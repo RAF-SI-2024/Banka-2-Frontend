@@ -28,7 +28,7 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        mode: "onSubmit",
+        mode: "onChange",
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
