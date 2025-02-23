@@ -1,13 +1,13 @@
 import {Button} from "@/components/ui/button";
-import {AppSidebar} from "@/components/common/app-sidebar.tsx";
+import {AppSidebar} from "@/components/common/AppSidebar.tsx";
 import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar.tsx";
-import Footer from "@/components/common/footer.tsx";
+import Footer from "@/components/common/Footer.tsx";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar.tsx";
-import {ThemeSwitch} from "@/components/common/theme-switch.tsx";
-import HeaderWithThemeSwitch from "@/components/common/header/header-with-theme-switch.tsx";
+import {ThemeSwitch} from "@/components/common/ThemeSwitch.tsx";
+import HeaderWithThemeSwitch from "@/components/common/header/HeaderWithThemeSwitch.tsx";
 
 export default function ComponentShowcasePage(){
     return (

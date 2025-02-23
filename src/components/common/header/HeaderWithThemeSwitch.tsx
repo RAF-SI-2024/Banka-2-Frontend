@@ -1,6 +1,6 @@
 import * as React from "react";
 import {cn} from "@/lib/utils.ts";
-import {ThemeSwitch} from "@/components/common/theme-switch.tsx";
+import {ThemeSwitch} from "@/components/common/ThemeSwitch.tsx";
 
 export default function HeaderWithThemeSwitch({
                                            className,

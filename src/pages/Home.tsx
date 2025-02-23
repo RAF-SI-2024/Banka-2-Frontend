@@ -1,12 +1,12 @@
-import { AppSidebar } from "@/components/common/app-sidebar.tsx"
+import { AppSidebar } from "@/components/common/AppSidebar.tsx"
 
 import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import Footer from "@/components/common/footer.tsx";
-import HeaderWithThemeSwitch from "@/components/common/header/header-with-theme-switch.tsx";
+import Footer from "@/components/common/Footer.tsx";
+import HeaderWithThemeSwitch from "@/components/common/header/HeaderWithThemeSwitch.tsx";
 
 export default function HomePage() {
     return (
@@ -15,7 +15,6 @@ export default function HomePage() {
             <AppSidebar />
             {/*part that the sidebar shrinks when open*/}
             <SidebarInset className="h-1">
-
                 <HeaderWithThemeSwitch className="flex h-16 shrink-0 items-center gap-2">
                     <SidebarTrigger className="-ml-1" />
                 </HeaderWithThemeSwitch>

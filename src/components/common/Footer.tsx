@@ -1,5 +1,5 @@
 import {Separator} from "@/components/ui/separator.tsx"
-import {ThemeSwitch} from "@/components/common/theme-switch.tsx";
+import {ThemeSwitch} from "@/components/common/ThemeSwitch.tsx";
 import * as React from "react";
 import {cn} from "@/lib/utils.ts";
 

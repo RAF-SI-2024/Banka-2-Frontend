@@ -12,8 +12,8 @@ function App() {
             {
                 <>
                     {/*<HomePage/>*/}
-                    <ComponentShowcasePage/>
-                    {/*<LoginPage/>*/}
+                    {/*<ComponentShowcasePage/>*/}
+                    <LoginPage/>
 
                 </>
             }</ThemeProvider>
