@@ -1,9 +1,9 @@
 import * as React from "react"
 
 
-import { NavMain } from "@/components/common/nav-main.tsx"
+import { NavMain } from "@/components/common/nav/nav-main.tsx"
 
-import { NavUser } from "@/components/common/nav-user.tsx"
+import { NavUser } from "@/components/common/nav/nav-user.tsx"
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +13,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx"
-import {Label} from "@/components/ui/label.tsx";
 import Logo from "@/components/common/logo.tsx";
 
 const data = {

@@ -11,7 +11,7 @@ function App() {
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             {
                 <>
-                    {/*<ComponentShowcasePage></ComponentShowcasePage>*/}
+                    {/*<HomePage/>*/}
                     <ComponentShowcasePage/>
                     {/*<LoginPage/>*/}
 
