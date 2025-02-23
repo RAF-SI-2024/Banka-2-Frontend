@@ -1,4 +1,4 @@
-import Logo from "@/components/common/Logo.tsx";
+import Logo from "@/assets/Logo.tsx";
 import * as React from "react";
 import {cn} from "@/lib/utils.ts";
 
