@@ -13,7 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx"
-import Logo from "@/components/common/Logo.tsx";
+import Logo from "@/assets/Logo.tsx";
 
 const data = {
   user: {
