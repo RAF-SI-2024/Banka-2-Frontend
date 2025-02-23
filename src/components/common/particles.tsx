@@ -12,7 +12,7 @@ interface ParticlesProps {
 
 function Particles({
                                       className = '',
-                                      quantity = 30,
+                                      quantity = 10,
                                       staticity = 50,
                                       ease = 50,
                                   }: ParticlesProps) {
