@@ -1,10 +1,10 @@
-import { LoginForm } from '@/components/login/login-form.tsx'
+import LoginForm from '@/components/login/LoginForm.tsx'
 import {Button} from "@/components/ui/button";
-import Footer from "@/components/common/footer.tsx";
-import { Particles } from "@/components/common/particles.tsx";
-import {BottomBar} from "@/components/common/bottom-bar.tsx";
+import Footer from "@/components/common/Footer.tsx";
+import { Particles } from "@/components/common/Particles.tsx";
+import {BottomBar} from "@/components/common/BottomBar.tsx";
 import * as React from "react";
-import HeaderWithLogo from "@/components/common/header/header-with-logo.tsx";
+import HeaderWithLogo from "@/components/common/header/HeaderWithLogo.tsx";
 
 export default function LoginPage() {
     return(
