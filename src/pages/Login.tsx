@@ -5,15 +5,19 @@ import { Particles } from "@/components/common/Particles.tsx";
 import {BottomBar} from "@/components/common/BottomBar.tsx";
 import * as React from "react";
 import HeaderWithLogo from "@/components/common/header/HeaderWithLogo.tsx";
+import {useNavigate} from "react-router-dom";
 
 export default function LoginPage() {
+    const navigate = useNavigate();
     return(
         <>
             {/*Header, main part and login fit the screen*/}
             <div className="max-w-full min-h-dvh justify-between flex flex-initial flex-col m-0 p-0 gap-0 relative">
                 {/*z and relative to make Header in front of particles*/}
                 <HeaderWithLogo className="z-50 relative">
-                    <Button type="button" variant="gradient">
+                    <Button type="button" variant="gradient"  onClick={() => {
+                        navigate("/register", { replace: true })
+                    }}>
                         Sign Up
                     </Button>
                 </HeaderWithLogo>
@@ -39,7 +43,9 @@ export default function LoginPage() {
                 <BottomBar className="relative z-50">
                     <p className="text-p">
                         Don&apos;t have an account?{" "}
-                        <Button variant="link" size="tight" className="text-base">
+                        <Button variant="link" size="tight" className="text-base" onClick={() => {
+                            navigate("/register", { replace: true })
+                        }}>
                             Sign up
                         </Button>
                     </p>
