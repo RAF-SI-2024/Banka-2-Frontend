@@ -12,6 +12,7 @@ const AppRoutes = () => {
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/home" element={<HomePage />} />
+            <Route path="/register" element={<HomePage />} /> {/* TODO: change to register page */}
             <Route path="/showcase" element={<ComponentShowcasePage />} />
         </Routes>
     );
