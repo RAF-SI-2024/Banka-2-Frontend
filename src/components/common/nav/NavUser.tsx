@@ -20,6 +20,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar.tsx"
+import {useAuth} from "@/hooks/useAuth.ts";
 
 export function NavUser({
   user,
@@ -31,6 +32,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const { logout } = useAuth()
 
   return (
     <SidebarMenu className="font-paragraph">
@@ -73,11 +75,18 @@ export function NavUser({
 
 
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-sidebar-destructive-foreground">
+            <DropdownMenuItem>
+
+              Edit profile
+
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+                className="text-sidebar-destructive-foreground"
+                onClick={logout}
+            >
               <span className="icon-[ph--sign-out]" />
-
               Log out
-
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
