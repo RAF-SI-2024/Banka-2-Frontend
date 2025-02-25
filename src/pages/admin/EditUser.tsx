@@ -35,7 +35,7 @@ export default function EditUserPage() {
                             Log in to BankToo</h1>
                         {/*Log in form/card - in front of the parrticles*/}
                         <div className="w-full max-w-sm z-10 relative">
-                            <EditUserDialog/>
+                            <EditUserDialog id = {1}/>
                         </div>
                     </div>
                 </main>

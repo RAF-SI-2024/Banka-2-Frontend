@@ -1,8 +1,7 @@
-import * as React from "react"
-
-import { cn } from "@/lib/utils"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { Button } from "@/components/ui/button"
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerClose,
@@ -20,42 +19,44 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import EditUserForm from "./EditUserForm"
+} from "@/components/ui/drawer";
+import EditUserForm from "./EditUserForm";
 
-export function EditUserDialog() {
-  const [open, setOpen] = React.useState(false)
-  const isDesktop = useMediaQuery("(min-width: 768px)")
+export function EditUserDialog({ id }) {
+  const [open, setOpen] = React.useState(false);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={setOpen} >
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="gradient" className="w-full">
-              Edit profile
+            Edit profile
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px] bg-card" >
+        <DialogContent className="sm:max-w-[425px] bg-card">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
               Make changes to your profile here. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
-          <EditUserForm />
+          <EditUserForm id_={id} onClose={handleClose} />
         </DialogContent>
       </Dialog>
-    )
+    );
   }
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-          <Button variant="gradient" className="w-full">
-              Edit profile
-          </Button>
+        <Button variant="gradient" className="w-full">
+          Edit profile
+        </Button>
       </DrawerTrigger>
       <DrawerContent className="bg-card">
         <DrawerHeader className="text-left">
@@ -64,7 +65,7 @@ export function EditUserDialog() {
             Make changes to your profile here. Click save when you're done.
           </DrawerDescription>
         </DrawerHeader>
-        <EditUserForm className="px-4" />
+        <EditUserForm className="px-4" id_={id} onClose={handleClose} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -72,7 +73,5 @@ export function EditUserDialog() {
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }
-
-

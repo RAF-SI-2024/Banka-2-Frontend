@@ -1,8 +1,9 @@
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 // import { updateUser } from "@/api/user.ts"; // Assume you have an API function to update user details
+import { getUserById, updateUser } from "@/api/user.ts"; // Import the getUserById function
 import { useAuth } from "@/hooks/useAuth.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -14,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { ErrorAlert } from "@/components/common/ErrorAlert.tsx";
+import { User } from "lucide-react";
 
 // Form field definitions
 const data = [
@@ -53,36 +55,91 @@ const formSchema = z.object({
     username: z.string().min(1, "Username is required"),
 });
 
-export default function EditUserForm({ className, ...props }: React.ComponentProps<"div">) {
-    const { user } = useAuth();
+export interface UserTest {
+    firstName: string;  
+    lastName: string;
+    username: string;
+}
+
+interface EditFormProps extends React.ComponentProps<"div"> {
+    id_: number;
+    onClose: () => void;
+}
+
+export default function EditUserForm({ id_, className, onClose, ...props }: EditFormProps) {
+    // _id -> id from user for fetch
     const navigate = useNavigate();
     const [errors, setErrors] = useState<Array<{ id: number; title: string, description: string }>>([]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        mode: "onChange",
+        // mode: "onChange",
         defaultValues: {
-            // firstName: user?.firstName || "",
-            // lastName: user?.lastName || "",
-            // username: user?.username || ""
+            firstName: "a",
+            lastName: "a",
+            username: "a"
         },
     });
 
+    useEffect(() => {
+        async function fetchUserData() {
+            try {
+                const userData = await getUserById(id_);
+                form.reset({
+                    firstName: userData.firstName, // TODO: Replace with actual user data 
+                    lastName: userData.lastName,
+                    username: userData.username
+                });
+            } catch (error) {
+                console.error("❌ Failed to fetch user data:", error);
+                setErrors(prev => [...prev, {
+                    id: Date.now(),
+                    title: "Failed to fetch user data",
+                    description: "An error occurred while fetching user data"
+                }]);
+            }
+        }
+
+        fetchUserData();
+    }, [id_, form]);
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setErrors([]); // Clear errors on submit
+        const updatedUser = {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            username: values.username
+        }
+
+        const currentValues = form.getValues();
+
+        console.log("Current values:", currentValues);
+        console.log("Updated user:", updatedUser);
+
+        if (JSON.stringify(currentValues) === JSON.stringify(updatedUser)) {
+            console.log("Nothing has changed");
+            // close the form
+            onClose();
+
+            return;
+        }
+
         try {
-            // const response = await updateUser(values);
-            // if (response.success) {
-            //     navigate("/home", { replace: true }); TODO: // Redirect to user profile page
-            // } else {
-            //     setErrors(prev => [...prev, {
-            //         id: Date.now(),
-            //         title: "Failed to update user",
-            //         description: "An error occurred while updating user details"
-            //     }]);
-            // }
+            
+            const response = await updateUser(id_, updatedUser);
+            if (response.success) {
+                navigate("/home", { replace: true }); TODO: // Redirect to user profile page
+                return;
+            } else {
+                setErrors(prev => [...prev, {
+                    id: Date.now(),
+                    title: "Failed to update user",
+                    description: "An error occurred while updating user details"
+                }]);
+            }
         } catch (error) {
             console.error("❌ Update failed:", error);
+            // throw new Error("Not implemented"); 
             setErrors(prev => [...prev, {
                 id: Date.now(),
                 title: "Failed to update user",
@@ -118,7 +175,7 @@ export default function EditUserForm({ className, ...props }: React.ComponentPro
                                     )}
                                 />
                             ))}
-                            <Button type="submit" variant="gradient" className="w-full">
+                            <Button type="submit" variant="gradient" className="w-full" disabled={!form.formState.isDirty}>
                                 Update
                             </Button>
                         </form>
