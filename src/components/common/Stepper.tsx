@@ -18,16 +18,15 @@ const numberIcons: Record<number, string> = {
 
 
 interface StepperProps extends React.ComponentProps<"div"> {
-    totalSteps: number;
-    currentStep: number;
-    iconProps?: React.ComponentProps<"span">;
-    iconClassName?: string;
-    lineProps?: React.ComponentProps<"hr">;
-    lineClassName?: string;
-    color1?: string;
-    color2?: string;
-    color3?: string;
-    color4?: string;
+    totalSteps: number; // total number of steps
+    currentStep: number; // current step number (starting from 1)
+    iconProps?: React.ComponentProps<"span">;  // props of the icon's span
+    iconClassName?: string; // span's className
+    lineProps?: React.ComponentProps<"hr">; // props of the line separator
+    lineClassName?: string; // line separator's className
+    color1?: string; // Finished color
+    color2?: string; // Transition color
+    color3?: string; // Unfinished color
 }
 
 
