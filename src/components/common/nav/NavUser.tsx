@@ -76,7 +76,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem>
 
-              <span className="icon-[ph--pencil-simple-line-light]"></span>
+              <span className="icon-[ph--pencil-simple-line-light]" />
               Edit profile
 
             </DropdownMenuItem>
