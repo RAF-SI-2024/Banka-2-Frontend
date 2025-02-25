@@ -2,9 +2,12 @@ import {Separator} from "@/components/ui/separator.tsx"
 import {ThemeSwitch} from "@/components/common/ThemeSwitch.tsx";
 import * as React from "react";
 import {cn} from "@/lib/utils.ts";
+import {useNavigate} from "react-router-dom";
+import {Button} from "@/components/ui/button.tsx";
 
 export default function Footer({className, ...props} :
                        React.ComponentProps<"footer"> ) {
+    const navigate = useNavigate();
     return (
         <footer className={cn("bg-footer p-8", className)} {...props}>
             <nav aria-label="Page navigation" className="grid gap-y-6 gap-x-2 items-center justify-between w-full grid-cols-1">
@@ -14,21 +17,16 @@ export default function Footer({className, ...props} :
                 </div>
                 <div className="text-sm font-medium font-paragraph flex h-5 flex-row space-x-4 h text-footer-foreground items-center">
 
-                    <a href="#" className="underline-offset-4 hover:underline hover:text-link-hover">
+                    <Button
+                        className="p-0 text-sm text-muted-foreground underline-offset-4 hover:underline hover:text-link-hover"
+                        variant="link"
+                        onClick={() => {
+                        navigate("/home", { replace: true })
+                    }}>
                         Home
-                    </a>
+                    </Button>
                     {/*<Separator orientation="vertical" />*/}
-                    {/*<a href="#" className="underline-offset-4 hover:underline hover:text-link-hover">*/}
-                    {/*    Page1*/}
-                    {/*</a>*/}
-                    {/*<Separator orientation="vertical" />*/}
-                    {/*<a href="#" className="underline-offset-4 hover:underline hover:text-link-hover">*/}
-                    {/*    Page2*/}
-                    {/*</a>*/}
-                    {/*<Separator orientation="vertical" />*/}
-                    {/*<a href="#" className="underline-offset-4 hover:underline hover:text-link-hover">*/}
-                    {/*    Page3*/}
-                    {/*</a>*/}
+                    {/*...*/}
 
                 </div>
                 <p className="text-muted-foreground text-xs font-paragraph font-extralight">© 2025, All rights reserved</p>
