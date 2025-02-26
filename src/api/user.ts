@@ -13,13 +13,28 @@ export const getUserById = async (id: number) => {
 };
 
 
-// update user by id 
-export const updateUser = async (id: number, data: any) => {
+export const updateClient = async (data: any) => {
     try {
-        const response = await api.put(`${API_BASE}/users/${id}`, data);
-        return response.data; // Returns updated user data
+        const response = await api.put(`${API_BASE}/clients`, data);
+        return { 
+            success: true, 
+            data: response.data 
+        };
     } catch (error) {
-        console.error("❌ Failed to update user:", error);
+        console.error("❌ Failed to update client:", error);
+        throw error;
+    }
+};
+
+export const updateEmployee = async (data: any) => {
+    try {
+        const response = await api.put(`${API_BASE}/employees`, data);
+        return { 
+            success: true, 
+            data: response.data 
+        };
+    } catch (error) {
+        console.error("❌ Failed to update employee:", error);
         throw error;
     }
 };
