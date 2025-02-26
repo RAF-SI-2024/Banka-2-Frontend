@@ -11,3 +11,24 @@ export const loginUser = async (data: LoginRequest) => {
         throw error;
     }
 };
+
+
+export const getAllUsers = async (page: number, pageSize: number, search: { email: string, firstName: string, lastName: string, role: string }) => {
+    try {
+        const response = await api.get(`${API_BASE}/users`, {
+            params: {
+                page: page,
+                pageSize: pageSize,
+                email: search.email,
+                firstName: search.firstName,
+                lastName: search.lastName,
+                role: search.role,
+            },
+        });
+
+        return Array.isArray(response.data.data) ? response.data.data : response.data;
+    } catch (error) {
+        console.error("❌ Error fetching users:", error);
+        throw error;
+    }
+};
