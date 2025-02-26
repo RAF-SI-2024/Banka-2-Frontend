@@ -49,7 +49,10 @@ export default function RegisterPage() {
         department: z
             .string()
             .regex(/^[0-9A-Za-zčČćĆžŽšŠđĐ ]+$/, "Only letters, numbers, and spaces are allowed"),
-        dateOfBirth: z.string().min(1, "Date of birth is required"),
+        dateOfBirth: z.date({
+            required_error: "Date of birth is required",
+            invalid_type_error: "Invalid date format",
+        }),
         gender: z.string().min(1, "Gender is required"),
         role: z.string().min(1, "Role is required"),
         employed: z.string().min(1, "Employment status is required"),
@@ -60,8 +63,11 @@ export default function RegisterPage() {
         mode: "onChange",
     });
 
-    function nextStep() {
-        setStep((prev) => prev + 1);
+    async function nextStep() {
+        const isValid = await form.trigger();
+        if (isValid) {
+            setStep((prev) => prev + 1);
+        }
     }
     function prevStep() {
         setStep((prev) => prev -1);

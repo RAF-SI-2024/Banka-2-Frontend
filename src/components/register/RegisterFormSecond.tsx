@@ -56,7 +56,7 @@ export default function RegisterFormSecond({ nextStep, prevStep, form, className
 
                                 <FormField
                                     control={form.control}
-                                    name="phone"
+                                    name="phoneNumber"
                                     render={({ field }) => (
                                         <FormItem className="flex flex-col items-start">
                                             <FormLabel className="text-left">Phone Number</FormLabel>
