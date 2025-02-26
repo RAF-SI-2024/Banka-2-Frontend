@@ -22,3 +22,4 @@ export interface EditUserRequest {
 export interface GetUserRequest {
     uniqueidentificationnumber: string;
 }
+

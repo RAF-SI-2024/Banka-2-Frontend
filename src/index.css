@@ -10,7 +10,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
 .card {
     padding: 2em;
 }
@@ -32,7 +31,6 @@
     --primary: #4556ff;
     --secondary: #9453ff;
 
-
     --link: #4556ff;
     --link-hover: #aabaff;
 
@@ -48,7 +46,6 @@
     --sidebar: #f1f4ff;
 
     --sidebar-foreground: #101217;
-
 
     --sidebar-destructive: #f1f4ff;
     --sidebar-destructive-foreground: #B3001B;
@@ -72,7 +69,6 @@
 .dark {
     --background: #0f1120;
     --foreground: #eef0ff;
-
 
     --card: #060817;
     --card-foreground: #eef0ff;
@@ -181,7 +177,6 @@
 
     --color-sidebar-accent: var(--sidebar-accent);
 
-
     --color-sidebar-foreground: var(--sidebar-foreground);
 
     --color-sidebar: var(--sidebar);
@@ -193,7 +188,6 @@
     --popover-foreground: var(--popover-foreground);
 
 }
-
 
 @layer base {
     * {
