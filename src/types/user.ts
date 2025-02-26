@@ -1,17 +1,18 @@
-export interface UserData {
-    id: string;
+export interface UserModel {
+    id: string; // Using string since the backend uses Guid
     firstName: string;
     lastName: string;
-    dateOfBirth: string; // DateOnly is not a standard JavaScript type, so using string
-    gender: number;
+    dateOfBirth: Date;
+    gender: 'Male' | 'Female';
     uniqueIdentificationNumber: string;
     username: string;
     email: string;
     phoneNumber: string;
     address: string;
-    role: number;
-    department?: string; // Optional field
-    createdAt: string; // DateTime is represented as string in JavaScript
-    modifiedAt: string; // DateTime is represented as string in JavaScript
+    role: 'Admin' | 'Employee' | 'Client';
+    department: string;
+    createdAt: Date;
+    modifiedAt: Date;
+    employed: boolean;
     activated: boolean;
-}
+  }

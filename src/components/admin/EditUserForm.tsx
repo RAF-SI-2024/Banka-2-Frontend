@@ -2,9 +2,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-// import { updateUser } from "@/api/user.ts"; // Assume you have an API function to update user details
-import { getUserById, updateUser } from "@/api/user.ts"; // Import the getUserById function
-import { useAuth } from "@/hooks/useAuth.ts";
+import { getUserById, updateUser } from "@/api/user.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { cn } from "@/lib/utils";
@@ -13,9 +11,7 @@ import {
     Form, FormControl, FormField, FormItem, FormLabel, FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { ErrorAlert } from "@/components/common/ErrorAlert.tsx";
-import { User } from "lucide-react";
 
 // Form field definitions
 const data = [
@@ -55,25 +51,23 @@ const formSchema = z.object({
     username: z.string().min(1, "Username is required"),
 });
 
-export interface UserTest {
-    firstName: string;  
-    lastName: string;
-    username: string;
-}
-
 interface EditFormProps extends React.ComponentProps<"div"> {
     id_: number;
     onClose: () => void;
 }
 
 export default function EditUserForm({ id_, className, onClose, ...props }: EditFormProps) {
-    // _id -> id from user for fetch
     const navigate = useNavigate();
     const [errors, setErrors] = useState<Array<{ id: number; title: string, description: string }>>([]);
+    const [originalData, setOriginalData] = useState<{
+        firstName: string;
+        lastName: string;
+        username: string;
+    } | null>(null);
+    const [hasChanges, setHasChanges] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        // mode: "onChange",
         defaultValues: {
             firstName: "a",
             lastName: "a",
@@ -81,15 +75,41 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
         },
     });
 
+    // Watch form values to detect changes
+    const watchedValues = form.watch();
+    
+    // Check for changes when form values update
+    useEffect(() => {
+        if (originalData) {
+            const formChanged = 
+                originalData.firstName !== watchedValues.firstName ||
+                originalData.lastName !== watchedValues.lastName ||
+                originalData.username !== watchedValues.username;
+            
+            setHasChanges(formChanged);
+            console.log("Form has changes:", formChanged);
+        }
+    }, [watchedValues, originalData]);
+
     useEffect(() => {
         async function fetchUserData() {
             try {
                 const userData = await getUserById(id_);
-                form.reset({
-                    firstName: userData.firstName, // TODO: Replace with actual user data 
-                    lastName: userData.lastName,
-                    username: userData.username
-                });
+                
+                // Store the original form data for comparison
+                const formData = {
+                    // firstName: userData.firstName,
+                    // lastName: userData.lastName,
+                    // username: userData.username
+                    firstName: "a",
+                    lastName: "a",
+                    username: "a"
+                };
+                console.log("Original data has been set!:", formData);
+                setOriginalData(formData);
+                
+                // Fill the form with user data
+                form.reset(formData);
             } catch (error) {
                 console.error("❌ Failed to fetch user data:", error);
                 setErrors(prev => [...prev, {
@@ -105,30 +125,33 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setErrors([]); // Clear errors on submit
-        const updatedUser = {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            username: values.username
+        
+        if (!originalData) {
+            setErrors(prev => [...prev, {
+                id: Date.now(),
+                title: "User data missing",
+                description: "Cannot update user because the original data is missing"
+            }]);
+            return;
         }
 
-        const currentValues = form.getValues();
-
-        console.log("Current values:", currentValues);
-        console.log("Updated user:", updatedUser);
-
-        if (JSON.stringify(currentValues) === JSON.stringify(updatedUser)) {
+        // Additional check to ensure there are actual changes
+        if (!hasChanges) {
             console.log("Nothing has changed");
-            // close the form
             onClose();
-
             return;
         }
 
         try {
+            const updatedUser = {
+                firstName: values.firstName,
+                lastName: values.lastName,
+                username: values.username
+            };
             
             const response = await updateUser(id_, updatedUser);
             if (response.success) {
-                navigate("/home", { replace: true }); TODO: // Redirect to user profile page
+                navigate("/home", { replace: true });
                 return;
             } else {
                 setErrors(prev => [...prev, {
@@ -139,7 +162,6 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
             }
         } catch (error) {
             console.error("❌ Update failed:", error);
-            // throw new Error("Not implemented"); 
             setErrors(prev => [...prev, {
                 id: Date.now(),
                 title: "Failed to update user",
@@ -156,31 +178,34 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
 
     return (
         <div className={cn("flex flex-col gap-2", className)} {...props}>
-            
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
-                            {data.map((field) => (
-                                <FormField
-                                    key={field.name}
-                                    control={form.control}
-                                    name={field.name as "firstName" | "lastName" | "username"}
-                                    render={({ field: fieldProps }) => (
-                                        <FormItem>
-                                            <FormLabel>{field.label}</FormLabel>
-                                            <FormControl>
-                                                <Input id={field.name} type={field.type} placeholder={field.placeholder} {...fieldProps} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            ))}
-                            <Button type="submit" variant="gradient" className="w-full" disabled={!form.formState.isDirty}>
-                                Update
-                            </Button>
-                        </form>
-                    </Form>
-            
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+                    {data.map((field) => (
+                        <FormField
+                            key={field.name}
+                            control={form.control}
+                            name={field.name as "firstName" | "lastName" | "username"}
+                            render={({ field: fieldProps }) => (
+                                <FormItem>
+                                    <FormLabel>{field.label}</FormLabel>
+                                    <FormControl>
+                                        <Input id={field.name} type={field.type} placeholder={field.placeholder} {...fieldProps} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    ))}
+                    <Button 
+                        type="submit" 
+                        variant="gradient" 
+                        className="w-full" 
+                        disabled={!hasChanges}
+                    >
+                        Update
+                    </Button>
+                </form>
+            </Form>
 
             {errors.map((error) => (
                 <ErrorAlert
