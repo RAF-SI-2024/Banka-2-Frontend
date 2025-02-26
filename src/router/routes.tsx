@@ -14,6 +14,7 @@ const AppRoutes = () => {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/home" element={<HomePage />} />
+            <Route path="/register" element={<HomePage />} /> {/* TODO: change to register page */}
             <Route path="/showcase" element={<ComponentShowcasePage />} />
         </Routes>
     );
