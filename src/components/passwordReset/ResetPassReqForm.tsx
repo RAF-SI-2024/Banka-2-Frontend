@@ -1,6 +1,14 @@
 import {Card, CardContent} from "@/components/ui/card.tsx";
 import {cn} from "@/lib/utils.ts";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage
+} from "@/components/ui/form.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import * as React from "react";
@@ -45,16 +53,16 @@ return (
             <CardContent className="mt-4 font-paragraph">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+                        <FormDescription>
+                            Enter the email you use to access your BankToo account and we will send you a link
+                            for password change.
+                        </FormDescription>
                         <FormField
                             control={form.control}
                             name="email"
-                            render={({ field }) => (
+                            render={({field}) => (
                                 <FormItem>
-                                    <div className="flex items-center">
-                                        <FormLabel>
-                                            Enter the email you use to access your BankToo account and we will send you a link for password change.
-                                        </FormLabel>
-                                    </div>
+
                                     <div className="flex items-center">
                                         <FormLabel>Email</FormLabel>
                                     </div>

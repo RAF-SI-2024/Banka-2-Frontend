@@ -1,35 +1,35 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "@/pages/Login";
 import HomePage from "@/pages/Home";
 import ComponentShowcasePage from "@/pages/ComponentShowcase";
 import UserListPage from "@/pages/UserList.tsx";
 import ResetPassReqPage from "@/pages/ResetPassRequest.tsx";
 import ResetPassPage from "@/pages/ResetPassword.tsx";
 import ResetPasswordNotificationPage from "@/pages/ResetPassNotification";
-import { Routes, Route, Navigate } from "react-router-dom"
-import EditUserPage from "@/pages/EditUser"
 import RegisterPage from "@/pages/Register"
-import TestPage from "@/pages/Test"
+import TestPage from "@/pages/Activate.tsx"
+import AuthorizationLayout from "@/layouts/AuthorizationLayout.tsx";
+import AppLayout from "@/layouts/AppLayout.tsx";
+import LoginPage from "@/pages/Login.tsx";
 
 
-const AppRoutes = () => {
+export const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/home" replace />} />
-      <Route path="/register" element={<RegisterPage />} />
-      {/* Field for activating account*/}
-      <Route path="/activate" element={<TestPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/userlist" element={<UserListPage />} />
-      <Route path="/edituser" element={<EditUserPage />} />
-      <Route path="/home" element={<HomePage />} />
-      <Route path="/resetpassreq" element={<ResetPassReqPage />} />
-      <Route path="/resetpass" element={<ResetPassPage />} />
-      <Route path="/resetNotification" element={<ResetPasswordNotificationPage />}/>
-      <Route path="/showcase" element={<ComponentShowcasePage />} />
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/user-list" element={<UserListPage />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/showcase" element={<ComponentShowcasePage />} />
+        </Route>
+
+        <Route element={<AuthorizationLayout />}>
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/activate" element={<TestPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/resetpass-nzm" element={<ResetPassPage />} /> {/*TODO: CHANGE ROUTE */}
+            <Route path="/password-reset" element={<ResetPassReqPage />} />
+            <Route path="/resetNotification" element={<ResetPasswordNotificationPage />}/>
+        </Route>
     </Routes>
   )
 }
-
-export default AppRoutes
-

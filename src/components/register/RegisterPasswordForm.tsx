@@ -1,9 +1,8 @@
 import * as React from "react"
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
-import { registerUser } from "@/api/auth.ts"
-import { RegisterRequest } from "@/types/auth.ts"
+import { useNavigate, useSearchParams} from "react-router-dom"
+import {activateUser} from "@/api/auth.ts"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
@@ -20,7 +19,6 @@ import { Input } from "@/components/ui/input"
 import InputHidable from "@/components/common/InputHidable"
 import { Card, CardContent } from "@/components/ui/card"
 import { ErrorAlert } from "@/components/common/ErrorAlert.tsx"
-import { Stepper } from "@/components/common/Stepper.tsx"
 
 // Form field definitions
 const data = [
@@ -55,22 +53,16 @@ const formSchema = z
       .min(8, "Password must be at least 8 characters long")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(
-        /[.@$!%*?&]/,
-        "Password must contain at least one special character (.@$!%*?&)"
-      ),
+      .regex(/[0-9]/, "Password must contain at least one number"),
+
     confirmPassword: z
       .string()
       .min(1, "This field is required")
       .min(8, "Password must be at least 8 characters long")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(
-        /[.@$!%*?&]/,
-        "Password must contain at least one special character (.@$!%*?&)"
-      ),
+      .regex(/[0-9]/, "Password must contain at least one number"),
+
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -81,10 +73,20 @@ export default function RegisterPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [isRegistered, setIsRegistered] = useState(false)
+
   const [errors, setErrors] = useState<
     Array<{ id: number; title: string; description: string }>
   >([])
+
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login", { replace: true });
+    }
+  }, [token, navigate]);
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -96,28 +98,24 @@ export default function RegisterPasswordForm({
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+
+
     setErrors([]) // Clear errors on submit
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("✅ Registrovan korisnik:", values)
-      /*const registerData: RegisterRequest = {
-        password: values.password,
+
+      if(!token)
+        throw new Error("No token provided")
+
+      console.log("SIFRA", values)
+      const response = await activateUser(values, token);
+
+      console.log("RESPONSE", response)
+      if(response.status === 202){
+          navigate("/login", {replace: true});
       }
-      const response = await registerUser(registerData)
-      if (response.success) {*/
-      setIsRegistered(true)
-      /*} else {
-        setErrors((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            title: "Registration failed",
-            description: "Could not create account",
-          },
-        ])
-      }*/
+
     } catch (error) {
-      console.error("❌ Registration failed:", error)
+      console.error("❌ Password creation failed:", error)
       setErrors((prev) => [
         ...prev,
         {
@@ -138,33 +136,6 @@ export default function RegisterPasswordForm({
 
   return (
     <div className="flex flex-col gap-2">
-      {isRegistered ? (
-        <Card className="flex flex-col gap-6">
-          <CardContent className="mt-4 font-paragraph flex flex-col items-center text-center gap-3">
-            <span className="icon-[ph--check-circle-fill] inset-0 bg-gradient-to-r from-primary to-secondary mask-size-cover text-[90px]"></span>
-            <Stepper totalSteps={4} currentStep={4} />
-            {/* Ne znam kako da mu podesim parametre (boja, velicina) :( */}
-            <h2 className="text-xl font-heading">
-              Activation email has been sent!
-            </h2>
-            <p className="text-xs text-paragraph text-gray-500">
-              We've sent an activation link to your email. Please check your
-              inbox (and spam folder) and click the link to activate your
-              account.
-            </p>
-            <p className="text-[10px] text-gray-500">
-              Didn’t receive the email?{" "}
-              <Button
-                variant="link"
-                size="tight"
-                className="ml-auto text-[10px]"
-              >
-                Resend activation email
-              </Button>
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
         <Card className={cn("flex flex-col gap-6", className)} {...props}>
           <CardContent className="mt-4 font-paragraph">
             <Form {...form}>
@@ -213,7 +184,7 @@ export default function RegisterPasswordForm({
             </Form>
           </CardContent>
         </Card>
-      )}
+
 
       {errors.map((error) => (
         <ErrorAlert

@@ -2,9 +2,9 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { editUser } from "@/api/auth.ts";
-import { getUser } from "@/api/auth.ts";
-import { EditUserRequest, GetUserRequest } from "@/types/auth.ts";
+import { editUser } from "@/api/user.ts";
+import { getUser } from "@/api/user.ts";
+import { EditUserRequest, GetUserRequest } from "@/types/user.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -323,10 +323,10 @@ export default function EditUserForm({ className, ...props }: React.ComponentPro
                                                     <RadioGroupItem value="2" id="employee" />
                                                     <Label htmlFor="employee">Employee</Label>
                                                 </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <RadioGroupItem value="3" id="client" />
-                                                    <Label htmlFor="client">Client</Label>
-                                                </div>
+                                                {/*<div className="flex items-center space-x-2">*/}
+                                                {/*    <RadioGroupItem value="3" id="client" />*/}
+                                                {/*    <Label htmlFor="client">Client</Label>*/}
+                                                {/*</div>*/}
                                                 </RadioGroup>
                                             ): field.variant === "Activated" ? (
                                                 <RadioGroup defaultValue= {form.control._defaultValues.activated?"1":"2"} className="flex gap-4">

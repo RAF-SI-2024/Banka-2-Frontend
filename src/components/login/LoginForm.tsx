@@ -65,8 +65,9 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
         try {
             const loginData: LoginRequest = { email: values.email, password: values.password };
             const response = await loginUser(loginData);
-            if (response.jwt) {
-                login(response.jwt);
+            if (response.token) {
+                login(response.token);
+                console.log("✅ Login successful", response);
                 navigate("/home", { replace: true });
             } else {
                 setErrors(prev => [...prev, {
@@ -109,7 +110,7 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
                                         <div className="flex items-center">
                                             <FormLabel>{field.label}</FormLabel>
                                             {field.name === "password" && (
-                                                <Button variant="link" size="tight" className="ml-auto">
+                                                <Button type="button" variant="link" size="tight" className="ml-auto" onClick={() => navigate("/password-reset")}>
                                                     Forgot your password?
                                                 </Button>
                                             )}

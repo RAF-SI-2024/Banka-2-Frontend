@@ -1,5 +1,4 @@
 import * as React from "react";
-import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +7,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Drawer,
@@ -18,26 +16,26 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
 import EditUserForm from "./EditUserForm";
 
-export function EditUserDialog({ id }) {
-  const [open, setOpen] = React.useState(false);
+interface EditUserDialogProps {
+  id: string;
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+}
+export function EditUserDialog({ id, isOpen, onOpenChange }: EditUserDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const handleClose = () => {
-    setOpen(false);
+    if (onOpenChange) {
+      onOpenChange(false);
+    }
   };
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button variant="gradient" className="w-full">
-            Edit profile
-          </Button>
-        </DialogTrigger>
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-[425px] bg-card">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
@@ -52,12 +50,7 @@ export function EditUserDialog({ id }) {
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button variant="gradient" className="w-full">
-          Edit profile
-        </Button>
-      </DrawerTrigger>
+    <Drawer open={isOpen} onOpenChange={onOpenChange}>
       <DrawerContent className="bg-card">
         <DrawerHeader className="text-left">
           <DrawerTitle>Edit profile</DrawerTitle>
