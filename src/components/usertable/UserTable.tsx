@@ -4,11 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User } from "@/types/user.ts";
+import { User, UserResponse } from "@/types/user.ts";
 import UserDropdownMenu from "@/components/usertable/UserDropdownMenu.tsx";
 import { getAllUsers } from "@/api/user.ts";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "@/components/ui/pagination";
 import { Role, Gender } from "@/types/enums.ts"; // Import Enums
+
 
 export default function UserTable() {
     const [search, setSearch] = useState({
@@ -25,39 +26,47 @@ export default function UserTable() {
     const itemsPerPage = 5;
     const [totalPages, setTotalPages] = useState(1);
 
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     // Fetch Users from API
     const fetchUsers = async () => {
-        setLoading(true);
+        // setLoading(true);
         setError(null);
 
         try {
-            const usersData = await getAllUsers(currentPage, itemsPerPage, search);
-            setUsers(usersData);
-            setTotalPages(Math.ceil(usersData.length / itemsPerPage)); // Assuming backend doesn't send totalPages
+            console.log("BOSSKO2:", currentPage, itemsPerPage, search);
+            const usersData:UserResponse = await getAllUsers(currentPage, itemsPerPage, search);
+            console.log("BOSSKO:", usersData.items);
+            setUsers(usersData.items);
+            setTotalPages(usersData.totalPages); // Assuming backend doesn't send totalPages
         } catch (err) {
             console.error("Error fetching users:", err);
             setError("Failed to fetch users.");
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
     const handleClearSearch = () => {
-        setSearch({
-            email: "",
-            firstName: "",
-            lastName: "",
-            role: "",
-        });
+        console.log("Clearing search...");
+        // setSearch({
+        //     email: "",
+        //     firstName: "",
+        //     lastName: "",
+        //     role: "",
+        // });
+        console.log("BOSSKO2:", currentPage, itemsPerPage, search);
+        search.email = "";
+        search.firstName = "";  
+        search.lastName = "";
+        search.role = "";
         fetchUsers();
     };
 
     useEffect(() => {
        fetchUsers();
-    }, []);
+    }, [currentPage]);
 
     const handleSearchChange = (field: string, value: string) => {
         setSearch(prevSearch => ({ ...prevSearch, [field]: value }));
@@ -75,7 +84,7 @@ export default function UserTable() {
         }
     };
 
-    if (loading) return <p className="text-center">Loading...</p>;
+    // if (loading) return <p className="text-center">Loading...</p>;
     if (error) return <p className="text-center text-red-500">{error}</p>;
 
     return (
@@ -136,7 +145,7 @@ export default function UserTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                {/* {users.map(user => (
+                {users.map(user => (
                         <TableRow key={user.id}>
                             <TableCell>{user.firstName}</TableCell>
                             <TableCell>{user.lastName}</TableCell>
@@ -157,7 +166,7 @@ export default function UserTable() {
                                 />
                             </TableCell>
                         </TableRow>
-                    ))} */}
+                    ))}
                 </TableBody>
             </Table>
 

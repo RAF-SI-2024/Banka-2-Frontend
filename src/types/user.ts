@@ -48,6 +48,14 @@ export interface User {
 }
 
 
+export interface UserResponse {
+    items: User[];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+}
+
 export interface AccountSimple {
     id: string;
     accountNumber: string;

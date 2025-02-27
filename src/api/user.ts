@@ -1,24 +1,24 @@
 import api from "./axios";
 import { API_BASE } from "../constants/endpoints";
 import { LoginRequest } from "../types/auth";
-import {EditUserRequest, GetUserRequest, User} from "@/types/user.ts";
+import {EditUserRequest, GetUserRequest, User, UserResponse} from "@/types/user.ts";
 
 export const getAllUsers = async (
     page: number,
     size: number,
     filters: { email?: string; firstName?: string; lastName?: string; role?: string }
-): Promise<User[]> => {
+): Promise<UserResponse> => {
     try {
-        const params = new URLSearchParams({
-            email: filters.email || '',
-            firstName: filters.firstName || '',
-            lastName: filters.lastName || '',
-            role: filters.role ? parseInt(filters.role, 10).toString() : '',
-            page: page.toString(),
-            size: size.toString(),
+        const response = await api.get("/users", {
+            params: {
+                email: filters.email || undefined,
+                firstName: filters.firstName || undefined,
+                lastName: filters.lastName || undefined,
+                role: filters.role ? parseInt(filters.role, 10) : undefined, // Convert role to number
+                page,
+                size,
+            },
         });
-
-        const response = await api.get(`/users?${params.toString()}`);
 
         return response.data; // API returns an array of users
     } catch (error) {
