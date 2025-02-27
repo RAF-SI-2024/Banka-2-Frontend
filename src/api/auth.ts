@@ -28,7 +28,8 @@ export const registerClient = async (data: RegisterRequestClient) => {
     console.log(data)
     try {
         const response = await api.post(`${API_BASE}/clients`, data);
-        return response.data;
+        console.log("REGISTER CLIENT", response)
+        return response;
     } catch (error) {
         console.error("❌ Register client failed:", error);
         throw error;
@@ -40,7 +41,7 @@ export const registerEmployee = async (data: RegisterRequestEmployee) => {
     console.log(data)
     try {
         const response = await api.post(`${API_BASE}/employees`, data);
-        return response.data;
+        return response;
     } catch (error) {
         console.error("❌ Register employee failed:", error);
         throw error;
