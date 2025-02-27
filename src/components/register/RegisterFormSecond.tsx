@@ -11,6 +11,9 @@ import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
 import {registerClient, registerEmployee} from "@/api/auth.ts";
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import {Role} from "@/types/enums.ts";
+import { useNavigate } from "react-router-dom";
+import { format } from 'date-fns';
+
 
 // @ts-expect-error Need to add type to the props
 export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, className, ...props }) {
@@ -34,7 +37,7 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
                 email: form.getValues("email"),
                 firstName: form.getValues("firstName"),
                 lastName: form.getValues("lastName"),
-                dateOfBirth: form.getValues("dateOfBirth"),
+                dateOfBirth: format(new Date(form.getValues("dateOfBirth")), "yyyy-MM-dd"),
                 uniqueIdentificationNumber: form.getValues("uniqueIdentificationNumber"),
                 gender: parseInt(form.getValues("gender"), 10), // Convert string to number
                 phoneNumber: form.getValues("phoneNumber"),
@@ -42,10 +45,14 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
                 role: Role.Client,
             };
 
+
             const response = await registerClient(registerData);
-            if (response.data) {
-                nextStep()
+
+            if (response.status === 200) {
+                // console.log("NEXT STEP");
+                nextStep();
             }
+
 
         } catch (error) {
             console.error("Register for client failed:", error);
@@ -56,6 +63,8 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
                     ? String(error.message)
                     : String(error || "An error occurred"),
             });
+        } finally {
+            console.log("FINALLY STEP");
         }
     }
 
@@ -83,7 +92,7 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
                 email: form.getValues("email"),
                 firstName: form.getValues("firstName"),
                 lastName: form.getValues("lastName"),
-                dateOfBirth: form.getValues("dateOfBirth"),
+                dateOfBirth: format(new Date(form.getValues("dateOfBirth")), "yyyy-MM-dd"),
                 uniqueIdentificationNumber: form.getValues("uniqueIdentificationNumber"),
                 gender: parseInt(form.getValues("gender"), 10), // Convert string to number
                 phoneNumber: form.getValues("phoneNumber"),
@@ -92,8 +101,9 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
             };
 
             const response = await registerEmployee(registerData);
-            if (response.data) {
-                // setStep((prev) => prev + 1);
+            if (response.status === 200) {
+                // console.log("NEXT STEP");
+                nextStep();
             }
 
         } catch (error) {
