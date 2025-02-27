@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "@/pages/Login";
 import HomePage from "@/pages/Home";
 import ComponentShowcasePage from "@/pages/ComponentShowcase";
+import UserListPage from "@/pages/UserList.tsx";
 import ResetPassReqPage from "@/pages/ResetPassRequest.tsx";
 import ResetPassPage from "@/pages/ResetPassword.tsx";
 import ResetPasswordNotificationPage from "@/pages/ResetPassNotification";
@@ -19,6 +20,7 @@ const AppRoutes = () => {
       {/* Field for activating account*/}
       <Route path="/activate" element={<TestPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/userlist" element={<UserListPage />} />
       <Route path="/edituser" element={<EditUserPage />} />
       <Route path="/home" element={<HomePage />} />
       <Route path="/resetpassreq" element={<ResetPassReqPage />} />
