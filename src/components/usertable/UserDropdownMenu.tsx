@@ -17,7 +17,7 @@ export default function UserDropdownMenu({ onEdit, onDelete }: Props) {
 
             <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={onEdit}>Edit User</DropdownMenuItem>
-                <DropdownMenuItem onClick={onDelete}>Delete User</DropdownMenuItem>
+                {/*<DropdownMenuItem onClick={onDelete}>Delete User</DropdownMenuItem>*/}
             </DropdownMenuContent>
 
         </DropdownMenu>

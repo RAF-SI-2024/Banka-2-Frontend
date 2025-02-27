@@ -25,3 +25,17 @@ export const getRoleNumber = (roleName: string): number => {
             return Role.Invalid;
     }
 };
+
+export const getRoleName = (roleNumber: number): Role => {
+    switch (roleNumber) {
+        case 1:
+            return Role.Admin;
+        case 2:
+            return Role.Employee;
+        case 3:
+            return Role.Client;
+        default:
+            return Role.Invalid;
+    }
+};
+

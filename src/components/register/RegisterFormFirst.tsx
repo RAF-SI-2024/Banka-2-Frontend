@@ -64,11 +64,11 @@ export default function RegisterFormFirst({ form, nextStep, className, ...props 
                                                 <Button
                                                     variant="outline"
                                                     className={cn(
-                                                        "w-full justify-start text-left font-normal",
+                                                        "w-full justify-start text-left font-normal hover:bg-transparent hover:text-muted-foreground",
                                                         !field.value && "text-muted-foreground"
                                                     )}
                                                 >
-                                                    <CalendarIcon className="h-4 w-4 opacity-50 mr-2"/>
+                                                    <CalendarIcon className="h-4 w-4 opacity-50 mr-2 "/>
                                                     {field.value ? (
                                                         format(field.value, "yyyy-MM-dd")
                                                     ) : (

@@ -103,7 +103,7 @@ export interface EditUserRequest {
     phonenumber: string
     address: string
     department: string
-    role: number
+    role: Role
     activated: boolean
 }
 
