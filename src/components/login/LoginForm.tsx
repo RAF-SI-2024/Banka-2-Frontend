@@ -68,7 +68,7 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
             if (response.token) {
                 login(response.token);
                 console.log("✅ Login successful", response);
-                // navigate("/home", { replace: true });
+                navigate("/home", { replace: true });
             } else {
                 setErrors(prev => [...prev, {
                     id: Date.now(),

@@ -53,22 +53,16 @@ const formSchema = z
       .min(8, "Password must be at least 8 characters long")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(
-        /[.@$!%*?&]/,
-        "Password must contain at least one special character (.@$!%*?&)"
-      ),
+      .regex(/[0-9]/, "Password must contain at least one number"),
+
     confirmPassword: z
       .string()
       .min(1, "This field is required")
       .min(8, "Password must be at least 8 characters long")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(
-        /[.@$!%*?&]/,
-        "Password must contain at least one special character (.@$!%*?&)"
-      ),
+      .regex(/[0-9]/, "Password must contain at least one number"),
+
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -112,9 +106,11 @@ export default function RegisterPasswordForm({
       if(!token)
         throw new Error("No token provided")
 
+      console.log("SIFRA", values)
       const response = await activateUser(values, token);
 
-      if(response.status === 200){
+      console.log("RESPONSE", response)
+      if(response.status === 202){
           navigate("/login", {replace: true});
       }
 

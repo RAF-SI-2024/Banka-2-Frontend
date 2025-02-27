@@ -48,8 +48,6 @@ export default function UserTable() {
         } catch (err) {
             console.error("Error fetching users:", err);
             setError("Failed to fetch users.");
-        } finally {
-            // setLoading(false);
         }
     };
 
@@ -192,7 +190,7 @@ export default function UserTable() {
             <EditUserDialog 
                 id={editingUser.id}
                 isOpen={isEditDialogOpen}
-                onOpenChange={(open) => {
+                onOpenChange={(open: any) => {
                     setIsEditDialogOpen(open);
                     if (!open) {
                         setEditingUser(null);
