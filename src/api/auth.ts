@@ -1,6 +1,6 @@
 import api from "./axios";
 import { API_BASE } from "../constants/endpoints";
-import { LoginRequest } from "../types/auth";
+import {LoginRequest, RegisterRequestClient, RegisterRequestEmployee} from "../types/auth";
 import { EditUserRequest } from "../types/auth";
 import { GetUserRequest } from "../types/auth";
 
@@ -49,6 +49,28 @@ export const getUser = async (data: GetUserRequest) => {
         
     } catch (error) {
         console.error("❌ Edit failed:", error);
+        throw error;
+    }
+};
+
+export const registerClient = async (data: RegisterRequestClient) => {
+    console.log(data)
+    try {
+        const response = await api.post(`${API_BASE}/clients`, data);
+        return response.data;
+    } catch (error) {
+        console.error("❌ Register client failed:", error);
+        throw error;
+    }
+};
+
+export const registerEmployee = async (data: RegisterRequestEmployee) => {
+    console.log(data)
+    try {
+        const response = await api.post(`${API_BASE}/employees`, data);
+        return response.data;
+    } catch (error) {
+        console.error("❌ Register employee failed:", error);
         throw error;
     }
 };

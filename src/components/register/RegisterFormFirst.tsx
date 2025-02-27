@@ -1,5 +1,4 @@
 import * as React from "react";
-import {useState} from "react";
 import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
@@ -15,17 +14,14 @@ import {
 import {CalendarIcon} from "lucide-react";
 import { format } from "date-fns"
 
-// @ts-ignore
+// @ts-expect-error can accept any time
 export default function RegisterFormFirst({ form, nextStep, className, ...props }) {
-
-    const [error, setError] = useState<string | null>(null);
 
     return (
         <Card className={cn("flex flex-col gap-6", className)} {...props}>
             <CardContent className="mt-4 font-paragraph">
-                {error && <p className="text-red-500">{error}</p>}
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit()} className="flex flex-col gap-4">
+                    <form className="flex flex-col gap-4">
                         {/* First name field */}
                         <div className="flex flex-row gap-4">
                             <FormField control={form.control} name="firstName" render={({ field }) => (
@@ -61,7 +57,7 @@ export default function RegisterFormFirst({ form, nextStep, className, ...props 
                                                 <Button
                                                     variant="outline"
                                                     className={cn(
-                                                        "w-full justify-start text-left font-normal", // Ovde osiguravamo poravnanje
+                                                        "w-full justify-start text-left font-normal",
                                                         !field.value && "text-muted-foreground"
                                                     )}
                                                 >
@@ -90,7 +86,6 @@ export default function RegisterFormFirst({ form, nextStep, className, ...props 
                                 </FormItem>
                             )}
                         />
-
 
                         <FormField control={form.control} name="uniqueIdentificationNumber" render={({ field }) => (
                             <FormItem>
@@ -121,7 +116,7 @@ export default function RegisterFormFirst({ form, nextStep, className, ...props 
                             </FormItem>
                         )} />
 
-                        <Button type="submit" variant="default" className="w-1/3" onClick={nextStep}>
+                        <Button type="button" variant="default" className="w-1/3" onClick={nextStep}>
                             Continue
                         </Button>
                     </form>

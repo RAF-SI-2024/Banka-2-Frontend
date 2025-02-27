@@ -9,12 +9,13 @@ import {Tabs, TabsList, TabsContent, TabsTrigger} from "@/components/ui/tabs.tsx
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group.tsx";
 import PhoneInput from "react-phone-number-input";
 import 'react-phone-number-input/style.css'
+import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
+import {registerClient, registerEmployee} from "@/api/auth.ts";
+import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 
-// @ts-ignore
+// @ts-expect-error Need to add type to the props
 export default function RegisterFormSecond({ setStep, prevStep, form, className, ...props }) {
-    const [error, setError] = useState<string | null>(null);
-
-
+    const [error, setError] = useState<{ id: number; title: string; description: string } | null>(null);
     async function goToNextStepClient() {
         const isValid = await form.trigger([
             "email",
@@ -22,10 +23,38 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
             "address",
         ]);
         if (isValid) {
-            // @ts-ignore
-            setStep((prev) => prev + 1);
-        } else {
-            console.log(form.formState.errors)
+            onSubmitClient();
+        }
+    }
+
+    async function onSubmitClient() {
+        setError(null);
+        try {
+            const registerData: RegisterRequestClient = {
+                email: form.getValues("email"),
+                firstName: form.getValues("firstName"),
+                lastName: form.getValues("lastName"),
+                dateOfBirth: form.getValues("dateOfBirth"),
+                uniqueIdentificationNumber: form.getValues("uniqueIdentificationNumber"),
+                gender: form.getValues("gender"),
+                phoneNumber: form.getValues("phoneNumber"),
+                address: form.getValues("address"),
+                role: "0",
+            };
+            const response = await registerClient(registerData);
+            if (response.data) {
+                // setStep((prev) => prev + 1);
+            }
+
+        } catch (error) {
+            console.error("❌ Login failed:", error);
+            setError({
+                id: Date.now(),
+                title: "Failed to log in",
+                description: error && typeof error === "object" && "message" in error
+                    ? String(error.message)
+                    : String(error || "An error occurred"),
+            });
         }
     }
 
@@ -40,25 +69,53 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
         ]);
 
         if (isValid) {
-            // @ts-ignore
-            setStep((prev) => prev + 1);
-        } else {
-            console.log(form.formState.errors)
+            onSubmitEmployee()
         }
     }
 
+    async function onSubmitEmployee() {
+        setError(null);
+        try {
+            const registerData: RegisterRequestEmployee = {
+                username: form.getValues("username"),
+                department: form.getValues("department"),
+                employed: form.getValues("employed"),
+                email: form.getValues("email"),
+                firstName: form.getValues("firstName"),
+                lastName: form.getValues("lastName"),
+                dateOfBirth: form.getValues("dateOfBirth"),
+                uniqueIdentificationNumber: form.getValues("uniqueIdentificationNumber"),
+                gender: form.getValues("gender"),
+                phoneNumber: form.getValues("phoneNumber"),
+                address: form.getValues("address"),
+                role: "1",
+            };
+            const response = await registerEmployee(registerData);
+            if (response.data) {
+                // setStep((prev) => prev + 1);
+            }
+
+        } catch (error) {
+            console.error("❌ Login failed:", error);
+            setError({
+                id: Date.now(),
+                title: "Failed to log in",
+                description: error && typeof error === "object" && "message" in error
+                    ? String(error.message)
+                    : String(error || "An error occurred"),
+            });
+        }
+    }
 
     return (
-
         <Tabs defaultValue="client" className="w-[400px]">
             <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="client">Client</TabsTrigger>
                 <TabsTrigger value="employee">Employee</TabsTrigger>
             </TabsList>
             <TabsContent value="client">
-                <Card className={cn("flex flex-col gap-6", className)} {...props}>
+                <Card className={cn("flex flex-col gap-6 mb-6", className)} {...props}>
                     <CardContent className="mt-4 font-paragraph">
-                        {error && <p className="text-red-500">{error}</p>} {/* Display errors */}
                         <Form {...form}>
                             <form className="flex flex-col gap-6">
                                 {/* First name field */}
@@ -125,9 +182,8 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
             </TabsContent>
 
             <TabsContent value="employee">
-                <Card className={cn("flex flex-col gap-6", className)} {...props}>
+                <Card className={cn("flex flex-col gap-6 mb-6", className)} {...props}>
                     <CardContent className="mt-4 font-paragraph">
-                        {error && <p className="text-red-500">{error}</p>} {/* Display errors */}
                         <Form {...form}>
                             <form className="flex flex-col gap-6">
                                 {/* First name field */}
@@ -241,8 +297,18 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
                         </Form>
                     </CardContent>
                 </Card>
+                {error && [error].map((error) => (
+                    <ErrorAlert
+                        key={error.id}
+                        title={error.title}
+                        description={error.description}
+                        onClose={() => setError(null)}
+                    />
+                ))}
             </TabsContent>
         </Tabs>
+
+
 
 
     );

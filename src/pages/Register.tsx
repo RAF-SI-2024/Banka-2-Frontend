@@ -15,7 +15,7 @@ import {z} from "zod";
 
 export default function RegisterPage() {
 
-    const [step, setStep] = useState(2);
+    const [step, setStep] = useState(1);
 
     const formSchema = z.object({
         firstName: z
@@ -54,7 +54,6 @@ export default function RegisterPage() {
             invalid_type_error: "Invalid date format",
         }),
         gender: z.string().min(1, "Gender is required"),
-        role: z.string().min(1, "Role is required"),
         employed: z.string().min(1, "Employment status is required"),
     });
 
@@ -72,7 +71,6 @@ export default function RegisterPage() {
             phoneNumber: "",
             address: "",
             department: "",
-            role: "",
             employed: "",
         }
     });
@@ -92,12 +90,11 @@ export default function RegisterPage() {
     }
 
     function prevStep() {
-        setStep((prev) => prev -1);
+        setStep((prev) => prev - 1);
     }
 
     return(
         <>
-
             {/*Header, main part and login fit the screen*/}
             <div className="max-w-full min-h-dvh justify-between flex flex-initial flex-col m-0 p-0 gap-0 relative">
                 {/*z and relative to make Header in front of particles*/}
@@ -112,21 +109,15 @@ export default function RegisterPage() {
                     z is set as well. mix = blending mode hard light for cooler effect*/}
                     <Particles className="absolute inset-0 pointer-events-none z-10 mix-blend-hard-light" quantity={8}/>
 
-                    {/*put the card and text in the center of the page, gap-2 for spacing between text and card*/}
-
                     <div className="flex flex-col justify-center items-center self-center w-full gap-2">
-                        {/*Log in text - behind the particles*/}
                         <h1 className="scroll-m-20 text-5xl font-heading tracking-tight lg:text-5xl z-0 relative">
                             Join BankToo </h1>
-                        {/*Log in form/card - in front of the parrticles*/}
+                        {/*Register form/card - in front of the parrticles*/}
                         <div className="w-full max-w-sm z-10 relative">
                             {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStepFirst}/>}
                             {step === 2 && <RegisterFormSecond form={form} className={""} prevStep={prevStep} setStep={setStep}/>}
-
                         </div>
                     </div>
-
-
                 </main>
 
                 {/*bottom bar - in front of the particles*/}
@@ -141,9 +132,7 @@ export default function RegisterPage() {
             </div>
 
             {/*footer - in front of the particles*/}
-
             <Footer className="z-10 relative"/>
-
         </>
     )
 }
