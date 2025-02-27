@@ -31,8 +31,10 @@ const data = [
 ];
 
 const formSchema = z.object({
-    // TODO? password (?? enough characters or big letter)
+    password: z.string().min(8, "Password must be at least 8 characters long"),
+    confirmPassword: z.string().min(8, "Password must be at least 8 characters long"),
 });
+
 
 export default function ResetPassForm({ className, ...props }: React.ComponentProps<"div">) {
 
@@ -41,7 +43,8 @@ export default function ResetPassForm({ className, ...props }: React.ComponentPr
         resolver: zodResolver(formSchema),
         mode: "onChange",
         defaultValues: {
-            email: "",
+            password: "",
+            confirmPassword: "",
         },
     });
 
@@ -59,7 +62,7 @@ export default function ResetPassForm({ className, ...props }: React.ComponentPr
                                 <FormField
                                     key={field.name}
                                     control={form.control}
-                                    name={field.name}
+                                    name={field.name as keyof typeof formSchema.shape}
                                     render={({ field: fieldProps }) => (
                                         <FormItem>
                                             <div className="flex items-center">
