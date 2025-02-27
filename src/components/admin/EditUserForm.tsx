@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { getUserById, updateClient, updateEmployee } from "@/api/user.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,23 +10,22 @@ import { Form } from "@/components/ui/form";
 import { ErrorAlert } from "@/components/common/ErrorAlert.tsx";
 import { UpdateClientRequest, UpdateEmployeeRequest, User } from "@/types/user.ts";
 import { createFormSchema, getFormFields } from "@/components/utils/form-fields.tsx";
-import { FormFieldRenderer } from "@/components/admin/FormFieldRendered.tsx";	
-import { getRoleNumber, Role } from "@/types/enums";
+import { FormFieldRenderer } from "@/components/admin/FormFieldRendered.tsx";
+import {Role} from "@/types/enums.ts";
 
 interface EditFormProps extends React.ComponentProps<"div"> {
-    id_: number;
+    id_: string;
     onClose: () => void;
 }
 
 export default function EditUserForm({ id_, className, onClose, ...props }: EditFormProps) {
-    const navigate = useNavigate();
     const [errors, setErrors] = useState<Array<{ id: number; title: string, description: string }>>([]);
     const [userData, setUserData] = useState<User | null>(null);
     const [formFields, setFormFields] = useState<any[]>([]);
     const [hasChanges, setHasChanges] = useState(false);
 
     // Create a type-safe form using a default schema initially
-    const [formSchema, setFormSchema] = useState<z.ZodObject<any>>(createFormSchema('Client'));
+    const [formSchema, setFormSchema] = useState<z.ZodObject<any>>(createFormSchema(Role.Client));
     
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -66,12 +64,11 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
                 // user.activated = true;
 
                 setUserData(user);
-                
+
                 // Determine if user is a client or employee based on API response
                 const userRole = user.role;
                 // const userRole = 'Employee';
 
-                console.log("User role:", userRole);
                 
                 // Set schema and form fields based on role
                 setFormSchema(createFormSchema(userRole));
@@ -80,7 +77,7 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
                 // Create default values for the form based on role
                 const formDefaultValues: any = {};
                 
-                if (userRole === 3) {
+                if (userRole === Role.Client) {
                     formDefaultValues.firstName = user.firstName;
                     formDefaultValues.lastName = user.lastName;
                     formDefaultValues.phoneNumber = user.phoneNumber;
@@ -99,7 +96,7 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
                     formDefaultValues.username = (user as any).username;
                     formDefaultValues.phoneNumber = user.phoneNumber;
                     formDefaultValues.address = user.address;
-                    formDefaultValues.role = user.role;
+                    formDefaultValues.role = userRole
                     formDefaultValues.department = (user as any).department;
                     formDefaultValues.employed = (user as any).employed;
                     formDefaultValues.activated = user.activated;
@@ -138,7 +135,7 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
             username: values.username,
             phoneNumber: values.phoneNumber,
             address: values.address,
-            role: getRoleNumber(values.role),
+            role: values.role,
             department: values.department,
             employed: values.employed,
             activated: values.activated,
@@ -168,17 +165,14 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
             // Prepare updated user data for API
             
             
-            
-            // console.log("Updating user:", updatedUser);            
+
             let response;
             
-            if (userData.role === 3) {
+            if (userData.role === Role.Client) {
                 const updatedClient = mapToUpdateClientRequest(values);
                 response = await updateClient(updatedClient, userData.id);
             } else {
                 const updatedUser = mapToUpdateEmployeeRequest(values);
-                console.log("Updated user:", updatedUser);
-                console.log("User ID:", userData.id);
                 response = await updateEmployee(updatedUser, userData.id);
             }
             if (response.success) {

@@ -55,30 +55,39 @@ export const FormFieldRenderer: React.FC<FormFieldProps> = ({ field, control }) 
                     key={field.name}
                     control={control}
                     name={field.name}
-                    render={({ field: fieldProps }) => (
-                        <FormItem>
-                            <FormLabel>{field.label}</FormLabel>
-                            <Select 
-                                onValueChange={fieldProps.onChange} 
-                                defaultValue={fieldProps.value}
-                            >
-                                <FormControl>
-                                    <SelectTrigger >
-                                        <SelectValue placeholder={field.placeholder} />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent className = "bg-card">
-                                    {field.options?.map((option) => (
-                                        <SelectItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    render={({ field: fieldProps }) => {
+                        // Since options are strings ("0", "1"), but form stores numbers (0, 1),
+                        // we need to match by converting to number
+                        const selectedOption = field.options?.find(option => Number(option.value) === fieldProps.value);
+
+                        return (
+                            <FormItem>
+                                <FormLabel>{field.label}</FormLabel>
+                                <Select
+                                    onValueChange={(val) => fieldProps.onChange(Number(val))} // Convert selected string to number
+                                    value={String(fieldProps.value)} // Ensure the select displays correct value
+                                >
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={field.placeholder}>
+                                                {selectedOption?.label || field.placeholder}
+                                            </SelectValue>
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="bg-card">
+                                        {field.options?.map((option) => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        );
+                    }}
                 />
+
             );
         
         case "Checkbox":

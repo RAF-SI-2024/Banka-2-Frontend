@@ -162,7 +162,7 @@ export default function UserTable() {
                             <TableCell>{genderToText(user.gender)}</TableCell>
                             <TableCell>
                                 <Badge variant={user.activated ? "default" : "destructive"}>
-                                    {user.activated ? "Active" : "Inactive"}
+                                    {user.activated ? "Activated" : "Not activated"}
                                 </Badge>
                             </TableCell>
                             <TableCell>

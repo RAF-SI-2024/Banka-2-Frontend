@@ -30,7 +30,6 @@ export const registerUser = async (data: RegisterRequest) => {
 }
 
 export const registerClient = async (data: RegisterRequestClient) => {
-    console.log(data)
     try {
         const response = await api.post(`${API_BASE}/clients`, data);
         console.log("REGISTER CLIENT", response)
@@ -43,7 +42,6 @@ export const registerClient = async (data: RegisterRequestClient) => {
 
 
 export const registerEmployee = async (data: RegisterRequestEmployee) => {
-    console.log(data)
     try {
         const response = await api.post(`${API_BASE}/employees`, data);
         return response;

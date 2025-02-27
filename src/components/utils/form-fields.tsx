@@ -1,8 +1,9 @@
 import * as z from "zod";
+import {Role} from "@/types/enums.ts";
 
 // Dynamic schema generation based on role
-export const createFormSchema = (role: number) => {
-    if (role === 3) {
+export const createFormSchema = (role: Role) => {
+    if (role === Role.Client) {
         return z.object({
             firstName: z.string().min(1, "First Name is required"),
             lastName: z.string().min(1, "Last Name is required"),
@@ -17,7 +18,7 @@ export const createFormSchema = (role: number) => {
             username: z.string().min(1, "Username is required"),
             phoneNumber: z.string().min(1, "Phone Number is required"),
             address: z.string().min(1, "Address is required"),
-            role: z.enum(['Admin', 'Employee']),
+            role: z.nativeEnum(Role),
             department: z.string().min(1, "Department is required"),
             employed: z.boolean(),
             activated: z.boolean()
@@ -26,8 +27,8 @@ export const createFormSchema = (role: number) => {
 };
 
 // Form field configuration based on role
-export const getFormFields = (role: number) => {
-    if (role === 3) {
+export const getFormFields = (role: Role) => {
+    if (role === Role.Client) {
         return [
             {
                 label: "First Name",
@@ -120,8 +121,8 @@ export const getFormFields = (role: number) => {
                 type: "select",
                 variant: "Select",
                 options: [
-                    { value: "Admin", label: "Admin" },
-                    { value: "Employee", label: "Employee" }
+                    { value: Role.Admin, label: "Admin" },
+                    { value: Role.Employee, label: "Employee" }
                 ]
             },
             {

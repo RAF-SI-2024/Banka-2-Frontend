@@ -323,10 +323,10 @@ export default function EditUserForm({ className, ...props }: React.ComponentPro
                                                     <RadioGroupItem value="2" id="employee" />
                                                     <Label htmlFor="employee">Employee</Label>
                                                 </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <RadioGroupItem value="3" id="client" />
-                                                    <Label htmlFor="client">Client</Label>
-                                                </div>
+                                                {/*<div className="flex items-center space-x-2">*/}
+                                                {/*    <RadioGroupItem value="3" id="client" />*/}
+                                                {/*    <Label htmlFor="client">Client</Label>*/}
+                                                {/*</div>*/}
                                                 </RadioGroup>
                                             ): field.variant === "Activated" ? (
                                                 <RadioGroup defaultValue= {form.control._defaultValues.activated?"1":"2"} className="flex gap-4">
