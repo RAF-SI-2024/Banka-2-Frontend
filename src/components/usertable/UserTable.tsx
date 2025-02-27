@@ -56,8 +56,8 @@ export default function UserTable() {
     };
 
     useEffect(() => {
-        fetchUsers();
-    }, [currentPage, itemsPerPage, search]);
+       fetchUsers();
+    }, []);
 
     const handleSearchChange = (field: string, value: string) => {
         setSearch(prevSearch => ({ ...prevSearch, [field]: value }));
@@ -136,7 +136,7 @@ export default function UserTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                {users.map(user => (
+                {/* {users.map(user => (
                         <TableRow key={user.id}>
                             <TableCell>{user.firstName}</TableCell>
                             <TableCell>{user.lastName}</TableCell>
@@ -157,7 +157,7 @@ export default function UserTable() {
                                 />
                             </TableCell>
                         </TableRow>
-                    ))}
+                    ))} */}
                 </TableBody>
             </Table>
 
