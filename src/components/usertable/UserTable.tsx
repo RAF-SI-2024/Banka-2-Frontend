@@ -18,6 +18,8 @@ export default function UserTable() {
         role: "",
     });
 
+    const isSearchActive = Object.values(search).some(value => value !== "");
+
     const [users, setUsers] = useState<User[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
@@ -43,10 +45,19 @@ export default function UserTable() {
         }
     };
 
+    const handleClearSearch = () => {
+        setSearch({
+            email: "",
+            firstName: "",
+            lastName: "",
+            role: "",
+        });
+        fetchUsers();
+    };
 
     useEffect(() => {
-        fetchUsers();
-    }, [currentPage, itemsPerPage, search]);
+       fetchUsers();
+    }, []);
 
     const handleSearchChange = (field: string, value: string) => {
         setSearch(prevSearch => ({ ...prevSearch, [field]: value }));
@@ -89,19 +100,24 @@ export default function UserTable() {
                     onChange={(e) => handleSearchChange("lastName", e.target.value)}
                     className="w-42"
                 />
-                <Select onValueChange={(value) => handleSearchChange("role", value)}>
+                <Select onValueChange={(value) => handleSearchChange("role", value)} value={search.role}>
                     <SelectTrigger className="w-28">
                         <SelectValue placeholder="Select role" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="1">Admin</SelectItem>
-                        <SelectItem value="2">Employee</SelectItem>
-                        <SelectItem value="3">Client</SelectItem>
+                        <SelectItem value="1"> Admin </SelectItem>
+                        <SelectItem value="2"> Employee </SelectItem>
+                        <SelectItem value="3"> Client </SelectItem>
                     </SelectContent>
                 </Select>
-                <Button onClick={fetchUsers} variant="primary">
+                <Button onClick={fetchUsers} variant="primary"> 
                     Filter
                 </Button>
+                {isSearchActive && (
+                    <Button onClick={handleClearSearch} variant="secondary">
+                        Clear
+                    </Button>
+                )}
             </div>
 
             {/* 📋 Users Table */}
@@ -120,7 +136,7 @@ export default function UserTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {users.map(user => (
+                {/* {users.map(user => (
                         <TableRow key={user.id}>
                             <TableCell>{user.firstName}</TableCell>
                             <TableCell>{user.lastName}</TableCell>
@@ -141,7 +157,7 @@ export default function UserTable() {
                                 />
                             </TableCell>
                         </TableRow>
-                    ))}
+                    ))} */}
                 </TableBody>
             </Table>
 
