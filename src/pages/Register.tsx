@@ -1,21 +1,18 @@
-import {Button} from "@/components/ui/button";
-import Footer from "@/components/common/Footer.tsx";
-import { Particles } from "@/components/common/Particles.tsx";
-import {BottomBar} from "@/components/common/BottomBar.tsx";
-import * as React from "react";
-import HeaderWithLogo from "@/components/common/header/HeaderWithLogo.tsx";
-import RegisterFormFirst from "@/components/register/RegisterFormFirst.tsx";
-import {useState} from "react";
-import RegisterFormSecond from "@/components/register/RegisterFormSecond.tsx";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {z} from "zod";
-
-
+import { Button } from "@/components/ui/button"
+import Footer from "@/components/common/Footer.tsx"
+import { Particles } from "@/components/common/Particles.tsx"
+import { BottomBar } from "@/components/common/BottomBar.tsx"
+import * as React from "react"
+import HeaderWithLogo from "@/components/common/header/HeaderWithLogo.tsx"
+import RegisterFormFirst from "@/components/register/RegisterFormFirst.tsx"
+import { useState } from "react"
+import RegisterFormSecond from "@/components/register/RegisterFormSecond.tsx"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 
 export default function RegisterPage() {
-
-    const [step, setStep] = useState(1);
+  const [step, setStep] = useState(1)
 
     const formSchema = z.object({
         firstName: z
@@ -104,10 +101,13 @@ export default function RegisterPage() {
                     </Button>
                 </HeaderWithLogo>
 
-                <main>
-                    {/*absolute so that they overlap with other parts of the page,
+        <main>
+          {/*absolute so that they overlap with other parts of the page,
                     z is set as well. mix = blending mode hard light for cooler effect*/}
-                    <Particles className="absolute inset-0 pointer-events-none z-10 mix-blend-hard-light" quantity={8}/>
+          <Particles
+            className="absolute inset-0 pointer-events-none z-10 mix-blend-hard-light"
+            quantity={8}
+          />
 
                     <div className="flex flex-col justify-center items-center self-center w-full gap-2">
                         <h1 className="scroll-m-20 text-5xl font-heading tracking-tight lg:text-5xl z-0 relative">
@@ -120,16 +120,16 @@ export default function RegisterPage() {
                     </div>
                 </main>
 
-                {/*bottom bar - in front of the particles*/}
-                <BottomBar className="relative z-50">
-                    <p className="text-p">
-                        Have an account already?{" "}
-                        <Button variant="link" size="tight" className="text-base">
-                            Log in
-                        </Button>
-                    </p>
-                </BottomBar>
-            </div>
+        {/*bottom bar - in front of the particles*/}
+        <BottomBar className="relative z-50">
+          <p className="text-p">
+            Have an account already?{" "}
+            <Button variant="link" size="tight" className="text-base">
+              Log in
+            </Button>
+          </p>
+        </BottomBar>
+      </div>
 
             {/*footer - in front of the particles*/}
             <Footer className="z-10 relative"/>
