@@ -1,9 +1,4 @@
-import { Button } from "@/components/ui/button"
-import Footer from "@/components/common/Footer.tsx"
-import { Particles } from "@/components/common/Particles.tsx"
-import { BottomBar } from "@/components/common/BottomBar.tsx"
 import * as React from "react"
-import HeaderWithLogo from "@/components/common/header/HeaderWithLogo.tsx"
 import RegisterFormFirst from "@/components/register/RegisterFormFirst.tsx"
 import { useState } from "react"
 import RegisterFormSecond from "@/components/register/RegisterFormSecond.tsx"
@@ -92,47 +87,16 @@ export default function RegisterPage() {
 
     return(
         <>
-            {/*Header, main part and login fit the screen*/}
-            <div className="max-w-full min-h-dvh justify-between flex flex-initial flex-col m-0 p-0 gap-0 relative">
-                {/*z and relative to make Header in front of particles*/}
-                <HeaderWithLogo className="z-50 relative">
-                    <Button type="button" variant="gradient">
-                        Log in
-                    </Button>
-                </HeaderWithLogo>
 
-        <main>
-          {/*absolute so that they overlap with other parts of the page,
-                    z is set as well. mix = blending mode hard light for cooler effect*/}
-          <Particles
-            className="absolute inset-0 pointer-events-none z-10 mix-blend-hard-light"
-            quantity={8}
-          />
-
-                    <div className="flex flex-col justify-center items-center self-center w-full gap-2">
-                        <h1 className="scroll-m-20 text-5xl font-heading tracking-tight lg:text-5xl z-0 relative">
-                            Join BankToo </h1>
-                        {/*Register form/card - in front of the parrticles*/}
-                        <div className="w-full max-w-sm z-10 relative">
-                            {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStepFirst}/>}
-                            {step === 2 && <RegisterFormSecond form={form} className={""} prevStep={prevStep} setStep={setStep}/>}
-                        </div>
-                    </div>
-                </main>
-
-        {/*bottom bar - in front of the particles*/}
-        <BottomBar className="relative z-50">
-          <p className="text-p">
-            Have an account already?{" "}
-            <Button variant="link" size="tight" className="text-base">
-              Log in
-            </Button>
-          </p>
-        </BottomBar>
-      </div>
-
-            {/*footer - in front of the particles*/}
-            <Footer className="z-10 relative"/>
+            <div className="flex flex-col justify-center items-center self-center w-full gap-2">
+                <h1 className="scroll-m-20 text-5xl font-heading tracking-tight lg:text-5xl z-0 relative">
+                    Join BankToo </h1>
+                {/*Register form/card - in front of the parrticles*/}
+                <div className="w-full max-w-sm z-10 relative">
+                    {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStepFirst}/>}
+                    {step === 2 && <RegisterFormSecond form={form} className={""} prevStep={prevStep} setStep={setStep}/>}
+                </div>
+            </div>
         </>
-    )
+        )
 }

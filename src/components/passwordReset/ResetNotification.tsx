@@ -2,20 +2,17 @@ import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
 import { CheckIcon } from "lucide-react";
 
 export default function ResetNotification({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const navigate = useNavigate();
 
   return (
-    <div className="flex  items-center justify-center min-h-screen flex-col gap-2">
       <Card
         className={cn(
-          "flex flex-col gap-20 items-center justify-center w-[150%] max-w-4xl",
+          "flex flex-col items-center justify-center size-full",
           className
         )}
         {...props}
@@ -25,7 +22,7 @@ export default function ResetNotification({
             <CheckIcon className="w-20 h-15 text-card stroke-3" />
           </div>
           <div className="space-y-6">
-            <h2 className="text-3xl font-heading font-heading">
+            <h2 className="text-3xl font-heading">
               Password reset email has been sent!
             </h2>
             <div className="mx-6">
@@ -52,6 +49,5 @@ export default function ResetNotification({
           </div>
         </CardContent>
       </Card>
-    </div>
   );
 }
