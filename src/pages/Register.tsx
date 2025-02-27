@@ -5,6 +5,8 @@ import RegisterFormSecond from "@/components/register/RegisterFormSecond.tsx"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import {useNavigate} from "react-router-dom";
+import ActivationConfirmation from "@/components/register/ActivationConfirmation.tsx";
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1)
@@ -80,22 +82,27 @@ export default function RegisterPage() {
         }
     }
 
+    async function nextStepSecond() {
+        setStep((prev) => prev + 1);
+    }
+
+
     function prevStep() {
         setStep((prev) => prev - 1);
     }
+
 
     return(
         <>
 
             <div className="flex flex-col justify-center items-center self-center w-full gap-2">
-                <h1 className="scroll-m-20 text-5xl font-heading tracking-tight lg:text-5xl z-0 relative">
-                    Join BankToo </h1>
-                {/*Register form/card - in front of the parrticles*/}
-                <div className="w-full max-w-sm z-10 relative">
-                    {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStepFirst}/>}
-                    {step === 2 && <RegisterFormSecond form={form} className={""} prevStep={prevStep} setStep={setStep}/>}
+
+                        {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStepFirst}/>}
+                        {step === 2 &&
+                            <RegisterFormSecond form={form} className={""} prevStep={prevStep} nextStep={nextStepSecond}
+                                                setStep={setStep}/>}
+                        {step === 3 && <ActivationConfirmation/>}
                 </div>
-            </div>
-        </>
-        )
-}
+            </>
+            )
+            }

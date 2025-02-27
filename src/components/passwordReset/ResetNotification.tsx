@@ -1,8 +1,7 @@
 import * as React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import {Card, CardContent, CardDescription} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { CheckIcon } from "lucide-react";
 
 export default function ResetNotification({
   className,
@@ -19,29 +18,28 @@ export default function ResetNotification({
             <h2 className="text-2xl font-heading">
               Password reset email has been sent!
             </h2>
-            <div className="mx-6">
-              <p className="text-muted-foreground text-left">
+
+            <CardDescription className="flex flex-col gap-4">
+              <p className="text-paragraph">
                 We've sent a password reset link to your email. Please check
                 your inbox (and spam folder) and follow the instructions to
                 reset your password.
               </p>
-            </div>
-          </div>
-          <div className="flex items-center justify-center gap-0">
-            <div className="flex items-center">
-              <p className="text-muted-foreground text-sm">
-                Didn’t receive the email?
+
+              <p className="text-paragraph text-sm">
+                Didn&apos;t receive the email?{" "}
+                <Button
+                    variant="link"
+                    size="tight"
+                    className="ml-auto"
+                >
+                  Resend password reset email
+                </Button>
               </p>
-              <Button
-                variant="link"
-                className="text-primary text-sm"
-                onClick={() => console.log("Resend password reset email")}
-              >
-                Resend password reset email
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-  );
-}
+            </CardDescription>
+
+          </CardContent>
+        </Card>
+      </div>
+        );
+        }

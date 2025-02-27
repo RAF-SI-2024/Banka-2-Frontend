@@ -138,33 +138,6 @@ export default function RegisterPasswordForm({
 
   return (
     <div className="flex flex-col gap-2">
-      {isRegistered ? (
-        <Card className="flex flex-col gap-6">
-          <CardContent className="mt-4 font-paragraph flex flex-col items-center text-center gap-3">
-            <span className="icon-[ph--check-circle-fill] inset-0 bg-gradient-to-r from-primary to-secondary mask-size-cover text-[90px]"></span>
-            <Stepper totalSteps={4} currentStep={4} />
-            {/* Ne znam kako da mu podesim parametre (boja, velicina) :( */}
-            <h2 className="text-xl font-heading">
-              Activation email has been sent!
-            </h2>
-            <p className="text-xs text-paragraph text-gray-500">
-              We've sent an activation link to your email. Please check your
-              inbox (and spam folder) and click the link to activate your
-              account.
-            </p>
-            <p className="text-[10px] text-gray-500">
-              Didn’t receive the email?{" "}
-              <Button
-                variant="link"
-                size="tight"
-                className="ml-auto text-[10px]"
-              >
-                Resend activation email
-              </Button>
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
         <Card className={cn("flex flex-col gap-6", className)} {...props}>
           <CardContent className="mt-4 font-paragraph">
             <Form {...form}>
@@ -213,7 +186,7 @@ export default function RegisterPasswordForm({
             </Form>
           </CardContent>
         </Card>
-      )}
+
 
       {errors.map((error) => (
         <ErrorAlert

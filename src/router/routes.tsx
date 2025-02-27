@@ -24,7 +24,7 @@ export const AppRoutes = () => {
 
         <Route element={<AuthorizationLayout />}>
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/activate" element={<TestPage />} />
+            <Route path="/register-activate" element={<TestPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/resetpass-nzm" element={<ResetPassPage />} /> {/*TODO: CHANGE ROUTE */}
             <Route path="/password-reset" element={<ResetPassReqPage />} />
