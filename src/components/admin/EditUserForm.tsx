@@ -12,6 +12,7 @@ import { ErrorAlert } from "@/components/common/ErrorAlert.tsx";
 import { User } from "@/types/user.ts";
 import { createFormSchema, getFormFields } from "@/components/utils/form-fields.tsx";
 import { FormFieldRenderer } from "@/components/admin/FormFieldRendered.tsx";	
+import { Role } from "@/types/enums";
 
 interface EditFormProps extends React.ComponentProps<"div"> {
     id_: number;
@@ -56,20 +57,21 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
     useEffect(() => {
         async function fetchUserData() {
             try {
-                // const user = await getUserById(id_);
-                const user = {} as User;
+                const user = await getUserById(id_);
                 // set user data to be same as formDataValues
-                user.firstName = "John";
-                user.lastName = "Doe";
-                user.phoneNumber = "1234567890";
-                user.address = "123 Main St";
-                user.activated = true;
+                // user.firstName = "John";
+                // user.lastName = "Doe";
+                // user.phoneNumber = "1234567890";
+                // user.address = "123 Main St";
+                // user.activated = true;
 
                 setUserData(user);
                 
                 // Determine if user is a client or employee based on API response
-                // const userRole = user.role as 'Client' | 'Admin' | 'Employee';
-                const userRole = 'Employee';
+                const userRole = user.role;
+                // const userRole = 'Employee';
+
+                console.log("User role:", userRole);
                 
                 // Set schema and form fields based on role
                 setFormSchema(createFormSchema(userRole));
@@ -78,18 +80,18 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
                 // Create default values for the form based on role
                 const formDefaultValues: any = {};
                 
-                if (userRole === 'Client') {
-                    // formDefaultValues.firstName = user.firstName;
-                    // formDefaultValues.lastName = user.lastName;
-                    // formDefaultValues.phoneNumber = user.phoneNumber;
-                    // formDefaultValues.address = user.address;
-                    // formDefaultValues.activated = user.activated;
+                if (userRole === 3) {
+                    formDefaultValues.firstName = user.firstName;
+                    formDefaultValues.lastName = user.lastName;
+                    formDefaultValues.phoneNumber = user.phoneNumber;
+                    formDefaultValues.address = user.address;
+                    formDefaultValues.activated = user.activated;
                     // create random values for testing
-                    formDefaultValues.firstName = "John";
-                    formDefaultValues.lastName = "Doe";
-                    formDefaultValues.phoneNumber = "1234567890";
-                    formDefaultValues.address = "123 Main St";
-                    formDefaultValues.activated = true;
+                    // formDefaultValues.firstName = "John";
+                    // formDefaultValues.lastName = "Doe";
+                    // formDefaultValues.phoneNumber = "1234567890";
+                    // formDefaultValues.address = "123 Main St";
+                    // formDefaultValues.activated = true;
 
                 } else {
                     formDefaultValues.firstName = user.firstName;
@@ -144,7 +146,7 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
             
             let response;
             
-            if (userData.role === 'Client') {
+            if (userData.role === 3) {
                 response = await updateClient(updatedUser);
             } else {
                 response = await updateEmployee(updatedUser);

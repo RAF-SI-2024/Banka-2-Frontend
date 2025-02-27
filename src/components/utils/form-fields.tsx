@@ -1,8 +1,8 @@
 import * as z from "zod";
 
 // Dynamic schema generation based on role
-export const createFormSchema = (role: 'Client' | 'Admin' | 'Employee') => {
-    if (role === 'Client') {
+export const createFormSchema = (role: number) => {
+    if (role === 3) {
         return z.object({
             firstName: z.string().min(1, "First Name is required"),
             lastName: z.string().min(1, "Last Name is required"),
@@ -26,8 +26,8 @@ export const createFormSchema = (role: 'Client' | 'Admin' | 'Employee') => {
 };
 
 // Form field configuration based on role
-export const getFormFields = (role: 'Client' | 'Admin' | 'Employee') => {
-    if (role === 'Client') {
+export const getFormFields = (role: number) => {
+    if (role === 3) {
         return [
             {
                 label: "First Name",
