@@ -1,39 +1,27 @@
 import * as React from "react";
-import {useState} from "react";
-import {useForm} from "react-hook-form"
-import { useNavigate } from "react-router-dom";
-import { loginUser } from "@/api/auth.ts";
-import { LoginRequest } from "@/types/auth.ts";
-import {useAuth} from "@/hooks/useAuth.ts";
-import {zodResolver} from "@hookform/resolvers/zod"
-import * as z from "zod"
 import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group.tsx";
+import { Calendar } from "@/components/ui/calendar"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import {CalendarIcon} from "lucide-react";
+import { format } from "date-fns"
 
-
-// @ts-ignore
+// @ts-expect-error can accept any time
 export default function RegisterFormFirst({ form, nextStep, className, ...props }) {
-
-    const [error, setError] = useState<string | null>(null);
-
-    function onSubmit(){}
-
-
-    function handleFormClick() {
-        console.log("Form data:", form.getValues());
-    }
-
 
     return (
         <Card className={cn("flex flex-col gap-6", className)} {...props}>
             <CardContent className="mt-4 font-paragraph">
-                {error && <p className="text-red-500">{error}</p>}
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} onClick={handleFormClick} className="flex flex-col gap-4">
+                    <form className="flex flex-col gap-4">
                         {/* First name field */}
                         <div className="flex flex-row gap-4">
                             <FormField control={form.control} name="firstName" render={({ field }) => (
@@ -57,15 +45,47 @@ export default function RegisterFormFirst({ form, nextStep, className, ...props 
                             )} />
                         </div>
 
-                        <FormField control={form.control} name="dateOfBirth" render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Date of birth</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Pick a date" id="dateOfBirth" type="text" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
+                        <FormField
+                            control={form.control}
+                            name="dateOfBirth"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel>Date of birth</FormLabel>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <FormControl>
+                                                <Button
+                                                    variant="outline"
+                                                    className={cn(
+                                                        "w-full justify-start text-left font-normal",
+                                                        !field.value && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    <CalendarIcon className="h-4 w-4 opacity-50 mr-2" />
+                                                    {field.value ? (
+                                                        format(field.value, "PPP")
+                                                    ) : (
+                                                        <span>Pick a date</span>
+                                                    )}
+                                                </Button>
+                                            </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0 inset-0 bg-gradient-to-r from-primary to-secondary mask-size-cover" align="start">
+                                            <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={field.onChange}
+                                                disabled={(date) =>
+                                                    date > new Date() || date < new Date("1900-01-01")
+                                                }
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
                         <FormField control={form.control} name="uniqueIdentificationNumber" render={({ field }) => (
                             <FormItem>
@@ -96,7 +116,7 @@ export default function RegisterFormFirst({ form, nextStep, className, ...props 
                             </FormItem>
                         )} />
 
-                        <Button type="submit" variant="default" className="w-1/3" onClick={nextStep}>
+                        <Button type="button" variant="default" className="w-1/3" onClick={nextStep}>
                             Continue
                         </Button>
                     </form>
