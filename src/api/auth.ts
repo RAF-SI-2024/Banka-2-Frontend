@@ -1,8 +1,13 @@
 import api from "./axios";
 import { API_BASE } from "../constants/endpoints";
-import {LoginRequest, RegisterRequestClient, RegisterRequestEmployee, RegisterRequest} from "@/types/auth";
-import { EditUserRequest } from "@/types/user";
-import { GetUserRequest } from "@/types/user";
+import {
+    LoginRequest,
+    RegisterRequestClient,
+    RegisterRequestEmployee,
+    RegisterRequest,
+    ActivateRequest
+} from "@/types/auth";
+
 
 export const loginUser = async (data: LoginRequest) => {
   try {
@@ -47,3 +52,13 @@ export const registerEmployee = async (data: RegisterRequestEmployee) => {
         throw error;
     }
 };
+
+export const activateUser = async (data: ActivateRequest, token:string) => {
+    try {
+        const response = await api.post(`${API_BASE}/users/activate?token=${token}`, data)
+        return response
+    } catch (error) {
+        console.error("❌ Activation failed:", error)
+        throw error
+    }
+}

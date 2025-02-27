@@ -5,6 +5,11 @@ export interface LoginRequest {
   password: string
 }
 
+export interface ActivateRequest {
+    password: string
+    confirmPassword: string
+}
+
 export interface RegisterRequestEmployee {
     email: string;
     firstName: string;
