@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import { setAuthToken } from "../api/axios";
 import { jwtDecode } from "jwt-decode";
+import {useNavigate} from "react-router-dom";
 // import { UserData } from "@/types/user";
 
 interface AuthContextType {
@@ -66,6 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         sessionStorage.removeItem("user");
         setAuthToken(null);
         console.log("User logged out!");
+
     };
 
     return (

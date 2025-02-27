@@ -20,6 +20,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar.tsx"
 import {useAuth} from "@/hooks/useAuth.ts";
+import {useNavigate} from "react-router-dom";
 
 export function NavUser({
   user,
@@ -32,6 +33,12 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const { logout } = useAuth()
+  const navigate = useNavigate()  // ✅ Get navigate in component
+
+  const handleLogout = () => {
+    logout()
+    navigate("/login", { replace: true })  // ✅ Navigate after logout
+  }
 
   return (
     <SidebarMenu className="font-paragraph">
@@ -83,7 +90,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem
                 className="text-sidebar-destructive-foreground"
-                onClick={logout}
+                onClick={handleLogout}
             >
               <span className="icon-[ph--sign-out]" />
               Log out
