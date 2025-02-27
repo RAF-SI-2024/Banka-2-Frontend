@@ -103,11 +103,11 @@ export default function RegisterFormFirst({ form, nextStep, className, ...props 
                                 <FormControl>
                                     <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4 flex-row mt-2">
                                         <FormItem className="flex flex-row">
-                                            <RadioGroupItem value="0" />
+                                            <RadioGroupItem value="1" />
                                             <FormLabel>Male</FormLabel>
                                         </FormItem>
                                         <FormItem className="flex flex-row">
-                                            <RadioGroupItem value="1" />
+                                            <RadioGroupItem value="2" />
                                             <FormLabel>Female</FormLabel>
                                         </FormItem>
                                     </RadioGroup>

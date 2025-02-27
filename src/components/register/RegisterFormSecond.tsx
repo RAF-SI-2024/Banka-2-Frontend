@@ -4,14 +4,15 @@ import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card";
-import {Tabs, TabsList, TabsContent, TabsTrigger} from "@/components/ui/tabs.tsx";
+import {Card, CardContent} from "@/components/ui/card";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group.tsx";
 import PhoneInput from "react-phone-number-input";
 import 'react-phone-number-input/style.css'
 import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
 import {registerClient, registerEmployee} from "@/api/auth.ts";
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
+import {Role} from "@/types/enums.ts";
 
 // @ts-expect-error Need to add type to the props
 export default function RegisterFormSecond({ setStep, prevStep, form, className, ...props }) {
@@ -23,7 +24,7 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
             "address",
         ]);
         if (isValid) {
-            onSubmitClient();
+            await onSubmitClient();
         }
     }
 
@@ -36,18 +37,19 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
                 lastName: form.getValues("lastName"),
                 dateOfBirth: form.getValues("dateOfBirth"),
                 uniqueIdentificationNumber: form.getValues("uniqueIdentificationNumber"),
-                gender: form.getValues("gender"),
+                gender: parseInt(form.getValues("gender"), 10), // Convert string to number
                 phoneNumber: form.getValues("phoneNumber"),
                 address: form.getValues("address"),
-                role: "0",
+                role: Role.Client,
             };
+
             const response = await registerClient(registerData);
             if (response.data) {
                 // setStep((prev) => prev + 1);
             }
 
         } catch (error) {
-            console.error("❌ Login failed:", error);
+            console.error("Register for client failed:", error);
             setError({
                 id: Date.now(),
                 title: "Failed to log in",
@@ -69,7 +71,7 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
         ]);
 
         if (isValid) {
-            onSubmitEmployee()
+            await onSubmitEmployee()
         }
     }
 
@@ -85,21 +87,22 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
                 lastName: form.getValues("lastName"),
                 dateOfBirth: form.getValues("dateOfBirth"),
                 uniqueIdentificationNumber: form.getValues("uniqueIdentificationNumber"),
-                gender: form.getValues("gender"),
+                gender: parseInt(form.getValues("gender"), 10), // Convert string to number
                 phoneNumber: form.getValues("phoneNumber"),
                 address: form.getValues("address"),
-                role: "1",
+                role: Role.Employee,
             };
+
             const response = await registerEmployee(registerData);
             if (response.data) {
                 // setStep((prev) => prev + 1);
             }
 
         } catch (error) {
-            console.error("❌ Login failed:", error);
+            console.error("Register for employee failed:", error);
             setError({
                 id: Date.now(),
-                title: "Failed to log in",
+                title: "Failed to register employee",
                 description: error && typeof error === "object" && "message" in error
                     ? String(error.message)
                     : String(error || "An error occurred"),
