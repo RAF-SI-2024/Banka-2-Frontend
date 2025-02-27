@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 // import { UserData } from "@/types/user";
 
 interface AuthContextType {
-    user: { email: string; permissions: string[] } | null;
+    user: { id: string; role: string } | null;
     token: string | null;
     login: (token: string) => void;
     logout: () => void;
@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     console.log("✅ AuthProvider is wrapping the app!");
 
     const [token, setToken] = useState<string | null>(sessionStorage.getItem("token"));
-    const [user, setUser] = useState<{ email: string; permissions: string[] } | null>(
+    const [user, setUser] = useState<{ id: string; role: string } | null>(
         token ? JSON.parse(sessionStorage.getItem("user") || "null") : null
     );
 
@@ -28,8 +28,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setAuthToken(token);
                 const decodedToken: any = jwtDecode(token);
                 const userData = {
-                    email: decodedToken.sub,
-                    permissions: decodedToken.permissions || [],
+                    id: decodedToken.sub,
+                    role: decodedToken.permissions || [],
                 };
                 setUser(userData);
                 sessionStorage.setItem("user", JSON.stringify(userData));
@@ -44,8 +44,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             const decodedToken: any = jwtDecode(token);
             const userData = {
-                email: decodedToken.sub,
-                permissions: decodedToken.permissions || [],
+                id: decodedToken.id,
+                role: decodedToken.role || [],
             };
 
             setToken(token);
