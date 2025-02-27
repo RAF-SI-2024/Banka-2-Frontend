@@ -1,7 +1,7 @@
 import * as React from "react"
 import {useEffect, useState} from "react"
 import { useForm } from "react-hook-form"
-import {redirect, useNavigate, useSearchParams} from "react-router-dom"
+import { useNavigate, useSearchParams} from "react-router-dom"
 import {activateUser} from "@/api/auth.ts"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
