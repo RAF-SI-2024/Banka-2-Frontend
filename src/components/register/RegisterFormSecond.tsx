@@ -30,7 +30,6 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
     }
 
     async function onSubmitClient() {
-        nextStep()
         setError(null);
         try {
             const registerData: RegisterRequestClient = {
@@ -44,16 +43,13 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
                 address: form.getValues("address"),
                 role: Role.Client,
             };
-
-
-            const response = await registerClient(registerData);
-
-            if (response.status === 200) {
-                // console.log("NEXT STEP");
-                nextStep();
-            }
-
-
+            await registerClient(registerData).then(
+                (response) => {
+                    if (response.status === 200) {
+                    // console.log("NEXT STEP");
+                    nextStep();
+                }}
+            )
         } catch (error) {
             console.error("Register for client failed:", error);
             setError({
@@ -63,8 +59,6 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
                     ? String(error.message)
                     : String(error || "An error occurred"),
             });
-        } finally {
-            console.log("FINALLY STEP");
         }
     }
 
