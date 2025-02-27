@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,6 +10,9 @@ import UserDropdownMenu from "@/components/usertable/UserDropdownMenu.tsx";
 import { getAllUsers } from "@/api/user.ts";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext } from "@/components/ui/pagination";
 import { Role, Gender } from "@/types/enums.ts"; // Import Enums
+import React from "react";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { EditUserDialog } from "../admin/EditUserDialog";
 
 
 export default function UserTable() {
@@ -18,6 +22,9 @@ export default function UserTable() {
         lastName: "",
         role: "",
     });
+    
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
 
     const isSearchActive = Object.values(search).some(value => value !== "");
 
@@ -35,9 +42,7 @@ export default function UserTable() {
         setError(null);
 
         try {
-            console.log("BOSSKO2:", currentPage, itemsPerPage, search);
             const usersData:UserResponse = await getAllUsers(currentPage, itemsPerPage, search);
-            console.log("BOSSKO:", usersData.items);
             setUsers(usersData.items);
             setTotalPages(usersData.totalPages); // Assuming backend doesn't send totalPages
         } catch (err) {
@@ -50,13 +55,6 @@ export default function UserTable() {
 
     const handleClearSearch = () => {
         console.log("Clearing search...");
-        // setSearch({
-        //     email: "",
-        //     firstName: "",
-        //     lastName: "",
-        //     role: "",
-        // });
-        console.log("BOSSKO2:", currentPage, itemsPerPage, search);
         search.email = "";
         search.firstName = "";  
         search.lastName = "";
@@ -83,6 +81,16 @@ export default function UserTable() {
             setCurrentPage(prev => prev + 1);
         }
     };
+    
+    const handleOpenEditDialog = (user: User) => {
+        setEditingUser(user);
+        setIsEditDialogOpen(true);
+      };
+      
+      const handleCloseEditDialog = () => {
+        setIsEditDialogOpen(false);
+        setEditingUser(null);
+      };
 
     // if (loading) return <p className="text-center">Loading...</p>;
     if (error) return <p className="text-center text-red-500">{error}</p>;
@@ -161,7 +169,7 @@ export default function UserTable() {
                             </TableCell>
                             <TableCell>
                                 <UserDropdownMenu
-                                    onEdit={() => console.log(`Edit user ${user.id}`)}
+                                    onEdit={() => handleOpenEditDialog(user)}
                                     onDelete={() => console.log(`Delete user ${user.id}`)}
                                 />
                             </TableCell>
@@ -180,6 +188,19 @@ export default function UserTable() {
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>
+            {editingUser && (
+            <EditUserDialog 
+                id={editingUser.id}
+                isOpen={isEditDialogOpen}
+                onOpenChange={(open) => {
+                    setIsEditDialogOpen(open);
+                    if (!open) {
+                        setEditingUser(null);
+                        fetchUsers(); // Refresh the user list after editing
+                    }
+                }}
+            />
+        )}
         </div>
     );
 }

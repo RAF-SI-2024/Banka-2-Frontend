@@ -9,9 +9,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ErrorAlert } from "@/components/common/ErrorAlert.tsx";
-import { User } from "@/types/user.ts";
+import { UpdateClientRequest, UpdateEmployeeRequest, User } from "@/types/user.ts";
 import { createFormSchema, getFormFields } from "@/components/utils/form-fields.tsx";
 import { FormFieldRenderer } from "@/components/admin/FormFieldRendered.tsx";	
+import { getRoleNumber, Role } from "@/types/enums";
 
 interface EditFormProps extends React.ComponentProps<"div"> {
     id_: number;
@@ -56,20 +57,21 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
     useEffect(() => {
         async function fetchUserData() {
             try {
-                // const user = await getUserById(id_);
-                const user = {} as User;
+                const user = await getUserById(id_);
                 // set user data to be same as formDataValues
-                user.firstName = "John";
-                user.lastName = "Doe";
-                user.phoneNumber = "1234567890";
-                user.address = "123 Main St";
-                user.activated = true;
+                // user.firstName = "John";
+                // user.lastName = "Doe";
+                // user.phoneNumber = "1234567890";
+                // user.address = "123 Main St";
+                // user.activated = true;
 
                 setUserData(user);
                 
                 // Determine if user is a client or employee based on API response
-                // const userRole = user.role as 'Client' | 'Admin' | 'Employee';
-                const userRole = 'Employee';
+                const userRole = user.role;
+                // const userRole = 'Employee';
+
+                console.log("User role:", userRole);
                 
                 // Set schema and form fields based on role
                 setFormSchema(createFormSchema(userRole));
@@ -78,18 +80,18 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
                 // Create default values for the form based on role
                 const formDefaultValues: any = {};
                 
-                if (userRole === 'Client') {
-                    // formDefaultValues.firstName = user.firstName;
-                    // formDefaultValues.lastName = user.lastName;
-                    // formDefaultValues.phoneNumber = user.phoneNumber;
-                    // formDefaultValues.address = user.address;
-                    // formDefaultValues.activated = user.activated;
+                if (userRole === 3) {
+                    formDefaultValues.firstName = user.firstName;
+                    formDefaultValues.lastName = user.lastName;
+                    formDefaultValues.phoneNumber = user.phoneNumber;
+                    formDefaultValues.address = user.address;
+                    formDefaultValues.activated = user.activated;
                     // create random values for testing
-                    formDefaultValues.firstName = "John";
-                    formDefaultValues.lastName = "Doe";
-                    formDefaultValues.phoneNumber = "1234567890";
-                    formDefaultValues.address = "123 Main St";
-                    formDefaultValues.activated = true;
+                    // formDefaultValues.firstName = "John";
+                    // formDefaultValues.lastName = "Doe";
+                    // formDefaultValues.phoneNumber = "1234567890";
+                    // formDefaultValues.address = "123 Main St";
+                    // formDefaultValues.activated = true;
 
                 } else {
                     formDefaultValues.firstName = user.firstName;
@@ -119,6 +121,30 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
         fetchUserData();
     }, [id_, form]);
 
+    const mapToUpdateClientRequest = (values: any): UpdateClientRequest => {
+        return {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            phoneNumber: values.phoneNumber,
+            address: values.address,
+            activated: values.activated,
+        };
+    };
+
+    const mapToUpdateEmployeeRequest = (values: any): UpdateEmployeeRequest => {
+        return {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            username: values.username,
+            phoneNumber: values.phoneNumber,
+            address: values.address,
+            role: getRoleNumber(values.role),
+            department: values.department,
+            employed: values.employed,
+            activated: values.activated,
+        };
+    }
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setErrors([]); // Clear errors on submit
         
@@ -140,14 +166,20 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
 
         try {
             // Prepare updated user data for API
-            const updatedUser = {...values};
             
+            
+            
+            // console.log("Updating user:", updatedUser);            
             let response;
             
-            if (userData.role === 'Client') {
-                response = await updateClient(updatedUser);
+            if (userData.role === 3) {
+                const updatedClient = mapToUpdateClientRequest(values);
+                response = await updateClient(updatedClient, userData.id);
             } else {
-                response = await updateEmployee(updatedUser);
+                const updatedUser = mapToUpdateEmployeeRequest(values);
+                console.log("Updated user:", updatedUser);
+                console.log("User ID:", userData.id);
+                response = await updateEmployee(updatedUser, userData.id);
             }
             if (response.success) {
                 navigate("/home", { replace: true });
