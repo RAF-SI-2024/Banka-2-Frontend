@@ -9,16 +9,16 @@ export const getAllUsers = async (
     filters: { email?: string; firstName?: string; lastName?: string; role?: string }
 ): Promise<User[]> => {
     try {
-        const response = await api.get("/users", {
-            params: {
-                email: filters.email || undefined,
-                firstName: filters.firstName || undefined,
-                lastName: filters.lastName || undefined,
-                role: filters.role ? parseInt(filters.role, 10) : undefined, // Convert role to number
-                page,
-                size,
-            },
+        const params = new URLSearchParams({
+            email: filters.email || '',
+            firstName: filters.firstName || '',
+            lastName: filters.lastName || '',
+            role: filters.role ? parseInt(filters.role, 10).toString() : '',
+            page: page.toString(),
+            size: size.toString(),
         });
+
+        const response = await api.get(`/users?${params.toString()}`);
 
         return response.data; // API returns an array of users
     } catch (error) {
