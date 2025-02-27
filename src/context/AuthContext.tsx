@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import { setAuthToken } from "../api/axios";
 import { jwtDecode } from "jwt-decode";
+import { UserData } from "@/types/user";
 
 interface AuthContextType {
     user: { email: string; permissions: string[] } | null;

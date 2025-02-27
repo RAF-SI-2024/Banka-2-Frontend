@@ -35,7 +35,6 @@
     --link: hsl(235, 100%, 36%);
     --link-hover: hsl(229, 100%, 17%);
 
-
     --footer:  hsl(233, 59%, 94%);
     --footer-foreground: hsl(236, 7%, 48%);
 
@@ -49,11 +48,8 @@
 
     --sidebar-foreground: hsl(233, 100%, 3%);
 
-
-
     --sidebar-destructive: hsl(233, 36%, 91%);
     --sidebar-destructive-foreground:hsl(351, 100%, 35%);
-
 
     --sidebar-accent: hsl(248, 100%, 3%);
 
@@ -75,10 +71,8 @@
     --background: hsl(233, 36%, 9%);
     --foreground: hsl(233, 100%, 97%);
 
-
     --card:	hsl(233, 59%, 6%);
     --card-foreground: hsl(233, 100%, 97%);
-
 
     --muted: hsl(231, 17%, 16%);
     --muted-foreground: hsl(236, 7%, 52%);
