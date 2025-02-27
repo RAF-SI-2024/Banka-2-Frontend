@@ -5,7 +5,6 @@ import RegisterFormSecond from "@/components/register/RegisterFormSecond.tsx"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import {useNavigate} from "react-router-dom";
 import ActivationConfirmation from "@/components/register/ActivationConfirmation.tsx";
 
 export default function RegisterPage() {
@@ -101,7 +100,7 @@ export default function RegisterPage() {
                         {step === 2 &&
                             <RegisterFormSecond form={form} className={""} prevStep={prevStep} nextStep={nextStepSecond}
                                                 setStep={setStep}/>}
-                        {step === 3 && <ActivationConfirmation/>}
+                        {step === 3 && <ActivationConfirmation className="max-w-xl"/>}
                 </div>
             </>
             )

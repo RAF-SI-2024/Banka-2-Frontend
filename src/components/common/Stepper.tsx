@@ -37,18 +37,15 @@ export default function Stepper ({
     iconClassName = "",
     lineProps = {},
     lineClassName = "",
-    color1 = "primary",
-    color2 = "secondary",
-    color3 = "background",
     ...props} : StepperProps) {
 
-    const currentStepColor = `inset-0 bg-gradient-to-r from-${color1} to-${color2} mask-size-cover`
-    const finishedColor = `text-${color1}`
-    const unfinishedColor = `text-${color3}`
+    const currentStepColor = `inset-0 bg-gradient-to-r from-primary to-secondary mask-size-cover`
+    const finishedColor = `text-primary`
+    const unfinishedColor = `text-background`
 
-    const currentLineColor = `bg-gradient-to-r from-${color2} to-${color3}`
-    const finishedLineColor = `bg-${color1}`
-    const unfinishedLineColor = `bg-${color3}`
+    const currentLineColor = `bg-gradient-to-r from-secondary to-background`
+    const finishedLineColor = `bg-primary`
+    const unfinishedLineColor = `bg-background`
 
 
     return (
