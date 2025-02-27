@@ -36,8 +36,8 @@ export const editUser = async (data: EditUserRequest) => {
 
 export const getUser = async (data: GetUserRequest) => {
     try {
-        //const response = await api.get(`${API_BASE}/users/{id}`, data); //Address will have to be updated
-        //return response.data; // Returns token or user data
+        // const response = await api.get(`${API_BASE}/users/{id}`, data); //Address will have to be updated
+        // return response.data; // Returns token or user data
 
         // For testing purposes
         const res = {

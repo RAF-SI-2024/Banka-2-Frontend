@@ -4,7 +4,6 @@ import EditUserPage from "@/pages/EditUser"
 import HomePage from "@/pages/Home"
 import RegisterPage from "@/pages/Register"
 import ComponentShowcasePage from "@/pages/ComponentShowcase"
-import RegisterPasswordForm from "@/components/register/RegisterPasswordForm"
 import TestPage from "@/pages/Test"
 
 const AppRoutes = () => {
@@ -14,6 +13,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Navigate to="/home" replace />} />
       {/* Public Routes */}
       <Route path="/register" element={<RegisterPage />} />
+      {/* Field for activating account*/}
       <Route path="/activate" element={<TestPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/edituser" element={<EditUserPage />} />

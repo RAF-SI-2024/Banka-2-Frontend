@@ -168,10 +168,10 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
                                 />
 
                                 <div className="flex flex-row gap-4">
-                                    <Button type="submit" variant="negative" className="w-24" onClick={prevStep}>
+                                    <Button type="button" variant="negative" className="w-24" onClick={prevStep}>
                                         Back
                                     </Button>
-                                    <Button type="submit" variant="default" className="w-24" onClick={goToNextStepClient}>
+                                    <Button type="button" variant="default" className="w-24" onClick={goToNextStepClient}>
                                         Continue
                                     </Button>
                                 </div>
@@ -179,6 +179,14 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
                         </Form>
                     </CardContent>
                 </Card>
+                {error && [error].map((error) => (
+                    <ErrorAlert
+                        key={error.id}
+                        title={error.title}
+                        description={error.description}
+                        onClose={() => setError(null)}
+                    />
+                ))}
             </TabsContent>
 
             <TabsContent value="employee">
