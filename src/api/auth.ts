@@ -7,8 +7,7 @@ import {
     RegisterRequest,
     ActivateRequest
 } from "@/types/auth";
-import { EditUserRequest } from "@/types/user";
-import { GetUserRequest } from "@/types/user";
+
 
 export const loginUser = async (data: LoginRequest) => {
   try {
