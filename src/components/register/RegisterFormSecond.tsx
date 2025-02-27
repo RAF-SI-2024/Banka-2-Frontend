@@ -13,6 +13,7 @@ import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
 import {registerClient, registerEmployee} from "@/api/auth.ts";
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import {Role} from "@/types/enums.ts";
+import { useNavigate } from "react-router-dom";
 
 // @ts-expect-error Need to add type to the props
 export default function RegisterFormSecond({ setStep, prevStep, form, className, ...props }) {
@@ -45,7 +46,7 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
 
             const response = await registerClient(registerData);
             if (response.data) {
-                // setStep((prev) => prev + 1);
+                nextStep()
             }
 
         } catch (error) {
@@ -81,7 +82,6 @@ export default function RegisterFormSecond({ setStep, prevStep, form, className,
             const registerData: RegisterRequestEmployee = {
                 username: form.getValues("username"),
                 department: form.getValues("department"),
-                employed: form.getValues("employed"),
                 email: form.getValues("email"),
                 firstName: form.getValues("firstName"),
                 lastName: form.getValues("lastName"),

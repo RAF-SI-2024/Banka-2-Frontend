@@ -65,9 +65,10 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
         try {
             const loginData: LoginRequest = { email: values.email, password: values.password };
             const response = await loginUser(loginData);
-            if (response.jwt) {
-                login(response.jwt);
-                navigate("/home", { replace: true });
+            if (response.token) {
+                login(response.token);
+                console.log("✅ Login successful", response);
+                // navigate("/home", { replace: true });
             } else {
                 setErrors(prev => [...prev, {
                     id: Date.now(),

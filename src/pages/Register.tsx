@@ -12,18 +12,17 @@ export default function RegisterPage() {
     const formSchema = z.object({
         firstName: z
             .string()
-            .min(2, "First name is required")
+            .min(1, "First name is required")
             .max(32, "First name must be at most 32 characters")
             .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Only letters and spaces are allowed"),
         lastName: z
             .string()
-            .min(2, "Last name is required")
+            .min(1, "Last name is required")
             .max(32, "Last name must be at most 32 characters")
             .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Only letters and spaces are allowed"),
         email: z
             .string()
-            .email("Invalid email format")
-            .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email format"),
+            .email("Invalid email format"),
         username: z
             .string()
             .regex(/^[@0-9A-Za-zčČćĆžŽšŠđĐ]+$/, "Only letters, numbers, and '@' are allowed"),
@@ -33,7 +32,9 @@ export default function RegisterPage() {
             .regex(/^\d{13}$/, "Unique identification number must contain only numbers"),
         phoneNumber: z
             .string()
-            .regex(/^\+\d{0,11}$/, "Phone number must contain up to 11 digits"),
+            .min(12, "Phone number does not have enough digits")
+            .max(13, "Phone number has more than 13 digits")
+            .regex(/^\+\d{11,12}$/, "Phone number must start with + followed by 11-12 digits"),
         address: z
             .string()
             .min(5, "Address is required")
@@ -46,7 +47,6 @@ export default function RegisterPage() {
             invalid_type_error: "Invalid date format",
         }),
         gender: z.string().min(1, "Gender is required"),
-        employed: z.string().min(1, "Employment status is required"),
     });
 
     const form = useForm({
@@ -63,7 +63,6 @@ export default function RegisterPage() {
             phoneNumber: "",
             address: "",
             department: "",
-            employed: "",
         }
     });
 

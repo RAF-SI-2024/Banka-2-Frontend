@@ -10,19 +10,13 @@ export default function ResetNotification({
 }: React.ComponentProps<"div">) {
 
   return (
-      <Card
-        className={cn(
-          "flex flex-col items-center justify-center size-full",
-          className
-        )}
-        {...props}
-      >
-        <CardContent className="mt-6 font-paragraph text-center">
-          <div className="w-22 h-22 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mb-6 mx-auto">
-            <CheckIcon className="w-20 h-15 text-card stroke-3" />
-          </div>
-          <div className="space-y-6">
-            <h2 className="text-3xl font-heading">
+      <div className="flex flex-col justify-center items-center w-full gap-2 z-10 max-width-full">
+        <Card className={cn("w-xl z-10  flex flex-col gap-6", className)} {...props}>
+          <CardContent  className="mt-4 font-paragraph flex flex-col items-center text-center gap-3">
+          <span
+              className="icon-[ph--check-circle-fill] inset-0 bg-gradient-to-r from-primary to-secondary mask-size-cover text-8xl"></span>
+
+            <h2 className="text-2xl font-heading">
               Password reset email has been sent!
             </h2>
             <div className="mx-6">

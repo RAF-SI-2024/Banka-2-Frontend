@@ -14,7 +14,6 @@ export interface RegisterRequestEmployee {
     gender: Gender;
     username: string;
     department: string;
-    employed: string;
     phoneNumber: string;
     address: string;
     role: Role;
@@ -35,4 +34,5 @@ export interface RegisterRequestClient {
     phoneNumber: string;
     address: string;
     role: Role;
+
 }
