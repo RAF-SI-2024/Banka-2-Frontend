@@ -185,8 +185,8 @@
     --color-sidebar-destructive: var(--sidebar-destructive);
     --color-sidebar-destructive-foreground: var(--sidebar-destructive-foreground);
 
-    --popover: var(--popover);
-    --popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
 
 }
 
