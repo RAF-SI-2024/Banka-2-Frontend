@@ -6,14 +6,11 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@
 import {Input} from "@/components/ui/input"
 import {Card, CardContent} from "@/components/ui/card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
-import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group.tsx";
-import PhoneInput from "react-phone-number-input";
-import 'react-phone-number-input/style.css'
+import { PhoneInput } from "@/components/common/PhoneInput.tsx"
 import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
 import {registerClient, registerEmployee} from "@/api/auth.ts";
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import {Role} from "@/types/enums.ts";
-import { useNavigate } from "react-router-dom";
 
 // @ts-expect-error Need to add type to the props
 export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, className, ...props }) {
@@ -30,6 +27,7 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
     }
 
     async function onSubmitClient() {
+        nextStep()
         setError(null);
         try {
             const registerData: RegisterRequestClient = {
@@ -77,7 +75,6 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
     }
 
     async function onSubmitEmployee() {
-        const navigate = useNavigate();
         setError(null);
         try {
             const registerData: RegisterRequestEmployee = {
@@ -150,13 +147,7 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
                                                 <FormItem className="flex flex-col items-start">
                                                     <FormLabel className="text-left">Phone Number</FormLabel>
                                                     <FormControl className="w-full">
-                                                        <PhoneInput
-                                                            placeholder="061 2345 678"
-                                                            className="w-full max-w-md border border-gray-700 rounded-md p-2"
-                                                            defaultCountry="RS"
-                                                            countries={["RS"]}
-                                                            {...field}
-                                                        />
+                                                        <PhoneInput placeholder="Enter a phone number" {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -245,16 +236,7 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
                                                 <FormItem className="flex flex-col items-start">
                                                     <FormLabel className="text-left">Phone Number</FormLabel>
                                                     <FormControl className="w-full">
-                                                        <PhoneInput
-                                                            placeholder="061 2345 678"
-                                                            className="w-full max-w-md border border-gray-700 rounded-md p-2"
-                                                            defaultCountry="RS"
-                                                            international={false}
-                                                            countries={["RS"]}
-                                                            country={"RS"}
-                                                            countryCallingCodeEditable={false}
-                                                            {...field}
-                                                        />
+                                                        <PhoneInput placeholder="Enter a phone number" {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -285,30 +267,6 @@ export default function RegisterFormSecond({ setStep, prevStep, nextStep, form, 
                                                     <FormControl>
                                                         <Input placeholder="Department" id="department" type="text"
                                                                required={true} {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
-
-                                        <FormField
-                                            name="employed"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Are you currently employed</FormLabel>
-                                                    <FormControl>
-                                                        <RadioGroup onValueChange={field.onChange}
-                                                                    defaultValue={field.value}
-                                                                    className="flex space-x-4 flex-row mt-2">
-                                                            <FormItem className="flex flex-row">
-                                                                <RadioGroupItem value="1"/>
-                                                                <FormLabel>Yes</FormLabel>
-                                                            </FormItem>
-                                                            <FormItem className="flex flex-row">
-                                                                <RadioGroupItem value="0"/>
-                                                                <FormLabel>No</FormLabel>
-                                                            </FormItem>
-                                                        </RadioGroup>
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
