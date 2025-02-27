@@ -1,13 +1,12 @@
-import LoginForm from '@/components/login/LoginForm.tsx'
+import EditUserForm from '@/components/edit/EditUserForm.tsx'
 import {Button} from "@/components/ui/button";
 import Footer from "@/components/common/Footer.tsx";
 import { Particles } from "@/components/common/Particles.tsx";
 import {BottomBar} from "@/components/common/BottomBar.tsx";
-import * as React from "react";
 import HeaderWithLogo from "@/components/common/header/HeaderWithLogo.tsx";
 import {useNavigate} from "react-router-dom";
 
-export default function LoginPage() {
+export default function EditUserPage() {
     const navigate = useNavigate();
     return(
         <>
@@ -16,9 +15,9 @@ export default function LoginPage() {
                 {/*z and relative to make Header in front of particles*/}
                 <HeaderWithLogo className="z-50 relative">
                     <Button type="button" variant="gradient"  onClick={() => {
-                        navigate("/register", { replace: true })
+                        navigate("/login", { replace: true })
                     }}>
-                        Sign Up
+                        Sign Out
                     </Button>
                 </HeaderWithLogo>
 
@@ -29,12 +28,12 @@ export default function LoginPage() {
 
                     {/*put the card and text in the center of the page, gap-2 for spacing between text and card*/}
                     <div className="flex flex-col justify-center items-center self-center w-full gap-2">
-                        {/*Log in text - behind the particles*/}
-                        <h1 className="scroll-m-20 text-5xl font-heading tracking-tight lg:text-5xl z-0 relative">
-                            Log in to BankToo</h1>
-                        {/*Log in form/card - in front of the parrticles*/}
+                        {/*Edit User text - behind the particles*/}
+                        <h1 className="scroll-m-20 text-1xl font-heading tracking-tight lg:text-1xl z-0 relative">
+                            Edit your user</h1>
+                        {/*Edit User form/card - in front of the parrticles*/}
                         <div className="w-full max-w-sm z-10 relative">
-                            <LoginForm/>
+                            <EditUserForm/>
                         </div>
                     </div>
                 </main>
@@ -42,12 +41,7 @@ export default function LoginPage() {
                 {/*bottom bar - in front of the particles*/}
                 <BottomBar className="relative z-50">
                     <p className="text-p">
-                        Don&apos;t have an account?{" "}
-                        <Button variant="link" size="tight" className="text-base" onClick={() => {
-                            navigate("/register", { replace: true })
-                        }}>
-                            Sign up
-                        </Button>
+                        
                     </p>
                 </BottomBar>
             </div>

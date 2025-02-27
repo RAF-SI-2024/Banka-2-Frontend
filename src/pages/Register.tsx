@@ -15,7 +15,7 @@ import {z} from "zod";
 
 export default function RegisterPage() {
 
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(2);
 
     const formSchema = z.object({
         firstName: z
@@ -58,17 +58,39 @@ export default function RegisterPage() {
         employed: z.string().min(1, "Employment status is required"),
     });
 
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm({
         resolver: zodResolver(formSchema),
         mode: "onChange",
+        defaultValues: {
+            firstName: "",
+            lastName: "",
+            dateOfBirth: new Date(),
+            uniqueIdentificationNumber: "",
+            gender: "",
+            email: "",
+            username: "",
+            phoneNumber: "",
+            address: "",
+            department: "",
+            role: "",
+            employed: "",
+        }
     });
 
-    async function nextStep() {
-        const isValid = await form.trigger();
+    async function nextStepFirst() {
+        const isValid = await form.trigger([
+            "firstName",
+            "lastName",
+            "dateOfBirth",
+            "uniqueIdentificationNumber",
+            "gender",
+        ]);
+
         if (isValid) {
             setStep((prev) => prev + 1);
         }
     }
+
     function prevStep() {
         setStep((prev) => prev -1);
     }
@@ -98,8 +120,8 @@ export default function RegisterPage() {
                             Join BankToo </h1>
                         {/*Log in form/card - in front of the parrticles*/}
                         <div className="w-full max-w-sm z-10 relative">
-                            {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStep}/>}
-                            {step === 2 && <RegisterFormSecond form={form} className={""} nextStep={nextStep} prevStep={prevStep}/>}
+                            {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStepFirst}/>}
+                            {step === 2 && <RegisterFormSecond form={form} className={""} prevStep={prevStep} setStep={setStep}/>}
 
                         </div>
                     </div>
