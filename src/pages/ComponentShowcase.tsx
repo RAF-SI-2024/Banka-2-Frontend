@@ -1,28 +1,13 @@
 import {Button} from "@/components/ui/button";
-import {AppSidebar} from "@/components/common/AppSidebar.tsx";
-import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar.tsx";
-import Footer from "@/components/common/Footer.tsx";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar.tsx";
 import {ThemeSwitch} from "@/components/common/ThemeSwitch.tsx";
-import HeaderWithThemeSwitch from "@/components/common/header/HeaderWithThemeSwitch.tsx";
 
 export default function ComponentShowcasePage(){
     return (
         <>
-            <SidebarProvider>
-            {/*add sidebar*/}
-            <AppSidebar />
-                {/*part that the sidebar shrinks when open*/}
-                <SidebarInset>
-                {/*header*/}
-                <HeaderWithThemeSwitch>
-                    <SidebarTrigger className="-ml-1" />
-                </HeaderWithThemeSwitch>
-
-                {/*vertical padding of 8*/}
                 <main className="py-8">
                     {/*display button variants*/}
                     <div className="flex flex-wrap gap-10 m-4">
@@ -79,11 +64,6 @@ export default function ComponentShowcasePage(){
                     </div>
                 </main>
 
-                {/*add footer*/}
-                <Footer/>
-
-                </SidebarInset>
-            </SidebarProvider>
         </>
     )
 }

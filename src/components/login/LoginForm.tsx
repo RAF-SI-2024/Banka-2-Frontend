@@ -109,7 +109,7 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
                                         <div className="flex items-center">
                                             <FormLabel>{field.label}</FormLabel>
                                             {field.name === "password" && (
-                                                <Button variant="link" size="tight" className="ml-auto">
+                                                <Button variant="link" size="tight" className="ml-auto" onClick={() => navigate("/password-reset")}>
                                                     Forgot your password?
                                                 </Button>
                                             )}
