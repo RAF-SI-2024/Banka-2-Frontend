@@ -27,7 +27,7 @@ export const getAllUsers = async (
     }
 };
 
-export const getUserById = async (id: number) => {
+export const getUserById = async (id: string) => {
     try {
         const response = await api.get(`${API_BASE}/users/${id}`);
         return response.data; // Returns user data

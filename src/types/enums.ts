@@ -26,7 +26,7 @@ export const getRoleNumber = (roleName: string): number => {
     }
 };
 
-export const getRoleName = (roleNumber: number): Role => {
+export const getRoleFromNumber = (roleNumber: number): Role => {
     switch (roleNumber) {
         case 1:
             return Role.Admin;
