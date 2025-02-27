@@ -10,7 +10,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
 .card {
     padding: 2em;
 }
@@ -20,101 +19,105 @@
 }
 
 :root {
-    --background: #f1f4ff;
-    --foreground: #101217;
+    --background: hsl(233, 36%, 91%);
+    --foreground: hsl(233, 100%, 3%);
 
-    --card: #e5e7f6;
-    --card-foreground: #101217;
+    --card: hsl(233, 59%, 94%);
+    --card-foreground: hsl(233, 100%, 3%);
 
-    --muted: #7b7c8c;
-    --muted-foreground: #222430;
+    --muted: hsl(231, 17%, 84%);
+    --muted-foreground: hsl(236, 7%, 48%);
 
-    --primary: #4556ff;
-    --secondary: #9453ff;
-
-
-    --link: #4556ff;
-    --link-hover: #aabaff;
-
-    --footer: #e5e7f6;
-    --footer-foreground: #101217;
-
-    --border: #7b7c8c;
-
-    --selection: #7b8eff;
-
-    --ring: #101217;
-
-    --sidebar: #f1f4ff;
-
-    --sidebar-foreground: #101217;
+    --primary: hsl(235, 100%, 64%);
+    --secondary: hsl(263, 100%, 66%);
 
 
-    --sidebar-destructive: #f1f4ff;
-    --sidebar-destructive-foreground: #B3001B;
+    --link: hsl(235, 100%, 36%);
+    --link-hover: hsl(229, 100%, 17%);
 
-    --sidebar-accent: #101217;
 
-    --sidebar-accent-foreground: #f1f4ff;
+    --footer:  hsl(233, 59%, 94%);
+    --footer-foreground: hsl(236, 7%, 48%);
 
-    --sidebar-border: #7b7c8c;
+    --border: hsl(236, 7%, 48%);
 
-    --sidebar-ring: #7b7c8c;
+    --selection: hsl(238, 90%, 58%);
 
-    --popover: #f1f4ff;
-    --popover-foreground: #101217;
+    --ring: hsl(233, 100%, 3%);
 
-    --destructive: #B3001B;
-    --destructive-foreground: #f1f4ff;
+    --sidebar: hsl(233, 36%, 91%);
+
+    --sidebar-foreground: hsl(233, 100%, 3%);
+
+
+
+    --sidebar-destructive: hsl(233, 36%, 91%);
+    --sidebar-destructive-foreground:hsl(351, 100%, 35%);
+
+
+    --sidebar-accent: hsl(248, 100%, 3%);
+
+    --sidebar-accent-foreground: hsl(0, 0%, 96%);
+
+    --sidebar-border: hsl(236, 7%, 48%);
+
+    --sidebar-ring: hsl(236, 7%, 48%);
+
+    --popover: hsl(233, 59%, 94%);
+    --popover-foreground: hsl(233, 100%, 3%);
+
+    --destructive: hsl(351, 100%, 35%);
+    --destructive-foreground: hsl(233, 100%, 3%);
 
 }
 
 .dark {
-    --background: #0f1120;
-    --foreground: #eef0ff;
+    --background: hsl(233, 36%, 9%);
+    --foreground: hsl(233, 100%, 97%);
 
 
-    --card: #060817;
-    --card-foreground: #eef0ff;
+    --card:	hsl(233, 59%, 6%);
+    --card-foreground: hsl(233, 100%, 97%);
 
-    --muted: #222430;
-    --muted-foreground: #7b7c8c;
 
-    --primary: #4556ff;
-    --secondary: #9453ff;
+    --muted: hsl(231, 17%, 16%);
+    --muted-foreground: hsl(236, 7%, 52%);
 
-    --link: #4556ff;
-    --link-hover: #aabaff;
+    --primary: hsl(235, 100%, 64%);
+    --secondary: hsl(263, 100%, 66%);
 
-    --footer: #060817;
-    --footer-foreground: #7b7c8c;
+    --link: hsl(235, 100%, 64%);
+    --link-hover: hsl(229, 100%, 83%);
 
-    --border: #7b7c8c;
+    --footer: hsl(233, 59%, 6%);
+    --footer-foreground: hsl(236, 7%, 52%);
 
-    --selection: #0b11cc;
+    --border: hsl(236, 7%, 52%);
 
-    --ring: #eef0ff;
+    --selection: hsl(238, 90%, 42%);
 
-    --sidebar: #0f1120;
+    --ring: hsl(233, 100%, 97%);
 
-    --sidebar-foreground: #eef0ff;
+    --sidebar: hsl(233, 36%, 9%);
 
-    --sidebar-destructive: #0f1120;
-    --sidebar-destructive-foreground: #B3001B;
+    --sidebar-foreground: hsl(233, 100%, 97%);
 
-    --sidebar-accent: #f2f0ff;
+    --sidebar-destructive: hsl(233, 36%, 9%);
+    --sidebar-destructive-foreground: hsl(351, 100%, 35%);
 
-    --sidebar-accent-foreground: #0a0a0a;
+    --sidebar-accent: hsl(248, 100%, 97%);
 
-    --sidebar-border: #7b7c8c;
+    --sidebar-accent-foreground: hsl(0, 0%, 4%);
 
-    --sidebar-ring: #7b7c8c;
+    --sidebar-border: hsl(236, 7%, 52%);
 
-    --popover: #060817;
-    --popover-foreground: #eef0ff;
+    --sidebar-ring: hsl(236, 7%, 52%);
 
-    --destructive: #B3001B;
-    --destructive-foreground: #eef0ff;
+    --popover: hsl(233, 59%, 6%);
+    --popover-foreground: hsl(233, 100%, 97%);
+
+    --destructive: hsl(351, 100%, 35%);
+    --destructive-foreground: hsl(233, 100%, 97%);
 }
 
 @theme inline {
@@ -181,7 +184,6 @@
 
     --color-sidebar-accent: var(--sidebar-accent);
 
-
     --color-sidebar-foreground: var(--sidebar-foreground);
 
     --color-sidebar: var(--sidebar);
@@ -193,7 +195,6 @@
     --popover-foreground: var(--popover-foreground);
 
 }
-
 
 @layer base {
     * {
