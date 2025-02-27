@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import { setAuthToken } from "../api/axios";
 import { jwtDecode } from "jwt-decode";
-import { UserData } from "@/types/user";
+// import { UserData } from "@/types/user";
 
 interface AuthContextType {
     user: { email: string; permissions: string[] } | null;
@@ -15,12 +15,12 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     console.log("✅ AuthProvider is wrapping the app!");
 
-    const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
+    const [token, setToken] = useState<string | null>(sessionStorage.getItem("token"));
     const [user, setUser] = useState<{ email: string; permissions: string[] } | null>(
-        token ? JSON.parse(localStorage.getItem("user") || "null") : null
+        token ? JSON.parse(sessionStorage.getItem("user") || "null") : null
     );
 
-    // Restore user from localStorage when app starts
+    // Restore user from sessionStorage when app starts
     useEffect(() => {
         if (token && !user) {
             try {
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     permissions: decodedToken.permissions || [],
                 };
                 setUser(userData);
-                localStorage.setItem("user", JSON.stringify(userData));
+                sessionStorage.setItem("user", JSON.stringify(userData));
             } catch (error) {
                 console.error("❌ Invalid token:", error);
                 logout();
@@ -50,8 +50,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             setToken(token);
             setUser(userData);
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(userData));
+            sessionStorage.setItem("token", token);
+            sessionStorage.setItem("user", JSON.stringify(userData));
             setAuthToken(token);
         } catch (error) {
             console.error("❌ Error decoding token during login:", error);
@@ -62,8 +62,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = () => {
         setToken(null);
         setUser(null);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
         setAuthToken(null);
         console.log("User logged out!");
     };

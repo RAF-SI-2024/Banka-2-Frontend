@@ -19,7 +19,7 @@ export const setAuthToken = (token: string | null) => {
 // Axios Interceptor to attach JWT token dynamically (except for login/register)
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         if (token && !config.url?.includes("/users/login") && !config.url?.includes("/users/register")) {
             config.headers["Authorization"] = `Bearer ${token}`;
         }
