@@ -1,9 +1,8 @@
 import * as React from "react"
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
-import { registerUser } from "@/api/auth.ts"
-import { RegisterRequest } from "@/types/auth.ts"
+import {redirect, useNavigate, useSearchParams} from "react-router-dom"
+import {activateUser} from "@/api/auth.ts"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
@@ -20,7 +19,6 @@ import { Input } from "@/components/ui/input"
 import InputHidable from "@/components/common/InputHidable"
 import { Card, CardContent } from "@/components/ui/card"
 import { ErrorAlert } from "@/components/common/ErrorAlert.tsx"
-import { Stepper } from "@/components/common/Stepper.tsx"
 
 // Form field definitions
 const data = [
@@ -81,10 +79,20 @@ export default function RegisterPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [isRegistered, setIsRegistered] = useState(false)
+
   const [errors, setErrors] = useState<
     Array<{ id: number; title: string; description: string }>
   >([])
+
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login", { replace: true });
+    }
+  }, [token, navigate]);
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -96,28 +104,22 @@ export default function RegisterPasswordForm({
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+
+
     setErrors([]) // Clear errors on submit
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("✅ Registrovan korisnik:", values)
-      /*const registerData: RegisterRequest = {
-        password: values.password,
+
+      if(!token)
+        throw new Error("No token provided")
+
+      const response = await activateUser(values, token);
+
+      if(response.status === 200){
+          navigate("/login", {replace: true});
       }
-      const response = await registerUser(registerData)
-      if (response.success) {*/
-      setIsRegistered(true)
-      /*} else {
-        setErrors((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            title: "Registration failed",
-            description: "Could not create account",
-          },
-        ])
-      }*/
+
     } catch (error) {
-      console.error("❌ Registration failed:", error)
+      console.error("❌ Password creation failed:", error)
       setErrors((prev) => [
         ...prev,
         {

@@ -6,7 +6,7 @@ import ResetPassReqPage from "@/pages/ResetPassRequest.tsx";
 import ResetPassPage from "@/pages/ResetPassword.tsx";
 import ResetPasswordNotificationPage from "@/pages/ResetPassNotification";
 import RegisterPage from "@/pages/Register"
-import TestPage from "@/pages/Test"
+import TestPage from "@/pages/Activate.tsx"
 import AuthorizationLayout from "@/layouts/AuthorizationLayout.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
 import LoginPage from "@/pages/Login.tsx";
@@ -24,7 +24,7 @@ export const AppRoutes = () => {
 
         <Route element={<AuthorizationLayout />}>
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/register-activate" element={<TestPage />} />
+            <Route path="/activate" element={<TestPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/resetpass-nzm" element={<ResetPassPage />} /> {/*TODO: CHANGE ROUTE */}
             <Route path="/password-reset" element={<ResetPassReqPage />} />
