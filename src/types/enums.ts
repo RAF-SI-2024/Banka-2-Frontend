@@ -11,3 +11,17 @@ export enum Gender {
     Male = 1,
     Female = 2,
 }
+
+
+export const getRoleNumber = (roleName: string): number => {
+    switch (roleName.toLowerCase()) {
+        case "admin":
+            return Role.Admin;
+        case "employee":
+            return Role.Employee;
+        case "client":
+            return Role.Client;
+        default:
+            return Role.Invalid;
+    }
+};

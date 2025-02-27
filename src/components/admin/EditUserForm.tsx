@@ -9,10 +9,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ErrorAlert } from "@/components/common/ErrorAlert.tsx";
-import { User } from "@/types/user.ts";
+import { UpdateClientRequest, UpdateEmployeeRequest, User } from "@/types/user.ts";
 import { createFormSchema, getFormFields } from "@/components/utils/form-fields.tsx";
 import { FormFieldRenderer } from "@/components/admin/FormFieldRendered.tsx";	
-import { Role } from "@/types/enums";
+import { getRoleNumber, Role } from "@/types/enums";
 
 interface EditFormProps extends React.ComponentProps<"div"> {
     id_: number;
@@ -121,6 +121,30 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
         fetchUserData();
     }, [id_, form]);
 
+    const mapToUpdateClientRequest = (values: any): UpdateClientRequest => {
+        return {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            phoneNumber: values.phoneNumber,
+            address: values.address,
+            activated: values.activated,
+        };
+    };
+
+    const mapToUpdateEmployeeRequest = (values: any): UpdateEmployeeRequest => {
+        return {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            username: values.username,
+            phoneNumber: values.phoneNumber,
+            address: values.address,
+            role: getRoleNumber(values.role),
+            department: values.department,
+            employed: values.employed,
+            activated: values.activated,
+        };
+    }
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setErrors([]); // Clear errors on submit
         
@@ -142,14 +166,20 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
 
         try {
             // Prepare updated user data for API
-            const updatedUser = {...values};
             
+            
+            
+            // console.log("Updating user:", updatedUser);            
             let response;
             
             if (userData.role === 3) {
-                response = await updateClient(updatedUser);
+                const updatedClient = mapToUpdateClientRequest(values);
+                response = await updateClient(updatedClient, userData.id);
             } else {
-                response = await updateEmployee(updatedUser);
+                const updatedUser = mapToUpdateEmployeeRequest(values);
+                console.log("Updated user:", updatedUser);
+                console.log("User ID:", userData.id);
+                response = await updateEmployee(updatedUser, userData.id);
             }
             if (response.success) {
                 navigate("/home", { replace: true });

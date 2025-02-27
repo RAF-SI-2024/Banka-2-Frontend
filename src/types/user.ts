@@ -56,6 +56,26 @@ export interface UserResponse {
     totalPages: number;
 }
 
+export interface UpdateClientRequest {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    address: string;
+    activated: boolean;
+}
+
+export interface UpdateEmployeeRequest {
+    firstName: string;
+    lastName: string;
+    username: string;
+    phoneNumber: string;
+    address: string;
+    role: Role;
+    department: string;
+    employed: boolean;
+    activated: boolean;
+}    
+
 export interface AccountSimple {
     id: string;
     accountNumber: string;

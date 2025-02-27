@@ -1,7 +1,7 @@
 import api from "./axios";
 import { API_BASE } from "../constants/endpoints";
 import { LoginRequest } from "../types/auth";
-import {EditUserRequest, GetUserRequest, User, UserResponse} from "@/types/user.ts";
+import {EditUserRequest, GetUserRequest, UpdateClientRequest, UpdateEmployeeRequest, User, UserResponse} from "@/types/user.ts";
 
 export const getAllUsers = async (
     page: number,
@@ -38,9 +38,9 @@ export const getUserById = async (id: number) => {
 };
 
 
-export const updateClient = async (data: any) => {
+export const updateClient = async (data: UpdateClientRequest, id: string) => {
     try {
-        const response = await api.put(`${API_BASE}/clients`, data);
+        const response = await api.put(`${API_BASE}/clients/${id}`, data);
         return { 
             success: true, 
             data: response.data 
@@ -51,9 +51,9 @@ export const updateClient = async (data: any) => {
     }
 };
 
-export const updateEmployee = async (data: any) => {
+export const updateEmployee = async (data: UpdateEmployeeRequest, id: string) => {
     try {
-        const response = await api.put(`${API_BASE}/employees`, data);
+        const response = await api.put(`${API_BASE}/employees/${id}`, data);
         return { 
             success: true, 
             data: response.data 
