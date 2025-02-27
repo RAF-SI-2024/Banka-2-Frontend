@@ -182,7 +182,7 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
                 response = await updateEmployee(updatedUser, userData.id);
             }
             if (response.success) {
-                navigate("/home", { replace: true });
+
                 return;
             } else {
                 setErrors(prev => [...prev, {
@@ -207,17 +207,36 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
         setErrors(prev => prev.filter(error => error.id !== id));
     };
 
+
     return (
         <div className={cn("flex flex-col gap-2", className)} {...props}>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
-                    {formFields.map((field) => (
-                        <FormFieldRenderer 
-                            key={field.name}
-                            field={field} 
-                            control={form.control} 
-                        />
-                    ))}
+                    <div className="grid grid-cols-2 gap-4">
+                        {['firstName', 'lastName', 'username', 'phoneNumber'].map((name) => {
+                            const field = formFields.find(f => f.name === name);
+                            return field ? (
+                                <FormFieldRenderer key={name} field={field} control={form.control} />
+                            ) : null;
+                        })}
+                    </div>
+
+                    {(() => {
+                        const field = formFields.find(f => f.name === 'address');
+                        return field ? (
+                            <FormFieldRenderer field={field} control={form.control} />
+                        ) : null;
+                    })()}
+
+                    <div className="grid grid-cols-2 gap-4">
+                        {['role', 'department', 'employed', 'activated'].map((name) => {
+                            const field = formFields.find(f => f.name === name);
+                            return field ? (
+                                <FormFieldRenderer key={name} field={field} control={form.control} />
+                            ) : null;
+                        })}
+                    </div>
+
                     
                     <Button 
                         type="submit" 
