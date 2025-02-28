@@ -65,8 +65,9 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
         try {
             const loginData: LoginRequest = { email: values.email, password: values.password };
             const response = await loginUser(loginData);
-            if (response.token) {
-                login(response.token);
+
+            if (response.token && response.user) {
+                login(response.token, response.user); // Store full user data
                 console.log("✅ Login successful", response);
                 navigate("/home", { replace: true });
             } else {
@@ -84,7 +85,6 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
                 description: error && typeof error === "object" && "message" in error
                     ? String(error.message)
                     : String(error || "An error occurred"),
-
             }]);
         }
     }

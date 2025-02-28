@@ -1,13 +1,13 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import { setAuthToken } from "../api/axios";
 import { jwtDecode } from "jwt-decode";
-import {useNavigate} from "react-router-dom";
-// import { UserData } from "@/types/user";
+import { Role } from "@/types/enums"; // Import the Role enum
+import { User } from "@/types/user"; // Assuming you have a User type defined
 
 interface AuthContextType {
-    user: { id: string; role: string } | null;
+    user: User | null;
     token: string | null;
-    login: (token: string) => void;
+    login: (token: string, user: User) => void;
     logout: () => void;
 }
 
@@ -17,45 +17,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     console.log("✅ AuthProvider is wrapping the app!");
 
     const [token, setToken] = useState<string | null>(sessionStorage.getItem("token"));
-    const [user, setUser] = useState<{ id: string; role: string } | null>(
+    const [user, setUser] = useState<User | null>(
         token ? JSON.parse(sessionStorage.getItem("user") || "null") : null
     );
 
-    // Restore user from sessionStorage when app starts
     useEffect(() => {
         if (token && !user) {
             try {
-                console.log("🔄 Restoring user from token...");
+                console.log("🔄 Restoring user from session storage...");
                 setAuthToken(token);
-                const decodedToken: any = jwtDecode(token);
-                const userData = {
-                    id: decodedToken.sub,
-                    role: decodedToken.permissions || [],
-                };
-                setUser(userData);
-                sessionStorage.setItem("user", JSON.stringify(userData));
+                const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
+
+                if (storedUser) {
+                    setUser(storedUser);
+                } else {
+                    logout();
+                }
             } catch (error) {
-                console.error("❌ Invalid token:", error);
+                console.error("❌ Error restoring user:", error);
                 logout();
             }
         }
-    }, [token]); // Runs only when token changes !!!
+    }, [token]);
 
-    const login = (token: string) => {
+    const login = (token: string, userData: User) => {
         try {
-            const decodedToken: any = jwtDecode(token);
-            const userData = {
-                id: decodedToken.id,
-                role: decodedToken.role || [],
-            };
-
             setToken(token);
             setUser(userData);
             sessionStorage.setItem("token", token);
             sessionStorage.setItem("user", JSON.stringify(userData));
             setAuthToken(token);
         } catch (error) {
-            console.error("❌ Error decoding token during login:", error);
+            console.error("❌ Error storing login session:", error);
             logout();
         }
     };
@@ -66,8 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("user");
         setAuthToken(null);
-        console.log("User logged out!");
-
+        console.log("🚪 User logged out!");
     };
 
     return (
