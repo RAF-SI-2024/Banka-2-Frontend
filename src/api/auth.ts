@@ -60,3 +60,13 @@ export const activateUser = async (data: ActivateRequest, token:string) => {
         throw error
     }
 }
+
+export const requestPasswordReset = async (email: string) => {
+    try {
+        const response = await api.post(`${API_BASE}/users/password-reset/request`, { email });
+        return response.data;
+    } catch (error) {
+        console.error("❌ Password reset request failed:", error);
+        throw error;
+    }
+};
