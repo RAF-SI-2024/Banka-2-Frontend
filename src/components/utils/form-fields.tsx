@@ -20,7 +20,7 @@ export const createFormSchema = (role: Role) => {
             address: z.string().min(1, "Address is required"),
             role: z.nativeEnum(Role),
             department: z.string().min(1, "Department is required"),
-            employed: z.boolean(),
+            // employed: z.boolean(),
             activated: z.boolean()
         });
     }
