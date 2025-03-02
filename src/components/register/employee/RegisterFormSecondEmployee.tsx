@@ -11,7 +11,7 @@ import { onSubmitEmployee} from "@/components/register/RegisterRequests.tsx";
 
 
 // @ts-expect-error Need to add type to the props
-export default function RegisterFormSecondEmployee({ setStep, prevStep, nextStep, form, className, ...props }) {
+export default function RegisterFormSecondEmployee({ prevStep, nextStep, form, className, ...props }) {
     const [error, setError] = useState<{ id: number; title: string; description: string } | null>(null);
 
     async function goToNextStepEmployee() {
