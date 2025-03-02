@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/sidebar.tsx"
 import {useAuth} from "@/hooks/useAuth.ts";
 import {useNavigate} from "react-router-dom";
+import {useState} from "react";
+import PasswordChangeDialog from "@/components/passwordChange/PasswordChangeDialog.tsx";
 
 export function NavUser({
   user,
@@ -34,6 +36,10 @@ export function NavUser({
   const { isMobile } = useSidebar()
   const { logout } = useAuth()
   const navigate = useNavigate()  // ✅ Get navigate in component
+
+  // TODO Make a settings window where password change can be an option
+  // State for showing password change dialog
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   const handleLogout = () => {
     logout()
@@ -81,8 +87,9 @@ export function NavUser({
 
 
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-
+            <DropdownMenuItem
+              onClick={() => setShowEditDialog(true)}
+            >
               <span className="icon-[ph--pencil-simple-line-light]" />
               Edit profile
 
@@ -98,6 +105,8 @@ export function NavUser({
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
+      {/* Ubaciti narednu liniju u prozor za podesavanja */}
+      <PasswordChangeDialog user={user} showDialog={showEditDialog} setShowDialog={setShowEditDialog}/>
     </SidebarMenu>
   )
 }

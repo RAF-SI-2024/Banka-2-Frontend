@@ -1,14 +1,14 @@
 import * as React from "react"
 import RegisterFormFirst from "@/components/register/RegisterFormFirst.tsx"
-import { useState } from "react"
+import {useState} from "react"
 import RegisterFormSecond from "@/components/register/RegisterFormSecond.tsx"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+import {useForm} from "react-hook-form"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {z} from "zod"
 import ActivationConfirmation from "@/components/register/ActivationConfirmation.tsx";
 
 export default function RegisterPage() {
-  const [step, setStep] = useState(1)
+    const [step, setStep] = useState(1)
 
     const formSchema = z.object({
         firstName: z
@@ -91,17 +91,16 @@ export default function RegisterPage() {
     }
 
 
-    return(
+    return (
         <>
-
             <div className="flex flex-col justify-center items-center self-center w-full gap-2">
 
-                        {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStepFirst}/>}
-                        {step === 2 &&
-                            <RegisterFormSecond form={form} className={""} prevStep={prevStep} nextStep={nextStepSecond}
-                                                setStep={setStep}/>}
-                        {step === 3 && <ActivationConfirmation className="max-w-xl"/>}
-                </div>
-            </>
-            )
-            }
+                {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStepFirst}/>}
+                {step === 2 &&
+                    <RegisterFormSecond form={form} className={""} prevStep={prevStep} nextStep={nextStepSecond}
+                                        setStep={setStep}/>}
+                {step === 3 && <ActivationConfirmation className="max-w-xl"/>}
+            </div>
+        </>
+    )
+}
