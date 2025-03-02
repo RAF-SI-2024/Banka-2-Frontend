@@ -41,3 +41,6 @@ export interface RegisterRequestClient {
     role: Role;
 
 }
+export interface RequestPasswordReset {
+    email: string
+}
