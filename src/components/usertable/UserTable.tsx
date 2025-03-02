@@ -169,62 +169,68 @@ export default function UserTable() {
 
     return (
         <div className="p-6 space-y-4">
+            <div className="w-full flex flex-row items-baseline">
             {/* 🔍 Search Filters */}
-            <div className="flex flex-wrap gap-4 items-center w-full">
+                <div className="flex flex-wrap gap-4 items-center">
 
-                <Input
-                    placeholder="Filter by email"
-                    value={search.email}
-                    onChange={(e) => handleSearchChange("email", e.target.value)}
-                    className="w-88"
-                />
+                    <Input
+                        placeholder="Filter by email"
+                        value={search.email}
+                        onChange={(e) => handleSearchChange("email", e.target.value)}
+                        className="w-88"
+                    />
 
-                <div className="flex flex-row gap-4">
-                    <Input
-                        placeholder="Filter by first name"
-                        value={search.firstName}
-                        onChange={(e) => handleSearchChange("firstName", e.target.value)}
-                        className="w-42"
-                    />
-                    <Input
-                        placeholder="Filter by last name"
-                        value={search.lastName}
-                        onChange={(e) => handleSearchChange("lastName", e.target.value)}
-                        className="w-42"
-                    />
+                    <div className="flex flex-row gap-4">
+                        <Input
+                            placeholder="Filter by first name"
+                            value={search.firstName}
+                            onChange={(e) => handleSearchChange("firstName", e.target.value)}
+                            className="w-42"
+                        />
+                        <Input
+                            placeholder="Filter by last name"
+                            value={search.lastName}
+                            onChange={(e) => handleSearchChange("lastName", e.target.value)}
+                            className="w-42"
+                        />
+                    </div>
+
+                    <Select onValueChange={(value) => handleSearchChange("role", value)} value={search.role}>
+                        <SelectTrigger className="w-42">
+                            <SelectValue placeholder="Filter by role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="1">Admin</SelectItem>
+                            <SelectItem value="2">Employee</SelectItem>
+                            <SelectItem value="3">Client</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+
+                    <div className="flex items-center space-x-2">
+                        <Button onClick={handleFilter} variant="primary">
+                            <span className="icon-[ph--funnel]" />
+                            Filter
+                        </Button>
+                        <Button onClick={handleClearSearch} variant="secondary" disabled={!isSearchActive}>
+                            <span className="icon-[ph--funnel-x]" />
+                            Clear
+                        </Button>
+
+                    </div>
                 </div>
-
-                <Select onValueChange={(value) => handleSearchChange("role", value)} value={search.role}>
-                    <SelectTrigger className="w-42">
-                        <SelectValue placeholder="Filter by role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="1">Admin</SelectItem>
-                        <SelectItem value="2">Employee</SelectItem>
-                        <SelectItem value="3">Client</SelectItem>
-                    </SelectContent>
-                </Select>
-
-
-                <div className="flex items-center space-x-2">
-                    <Button onClick={handleFilter} variant="primary">
-                        <span className="icon-[ph--funnel]" />
-                        Filter
-                    </Button>
-                    <Button onClick={handleClearSearch} variant="secondary" disabled={!isSearchActive}>
-                        <span className="icon-[ph--funnel-x]" />
-                        Clear
-                    </Button>
-
+                <div className="flex ml-auto">
+                    <DataTableViewOptions table={table} />
                 </div>
             </div>
 
             {/* 📋 Users Table */}
+
             <DataTable
                 key={`${currentPage}-${pageSize}`} // Re-render on pagination changes
                 table={table}
             />
-            <DataTableViewOptions table={table} />
+
 
             {/* Pagination Controls */}
             <DataTablePagination table={table} />
