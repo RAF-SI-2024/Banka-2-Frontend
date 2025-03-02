@@ -4,10 +4,11 @@ import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
-import {Card, CardContent} from "@/components/ui/card";
+import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import { PhoneInput } from "@/components/common/PhoneInput.tsx"
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import { onSubmitEmployee} from "@/components/register/RegisterRequests.tsx";
+import Stepper from "@/components/common/Stepper.tsx";
 
 
 // @ts-expect-error Need to add type to the props
@@ -33,9 +34,12 @@ export default function RegisterFormSecondEmployee({ prevStep, nextStep, form, c
     return (
         <>
             <h1 className="scroll-m-20 text-5xl font-heading tracking-tight lg:text-5xl z-0 relative text-center">
-                Create your account </h1>
+                Create employee's account </h1>
             <div className="w-full max-w-md z-10 relative">
                 <Card className={cn("flex flex-col gap-6 mb-6", className)} {...props}>
+                    <CardHeader className="pb-0">
+                        <Stepper totalSteps={4} currentStep={2} className="w-full h-10 justify-center"/>
+                    </CardHeader>
                     <CardContent className="mt-4 font-paragraph">
                         <Form {...form}>
                             <form className="flex flex-col gap-6">

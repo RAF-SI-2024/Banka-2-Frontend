@@ -65,7 +65,7 @@ export async function onSubmitClient({form, nextStep, setError}) {
         console.error("Register for client failed:", error);
         setError({
             id: Date.now(),
-            title: "Failed to log in",
+            title: "Failed to register",
             description: error && typeof error === "object" && "message" in error
                 ? String(error.message)
                 : String(error || "An error occurred"),

@@ -106,8 +106,7 @@ export default function RegisterPage() {
 
                         {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStepFirst}/>}
                         {step === 2 &&
-                            <RegisterFormSecondClient form={form} className={""} prevStep={prevStep} nextStep={nextStepSecond}
-                                                setStep={setStep}/>}
+                            <RegisterFormSecondClient form={form} className={""} prevStep={prevStep} nextStep={nextStepSecond}/>}
                         {step === 3 && <ActivationConfirmation registerdata={registerdata} className="max-w-xl"/>}
                 </div>
             </>
