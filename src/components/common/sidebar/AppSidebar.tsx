@@ -42,10 +42,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader >
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="/home" className="hover:bg-transparent hover:animate-pulse my-2">
-                <span className="size-full flex items-center">
-                  <Logo className="h-full"></Logo>
+            <SidebarMenuButton size="lg"  asChild>
+              <a href="/home" className="hover:bg-transparent focus:bg-transparent active:bg-transparent hover:animate-pulse my-2 ">
+                <span className="size-full flex items-center ">
+                  <Logo className="h-full "></Logo>
 
                   </span>
               </a>
