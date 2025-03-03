@@ -1,4 +1,6 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
+import { Button } from "@/components/ui/button";
+import CreateAccountDialog from "@/components/createBankAccount/CreateAccountDialog.tsx";
 
 export default function HomePage() {
     return (
@@ -39,6 +41,7 @@ export default function HomePage() {
                         <p className="text-lg text-muted-foreground">
                             Data loading... Please wait.
                         </p>
+                        <CreateAccountDialog />
                     </div>
 
                 </main>
