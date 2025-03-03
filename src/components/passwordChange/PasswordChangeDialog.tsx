@@ -8,13 +8,8 @@ import * as React from "react";
 interface PasswordChangeDialogProps {
   showDialog: boolean;
   setShowDialog: (open: boolean) => void;
-  user: {
-    name: string
-    email: string
-    avatar: string
-  };
 }
-export default function PasswordChangeDialog({showDialog, setShowDialog, user}: PasswordChangeDialogProps) {
+export default function PasswordChangeDialog({showDialog, setShowDialog}: PasswordChangeDialogProps) {
 
   const [error, setError] = useState<{ id: number; title: string; description: string } | null>(null);
 
@@ -33,7 +28,7 @@ export default function PasswordChangeDialog({showDialog, setShowDialog, user}: 
         </DialogHeader>
         <p>In order to change your password please insert your current password.</p>
 
-        <ConfirmCurrentPassword user={user} setErrors={setError} setShowDialog={setShowDialog} />
+        <ConfirmCurrentPassword setErrors={setError} setShowDialog={setShowDialog} />
 
         {error && [error].map((error) => (
           <ErrorAlert
