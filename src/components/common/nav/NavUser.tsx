@@ -24,15 +24,7 @@ import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import PasswordChangeDialog from "@/components/passwordChange/PasswordChangeDialog.tsx";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}) {
+export function NavUser() {
   const { isMobile } = useSidebar()
   const { logout } = useAuth()
   const navigate = useNavigate()  // ✅ Get navigate in component
@@ -45,6 +37,15 @@ export function NavUser({
     logout()
     navigate("/login", { replace: true })  // ✅ Navigate after logout
   }
+  const rawData = sessionStorage.getItem("user")
+  let user = {
+    email: "",
+    avatar: "",
+    firstName: ""
+  }
+  if (rawData) {
+    user = JSON.parse(rawData);
+  }
 
   return (
     <SidebarMenu className="font-paragraph">
@@ -56,11 +57,11 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent/70 data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={user.avatar} alt={user.firstName} />
                 <AvatarFallback className="rounded-lg icon-[ph--user-circle]"></AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{user.firstName}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
               <span className="icon-[ph--dots-three-circle] ml-auto size-4" />
@@ -75,11 +76,11 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={user.avatar} alt={user.firstName} />
                   <AvatarFallback className="rounded-lg icon-[ph--user]"></AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">{user.firstName}</span>
                   <span className="truncate text-xs">{user.email}</span>
                 </div>
               </div>
@@ -106,7 +107,7 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
       {/* Ubaciti narednu liniju u prozor za podesavanja */}
-      <PasswordChangeDialog user={user} showDialog={showEditDialog} setShowDialog={setShowEditDialog}/>
+      <PasswordChangeDialog showDialog={showEditDialog} setShowDialog={setShowEditDialog}/>
     </SidebarMenu>
   )
 }

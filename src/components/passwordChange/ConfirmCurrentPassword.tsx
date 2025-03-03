@@ -13,10 +13,10 @@ const formSchema = z.object({
   password: z
     .string()
     .min(1, "This field is required")
-    .min(8, "Password must be at least 8 characters long")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number"),
+    // .min(8, "Password must be at least 8 characters long")
+    // .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    // .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    // .regex(/[0-9]/, "Password must contain at least one number"),
 });
 
 type ErrorType = {
@@ -26,16 +26,11 @@ type ErrorType = {
 } | null;
 
 interface ConfirmProps {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
   setErrors: (error: ErrorType) => void;
   setShowDialog: (open: boolean) => void;
 }
 
-export default function ConfirmCurrentPassword({user, setErrors, setShowDialog}: ConfirmProps) {
+export default function ConfirmCurrentPassword({setErrors, setShowDialog}: ConfirmProps) {
 
   const navigate = useNavigate();
 
@@ -43,12 +38,20 @@ export default function ConfirmCurrentPassword({user, setErrors, setShowDialog}:
     resolver: zodResolver(formSchema),
   })
 
+  const rawData = sessionStorage.getItem("user");
+  let email = ""
+
+  if (rawData) {
+    const user = JSON.parse(rawData);
+    email = user.email;
+  }
+
   // Funkcija se poziva nakon uspesnog logina. Salje se zahtev za promenu sifre
   // Mozda je bolje da se ovo odraduje u komponenti "Uspesno poslat mejl za reset sifre"
   // Posto je ta komponenta cela ruta, ostavljam vama da prilagodite gde se poziva
   async function sendPasswordResetRequest() {
     try {
-      const requestData: RequestPasswordReset = { email: user.email}
+      const requestData: RequestPasswordReset = { email: email}
       const response = await requestPasswordReset(requestData);
       console.log(response)
     } catch (error) {
@@ -58,7 +61,7 @@ export default function ConfirmCurrentPassword({user, setErrors, setShowDialog}:
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const loginData: LoginRequest = { email: user.email, password: values.password };
+      const loginData: LoginRequest = { email: email, password: values.password };
       const response = await loginUser(loginData);
       if (response.token) {
         console.log("✅ Login successful", response);
@@ -76,7 +79,7 @@ export default function ConfirmCurrentPassword({user, setErrors, setShowDialog}:
       console.error("Failed to authenticate:", error);
       setErrors({
         id: Date.now(),
-        title: "Error while sending request",
+        title: "Password is incorrect",
         description: error && typeof error === "object" && "message" in error
           ? String(error.message)
           : String(error || "An error occurred"),
@@ -97,7 +100,7 @@ export default function ConfirmCurrentPassword({user, setErrors, setShowDialog}:
                 <FormLabel>Email address</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder={user.email}
+                    placeholder={email}
                     disabled
                     type=""
                     {...field} />
