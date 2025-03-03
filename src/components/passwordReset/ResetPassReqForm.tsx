@@ -43,14 +43,13 @@ export default function ResetPassReqForm({ className, ...props }: React.Componen
         try {
             const response = await requestPasswordReset(values.email);
 
-            if (response.success) {
-                alert(response.message);
+            if (response.status==202) {
                 navigate("/resetNotification", { state: { email: values.email } });
             } else {
                 setErrors(prev => [...prev, {
                     id: Date.now(),
                     title: "Failed to send reset request",
-                    description: response.message || "An unexpected error occurred.",
+                    description: response.data.message() || "An unexpected error occurred.",
                 }]);
             }
         } catch (error) {
@@ -61,8 +60,6 @@ export default function ResetPassReqForm({ className, ...props }: React.Componen
                 description: error instanceof Error ? error.message : "An unknown error occurred",
             }]);
         }
-
-        // nesto
     }
 
     const removeError = (id: number) => {

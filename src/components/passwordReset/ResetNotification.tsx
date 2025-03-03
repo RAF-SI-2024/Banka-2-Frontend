@@ -11,6 +11,8 @@ export default function ResetNotification({
                 your inbox (and spam folder) and follow the instructions to
                 reset your password."
       resendQuestion="Didn't receive the email?"
-      resendUrlText="Resend password reset email" {...props}></EmailConfirmation>
+      resendUrlText="Resend activation mail" {...props}
+      onUrlClick={() => alert("Email je ponovo poslat!")}
+      ></EmailConfirmation>
   );
 }
