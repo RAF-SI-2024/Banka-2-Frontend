@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card, CardContent, CardDescription } from "@/components/ui/card";
+import {Card, CardContent, CardDescription} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +14,7 @@ interface ConfirmationProps extends React.ComponentProps<"div"> {
     cardProps?: React.ComponentProps<"div">;
     cardClassName?: string;
     iconClassName?: string;
+    footer?: React.ReactNode;
 }
 
 export default function EmailConfirmation({
@@ -27,6 +28,7 @@ export default function EmailConfirmation({
                                               cardProps,
                                               cardClassName,
                                               iconClassName,
+                                              footer,
                                               ...props
                                           }: ConfirmationProps) {
     const [countdown, setCountdown] = React.useState<number | null>(null);
@@ -86,6 +88,7 @@ export default function EmailConfirmation({
                         </p>
                     </CardDescription>
                 </CardContent>
+                {footer}
             </Card>
         </div>
     );

@@ -96,7 +96,9 @@ export default function RegisterPage() {
         setStep((prev) => prev - 1);
     }
 
-
+    function onContinue(){
+        // TODO: implement dialog/drawer close
+    }
 
 
     return(
@@ -107,7 +109,7 @@ export default function RegisterPage() {
                         {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStepFirst}/>}
                         {step === 2 &&
                             <RegisterFormSecondClient form={form} className={""} prevStep={prevStep} nextStep={nextStepSecond}/>}
-                        {step === 3 && <ActivationConfirmation registerdata={registerdata} className="max-w-xl"/>}
+                        {step === 3 && <ActivationConfirmation registerdata={registerdata} onContinue={onContinue} className="max-w-xl"/>}
                 </div>
             </>
             )
