@@ -54,6 +54,7 @@ export async function onSubmitClient({form, nextStep, setError}) {
             address: form.getValues("address"),
             role: Role.Client,
         };
+
         await registerClient(registerData).then(
             (response) => {
                 if (response.status === 200) {

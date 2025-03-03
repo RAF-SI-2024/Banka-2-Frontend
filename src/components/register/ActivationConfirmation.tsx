@@ -3,13 +3,16 @@ import Stepper from "@/components/common/Stepper.tsx";
 import EmailConfirmation from "@/components/common/EmailConfirmation.tsx";
 import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
 import {registerClient, registerEmployee} from "@/api/auth.ts";
+import { Button } from "@/components/ui/button";
+import {CardFooter} from "@/components/ui/card.tsx";
 
 interface ActivationConfirmationProps extends React.ComponentProps<"div"> {
+    onContinue?: () => void;
     registerdata?: RegisterRequestEmployee | RegisterRequestClient,
     className: string,
 }
 
-export default function ActivationConfirmation({ registerdata, className, ...props}: ActivationConfirmationProps) {
+export default function ActivationConfirmation({ onContinue, registerdata, className, ...props}: ActivationConfirmationProps) {
     // Type guard function
     function isEmployee(data: RegisterRequestEmployee | RegisterRequestClient): data is RegisterRequestEmployee {
         return (data as RegisterRequestEmployee).department !== undefined;
@@ -39,6 +42,7 @@ export default function ActivationConfirmation({ registerdata, className, ...pro
     }
 
     return (
+        <div>
             <EmailConfirmation title="Activation email has been sent!"
                                description="We've sent an activation link to the email you provided. Please check the
                             inbox (and spam folder) and click the link to activate the
@@ -49,9 +53,16 @@ export default function ActivationConfirmation({ registerdata, className, ...pro
                                     <Stepper totalSteps={4} currentStep={3}/>
                                 }
                                onUrlClick={handleUrlClick}
-                               className={className}>
-                                ...props
+                               className={className}
+                                {...props}
+                                footer={
+                                    <CardFooter className="flex flex-row gap-4 justify-center">
+                                        <Button variant="default" onClick={onContinue}>Continue bank account creation</Button>
+                                    </CardFooter>
+                                 }>
             </EmailConfirmation>
+
+        </div>
 
     )
 }
