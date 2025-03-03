@@ -3,7 +3,7 @@ import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card";
+import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group.tsx";
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/popover"
 import {CalendarIcon} from "lucide-react";
 import { format } from "date-fns"
+import Stepper from "@/components/common/Stepper.tsx";
 
 
 
@@ -25,6 +26,9 @@ export default function RegisterFormFirst({ form, nextStep, className, ...props 
             Join BankToo </h1>
             <div className = "w-full max-w-md z-10 relative">
         <Card className={cn("flex flex-col gap-6 justify-center", className)} {...props}>
+            <CardHeader className="pb-0">
+                <Stepper totalSteps={4} currentStep={1} className="w-full h-10 justify-center"/>
+            </CardHeader>
             <CardContent className="mt-4 font-paragraph">
                 <Form {...form}>
                     <form className="flex flex-col gap-4">

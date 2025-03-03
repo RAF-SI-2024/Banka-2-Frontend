@@ -18,6 +18,7 @@ const numberIcons: Record<number, string> = {
 
 
 interface StepperProps extends React.ComponentProps<"div"> {
+    className?: string,
     totalSteps: number; // total number of steps
     currentStep: number; // current step number (starting from 1)
     iconProps?: React.ComponentProps<"span">;  // props of the icon's span
@@ -31,6 +32,7 @@ interface StepperProps extends React.ComponentProps<"div"> {
 
 
 export default function Stepper ({
+    className = "",
     totalSteps = 4,
     currentStep = 2,
     iconProps = {},
@@ -49,7 +51,7 @@ export default function Stepper ({
 
 
     return (
-        <div className="flex flex-row" {...props}>
+        <div className={cn("flex flex-row", className)} {...props}>
             {Array.from({ length: totalSteps }).map((_, i) => (
                 // <div key={i} className="">
                 <div key={i} className="flex flex-col">
