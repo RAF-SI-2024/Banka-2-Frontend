@@ -10,26 +10,32 @@ import TestPage from "@/pages/Activate.tsx"
 import AuthorizationLayout from "@/layouts/AuthorizationLayout.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
 import LoginPage from "@/pages/Login.tsx";
-
+import { AdminProtectedRoutes, AllProtectedRoutes, ProtectedLoggedUser } from "@/router/utils/ProtectedRoutes.tsx";
 
 export const AppRoutes = () => {
-  return (
-    <Routes>
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route path="/user-list" element={<UserListPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/showcase" element={<ComponentShowcasePage />} />
-        </Route>
+    return (
+        <Routes>
+            <Route element={<AppLayout />}>
+                <Route element={<AdminProtectedRoutes />}>
+                    <Route path="/user-list" element={<UserListPage />} />
+                </Route>
+                <Route element={<AllProtectedRoutes />}>
+                    <Route path="/" element={<Navigate to="/home" replace />} />
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/showcase" element={<ComponentShowcasePage />} />
+                </Route>
+            </Route>
 
-        <Route element={<AuthorizationLayout />}>
-            <Route path="/activate" element={<TestPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/resetpass-nzm" element={<ResetPassPage />} /> {/*TODO: CHANGE ROUTE */}
-            <Route path="/password-reset" element={<ResetPassReqPage />} />
-            <Route path="/resetNotification" element={<ResetPasswordNotificationPage />}/>
-        </Route>
-    </Routes>
-  )
+            <Route element={<AuthorizationLayout />}>
+                <Route element={<ProtectedLoggedUser />}>
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/activate" element={<TestPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/resetpass-nzm" element={<ResetPassPage />} /> {/*TODO: CHANGE ROUTE */}
+                    <Route path="/password-reset" element={<ResetPassReqPage />} />
+                    <Route path="/resetNotification" element={<ResetPasswordNotificationPage />} />
+                </Route>
+            </Route>
+        </Routes>
+    )
 }
