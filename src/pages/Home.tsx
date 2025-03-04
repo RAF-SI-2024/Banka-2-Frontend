@@ -1,6 +1,6 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import { Button } from "@/components/ui/button";
-import CreateAccountDialog from "@/components/createBankAccount/CreateAccountDialog.tsx";
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
     return (
@@ -41,7 +41,11 @@ export default function HomePage() {
                         <p className="text-lg text-muted-foreground">
                             Data loading... Please wait.
                         </p>
-                        <CreateAccountDialog />
+                        <Link to="/create-account">
+                            <Button variant="gradient" className="absolute bottom-55 right-8 shadow-lg transition-shadow duration-300 hover:shadow-xl">
+                                Create Account
+                            </Button>
+                        </Link>
                     </div>
 
                 </main>
