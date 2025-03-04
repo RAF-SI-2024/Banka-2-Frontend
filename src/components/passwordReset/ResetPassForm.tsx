@@ -7,6 +7,10 @@ import {cn} from "@/lib/utils.ts";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import InputHidable from "@/components/common/InputHidable.tsx";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {requestPasswordReset, resetPassword} from "@/api/auth.ts";
+import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 
 // Form field definitions
 const data = [
@@ -62,6 +66,16 @@ const formSchema = z.object({
 
 export default function ResetPassForm({ className, ...props }: React.ComponentProps<"div">) {
 
+    const [errors, setErrors] = useState<Array<{ id: number; title: string; description: string }>>([]);
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get("token");
+    useEffect(() => {
+        if (!token) {
+            navigate("/login", { replace: true });
+        }
+    }, [token, navigate]);
+
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -72,8 +86,31 @@ export default function ResetPassForm({ className, ...props }: React.ComponentPr
         },
     });
 
+    const removeError = (id: number) => {
+        setErrors(prev => prev.filter(error => error.id !== id));
+    };
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+        setErrors([]);
+        try {
+            const response = await resetPassword(values.password, values.confirmPassword, token);
+
+            if (response.status==202) {
+                navigate("/login");
+            } else {
+                setErrors(prev => [...prev, {
+                    id: Date.now(),
+                    title: "Failed to reset password",
+                    description: response.data.message() || "An unexpected error occurred.",
+                }]);
+            }
+        } catch (error) {
+            setErrors(prev => [...prev, {
+                id: Date.now(),
+                title: "Failed to reset password",
+                description: error instanceof Error ? error.message : "An unknown error occurred",
+            }]);
+        }
     }
 
     return (
@@ -112,6 +149,15 @@ export default function ResetPassForm({ className, ...props }: React.ComponentPr
                     </Form>
                 </CardContent>
             </Card>
+
+            {errors.map((error) => (
+                <ErrorAlert
+                    key={error.id}
+                    title={error.title}
+                    description={error.description}
+                    onClose={() => removeError(error.id)}
+                />
+            ))}
 
         </div>
     );

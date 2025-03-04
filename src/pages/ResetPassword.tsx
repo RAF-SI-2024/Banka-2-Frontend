@@ -1,7 +1,15 @@
 import * as React from "react";
 import ResetPassForm from "@/components/passwordReset/ResetPassForm.tsx";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {useEffect} from "react";
+import * as z from "zod";
+import {activateUser} from "@/api/auth.ts";
 
-export default function ResetPassPage(){
+export default function ResetPassPage({
+  className
+  , ...props
+}: React.ComponentProps<"div">){
+
 
     return(
         <>
