@@ -5,7 +5,7 @@ export interface Account {
     lastName: string
     email: string
   }
-  number: number
+  accountNumber: string
   balance: number
   availableBalance: number
   employee: {
