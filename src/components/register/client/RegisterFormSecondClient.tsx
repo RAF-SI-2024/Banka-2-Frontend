@@ -5,7 +5,7 @@ import {Button} from "@/components/ui/button"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
-import { PhoneInput } from "@/components/common/PhoneInput.tsx"
+import { PhoneInput } from "@/components/common/input/PhoneInput.tsx"
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import {onSubmitClient} from "@/components/register/RegisterRequests.tsx";
 import Stepper from "@/components/common/Stepper.tsx";

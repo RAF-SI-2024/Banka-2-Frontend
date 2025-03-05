@@ -20,7 +20,9 @@ export default function AppLayout() {
                     <SidebarTrigger className="-ml-1" />
                 </HeaderWithThemeSwitch>
 
-                <Outlet />
+                <div className="max-w-[1200px] w-full mx-auto">
+                 <Outlet />
+                </div>
 
                 <Footer/>
 
