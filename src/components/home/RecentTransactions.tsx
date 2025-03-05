@@ -74,8 +74,8 @@ const transactions: Transaction[]  = [
 
 const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"div">) => {
     return (
-        <Card className={cn("border-0", className)} {...props}>
-            <CardHeader className="pb-1">
+        <Card className={cn("border-0 content-center", className)} {...props}>
+            <CardHeader className="pb-2">
                 <CardTitle className="font-heading text-2xl">Recent transactions</CardTitle>
             </CardHeader>
             <Card className="m-4 rounded-md font-paragraph" >
