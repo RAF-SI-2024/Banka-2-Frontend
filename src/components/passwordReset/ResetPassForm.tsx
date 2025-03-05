@@ -6,7 +6,7 @@ import {Card, CardContent} from "@/components/ui/card.tsx";
 import {cn} from "@/lib/utils.ts";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import InputHidable from "@/components/common/InputHidable.tsx";
+import InputHidable from "@/components/common/input/InputHidable.tsx";
 
 const data = [
     // {
