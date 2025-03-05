@@ -5,7 +5,7 @@ import BankingAccountDropdownMenu from "./BankingAccountDropdownMenu"
 export function generateAccountColumns(): ColumnDef<Account>[] {
   return [
     {
-      accessorKey: "number",
+      accessorKey: "accountNumber",
       header: "Bank Account Number",
       enableHiding: true,
     },

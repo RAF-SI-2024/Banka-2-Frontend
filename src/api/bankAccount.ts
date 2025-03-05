@@ -4,20 +4,24 @@ import { AccountResponse } from "@/types/bankAccount"
 
 export const getAllAccounts = async (
   pageNumber: number,
-  pageSize: number
-  /*filters: {
-    number?: string
-  }*/
+  pageSize: number,
+  filters: { accountNumber?: string; firstName?: string; lastName?: string;}
 ): Promise<AccountResponse> => {
   try {
+    // After route is done
     /*const response = await api.get("/accounts", {
       params: {
-        number: filters.number || undefined,
-        page,
-        size,
+        accountNumber: filters.accountNumber || undefined,
+        firstName: filters.firstName || undefined,
+        lastName: filters.lastName || undefined,
+        pageNumber,
+        pageSize,
       },
     })*/
+   
+    //return response.data
 
+    //For testing purposes
     const response = [
       {
         id: "550e8400-e29b-41d4-a716-446655440000",
@@ -26,7 +30,7 @@ export const getAllAccounts = async (
           lastName: "Doe",
           email: "john.doe@example.com",
         },
-        number: 123456,
+        accountNumber: "123456",
         balance: 1000.5,
         availableBalance: 900.0,
         employee: {
@@ -51,7 +55,7 @@ export const getAllAccounts = async (
           lastName: "Brown",
           email: "alice.brown@example.com",
         },
-        number: 654321,
+        accountNumber: "654321",
         balance: 2500.75,
         availableBalance: 2400.5,
         employee: {
@@ -79,7 +83,7 @@ export const getAllAccounts = async (
           lastName: "Johnson",
           email: "charlie.j@example.com",
         },
-        number: 789012,
+        accountNumber: "789012",
         balance: 3200.0,
         availableBalance: 3100.0,
         employee: {
@@ -104,7 +108,7 @@ export const getAllAccounts = async (
           lastName: "White",
           email: "daniel.white@example.com",
         },
-        number: 456789,
+        accountNumber: "456789",
         balance: 1800.5,
         availableBalance: 1600.0,
         employee: {
@@ -129,7 +133,7 @@ export const getAllAccounts = async (
           lastName: "Harris",
           email: "emily.h@example.com",
         },
-        number: 987654,
+        accountNumber: "987654",
         balance: 500.0,
         availableBalance: 450.0,
         employee: {
@@ -154,7 +158,7 @@ export const getAllAccounts = async (
           lastName: "Miller",
           email: "george.m@example.com",
         },
-        number: 112233,
+        accountNumber: "112233",
         balance: 12000.0,
         availableBalance: 11000.0,
         employee: {
@@ -179,7 +183,7 @@ export const getAllAccounts = async (
           lastName: "Anderson",
           email: "hannah.a@example.com",
         },
-        number: 334455,
+        accountNumber: "334455",
         balance: 7800.5,
         availableBalance: 7000.0,
         employee: {
@@ -204,7 +208,7 @@ export const getAllAccounts = async (
           lastName: "Taylor",
           email: "jack.t@example.com",
         },
-        number: 556677,
+        accountNumber: "556677",
         balance: 950.0,
         availableBalance: 800.0,
         employee: {
@@ -229,7 +233,7 @@ export const getAllAccounts = async (
           lastName: "Martinez",
           email: "isabella.m@example.com",
         },
-        number: 778899,
+        accountNumber: "778899",
         balance: 4320.5,
         availableBalance: 4200.0,
         employee: {
@@ -249,13 +253,20 @@ export const getAllAccounts = async (
       },
     ]
 
-    const totalElements = response.length
+    const filteredData = response.filter((account) => {
+      return (
+        (!filters.accountNumber || account.accountNumber.toLowerCase().includes(filters.accountNumber.toLowerCase())) &&
+        (!filters.firstName || account.client.firstName.toLowerCase().includes(filters.firstName.toLowerCase())) &&
+        (!filters.lastName || account.client.lastName.toLowerCase().includes(filters.lastName.toLowerCase()))
+      )
+    })
+
+    const totalElements = filteredData.length
     const totalPages = Math.ceil(totalElements / pageSize)
     const startIndex = (pageNumber - 1) * pageSize
     const endIndex = startIndex + pageSize
-    const items = response.slice(startIndex, endIndex)
+    const items = filteredData.slice(startIndex, endIndex)
 
-    //return response.data
     return {
       items,
       pageNumber,
