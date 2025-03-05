@@ -16,7 +16,7 @@ const BalanceCard = ({ balance="0 RSD", income="0 RSD", expensses="0 RSD", onSen
     return (
         <Card
             className={cn(
-                "p-6 flex flex-col lg:flex-row lg:items-center justify-between ",
+                "border-0 p-6 flex flex-col lg:flex-row lg:items-center justify-between ",
                 className
             )}
             {...props}

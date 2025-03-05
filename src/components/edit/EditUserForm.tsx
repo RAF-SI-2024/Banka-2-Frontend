@@ -14,7 +14,7 @@ import {
     Form, FormControl, FormField, FormItem, FormLabel, FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import InputHidable from "@/components/common/InputHidable";
+import InputHidable from "@/components/common/input/InputHidable.tsx";
 import { Card, CardContent } from "@/components/ui/card";
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import { Label } from "@/components/ui/label"
