@@ -1,21 +1,43 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ActivityCodeDropdown from "@/components/createBankAccount/ActivityCodeDropdown.tsx";
 import RadioGroupSelector from "@/components/createBankAccount/RadioGroupSelector.tsx";
 import PlanSelect from "@/components/createBankAccount/PlanSelect.tsx";
 import CurrencySelect from "@/components/createBankAccount/CurrencySelect.tsx";
 import TypeSelect from "@/components/createBankAccount/TypeSelect.tsx";
 import OwnershipSelect from "@/components/createBankAccount/OwnershipSelect.tsx";
+import { z } from "zod";
+
+const businessInfoSchema = z.object({
+    businessName: z.string()
+        .min(1, "Business name is required")
+        .max(32, "Business name must be at most 32 characters")
+        .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Only letters and spaces are allowed"),
+    registrationNumber: z.string()
+        .length(9, "Registration number must be exactly 9 digits long")
+        .regex(/^\d{9}$/, "Unique identification number must contain only numbers"),
+    pib: z.string()
+        .length(9, "PIB must be exactly 9 digits long")
+        .regex(/^\d{9}$/, "PIB must contain only numbers"),
+    activityCode: z.string().min(1, { message: "Activity Code is required" }),
+    address: z .string()
+        .min(5, "Address is required")
+        .regex(/^[0-9A-Za-zčČćĆžŽšŠđĐ /]+$/, "Only letters, numbers, spaces and / are allowed"),
+    majorityOwner: z.string()
+        .min(1, "Majority owner name is required")
+        .max(32, "Majority owner name must be at most 32 characters")
+        .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Only letters and spaces are allowed"),
+});
+const emailSchema = z.string().email({ message: "Invalid email format" });
+type BusinessInfo = z.infer<typeof businessInfoSchema>;
 
 export default function CreateAccountPage() {
-
     const location = useLocation();
-    const { step2 } = location.state || {}; // Čitanje step parametra iz state-a
-
+    const { step2 } = location.state || {};
 
     const [selectedOption, setSelectedOption] = useState("new");
     const [email, setEmail] = useState("");
@@ -23,7 +45,7 @@ export default function CreateAccountPage() {
     const [step, setStep] = useState(1);
     const [ownership, setOwnership] = useState("Personal");
     const [creditCard, setCreditCard] = useState("yes");
-    const [type, setType] = useState("Current Account")
+    const [type, setType] = useState("Current Account");
     const [businessName, setBusinessName] = useState("");
     const [registrationNumber, setRegistrationNumber] = useState("");
     const [pib, setPib] = useState("");
@@ -32,64 +54,45 @@ export default function CreateAccountPage() {
     const [majorityOwner, setMajorityOwner] = useState("");
     const [selectedCurrency, setSelectedCurrency] = useState("EUR");
     const [plan, setPlan] = useState(ownership === "Business" ? "DOO" : "Standard");
-
-    const [errors, setErrors] = useState({
-        businessName: "",
-        registrationNumber: "",
-        pib: "",
-        activityCode: "",
-        address: "",
-        majorityOwner: "",
-    });
+    const [emailError, setEmailError] = useState<string | null>(null);
+    const [errors, setErrors] = useState<Partial<Record<keyof BusinessInfo, string>>>({});
     const navigate = useNavigate();
 
-    const validateBusinessInformation = () => {
-        const errors = {
-            businessName: businessName.trim() === "" ? "Business Name is required" : "",
-            registrationNumber: registrationNumber.trim() === "" ? "Registration Number is required" : "",
-            pib: pib.trim() === "" ? "PIB is required" : "",
-            activityCode: activityCode.trim() === "" ? "Activity Code is required" : "",
-            address: address.trim() === "" ? "Address is required" : "",
-            majorityOwner: majorityOwner.trim() === "" ? "Majority Owner is required" : "",
-        };
-        setErrors(errors);
-        return Object.values(errors).every((error) => error === "");
-    };
-
-    const handlePlanChange = (value) => {
-        setPlan(value);
-    };
-    const handleOwnershipChange = (value) => {
-        setOwnership(value);
-        setPlan(value === "Business" ? "DOO" : "Standard"); // Automatski postavlja plan
-    };
     const validateEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
+
     const handleContinueClick = () => {
         if (selectedOption === "new") {
             navigate("/register");
         } else if (selectedOption === "existing") {
-            if (validateEmail(email)) {
+            try {
+                emailSchema.parse(email);
+                setEmailError(null);
                 setStep(step + 1);
-            } else {
-                setIsEmailValid(false);
+            } catch (error) {
+                if (error instanceof z.ZodError) {
+                    setEmailError(error.errors[0].message);
+                } else {
+                    setEmailError("An unexpected error occurred.");
+                }
             }
         }
-    };
+    }
 
     useEffect(() => {
         if (location.state?.step2) {
-            setStep(location.state.step2); // Postavi step iz state ako je prosleđeno
+            setStep(location.state.step2);
         }
-    }, [location.state]); // Reaguj na promene location.state
+    }, [location.state]);
 
     const handleBack = () => {
         if (step > 1) {
             setStep(step - 1);
         }
     };
+
     useEffect(() => {
         if (ownership === "Business") {
             setPlan("DOO");
@@ -97,50 +100,34 @@ export default function CreateAccountPage() {
             setPlan("Standard");
         }
     }, [ownership]);
+
     const handleFinishOrContinue = () => {
         if (type === "Current Account" && ownership === "Personal") {
-            // TODO: Pošalji zahtev na server za kreiranje obicnog naloga
             console.log("Sending request to create a personal current account...");
-        }
-        else if (type === "Foreign Exchange Account" && ownership === "Personal") {
-            // TODO: Pošalji zahtev na server za kreiranje obicnog naloga
+        } else if (type === "Foreign Exchange Account" && ownership === "Personal") {
             console.log("Sending request to create a personal exchange account...");
-        }
-        else if (type === "Current Account" && ownership === "Business") {
+        } else if (type === "Current Account" && ownership === "Business" || type === "Foreign Exchange Account" && ownership === "Business") {
             if (step === 3) {
-                const isValid = validateBusinessInformation();
-                if (isValid) {
-                    console.log("Business Information:", {
-                        businessName,
-                        registrationNumber,
-                        pib,
-                        activityCode,
-                        address,
-                        majorityOwner,
+                try {
+                    businessInfoSchema.parse({businessName, registrationNumber, pib, activityCode, address, majorityOwner,
                     });
-                    // TODO: Pošalji zahtev na server za kreiranje biznis naloga
-                    console.log("Sending request to create a business current account...");
-                } else {
-                    console.log("Form is invalid. Please check the errors.");
-                }
-            } else {
-                setStep(step + 1);
-            }
-        }
-        else if (type === "Foreign Exchange Account" && ownership === "Business") {
-            if (step === 3) {
-                const isValid = validateBusinessInformation();
-                if (isValid) {
-                    console.log("Business Information:", {
-                        businessName,
-                        registrationNumber,
-                        pib,
-                        activityCode,
-                        address,
-                        majorityOwner,
+                    setErrors({});
+                    console.log("Business Information:", {businessName, registrationNumber,pib, activityCode, address, majorityOwner,
                     });
-                    console.log("Sending request to create a business exchange account...");
-                } else {
+                    if(type === "Current Account"){
+                        console.log("Sending request to create a business current account...");
+                    } else{
+                        console.log("Sending request to create a business exchange account...");
+                    }
+                } catch (error) {
+                    if (error instanceof z.ZodError) {
+                        const newErrors: Partial<Record<keyof BusinessInfo, string>> = {};
+                        error.errors.forEach((e) => {
+                            if (e.path[0] in newErrors) return;
+                            newErrors[e.path[0] as keyof BusinessInfo] = e.message;
+                        });
+                        setErrors(newErrors);
+                    }
                     console.log("Form is invalid. Please check the errors.");
                 }
             } else {
@@ -148,6 +135,15 @@ export default function CreateAccountPage() {
             }
         }
     };
+
+    const handlePlanChange = (value) => {
+        setPlan(value);
+    };
+    const handleOwnershipChange = (value) => {
+        setOwnership(value);
+        setPlan(value === "Business" ? "DOO" : "Standard");
+    };
+
     return (
         <div className="max-w-lg mx-auto mt-10 p-8 rounded-xl shadow-lg border text-[var(--card-foreground)] bg-[var(--card)] border-[var(--border)] flex flex-col ">
             {step === 1 &&
@@ -164,8 +160,18 @@ export default function CreateAccountPage() {
                     {selectedOption === "existing" && (
                         <div className="mt-4 w-full">
                             <Label htmlFor="email" className="text-[var(--muted-foreground)] text-left">Email</Label>
-                            <Input id="email" type="email" placeholder="example@example.com" value={email} onChange={(e) => {setEmail(e.target.value);setIsEmailValid(true);}} className={`mt-1  ${isEmailValid ? 'border-[var(--border)]' : 'border-[var(--destructive)]'} rounded-lg p-2`}/>
-                            {!isEmailValid && <p className="text-[var(--destructive)] text-xs mt-1 text-left">Invalid email format</p>}
+                            <Input id="email"
+                                type="email"
+                                placeholder="example@example.com"
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    setEmailError(null);
+                                }}
+                                className={`mt-1 ${emailError ? 'border-[var(--destructive)]' : 'border-[var(--border)]'} rounded-lg p-2`}
+                            />
+                            {emailError && <p className="text-[var(--destructive)] text-xs mt-1 text-left">{emailError}</p>}
+
                         </div>
                     )}
                     <Button variant="gradient_outline" className="w-full mt-6" onClick={handleContinueClick}>
@@ -191,7 +197,8 @@ export default function CreateAccountPage() {
                         <div className="flex flex-col space-y-4">
                             <div className="flex flex-col space-y-4">
                                 <div className="flex flex-col space-y-1 w-full">
-                                    <OwnershipSelect ownership={ownership} handleOwnershipChange={handleOwnershipChange} />
+                                    <OwnershipSelect ownership={ownership} handleOwnershipChange={
+                                        handleOwnershipChange} />
                                 </div>
                             </div>
 
@@ -240,7 +247,7 @@ export default function CreateAccountPage() {
                         </div>
                         <div className="flex flex-col space-y-2 w-full">
                             <Label className="text-white text-left">PIB</Label>
-                            <Input className={`bg-[var(--card)] ${errors.pib ? 'border-destructive' : ''}`} laceholder="123456789" value={pib} onChange={(e) => setPib(e.target.value)}/>
+                            <Input className={`bg-[var(--card)] ${errors.pib ? 'border-destructive' : ''}`} placeholder="123456789" value={pib} onChange={(e) => setPib(e.target.value)}/>
                             {errors.pib && <p className="text-destructive text-sm">{errors.pib}</p>}
                         </div>
                     </div>
@@ -272,8 +279,3 @@ export default function CreateAccountPage() {
         </div>
     );
 }
-
-
-
-
-

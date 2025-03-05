@@ -1,67 +1,60 @@
-
-import { useState, useRef, useEffect } from "react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import * as React from "react"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 interface ActivityCodeDropdownProps {
     value: string;
     onChange: (value: string) => void;
+    className?: string;
 }
 
-export default function ActivityCodeDropdown({ value, onChange }: ActivityCodeDropdownProps) {
-    const [options, setOptions] = useState(["Option 1", "Option 2", "Option 3"]);
-    const [filteredOptions, setFilteredOptions] = useState(options);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-    const [isInputEmpty, setIsInputEmpty] = useState(true); // State to track if the input is empty
-    const [isInputFocused, setIsInputFocused] = useState(false); // Track if the input is focused
+export default function ActivityCodeDropdown({ className,value, onChange }: ActivityCodeDropdownProps) {
+    const [open, setOpen] = React.useState(false)
+    const [filteredOptions, setFilteredOptions] = React.useState(["Option 1", "Option 2", "Option 3"])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        onChange(newValue);
-        setIsInputEmpty(newValue === ""); // Update state based on input content
+        const newValue = e.target.value
+        onChange(newValue)
         setFilteredOptions(
-            options.filter((option) =>
+            ["Option 1", "Option 2", "Option 3"].filter(option =>
                 option.toLowerCase().includes(newValue.toLowerCase())
             )
-        );
-    };
-
-    const handleOptionClick = (option: string) => {
-        onChange(option);
-    };
+        )
+    }
 
     return (
-        <div className="relative w-full" ref={dropdownRef}>
-            <DropdownMenu>
-                <div className="flex items-center border border-[var(--border)] rounded-lg px-3 h-10 bg-[var(--card)]">
-                    <input
-                        type="text"
-                        placeholder="Enter activity code..."
-                        value={value}
-                        onChange={handleInputChange}
-                        onFocus={() => setIsInputFocused(true)} // Set focused to true when the input is focused
-                        onBlur={() => setIsInputFocused(false)} // Set focused to false when the input is blurred
-                        className="w-full border-none outline-none bg-transparent text-white h-full placeholder-muted-foreground/50"
-                    />
-                    <DropdownMenuTrigger asChild>
-                        {!isInputFocused && isInputEmpty && ( // Only show the arrow if the input is not focused and is empty
-                            <button className="h-full px-2">
-                                <span className="icon-[ph--arrow-down-bold]" />
-                            </button>
-                        )}
-                    </DropdownMenuTrigger>
-                </div>
-                <DropdownMenuContent className="w-full bg-[var(--card)] border border-[var(--border)] rounded-lg mt-1 shadow-lg z-10">
-                    {filteredOptions.map((option, index) => (
-                        <DropdownMenuItem
-                            key={index}
-                            className="p-2 cursor-pointer hover:bg-[var(--border)] text-white"
-                            onClick={() => handleOptionClick(option)}
-                        >
-                            {option}
-                        </DropdownMenuItem>
-                    ))}
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-    );
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" aria-expanded={open} className="w-[446px] justify-between">
+                    {value || "Enter activity code..."}
+                    <ChevronsUpDown className="opacity-50" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[446px] p-0">
+                <Command>
+                    <CommandInput placeholder="Search activity code..." onChange={handleInputChange} className="h-9" />
+                    <CommandList>
+                        <CommandEmpty>No options found.</CommandEmpty>
+                        <CommandGroup>
+                            {filteredOptions.map((option, index) => (
+                                <CommandItem
+                                    key={index}
+                                    value={option}
+                                    onSelect={(currentValue) => {
+                                        onChange(currentValue === value ? "" : currentValue)
+                                        setOpen(false)
+                                    }}
+                                >
+                                    {option}
+                                    <Check className={value === option ? "ml-auto opacity-100" : "ml-auto opacity-0"} />
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+                    </CommandList>
+                </Command>
+            </PopoverContent>
+        </Popover>
+    )
 }
