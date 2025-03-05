@@ -48,7 +48,7 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
                 <CardTitle className="font-heading text-2xl">Quick payment</CardTitle>
             </CardHeader>
 
-            <CardContent className="overflow-y-auto max-h-50 mb-4">
+            <CardContent className="overflow-y-auto max-h-50 mb-4 mr-4 pr-1">
                     <Table>
 
                     <TableBody>
@@ -60,7 +60,7 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
                             >
                                 <TableCell className="p-0 rounded-2xl">
 
-                                    <Button className="size-full font-paragraph text-base py-4 font-semibold justify-start" variant="negative" >
+                                    <Button className="size-full font-paragraph text-base py-4 font-semibold rounded-none justify-start" variant="negative" >
                                         {item.firstName} {item.lastName}
                                     </Button>
                                 </TableCell>
