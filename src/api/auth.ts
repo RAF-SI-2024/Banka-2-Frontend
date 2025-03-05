@@ -1,11 +1,11 @@
 import api from "./axios";
 import { API_BASE } from "../constants/endpoints";
 import {
-    LoginRequest,
-    RegisterRequestClient,
-    RegisterRequestEmployee,
-    RegisterRequest,
-    ActivateRequest
+  LoginRequest,
+  RegisterRequestClient,
+  RegisterRequestEmployee,
+  RegisterRequest,
+  ActivateRequest, RequestPasswordReset
 } from "@/types/auth";
 
 
@@ -59,4 +59,14 @@ export const activateUser = async (data: ActivateRequest, token:string) => {
         console.error("❌ Activation failed:", error)
         throw error
     }
+}
+
+export const requestPasswordReset = async (data: RequestPasswordReset) => {
+  try {
+    const response = await api.post(`${API_BASE}/users/password-reset/request`, data)
+    return response
+  } catch (error) {
+    console.error("❌ Password reset request failed:", error)
+    throw error
+  }
 }

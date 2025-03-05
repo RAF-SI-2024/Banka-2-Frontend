@@ -16,11 +16,6 @@ import {
 import Logo from "@/assets/Logo.tsx";
 
 const data = {
-  user: {
-    name: "user",
-    email: "user@gmail.com",
-    avatar: "",
-  },
   navMain: [
     {
       title: "Home",
@@ -57,7 +52,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/*<NavSecondary items={data.navSecondary} className="mt-auto" />*/}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser/>
       </SidebarFooter>
     </Sidebar>
   )
