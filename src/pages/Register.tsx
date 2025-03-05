@@ -1,14 +1,16 @@
 import * as React from "react"
 import RegisterFormFirst from "@/components/register/RegisterFormFirst.tsx"
 import { useState } from "react"
-import RegisterFormSecond from "@/components/register/RegisterFormSecond.tsx"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import ActivationConfirmation from "@/components/register/ActivationConfirmation.tsx";
+import RegisterFormSecondClient from "@/components/register/client/RegisterFormSecondClient.tsx";
+import {RegisterRequestClient} from "@/types/auth.ts";
 
 export default function RegisterPage() {
-  const [step, setStep] = useState(1)
+    const [step, setStep] = useState(1)
+    const [registerdata, setRegisterdata] = useState<RegisterRequestClient | undefined>(undefined);
 
     const formSchema = z.object({
         firstName: z
@@ -29,7 +31,7 @@ export default function RegisterPage() {
             .regex(/^[@0-9A-Za-zčČćĆžŽšŠđĐ]+$/, "Only letters, numbers, and '@' are allowed"),
         uniqueIdentificationNumber: z
             .string()
-            .length(13, "Unique identification number must be exactly 13 characters")
+            .length(13, "Unique identification number must be exactly 13 digits long")
             .regex(/^\d{13}$/, "Unique identification number must contain only numbers"),
         phoneNumber: z
             .string()
@@ -39,7 +41,7 @@ export default function RegisterPage() {
         address: z
             .string()
             .min(5, "Address is required")
-            .regex(/^[0-9A-Za-zčČćĆžŽšŠđĐ ]+$/, "Only letters, numbers, and spaces are allowed"),
+            .regex(/^[0-9A-Za-zčČćĆžŽšŠđĐ /]+$/, "Only letters, numbers, spaces and / are allowed"),
         department: z
             .string()
             .regex(/^[0-9A-Za-zčČćĆžŽšŠđĐ ]+$/, "Only letters, numbers, and spaces are allowed"),
@@ -81,13 +83,21 @@ export default function RegisterPage() {
         }
     }
 
-    async function nextStepSecond() {
+    async function nextStepSecond(registerdata: RegisterRequestClient) {
+        if(!registerdata) {
+            return;
+        }
+        setRegisterdata(registerdata)
         setStep((prev) => prev + 1);
     }
 
 
     function prevStep() {
         setStep((prev) => prev - 1);
+    }
+
+    function onContinue(){
+        // TODO: implement dialog/drawer close
     }
 
 
@@ -98,9 +108,8 @@ export default function RegisterPage() {
 
                         {step === 1 && <RegisterFormFirst form={form} className={""} nextStep={nextStepFirst}/>}
                         {step === 2 &&
-                            <RegisterFormSecond form={form} className={""} prevStep={prevStep} nextStep={nextStepSecond}
-                                                setStep={setStep}/>}
-                        {step === 3 && <ActivationConfirmation className="max-w-xl"/>}
+                            <RegisterFormSecondClient form={form} className={""} prevStep={prevStep} nextStep={nextStepSecond}/>}
+                        {step === 3 && <ActivationConfirmation registerdata={registerdata} onContinue={onContinue} className="max-w-xl"/>}
                 </div>
             </>
             )
