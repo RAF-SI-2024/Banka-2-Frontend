@@ -1,6 +1,7 @@
 import BalanceCard from "@/components/home/BalanceCard.tsx";
 import QuickPaymentCard from "@/components/home/QuickPaymentCard.tsx";
 import ConverterCard from "@/components/home/ConverterCard.tsx";
+import RecentTransactionsCard from "@/components/home/RecentTransactions.tsx";
 
 
 export default function HomePage() {
@@ -16,6 +17,7 @@ export default function HomePage() {
                         <BalanceCard />
                         <QuickPaymentCard />
                         <ConverterCard />
+                        <RecentTransactionsCard />
                         {/*<Card>*/}
                         {/*    <CardHeader>*/}
                         {/*        <CardTitle>Welcome to BankToo</CardTitle>*/}
