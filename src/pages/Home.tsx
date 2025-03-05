@@ -1,6 +1,8 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
+import BankingAccountsTable from "@/components/allBankingAccounts/BankingAccountsTable"
+
 
 
 export default function HomePage() {
@@ -33,6 +35,10 @@ export default function HomePage() {
                                 Trade confidently with our secure and fast system.
                             </CardContent>
                         </Card>
+                    </div>
+        
+                    <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min flex items-center justify-center">
+                         <BankingAccountsTable />
                     </div>
 
                     {/* Placeholder sekcija dok ne stignu pravi podaci */}
