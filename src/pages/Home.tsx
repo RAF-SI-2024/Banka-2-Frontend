@@ -1,9 +1,13 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
+import { Button } from "@/components/ui/button";
+import { Link } from 'react-router-dom';
+import BankingAccountsTable from "@/components/allBankingAccounts/BankingAccountsTable"
+
+
 
 export default function HomePage() {
+
     return (
-
-
                 <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     {/* Kartice sa placeholder tekstom */}
                     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -32,6 +36,10 @@ export default function HomePage() {
                             </CardContent>
                         </Card>
                     </div>
+        
+                    <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min flex items-center justify-center">
+                         <BankingAccountsTable />
+                    </div>
 
                     {/* Placeholder sekcija dok ne stignu pravi podaci */}
                     <div
@@ -39,9 +47,20 @@ export default function HomePage() {
                         <p className="text-lg text-muted-foreground">
                             Data loading... Please wait.
                         </p>
+                        <Link to="/create-account">
+                            {/*<Button variant="gradient" className="absolute bottom-55 right-8 shadow-lg transition-shadow duration-300 hover:shadow-xl">*/}
+                            {/*    Create Account*/}
+                            {/*</Button>*/}
+                            <Button
+                                variant="default"
+                                size="icon"
+                                className="absolute bottom-55 right-8 w-auto px-6 py-3 rounded-full shadow-lg bg-primary text-white hover:bg-primary/90"
+                            >
+                                Create client account
+                            </Button>
+                        </Link>
                     </div>
 
                 </main>
-
     )
 }

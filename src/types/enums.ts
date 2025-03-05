@@ -26,16 +26,28 @@ export const getRoleNumber = (roleName: string): number => {
     }
 };
 
-export const getRoleFromNumber = (roleNumber: number): Role => {
-    switch (roleNumber) {
-        case 1:
-            return Role.Admin;
-        case 2:
-            return Role.Employee;
-        case 3:
-            return Role.Client;
+export const getRoleString = (role: Role): string => {
+    switch (role) {
+        case Role.Admin:
+            return "Admin";
+        case Role.Employee:
+            return "Employee";
+        case Role.Client:
+            return "Client";
         default:
-            return Role.Invalid;
+            return "Unknown";
+    }
+};
+
+
+export const getGenderString = (gender: Gender) => {
+    switch (gender) {
+        case Gender.Male:
+            return "Male";
+        case Gender.Female:
+            return "Female";
+        default:
+            return "Unknown";
     }
 };
 

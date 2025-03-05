@@ -1,11 +1,11 @@
 import api from "./axios";
 import { API_BASE } from "../constants/endpoints";
 import {
-    LoginRequest,
-    RegisterRequestClient,
-    RegisterRequestEmployee,
-    RegisterRequest,
-    ActivateRequest
+  LoginRequest,
+  RegisterRequestClient,
+  RegisterRequestEmployee,
+  RegisterRequest,
+  ActivateRequest, RequestPasswordReset
 } from "@/types/auth";
 
 
