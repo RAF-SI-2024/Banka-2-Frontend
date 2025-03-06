@@ -6,7 +6,7 @@ import {Card, CardContent} from "@/components/ui/card.tsx";
 import {cn} from "@/lib/utils.ts";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import InputHidable from "@/components/common/InputHidable.tsx";
+import InputHidable from "@/components/common/input/InputHidable.tsx";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {requestPasswordReset, resetPassword} from "@/api/auth.ts";
@@ -93,7 +93,7 @@ export default function ResetPassForm({ className, ...props }: React.ComponentPr
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setErrors([]);
         try {
-            const response = await resetPassword(values.password, values.confirmPassword, token);
+            const response = await resetPassword(values.password, values.confirmPassword, token || '');
 
             if (response.status==202) {
                 navigate("/login");
