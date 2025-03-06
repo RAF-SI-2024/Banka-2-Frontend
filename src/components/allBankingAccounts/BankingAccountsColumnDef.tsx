@@ -1,8 +1,8 @@
-import { Account } from "@/types/bankAccount"
+import { BankAccount } from "@/types/bankAccount"
 import { ColumnDef } from "@tanstack/react-table"
 import BankingAccountDropdownMenu from "./BankingAccountDropdownMenu"
 
-export function generateAccountColumns(): ColumnDef<Account>[] {
+export function generateAccountColumns(): ColumnDef<BankAccount>[] {
   return [
     {
       accessorKey: "accountNumber",

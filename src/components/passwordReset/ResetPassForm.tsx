@@ -46,16 +46,14 @@ const formSchema = z.object({
             .min(8, "Password must be at least 8 characters long")
             .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
             .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-            .regex(/[0-9]/, "Password must contain at least one number"),
-
+            .regex(/(?=(.*\d){2})/, "Password must contain at least two numbers"),
         confirmPassword: z
             .string()
             .min(1, "This field is required")
             .min(8, "Password must be at least 8 characters long")
             .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
             .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-            .regex(/[0-9]/, "Password must contain at least one number"),
-
+            .regex(/(?=(.*\d){2})/, "Password must contain at least two numbers")
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords don't match",

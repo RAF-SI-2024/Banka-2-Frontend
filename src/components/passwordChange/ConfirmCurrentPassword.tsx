@@ -52,7 +52,7 @@ export default function ConfirmCurrentPassword({setErrors, setShowDialog}: Confi
   async function sendPasswordResetRequest() {
     try {
       const requestData: RequestPasswordReset = { email: email}
-      const response = await requestPasswordReset(requestData);
+      const response = await requestPasswordReset(requestData.email);
       console.log(response)
     } catch (error) {
       console.log(error)

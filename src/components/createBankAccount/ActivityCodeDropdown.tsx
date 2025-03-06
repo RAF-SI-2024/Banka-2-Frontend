@@ -10,7 +10,7 @@ interface ActivityCodeDropdownProps {
     className?: string;
 }
 
-export default function ActivityCodeDropdown({ className,value, onChange }: ActivityCodeDropdownProps) {
+export default function ActivityCodeDropdown({ className, value, onChange }: ActivityCodeDropdownProps) {
     const [open, setOpen] = React.useState(false)
     const [filteredOptions, setFilteredOptions] = React.useState(["Option 1", "Option 2", "Option 3"])
 
@@ -34,7 +34,9 @@ export default function ActivityCodeDropdown({ className,value, onChange }: Acti
             </PopoverTrigger>
             <PopoverContent className="w-[446px] p-0">
                 <Command>
-                    <CommandInput placeholder="Search activity code..." onChange={handleInputChange} className="h-9" />
+                    <CommandInput placeholder="Search activity code..." className="h-9">
+                        <input type="text" onChange={handleInputChange} />
+                    </CommandInput>
                     <CommandList>
                         <CommandEmpty>No options found.</CommandEmpty>
                         <CommandGroup>

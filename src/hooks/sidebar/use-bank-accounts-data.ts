@@ -6,7 +6,7 @@ export  function useBankAccountsData() {
     useEffect(() => {
         const fetchBankAccounts = async () => {
             try {
-                const data = [] // TODO: FILL IN WITH ACTUAL RESPONSE DATA
+                const data: any = [] // TODO: FILL IN WITH ACTUAL RESPONSE DATA
                 setBankAccounts(data.map(account => ({  // TODO: ADD ACTUAL RESPONSE DATA TYPE INSTEAD OF ANY
                     title: account.name,
                     url: `/accounts/${account.id}` // TODO: CHECK WITH API HOW TO GET A SINGLE BANK ACCOUNT INFO
