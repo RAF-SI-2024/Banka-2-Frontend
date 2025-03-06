@@ -12,7 +12,7 @@ import {
     ProtectedLoggedUser
 } from "@/router/utils/ProtectedRoutes.tsx";
 import BankAccountPage from "@/pages/BankAccount.tsx";
-import CreateAccountPage from "@/pages/CreateAccountPage.tsx";
+import CreateBankAccount from "@/components/createBankAccount/CreateBankAccount.tsx";
 import RoleBasedHomePage from "@/pages/RoleBasedHome.tsx";
 
 export const AppRoutes = () => {
@@ -26,7 +26,7 @@ export const AppRoutes = () => {
                     <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
                     <Route path="/showcase" element={<ComponentShowcasePage />} />
-                    <Route path="/create-account" element={<CreateAccountPage />} />
+                    <Route path="/create-account" element={<CreateBankAccount />} />
                 </Route>
             </Route>
 

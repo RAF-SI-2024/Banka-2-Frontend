@@ -1,35 +1,29 @@
 import {Dialog, DialogContent, DialogDescription, DialogTitle} from "@/components/ui/dialog.tsx";
-import RegisterPage from "@/pages/Register.tsx";
-import {Role} from "@/types/enums.ts";
 import {useMediaQuery} from "@/hooks/use-media-query.ts";
 import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerTitle} from "../ui/drawer";
 import {Button} from "@/components/ui/button.tsx";
+import CreateBankAccount from "@/components/createBankAccount/CreateBankAccount.tsx";
 
-interface RegisterDialogProps {
-    variant: Role,
+interface CreateBankAccountDialogProps {
     open: boolean;
     onClose: () => void;
-    onSuccess?: (email: string) => void;
+    onRegister: () => void;
+    registeredEmail?: string;  // Add email prop
 }
 
-export default function RegisterDialog({ variant, open, onClose, onSuccess }: RegisterDialogProps) {
-    const isDesktop = useMediaQuery("(min-width: 1500px)");
+export default function CreateBankAccountDialog({ open, onClose, onRegister, registeredEmail }: CreateBankAccountDialogProps) {
+    const isDesktop = useMediaQuery("(min-width: 1000px)");
 
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={onClose}>
-                <DialogContent className="!w-full !max-w-3xl !max-h-[95vh] bg-card overflow-hidden">
+                <DialogContent className="!w-full !max-w-xl !max-h-[95vh] bg-card overflow-hidden">
                     <DialogTitle></DialogTitle>
                     <DialogDescription></DialogDescription>
                     <div className="p-4 w-full overflow-y-auto h-full">
-                        <RegisterPage
-                            onClose={(email) => {
-                                onClose();
-                                if (email && onSuccess) {
-                                    onSuccess(email);
-                                }
-                            }}
-                            variant={variant}
+                        <CreateBankAccount
+                            onRegister={onRegister}
+                            registeredEmail={registeredEmail}
                         />
                     </div>
                 </DialogContent>
@@ -42,15 +36,10 @@ export default function RegisterDialog({ variant, open, onClose, onSuccess }: Re
             <DrawerContent className="bg-card !max-h-11/12">
                 <DrawerTitle></DrawerTitle>
                 <DrawerDescription></DrawerDescription>
-                <div className="p-4 w-full overflow-y-auto h-full">
-                    <RegisterPage
-                        onClose={(email) => {
-                            onClose();
-                            if (email && onSuccess) {
-                                onSuccess(email);
-                            }
-                        }}
-                        variant={variant}
+                <div className="p-4 flex justify-center w-full overflow-y-auto h-full">
+                    <CreateBankAccount
+                        onRegister={onRegister}
+                        registeredEmail={registeredEmail}
                     />
                 </div>
                 <DrawerFooter className="pt-2 self-center w-full max-w-3xl ">
