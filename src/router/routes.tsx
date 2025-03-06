@@ -24,7 +24,9 @@ export const AppRoutes = () => {
                     <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route path="/home" element={<HomePage />} />
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
                     <Route path="/showcase" element={<ComponentShowcasePage />} />
+                    {/*<Route path="/create-account" element={<ClientForm />} />*/}
                 </Route>
             </Route>
 
@@ -33,7 +35,7 @@ export const AppRoutes = () => {
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/activate" element={<TestPage />} />
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/resetpass-nzm" element={<ResetPassPage />} /> {/*TODO: CHANGE ROUTE */}
+                    <Route path="/reset-password" element={<ResetPassPage />} /> {/*TODO: CHANGE ROUTE */}
                     <Route path="/password-reset" element={<ResetPassReqPage />} />
                     <Route path="/resetNotification" element={<ResetPasswordNotificationPage />} />
                 </Route>

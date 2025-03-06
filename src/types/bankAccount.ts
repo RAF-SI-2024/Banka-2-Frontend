@@ -20,3 +20,12 @@ export interface BankAccount {
     modifiedAt: Date;
 }
 
+
+
+export interface AccountResponse {
+    items: BankAccount[]
+    pageNumber: number
+    pageSize: number
+    totalElements: number
+    totalPages: number
+}
