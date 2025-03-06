@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Account, AccountResponse } from "@/types/bankAccount"
+import {AccountResponse, BankAccount} from "@/types/bankAccount.ts"
 import { getAllAccounts } from "@/api/bankAccount"
 import { DataTable } from "@/components/common/datatable/DataTable.tsx"
 import { getCoreRowModel } from "@tanstack/react-table"
@@ -31,7 +31,7 @@ export default function BankingAccountsTable() {
 
   const [fetchFlag, setFetchFlag] = useState(false);
 
-  const [accounts, setAccounts] = useState<Account[]>([])
+  const [accounts, setAccounts] = useState<BankAccount[]>([])
 
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)

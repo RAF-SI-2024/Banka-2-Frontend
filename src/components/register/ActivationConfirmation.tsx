@@ -5,24 +5,16 @@ import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
 import {registerClient, registerEmployee} from "@/api/auth.ts";
 import { Button } from "@/components/ui/button";
 import {CardFooter} from "@/components/ui/card.tsx";
-import { useNavigate } from "react-router-dom";
+import {Role} from "@/types/enums.ts";
 
 interface ActivationConfirmationProps extends React.ComponentProps<"div"> {
     onContinue?: () => void;
+    continueVariant?: Role;
     registerdata?: RegisterRequestEmployee | RegisterRequestClient,
     className: string,
 }
 
-export default function ActivationConfirmation({ onContinue, registerdata, className, ...props}: ActivationConfirmationProps) {
-
-    const navigate = useNavigate();
-
-    const handleClick = () => {
-
-        navigate("/create-account", { state: { step2: 2 } });
-
-    };
-
+export default function ActivationConfirmation({ onContinue, continueVariant=Role.Employee, registerdata, className, ...props}: ActivationConfirmationProps) {
     // Type guard function
     function isEmployee(data: RegisterRequestEmployee | RegisterRequestClient): data is RegisterRequestEmployee {
         return (data as RegisterRequestEmployee).department !== undefined;
@@ -51,10 +43,6 @@ export default function ActivationConfirmation({ onContinue, registerdata, class
 
     }
 
-    const handleContinue = () => {
-        navigate("/create-account");
-    };
-
     return (
         <div>
             <EmailConfirmation title="Activation email has been sent!"
@@ -71,7 +59,15 @@ export default function ActivationConfirmation({ onContinue, registerdata, class
                                 {...props}
                                 footer={
                                     <CardFooter className="flex flex-row gap-4 justify-center">
-                                        <Button variant="default" onClick={handleClick}>Continue bank account creation</Button>
+                                        {
+                                            continueVariant === Role.Employee &&
+                                            <Button variant="default" onClick={onContinue}>Continue bank account creation</Button>
+                                        }
+                                        {
+                                            continueVariant === Role.Admin &&
+                                                <Button variant="gradient" onClick={onContinue}>Finish</Button>
+                                        }
+
 
                                     </CardFooter>
                                  }>

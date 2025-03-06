@@ -7,8 +7,23 @@ import { z } from "zod"
 import ActivationConfirmation from "@/components/register/ActivationConfirmation.tsx"
 import RegisterFormSecondClient from "@/components/register/client/RegisterFormSecondClient.tsx"
 import { RegisterRequestClient } from "@/types/auth.ts"
+import {Role} from "@/types/enums.ts";
+import RegisterFormSecondEmployee from "@/components/register/employee/RegisterFormSecondEmployee.tsx";
 
-export default function RegisterPage() {
+interface RegisterPageProps {
+  variant: Role;
+  onClose: () => void;
+}
+
+export default function RegisterPage({variant, onClose}: RegisterPageProps) {
+
+  // your existing code...
+
+  function onContinue() {
+      onClose();
+  }
+
+
   const [step, setStep] = useState(1)
   const [registerdata, setRegisterdata] = useState<
     RegisterRequestClient | undefined
@@ -110,12 +125,7 @@ export default function RegisterPage() {
     setStep((prev) => prev - 1)
   }
 
-  function onContinue() {
-    // TODO: implement dialog/drawer close
-  }
-
   return (
-    <>
       <div className="flex flex-col justify-center items-center self-center w-full gap-2">
         {step === 1 && (
           <RegisterFormFirst
@@ -125,21 +135,29 @@ export default function RegisterPage() {
           />
         )}
         {step === 2 && (
-          <RegisterFormSecondClient
-            form={form}
-            className={""}
-            prevStep={prevStep}
-            nextStep={nextStepSecond}
-          />
+            variant===Role.Employee?
+            <RegisterFormSecondClient
+              form={form}
+              className={""}
+              prevStep={prevStep}
+              nextStep={nextStepSecond}
+            />:
+                <RegisterFormSecondEmployee
+                    form={form}
+                    className={""}
+                    prevStep={prevStep}
+                    nextStep={nextStepSecond}
+                />
+
         )}
         {step === 3 && (
           <ActivationConfirmation
             registerdata={registerdata}
+            continueVariant={variant}
             onContinue={onContinue}
             className="max-w-xl"
           />
         )}
       </div>
-    </>
   )
 }

@@ -5,7 +5,6 @@ import UserListPage from "@/pages/UserList.tsx";
 import ResetPassReqPage from "@/pages/ResetPassRequest.tsx";
 import ResetPassPage from "@/pages/ResetPassword.tsx";
 import ResetPasswordNotificationPage from "@/pages/ResetPassNotification";
-import RegisterPage from "@/pages/Register"
 import TestPage from "@/pages/Activate.tsx"
 import AuthorizationLayout from "@/layouts/AuthorizationLayout.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
@@ -17,6 +16,7 @@ import {
     ProtectedLoggedUser
 } from "@/router/utils/ProtectedRoutes.tsx";
 import BankAccountPage from "@/pages/BankAccount.tsx";
+import BankAccountListPage from "@/pages/BankAccountList.tsx";
 import CreateAccountPage from "@/pages/CreateAccountPage.tsx";
 
 export const AppRoutes = () => {
@@ -31,21 +31,21 @@ export const AppRoutes = () => {
                         <Route path="/home" element={<HomePage />} />
                     </Route>
                     <Route element={<EmployeeHomePageGuard />}>
-                        <Route path="/home" element={<ComponentShowcasePage />} /> {/*TODO: CHANGE ELEMENT COMPONENT TO EMPLOYEE HOME PAGE */}
+                        <Route path="/home" element={<BankAccountListPage />} />
                     </Route>
                     <Route element={<ClientHomePageGuard />}>
                         <Route path="/home" element={<HomePage />} />
                     </Route>
                     <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/showcase" element={<ComponentShowcasePage />} />
+                    <Route path="/bank-account-list" element={<BankAccountListPage />} />
                     <Route path="/create-account" element={<CreateAccountPage />} />
                 </Route>
             </Route>
 
             <Route element={<AuthorizationLayout />}>
                 <Route element={<ProtectedLoggedUser />}>
-                    <Route path="/register" element={<RegisterPage />} />
                     <Route path="/activate" element={<TestPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/reset-password" element={<ResetPassPage />} />

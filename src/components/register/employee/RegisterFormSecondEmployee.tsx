@@ -33,10 +33,10 @@ export default function RegisterFormSecondEmployee({ prevStep, nextStep, form, c
 
     return (
         <>
-            <h1 className="scroll-m-20 text-5xl font-heading tracking-tight lg:text-5xl z-0 relative text-center">
+            <h1 className="scroll-m-20 text-5xl font-heading tracking-tight z-0 relative text-center">
                 Create employee's account </h1>
             <div className="w-full max-w-md z-10 relative">
-                <Card className={cn("flex flex-col gap-6 mb-6", className)} {...props}>
+                <Card className={cn("flex flex-col gap-6 mb-6 size-full bg-transparent border-0", className)} {...props}>
                     <CardHeader className="pb-0">
                         <Stepper totalSteps={4} currentStep={2} className="w-full h-10 justify-center"/>
                     </CardHeader>

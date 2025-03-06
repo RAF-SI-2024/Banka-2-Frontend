@@ -1,12 +1,12 @@
 import api from "./axios"
-import { BankAccount } from "@/types/bankAccount"
+import {AccountResponse} from "@/types/bankAccount"
 
 
 export const getAllAccounts = async (
     pageNumber: number,
     pageSize: number,
     filters: { accountNumber?: string; firstName?: string; lastName?: string;}
-): Promise<BankAccount> => {
+): Promise<AccountResponse> => {
     try {
         const response = await api.get("/accounts", {
             params: {

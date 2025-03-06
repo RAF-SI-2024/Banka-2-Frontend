@@ -22,6 +22,7 @@ export interface RegisterRequestEmployee {
     phoneNumber: string;
     address: string;
     role: Role;
+    employed?: boolean;
 }
 
 export interface RegisterRequest {
