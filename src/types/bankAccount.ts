@@ -1,0 +1,22 @@
+import {Client, Employee} from "@/types/user.ts";
+import {Currency} from "@/types/currency.ts";
+import {BankAccountType} from "@/types/bankAccountType.ts";
+
+export interface BankAccount {
+    id: string;
+    name: string,
+    client: Client;
+    number: number;
+    balance: number;
+    employee: Employee;
+    currency: Currency;
+    accountType: BankAccountType;
+    dailyLimit: number;
+    monthlyLimit: number;
+    status: boolean;
+    creationDate: Date;
+    expirationDate: Date;
+    createdAt: Date;
+    modifiedAt: Date;
+}
+
