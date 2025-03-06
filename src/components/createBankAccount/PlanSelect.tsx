@@ -12,9 +12,8 @@ interface PlanSelectProps {
 const PlanSelect: React.FC<PlanSelectProps> = ({ plan, handlePlanChange, ownership }) => {
     return (
         <div className="w-full">
-            <Label className="text-white text-left">Plan</Label>
             <Select value={plan} onValueChange={handlePlanChange}>
-                <SelectTrigger className="w-full p-2 bg-[var(--card)] text-white border border-[var(--border)] rounded-lg">
+                <SelectTrigger className="w-full p-3 bg-[var(--card)] text-white border border-[var(--border)] rounded-lg">
                     <SelectValue placeholder="Izaberi plan" />
                 </SelectTrigger>
                 <SelectContent>

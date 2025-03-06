@@ -9,10 +9,9 @@ interface OwnershipSelectProps {
 
 const OwnershipSelect = ({ ownership, handleOwnershipChange }: OwnershipSelectProps) => {
     return (
-        <div className="flex flex-col space-y-1 w-full">
-            <Label className="text-white text-left">Ownership</Label>
+        <div className="w-full">
             <Select value={ownership} onValueChange={handleOwnershipChange}>
-                <SelectTrigger className="w-full p-2 bg-[var(--card)] text-white border border-[var(--border)] rounded-lg">
+                <SelectTrigger className="w-full p-3 bg-[var(--card)] text-white border border-[var(--border)] rounded-lg">
                     <SelectValue placeholder="Choose ownership" />
                 </SelectTrigger>
                 <SelectContent>
