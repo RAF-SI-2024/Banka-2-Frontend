@@ -11,7 +11,6 @@ interface CurrencySelectProps {
 const CurrencySelect = ({ selectedCurrency, setSelectedCurrency }: CurrencySelectProps) => {
     return (
         <div className="flex flex-col space-y-1 w-full">
-            <Label className="text-white text-left">Currency</Label>
             <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
                 <SelectTrigger className="w-full">
                     <SelectValue placeholder="Izaberi valutu" />
