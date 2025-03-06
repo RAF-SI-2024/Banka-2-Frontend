@@ -9,7 +9,12 @@ import TestPage from "@/pages/Activate.tsx"
 import AuthorizationLayout from "@/layouts/AuthorizationLayout.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
 import LoginPage from "@/pages/Login.tsx";
-import { AdminProtectedRoutes, AllProtectedRoutes, ProtectedLoggedUser } from "@/router/utils/ProtectedRoutes.tsx";
+import {
+    AdminProtectedRoutes,
+    AllProtectedRoutes,
+    ClientHomePageGuard, EmployeeHomePageGuard,
+    ProtectedLoggedUser
+} from "@/router/utils/ProtectedRoutes.tsx";
 import BankAccountPage from "@/pages/BankAccount.tsx";
 import BankAccountListPage from "@/pages/BankAccountList.tsx";
 import CreateAccountPage from "@/pages/CreateAccountPage.tsx";
@@ -19,11 +24,19 @@ export const AppRoutes = () => {
         <Routes>
             <Route element={<AppLayout />}>
                 <Route element={<AdminProtectedRoutes />}>
-                    <Route path="/user-list" element={<UserListPage />} />
+                    <Route path="/home" element={<UserListPage />} />
                 </Route>
                 <Route element={<AllProtectedRoutes />}>
+                    <Route element={<ClientHomePageGuard />}>
+                        <Route path="/home" element={<HomePage />} />
+                    </Route>
+                    <Route element={<EmployeeHomePageGuard />}>
+                        <Route path="/home" element={<BankAccountListPage />} />
+                    </Route>
+                    <Route element={<ClientHomePageGuard />}>
+                        <Route path="/home" element={<HomePage />} />
+                    </Route>
                     <Route path="/" element={<Navigate to="/home" replace />} />
-                    <Route path="/home" element={<HomePage />} />
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
                     <Route path="/showcase" element={<ComponentShowcasePage />} />
                     <Route path="/bank-account-list" element={<BankAccountListPage />} />
@@ -35,7 +48,7 @@ export const AppRoutes = () => {
                 <Route element={<ProtectedLoggedUser />}>
                     <Route path="/activate" element={<TestPage />} />
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/reset-password" element={<ResetPassPage />} /> {/*TODO: CHANGE ROUTE */}
+                    <Route path="/reset-password" element={<ResetPassPage />} />
                     <Route path="/password-reset" element={<ResetPassReqPage />} />
                     <Route path="/resetNotification" element={<ResetPasswordNotificationPage />} />
                 </Route>
