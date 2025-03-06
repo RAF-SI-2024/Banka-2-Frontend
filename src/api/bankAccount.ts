@@ -1,5 +1,5 @@
 import api from "./axios"
-import {AccountResponse} from "@/types/bankAccount"
+import {AccountResponse, CreateBankAccountRequest} from "@/types/bankAccount"
 
 
 export const getAllAccounts = async (
@@ -24,3 +24,25 @@ export const getAllAccounts = async (
         throw error;
     }
 }
+
+
+export const createBankAccount = async (data : CreateBankAccountRequest, currency : string) => {
+
+    try {
+        const currencyResponse = await api.get("/currencies", {
+            params: {
+                code: currency
+            }   
+        });
+
+        data.currencyId = currencyResponse.data.items[0]?.id;
+        
+        const response = await api.post("/accounts", data);
+        return response;
+    } catch (error) {
+        console.error("❌ Failed to create bank account:", error);
+        throw error;
+    }
+
+}
+

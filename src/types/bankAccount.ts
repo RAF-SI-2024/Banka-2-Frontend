@@ -6,8 +6,9 @@ export interface BankAccount {
     id: string;
     name: string,
     client: Client;
-    number: number;
+    accountNumber: number;
     balance: number;
+    availableBalance: number;
     employee: Employee;
     currency: Currency;
     accountType: BankAccountType;
@@ -29,3 +30,18 @@ export interface AccountResponse {
     totalElements: number
     totalPages: number
 }
+
+export interface CreateBankAccountRequest {
+    name: string,
+    dailyLimit: number,
+    clientId: string,
+    balance : number,
+    currencyId: string,
+    accountTypeId: string,
+    monthlyLimit: number,
+    status: boolean,
+}
+
+
+
+
