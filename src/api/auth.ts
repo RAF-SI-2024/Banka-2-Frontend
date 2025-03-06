@@ -1,11 +1,11 @@
 import api from "./axios";
 import { API_BASE } from "../constants/endpoints";
 import {
-    LoginRequest,
-    RegisterRequestClient,
-    RegisterRequestEmployee,
-    RegisterRequest,
-    ActivateRequest
+  LoginRequest,
+  RegisterRequestClient,
+  RegisterRequestEmployee,
+  RegisterRequest,
+  ActivateRequest
 } from "@/types/auth";
 
 
@@ -43,6 +43,7 @@ export const registerClient = async (data: RegisterRequestClient) => {
 
 export const registerEmployee = async (data: RegisterRequestEmployee) => {
     try {
+        data.employed = true;
         const response = await api.post(`${API_BASE}/employees`, data);
         return response;
     } catch (error) {
@@ -58,5 +59,25 @@ export const activateUser = async (data: ActivateRequest, token:string) => {
     } catch (error) {
         console.error("❌ Activation failed:", error)
         throw error
+    }
+}
+
+export const requestPasswordReset = async (email: string) => {
+    try {
+        const response = await api.post(`${API_BASE}/users/password-reset/request`, { email });
+        return response
+    } catch (error) {
+        console.error("❌ Password reset request failed:", error);
+        throw error;
+    }
+}
+
+export const resetPassword = async (password: string, confirmPassword: string, token: string) => {
+    try {
+        const response = await api.post(`${API_BASE}/users/password-reset?token=${token}`, { password, confirmPassword });
+        return response
+    } catch (error) {
+        console.error("❌ Password reset failed:", error);
+        throw error;
     }
 }

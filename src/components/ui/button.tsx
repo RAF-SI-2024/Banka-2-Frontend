@@ -3,7 +3,6 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
-import {ReactNode} from "react";
 
 const sizeClasses = {
   default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -14,10 +13,10 @@ const sizeClasses = {
 };
 
 
-const constantProps = "font-paragraph font-medium inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm " +
+const constantProps = "cursor-pointer font-paragraph font-medium inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm " +
     "transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none " +
     "[&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 ring-ring dark:ring-ring dark:outline-ring/40 " +
-    "outline-ring/50 focus-visible:ring-4 focus-visible:outline-1 aria-invalid:focus-visible:ring-0 cursor-pointer"
+    "outline-ring/50 focus-visible:ring-4 focus-visible:outline-1 aria-invalid:focus-visible:ring-0"
 
 const buttonVariants = cva(
     constantProps,
@@ -30,6 +29,8 @@ const buttonVariants = cva(
             "border-transparent border bg-background text-foreground shadow-sm hover:border hover:border-border hover:bg-background/70",
         destructive:
           "border-transparent border bg-destructive text-destructive-foreground shadow-xs hover:bg-destructive/70 hover:border hover:border-border",
+        success:
+            "border-transparent border bg-success text-background shadow-xs hover:bg-success/70 hover:border hover:border-border",
         outline:
           "border border-input border-foreground bg-background text-foreground shadow-xs hover:bg-foreground hover:text-background",
         primary:
