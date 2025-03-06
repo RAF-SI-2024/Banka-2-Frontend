@@ -8,13 +8,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "target": "ESNext",
-    "allowJs": true,
-    "noEmit": true,
-    "isolatedModules": false,
-    "types": ["cypress"]
+    }
   }
 }
