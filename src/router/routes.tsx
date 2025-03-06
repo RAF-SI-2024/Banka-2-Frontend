@@ -23,9 +23,6 @@ export const AppRoutes = () => {
     return (
         <Routes>
             <Route element={<AppLayout />}>
-                <Route element={<AdminProtectedRoutes />}>
-                    <Route path="/home" element={<UserListPage />} />
-                </Route>
                 <Route element={<AllProtectedRoutes />}>
                     <Route element={<ClientHomePageGuard />}>
                         <Route path="/home" element={<HomePage />} />
@@ -33,13 +30,12 @@ export const AppRoutes = () => {
                     <Route element={<EmployeeHomePageGuard />}>
                         <Route path="/home" element={<BankAccountListPage />} />
                     </Route>
-                    <Route element={<ClientHomePageGuard />}>
-                        <Route path="/home" element={<HomePage />} />
+                    <Route element={<AdminProtectedRoutes />}>
+                        <Route path="/home" element={<UserListPage />} />
                     </Route>
                     <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
                     <Route path="/showcase" element={<ComponentShowcasePage />} />
-                    <Route path="/bank-account-list" element={<BankAccountListPage />} />
                     <Route path="/create-account" element={<CreateAccountPage />} />
                 </Route>
             </Route>
