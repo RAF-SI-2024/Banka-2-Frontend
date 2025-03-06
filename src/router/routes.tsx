@@ -5,7 +5,6 @@ import UserListPage from "@/pages/UserList.tsx";
 import ResetPassReqPage from "@/pages/ResetPassRequest.tsx";
 import ResetPassPage from "@/pages/ResetPassword.tsx";
 import ResetPasswordNotificationPage from "@/pages/ResetPassNotification";
-import RegisterPage from "@/pages/Register"
 import TestPage from "@/pages/Activate.tsx"
 import AuthorizationLayout from "@/layouts/AuthorizationLayout.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
@@ -26,7 +25,6 @@ export const AppRoutes = () => {
                     <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route path="/home" element={<HomePage />} />
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
                     <Route path="/showcase" element={<ComponentShowcasePage />} />
                     <Route path="/bank-account-list" element={<BankAccountListPage />} />
                     <Route path="/create-account" element={<CreateAccountPage />} />
@@ -35,7 +33,6 @@ export const AppRoutes = () => {
 
             <Route element={<AuthorizationLayout />}>
                 <Route element={<ProtectedLoggedUser />}>
-                    <Route path="/register" element={<RegisterPage />} />
                     <Route path="/activate" element={<TestPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/reset-password" element={<ResetPassPage />} /> {/*TODO: CHANGE ROUTE */}

@@ -5,7 +5,7 @@ import {
   RegisterRequestClient,
   RegisterRequestEmployee,
   RegisterRequest,
-  ActivateRequest, RequestPasswordReset
+  ActivateRequest
 } from "@/types/auth";
 
 
@@ -43,6 +43,7 @@ export const registerClient = async (data: RegisterRequestClient) => {
 
 export const registerEmployee = async (data: RegisterRequestEmployee) => {
     try {
+        data.employed = true;
         const response = await api.post(`${API_BASE}/employees`, data);
         return response;
     } catch (error) {
