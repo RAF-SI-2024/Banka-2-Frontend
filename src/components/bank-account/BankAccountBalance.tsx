@@ -27,7 +27,7 @@ const BankAccountBalanceCard = ({ account, income=0, expensses=0, onSendClick, c
             <div>
                 <div className="justify-center w-full">
                     <div>
-                        <h6 className="font-medium text-4xl font-paragraph mb-1">
+                        <h6 className="font-medium text-4xl font-heading mb-1">
                             {
                                 formatCurrency(account.balance, account.currency.code)
                             }
