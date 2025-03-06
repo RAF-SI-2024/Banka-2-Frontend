@@ -12,7 +12,7 @@ import RegisterFormSecondEmployee from "@/components/register/employee/RegisterF
 
 interface RegisterPageProps {
   variant: Role;
-  onClose: () => void;
+  onClose: (email?: string) => void;
 }
 
 export default function RegisterPage({variant, onClose}: RegisterPageProps) {
@@ -20,7 +20,7 @@ export default function RegisterPage({variant, onClose}: RegisterPageProps) {
   // your existing code...
 
   function onContinue() {
-      onClose();
+      onClose(registerdata?.email);
   }
 
 

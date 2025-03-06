@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import ActivityCodeDropdown from "@/components/createBankAccount/ActivityCodeDropdown.tsx";
 import RadioGroupSelector from "@/components/createBankAccount/RadioGroupSelector.tsx";
 import PlanSelect from "@/components/createBankAccount/PlanSelect.tsx";
@@ -13,7 +13,7 @@ import OwnershipSelect from "@/components/createBankAccount/OwnershipSelect.tsx"
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Card, CardContent, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardDescription } from "@/components/ui/card.tsx";
 import {
     Form,
     FormField,
@@ -21,7 +21,7 @@ import {
     FormLabel,
     FormControl,
     FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/form.tsx";
 
 const businessInfoSchema = z.object({
     businessName: z.string()
@@ -48,10 +48,14 @@ const emailSchema = z.object({ email: z.string().email({ message: "Invalid email
 type EmailInfo = z.infer<typeof emailSchema>;
 type BusinessInfo = z.infer<typeof businessInfoSchema>;
 
-export default function CreateAccountPage() {
+interface CreateBankAccountProps {
+    onRegister: () => void;
+    registeredEmail?: string;  // Add email prop
+}
+
+
+export default function CreateBankAccount({onRegister, registeredEmail}: CreateBankAccountProps) {
     const location = useLocation();
-    const { step2 } = location.state || {};
-    const navigate = useNavigate();
 
     const [selectedOption, setSelectedOption] = useState("new");
     const [email, setEmail] = useState("");
@@ -64,6 +68,16 @@ export default function CreateAccountPage() {
     const [emailError, setEmailError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (registeredEmail) {
+            setSelectedOption("existing");
+            setEmail(registeredEmail);
+            console.log(registeredEmail);
+            setStep(2);
+            setEmailError(null);
+        }
+    }, [registeredEmail]);
+
+    useEffect(() => {
         if (location.state?.step2) {
             setStep(location.state.step2);
         }
@@ -71,7 +85,7 @@ export default function CreateAccountPage() {
 
     const handleContinueClick = () => {
         if (selectedOption === "new") {
-            navigate("/register");
+             onRegister();
         } else if (selectedOption === "existing") {
             try {
                 emailSchema.parse(email);
@@ -144,7 +158,7 @@ export default function CreateAccountPage() {
     };
 
 
-    //  NE BRISATI OVO!! 
+    //  NE BRISATI OVO!!
     //
     // const handleFinishOrContinue = () => {
     //     if (type === "Current Account" && ownership === "Personal") {
@@ -200,9 +214,9 @@ export default function CreateAccountPage() {
     };
 
     return (
-        <div className="max-w-lg mx-auto mt-10">
+        <>
             {step === 1 && (
-                <Card>
+                <Card className="bg-transparent border-0 items-center">
                     <CardContent>
                         <div className="text-center">
                             <span className="icon-[ph--user-circle-plus-fill] inset-0 bg-gradient-to-r from-primary to-secondary mask-size-cover text-8xl mt-5" />
@@ -235,7 +249,7 @@ export default function CreateAccountPage() {
                                         )}
                                     />
                                     <div className="flex justify-center w-full mt-4">
-                                        <Button type="submit" className="w-full" variant="default">
+                                        <Button type="submit" className="w-full" variant="default" onClick={handleContinueClick}>
                                             Continue
                                         </Button>
                                     </div>
@@ -243,7 +257,7 @@ export default function CreateAccountPage() {
                             </Form>
                         )}
                         {selectedOption === "new" && (
-                            <Button variant="outline" className="w-full mt-6" onClick={handleContinueClick}>
+                            <Button type="button" variant="default" className="w-full mt-6" onClick={handleContinueClick}>
                                 Continue
                             </Button>
                         )}
@@ -252,7 +266,7 @@ export default function CreateAccountPage() {
             )}
 
             {step === 2 && (
-                <Card className="mt-4">
+                <Card className="bg-transparent border-0 items-center">
                     <CardContent>
                         <Form {...accountForm}>
                             <form
@@ -378,7 +392,7 @@ export default function CreateAccountPage() {
 
 
             {step === 3 && (
-                <Card className="mt-6">
+                <Card className="bg-transparent border-0 items-center">
                     <CardContent>
                         <h2 className="text-2xl font-semibold text-center mt-4 mb-8">Business Information</h2>
                         <Form {...businessForm}>
@@ -437,7 +451,6 @@ export default function CreateAccountPage() {
                                                 <ActivityCodeDropdown
                                                     value={field.value}
                                                     onChange={field.onChange}
-                                                    className="w-full"
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -483,6 +496,6 @@ export default function CreateAccountPage() {
                     </CardContent>
                 </Card>
             )}
-        </div>
+        </>
     );
 }
