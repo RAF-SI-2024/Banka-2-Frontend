@@ -1,39 +1,31 @@
-export interface Account {
-  id: string
-  client: {
-    firstName: string
-    lastName: string
-    email: string
-  }
-  accountNumber: string
-  balance: number
-  availableBalance: number
-  employee: {
-    firstName: string
-    lastName: string
-    email: string
-  }
-  currency: {
-    code: string
-    symbol: string
-  }
-  type: {
-    name: string
-    description: string
-  }
-  dailyLimit: number
-  monthlyLimit: number
-  status: boolean
-  creationDate: string
-  expirationDate: string
-  createdAt: string
-  modifiedAt: string
+import {Client, Employee} from "@/types/user.ts";
+import {Currency} from "@/types/currency.ts";
+import {BankAccountType} from "@/types/bankAccountType.ts";
+
+export interface BankAccount {
+    id: string;
+    name: string,
+    client: Client;
+    number: number;
+    balance: number;
+    employee: Employee;
+    currency: Currency;
+    accountType: BankAccountType;
+    dailyLimit: number;
+    monthlyLimit: number;
+    status: boolean;
+    creationDate: Date;
+    expirationDate: Date;
+    createdAt: Date;
+    modifiedAt: Date;
 }
 
+
+
 export interface AccountResponse {
-  items: Account[]
-  pageNumber: number
-  pageSize: number
-  totalElements: number
-  totalPages: number
+    items: BankAccount[]
+    pageNumber: number
+    pageSize: number
+    totalElements: number
+    totalPages: number
 }
