@@ -12,6 +12,7 @@ import AppLayout from "@/layouts/AppLayout.tsx";
 import LoginPage from "@/pages/Login.tsx";
 import { AdminProtectedRoutes, AllProtectedRoutes, ProtectedLoggedUser } from "@/router/utils/ProtectedRoutes.tsx";
 import BankAccountPage from "@/pages/BankAccount.tsx";
+import CreateAccountPage from "@/pages/CreateAccountPage.tsx";
 
 export const AppRoutes = () => {
     return (
@@ -26,7 +27,7 @@ export const AppRoutes = () => {
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/showcase" element={<ComponentShowcasePage />} />
-                    {/*<Route path="/create-account" element={<ClientForm />} />*/}
+                    <Route path="/create-account" element={<CreateAccountPage />} />
                 </Route>
             </Route>
 
