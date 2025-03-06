@@ -1,4 +1,7 @@
 const apiBaseUrl = `${Cypress.env("API_URL")}${Cypress.env("API_BASE_PATH")}`;
+import api from "../../src/api/axios";
+
+
 
 // Existing UI login command
 Cypress.Commands.add("login", (email: string, password: string) => {

@@ -6,6 +6,7 @@ export default {
     setupNodeEvents(on, config) {
       return config;
     },
+    testIsolation: false,
     baseUrl: "http://localhost:5173", // Adjust for your Vite setup
     viewportWidth: 1280,
     viewportHeight: 720,

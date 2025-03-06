@@ -1,5 +1,4 @@
-const apiBaseUrl = `${Cypress.env("API_URL")}${Cypress.env("API_BASE_PATH")}`;
-
+import {apiBaseUrl} from "./register.cy";
 
 describe("Login Page", () => {
     beforeEach(() => {
