@@ -7,6 +7,9 @@ import {Currency} from "@/types/currency.ts"
 import BankAccountBalanceCard from "@/components/bank-account/BankAccountBalance.tsx";
 import BankAccountDetailsCard from "@/components/bank-account/BankAccountDetails.tsx";
 import BankAccountTransactions from "@/components/bank-account/BankAccountTransactions.tsx";
+import { motion, AnimatePresence } from "framer-motion";
+import BankAccountCardsCard from "@/components/bank-account/BankAccountCards.tsx";
+import React from "react";
 
 const client: Client = {
     firstName: "Bosko",
@@ -58,13 +61,14 @@ const account: BankAccount = {
     id: "1",
     name: "Racun 1",
     client: client,
-    number: 11111111,
+    accountNumber: 1111222233334444,
     balance: 99900000.25,
     employee: employee,
     currency: currency,
     accountType: accountType,
     dailyLimit: 1000,
     monthlyLimit: 10000,
+    availableBalance: 1000,
     status: true,
     creationDate: new Date(),
     expirationDate: new Date(),
@@ -73,19 +77,46 @@ const account: BankAccount = {
 }
 export default function BankAccountPage() {
     const { accountId } = useParams<{ accountId: string }>();
+    const [showDetails, setShowDetails] = React.useState(false)
 
     return (
-
-
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
             <h1 className="font-display font-bold text-5xl">{account.name} overview</h1>
             <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-                <BankAccountBalanceCard account={account}/>
-                <BankAccountDetailsCard account={account} onAccountNameChange={newValue => console.log(newValue)} />
+                <AnimatePresence mode="wait">
+                    {showDetails ? (
+                        <motion.div
+                            key="details"
+                            layout
+                            initial={{ opacity: 0, x: 100 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -100 }}
+                        >
+                            <BankAccountDetailsCard
+                                account={account}
+                                onBackClick={() => setShowDetails(false)}
+                                onAccountNameChange={newValue => console.log(newValue)}
+                            />
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="balance"
+                            layout
+                            initial={{ opacity: 0, x: 100 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -100 }}
+                        >
+                            <BankAccountBalanceCard
+                                account={account}
+                                onDetailsClick={() => setShowDetails(true)}
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <BankAccountCardsCard account={account} />
                 <BankAccountTransactions className="col-span-2" account={account}/>
             </div>
-
         </main>
-
     )
 }

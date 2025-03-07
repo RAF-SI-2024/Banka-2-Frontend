@@ -12,10 +12,11 @@ interface BalanceCardProps extends React.ComponentProps<"div">{
     income?: number,
     expensses?: number,
     onSendClick?: () => void,
+    onDetailsClick?: () => void,
 }
 
 
-const BankAccountBalanceCard = ({ account, income=0, expensses=0, onSendClick, className, ...props }: BalanceCardProps) => {
+const BankAccountBalanceCard = ({ account, income=0, expensses=0, onSendClick, onDetailsClick, className, ...props }: BalanceCardProps) => {
     return (
         <Card
             className={cn(
@@ -60,6 +61,7 @@ const BankAccountBalanceCard = ({ account, income=0, expensses=0, onSendClick, c
 
                     <div className="flex items-center justify-center lg:justify-start gap-4">
                         <Button variant="primary" size="lg" onClick={onSendClick}>Send</Button>
+                        <Button variant="negative" size="lg" onClick={onDetailsClick}>Details</Button>
                     </div>
                 </div>
             </div>

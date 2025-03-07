@@ -99,7 +99,7 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                                         {item.recipient}
                                 </TableCell>
                                 <TableCell className="px-6 py-5">
-                                    {format(new Date(item.createdAt), "dd MMM, yyyy")}
+                                    {format(new Date(item.createdAt), "dd MM, yyyy")}
                                 </TableCell>
                                 <TableCell className="px-6 py-5">
                                     {format(new Date(item.createdAt), "hh:mm a")}
