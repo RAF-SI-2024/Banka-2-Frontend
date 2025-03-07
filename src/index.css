@@ -62,8 +62,10 @@
     --popover: hsl(233, 59%, 94%);
     --popover-foreground: hsl(233, 100%, 3%);
 
-    --destructive: hsl(351, 100%, 35%);
-    --destructive-foreground: hsl(233, 100%, 3%);
+    --destructive: hsl(351, 100%, 65%);
+    --destructive-foreground: hsl(233, 100%, 97%);
+
+    --success: hsl(121, 90%, 19%);
 
 }
 
@@ -112,6 +114,8 @@
 
     --destructive: hsl(351, 100%, 35%);
     --destructive-foreground: hsl(233, 100%, 97%);
+
+    --success: hsl(121, 90%, 81%);
 }
 
 @theme inline {
@@ -187,6 +191,8 @@
 
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
+
+    --color-success: var(--success);
 
 }
 

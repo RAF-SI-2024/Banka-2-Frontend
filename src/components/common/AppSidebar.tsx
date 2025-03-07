@@ -1,9 +1,4 @@
 import * as React from "react"
-
-
-import { NavMain } from "@/components/common/nav/NavMain.tsx"
-
-import { NavUser } from "@/components/common/nav/NavUser.tsx"
 import {
   Sidebar,
   SidebarContent,
@@ -14,13 +9,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx"
 import Logo from "@/assets/Logo.tsx";
+import {NavUser} from "@/components/common/sidebar/nav/user/NavUser.tsx";
+import {NavMain} from "@/components/common/sidebar/nav/main/NavMain.tsx";
 
 const data = {
-  user: {
-    name: "user",
-    email: "user@gmail.com",
-    avatar: "",
-  },
   navMain: [
     {
       title: "Home",
@@ -57,7 +49,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/*<NavSecondary items={data.navSecondary} className="mt-auto" />*/}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser/>
       </SidebarFooter>
     </Sidebar>
   )

@@ -22,6 +22,7 @@ export interface RegisterRequestEmployee {
     phoneNumber: string;
     address: string;
     role: Role;
+    employed?: boolean;
 }
 
 export interface RegisterRequest {
@@ -40,4 +41,7 @@ export interface RegisterRequestClient {
     address: string;
     role: Role;
 
+}
+export interface RequestPasswordReset {
+    email: string
 }

@@ -14,7 +14,7 @@ import {
     Form, FormControl, FormField, FormItem, FormLabel, FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import InputHidable from "@/components/common/InputHidable";
+import InputHidable from "@/components/common/input/InputHidable.tsx";
 import { Card, CardContent } from "@/components/ui/card";
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import { Label } from "@/components/ui/label"
@@ -154,7 +154,7 @@ const formSchema = z.object({
     firstname: z.string().min(1, "First name is required"),
     lastname: z.string().min(1, "Last name is required"),
     email: z.string().email("Invalid email address").min(1, "Email is required"),
-    password: z.string().min(1, "Password is required"),
+    password: z.string().min(1, "Password is required").regex(/(?=(.*\d){2})/, "Password must contain at least two numbers"),
     date: z.coerce.date().refine((date) => date <= new Date(), {
         message: "Date must be today or in the past",
       }),
