@@ -23,6 +23,8 @@ import {
     FormMessage,
 } from "@/components/ui/form.tsx";
 import { createBankAccount } from "@/api/bankAccount";
+import {getAllCurrencies} from "@/api/currency.ts";
+import {Currency} from "@/types/currency.ts";
 
 const businessInfoSchema = z.object({
     businessName: z.string()
@@ -64,7 +66,8 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
     const [ownership, setOwnership] = useState("Personal");
     const [creditCard, setCreditCard] = useState("yes");
     const [type, setType] = useState("Current Account");
-    const [selectedCurrency, setSelectedCurrency] = useState("EUR");
+    // const [selectedCurrency, setSelectedCurrency] = useState("EUR");
+    const [currencies, setCurrencies] = useState<Currency[]>([]);
     const [plan, setPlan] = useState(ownership === "Business" ? "DOO" : "Standard");
     const [emailError, setEmailError] = useState<string | null>(null);
 
@@ -84,6 +87,38 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
         }
     }, [location.state]);
 
+    useEffect(() => {
+        if (ownership === "Business") {
+            setPlan("DOO");
+        } else {
+            setPlan("Standard");
+        }
+    }, [ownership]);
+
+    // za fetch valuta
+    useEffect(() => {
+        const fetchCurrencies = async () => {
+            if (step === 2) {
+                const cachedCurrencies = localStorage.getItem("currencies");
+                if (cachedCurrencies) {
+                    setCurrencies(JSON.parse(cachedCurrencies));
+                } else {
+                    try {
+                        const response = await getAllCurrencies();
+                        setCurrencies(response.items);
+                        localStorage.setItem("currencies", JSON.stringify(response.items));
+                        console.log(response);
+                    } catch (error) {
+                        console.error("Error fetching currencies:", error);
+                    }
+                }
+            }
+        };
+
+        fetchCurrencies();
+    }, [step]);
+
+
     const handleContinueClick = () => {
         if (selectedOption === "new") {
              onRegister();
@@ -102,19 +137,24 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
         }
     };
 
+// This effect needs accountForm in its dependency array
+    useEffect(() => {
+        if (currencies.length > 0) {
+            // Find EUR in your currencies array to confirm it exists
+            const defaultCurrency = currencies.find(curr => curr.code === "EUR");
+            if (defaultCurrency) {
+                accountForm.setValue("currency", defaultCurrency.code);
+            }
+        }
+    }, [currencies]); // Missing accountForm here
+
     const handleBack = () => {
         if (step > 1) {
             setStep(step - 1);
         }
     };
 
-    useEffect(() => {
-        if (ownership === "Business") {
-            setPlan("DOO");
-        } else {
-            setPlan("Standard");
-        }
-    }, [ownership]);
+
 
     // useForm za Business Information (korak 3)
     const businessForm = useForm<BusinessInfo>({
@@ -139,14 +179,16 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
     });
 
     // Kreiramo form instance za step 2, npr. sa početnim vrednostima
+    // TODO - dodati default vrednosti za currency
     const accountForm = useForm({
         defaultValues: {
             accountType: type,
             ownership: ownership,
             plan: plan,
-            currency: selectedCurrency,
+            currency: "EUR"
         },
     });
+
 
 
     const onBusinessSubmit = (data: BusinessInfo) => {
@@ -360,9 +402,9 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                                     <FormLabel>Currency</FormLabel>
                                                     <FormControl>
                                                         <CurrencySelect
-                                                            selectedCurrency={selectedCurrency}
-                                                            setSelectedCurrency={setSelectedCurrency}
-                                                            {...field}
+                                                            value={field.value}
+                                                            onChange={field.onChange}
+                                                            currencies={currencies}
                                                         />
                                                     </FormControl>
                                                 </FormItem>

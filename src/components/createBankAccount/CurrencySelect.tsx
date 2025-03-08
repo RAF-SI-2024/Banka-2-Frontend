@@ -1,28 +1,33 @@
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select.tsx";
 import { Label } from "@/components/ui/label.tsx";
+import {Currency} from "@/types/currency.ts";
 
 // Definiši props tip
 interface CurrencySelectProps {
-    selectedCurrency: string;
-    setSelectedCurrency: (value: string) => void;
+    value: string;
+    onChange: (value: string) => void;
+    currencies: Currency[];
 }
 
 
-const CurrencySelect = ({ selectedCurrency, setSelectedCurrency }: CurrencySelectProps) => {
+const CurrencySelect = ({ value, onChange, currencies }: CurrencySelectProps) => {
     return (
         <div className="flex flex-col space-y-1 w-full">
-            <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
+            <Select value={value} onValueChange={onChange}>
                 <SelectTrigger className="w-full">
                     <SelectValue placeholder="Izaberi valutu" />
                 </SelectTrigger>
                 <SelectContent side="bottom">
-                    <SelectItem value="EUR">EUR</SelectItem>
-                    <SelectItem value="CHF">CHF</SelectItem>
-                    <SelectItem value="USD">USD</SelectItem>
-                    <SelectItem value="GBP">GBP</SelectItem>
-                    <SelectItem value="JPY">JPY</SelectItem>
-                    <SelectItem value="CAD">CAD</SelectItem>
-                    <SelectItem value="AUD">AUD</SelectItem>
+                    {currencies.map((currency: Currency) => {
+                        //Ako su code i symbol drugaciji prikazi oba (npr. USD - $)
+                        // ovo je zato sto neke valute imaju isti code i symbol
+                        const currencyLabel = currency.code === currency.symbol ? currency.code : `${currency.code} - ${currency.symbol}`;
+                        return (
+                            <SelectItem key={currency.id} value={currency.code}>
+                                {currencyLabel}
+                            </SelectItem>
+                        );
+                    })}
                 </SelectContent>
             </Select>
         </div>
