@@ -4,6 +4,7 @@ import {CardType} from "@/types/cardType.ts";
 export interface Card{
     id: string;
     type: CardType;
+    number: string,
     name: string;
     expiresAt: Date;
     account: BankAccount;
