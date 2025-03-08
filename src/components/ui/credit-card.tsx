@@ -25,6 +25,8 @@ interface CreditCardProps extends React.HTMLAttributes<HTMLDivElement> {
   expiryDate: string
 }
 
+
+
 const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
   ({ className, title, cardNumber, cardHolder, expiryDate, ...props }, ref) => {
     const [isVisible, setIsVisible] = React.useState(false)
@@ -35,24 +37,40 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
       return `${firstFour} **** **** ${lastFour}`;
     }
 
-    const shuffledColors = React.useMemo(() => {
-      const colors = ["primary", "secondary", "destructive", "background"];
+    const gradientVariants = React.useMemo(() => [
+      'bg-gradient-to-tr from-primary via-secondary to-background',
+      'bg-gradient-to-tr from-primary via-background to-secondary',
+      'bg-gradient-to-tr from-primary via-destructive to-background',
+      'bg-gradient-to-tr from-primary via-destructive to-secondary',
+      'bg-gradient-to-tr from-primary via-secondary to-destructive',
+      'bg-gradient-to-tr from-primary via-background to-destructive',
 
-      // Shuffle the colors
-      const shuffled = colors.sort(() => Math.random() - 0.5);
+      'bg-gradient-to-tr from-secondary via-primary to-background',
+      'bg-gradient-to-tr from-secondary via-background to-primary',
+      'bg-gradient-to-tr from-secondary via-destructive to-background',
+      'bg-gradient-to-tr from-secondary via-destructive to-primary',
+      'bg-gradient-to-tr from-secondary via-primary to-destructive',
+      'bg-gradient-to-tr from-secondary via-background to-destructive',
 
-      // Ensure at least 2 different colors
-      if (new Set(shuffled.slice(0, 2)).size < 2) {
-        // If the first two colors are the same, swap the second color
-        const uniqueColor = colors.find(color => color !== shuffled[0]);
-        if (uniqueColor) {
-          shuffled[1] = uniqueColor;
-        }
-      }
-      console.log(shuffled)
+      'bg-gradient-to-tr from-background via-primary to-secondary',
+      'bg-gradient-to-tr from-background via-secondary to-primary',
+      'bg-gradient-to-tr from-background via-destructive to-secondary',
+      'bg-gradient-to-tr from-background via-destructive to-primary',
+      'bg-gradient-to-tr from-background via-primary to-destructive',
+      'bg-gradient-to-tr from-background via-secondary to-destructive',
 
-      return shuffled;
-    }, []);
+      'bg-gradient-to-tr from-destructive via-primary to-secondary',
+      'bg-gradient-to-tr from-destructive via-secondary to-primary',
+      'bg-gradient-to-tr from-destructive via-background to-secondary',
+      'bg-gradient-to-tr from-destructive via-background to-primary',
+      'bg-gradient-to-tr from-destructive via-primary to-background',
+      'bg-gradient-to-tr from-destructive via-secondary to-background',
+
+    ], [])
+
+    const randomGradient = React.useMemo(() =>
+            gradientVariants[Math.floor(Math.random() * gradientVariants.length)]
+        , [])
 
 
 
@@ -71,7 +89,7 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
         <motion.div
           className={cn(
             "relative h-48 w-80 overflow-hidden rounded-xl p-6 shadow-xl",
-              `bg-gradient-to-tr from-${shuffledColors[0]} via-${shuffledColors[1]} to-${shuffledColors[2]} text-foreground`
+              randomGradient
           )}
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}

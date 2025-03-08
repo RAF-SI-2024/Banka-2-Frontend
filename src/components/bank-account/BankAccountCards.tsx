@@ -92,7 +92,7 @@ const BankAccountCardsCard = ({ account, className, ...props }: BalanceCardProps
 
                             </Tooltip>
                         ))}
-                        autoplayDelay={3000}
+                        autoplayDelay={5000}
                         slideShadows={false}
                     />
 

@@ -37,7 +37,7 @@ export const CardSwipe: React.FC<CarouselProps> = ({
                 }}
                 effect={"cards"}
                 grabCursor={true}
-                // loop={true}
+                loop={true}
                 slidesPerView={"auto"}
                 rewind={true}
                 cardsEffect={{
@@ -48,10 +48,10 @@ export const CardSwipe: React.FC<CarouselProps> = ({
                 modules={[EffectCards, Autoplay, Pagination, Navigation]}
               >
                 {elements.map((element, index) => (
-                  <SwiperSlide key={index} className="!w-fit">
-                    <div className="size-full rounded-2xl bg-card w-fit flex justify-center">
+                  <SwiperSlide key={index} className="!size-fit rounded-2xl  flex justify-center">
+
                         {element}
-                    </div>
+
                   </SwiperSlide>
                 ))}
 
