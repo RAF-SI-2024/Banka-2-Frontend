@@ -64,7 +64,8 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
     const [ownership, setOwnership] = useState("Personal");
     const [creditCard, setCreditCard] = useState("yes");
     const [type, setType] = useState("Current Account");
-    const [selectedCurrency, setSelectedCurrency] = useState("EUR");
+    // const [selectedCurrency, setSelectedCurrency] = useState("EUR");
+    const [currencies, setCurrencies] = useState<Currency[]>([]);
     const [plan, setPlan] = useState(ownership === "Business" ? "DOO" : "Standard");
     const [emailError, setEmailError] = useState<string | null>(null);
 
@@ -83,6 +84,38 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
             setStep(location.state.step2);
         }
     }, [location.state]);
+
+    useEffect(() => {
+        if (ownership === "Business") {
+            setPlan("DOO");
+        } else {
+            setPlan("Standard");
+        }
+    }, [ownership]);
+
+    // za fetch valuta
+    useEffect(() => {
+        const fetchCurrencies = async () => {
+            if (step === 2) {
+                const cachedCurrencies = localStorage.getItem("currencies");
+                if (cachedCurrencies) {
+                    setCurrencies(JSON.parse(cachedCurrencies));
+                } else {
+                    try {
+                        const response = await getAllCurrencies();
+                        setCurrencies(response.items);
+                        localStorage.setItem("currencies", JSON.stringify(response.items));
+                        console.log(response);
+                    } catch (error) {
+                        console.error("Error fetching currencies:", error);
+                    }
+                }
+            }
+        };
+
+        fetchCurrencies();
+    }, [step]);
+
 
     const handleContinueClick = () => {
         if (selectedOption === "new") {
@@ -108,13 +141,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
         }
     };
 
-    useEffect(() => {
-        if (ownership === "Business") {
-            setPlan("DOO");
-        } else {
-            setPlan("Standard");
-        }
-    }, [ownership]);
+
 
     // useForm za Business Information (korak 3)
     const businessForm = useForm<BusinessInfo>({
@@ -138,15 +165,16 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
         },
     });
 
-    // Kreiramo form instance za step 2, npr. sa početnim vrednostima
+
     const accountForm = useForm({
         defaultValues: {
             accountType: type,
             ownership: ownership,
             plan: plan,
-            currency: selectedCurrency,
+            currency: "EUR"
         },
     });
+
 
 
     const onBusinessSubmit = (data: BusinessInfo) => {
@@ -186,15 +214,17 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
             if (type === "Current Account") {
 
-                // TODO: Implement personal current account creation route
-                // createBankAccount
-                // const response = createBankAccount({
-                //     accountType: type,
-                //     ownership: ownership,
-                //     plan: plan,
-                //     currency: selectedCurrency,
-                //     creditCard: creditCard === "yes",
-                // }, selectedCurrency.toUpperCase() || "RSD");
+                    // TODO: Implement personal current account creation route
+                    // createBankAccount
+                    // const response = createBankAccount({
+                    //     accountType: type,
+                    //     ownership: ownership,
+                    //     plan: plan,
+                    //     currency: selectedCurrency,
+                    //     creditCard: creditCard === "yes",
+                    // }, selectedCurrency.toUpperCase() || "RSD");
+
+
 
             } else {
                 // TODO: Implement personal exchange account creation route
@@ -360,9 +390,9 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                                     <FormLabel>Currency</FormLabel>
                                                     <FormControl>
                                                         <CurrencySelect
-                                                            selectedCurrency={selectedCurrency}
-                                                            setSelectedCurrency={setSelectedCurrency}
-                                                            {...field}
+                                                            value={`${currencies[5].code} - ${currencies[5].symbol}`}
+                                                            onChange={field.onChange}
+                                                            currencies={currencies}
                                                         />
                                                     </FormControl>
                                                 </FormItem>
