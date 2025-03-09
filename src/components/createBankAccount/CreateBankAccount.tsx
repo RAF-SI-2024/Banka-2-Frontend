@@ -137,16 +137,6 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
         }
     };
 
-// This effect needs accountForm in its dependency array
-    useEffect(() => {
-        if (currencies.length > 0) {
-            // Find EUR in your currencies array to confirm it exists
-            const defaultCurrency = currencies.find(curr => curr.code === "EUR");
-            if (defaultCurrency) {
-                accountForm.setValue("currency", defaultCurrency.code);
-            }
-        }
-    }, [currencies]); // Missing accountForm here
 
     const handleBack = () => {
         if (step > 1) {
@@ -178,8 +168,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
         },
     });
 
-    // Kreiramo form instance za step 2, npr. sa početnim vrednostima
-    // TODO - dodati default vrednosti za currency
+
     const accountForm = useForm({
         defaultValues: {
             accountType: type,
@@ -227,7 +216,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
         if (ownership === "Personal") {
 
             if (type === "Current Account") {
-
+            /*
                 // TODO: Implement personal current account creation route
                 // createBankAccount
                 // const response = createBankAccount({
@@ -237,6 +226,8 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                 //     currency: selectedCurrency,
                 //     creditCard: creditCard === "yes",
                 // }, selectedCurrency.toUpperCase() || "RSD");
+
+             */
 
             } else {
                 // TODO: Implement personal exchange account creation route
@@ -402,7 +393,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                                     <FormLabel>Currency</FormLabel>
                                                     <FormControl>
                                                         <CurrencySelect
-                                                            value={field.value}
+                                                            value={`${currencies[5].code} - ${currencies[5].symbol}`}
                                                             onChange={field.onChange}
                                                             currencies={currencies}
                                                         />

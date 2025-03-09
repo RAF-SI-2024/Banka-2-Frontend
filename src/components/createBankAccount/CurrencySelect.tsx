@@ -1,6 +1,7 @@
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import {Currency} from "@/types/currency.ts";
+import {useState} from "react";
 
 // Definiši props tip
 interface CurrencySelectProps {
@@ -13,17 +14,17 @@ interface CurrencySelectProps {
 const CurrencySelect = ({ value, onChange, currencies }: CurrencySelectProps) => {
     return (
         <div className="flex flex-col space-y-1 w-full">
-            <Select value={value} onValueChange={onChange}>
+            <Select value={value} onValueChange={onChange} >
                 <SelectTrigger className="w-full">
                     <SelectValue placeholder="Izaberi valutu" />
                 </SelectTrigger>
-                <SelectContent side="bottom">
+                <SelectContent side="bottom" >
                     {currencies.map((currency: Currency) => {
                         //Ako su code i symbol drugaciji prikazi oba (npr. USD - $)
                         // ovo je zato sto neke valute imaju isti code i symbol
                         const currencyLabel = currency.code === currency.symbol ? currency.code : `${currency.code} - ${currency.symbol}`;
                         return (
-                            <SelectItem key={currency.id} value={currency.code}>
+                            <SelectItem key={currency.id} value={`${currency.code} - ${currency.symbol}`} >
                                 {currencyLabel}
                             </SelectItem>
                         );
