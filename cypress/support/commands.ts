@@ -21,8 +21,8 @@ Cypress.Commands.add("loginUserApi", (data: { email: string; password: string })
     });
 });
 
-Cypress.Commands.add("getAllUsersApi", (page: number, size: number, filters: { email?: string; firstName?: string; lastName?: string; role?: string } = {}) => {
-    const authToken = Cypress.env('authToken');
+Cypress.Commands.add("getAllUsersApi", (page: number, size: number) => {
+    const authToken = window.sessionStorage.getItem("token");
 
     return cy.request({
         method: 'GET',
@@ -31,10 +31,6 @@ Cypress.Commands.add("getAllUsersApi", (page: number, size: number, filters: { e
             'Authorization': `Bearer ${authToken}`
         },
         qs: {
-            email: filters.email,
-            firstName: filters.firstName,
-            lastName: filters.lastName,
-            role: filters.role ? parseInt(filters.role, 10) : undefined,
             page,
             size
         },

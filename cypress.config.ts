@@ -1,7 +1,7 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 dotenv.config();
 
-export default {
+const config = {
   e2e: {
     setupNodeEvents(on, config) {
       return config;
@@ -25,3 +25,5 @@ export default {
     experimentalStudio: true
   },
 };
+
+export default config;
