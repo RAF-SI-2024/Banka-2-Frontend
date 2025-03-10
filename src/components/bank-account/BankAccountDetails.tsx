@@ -9,6 +9,7 @@ import {z} from "zod";
 
 interface DetailsProps extends React.ComponentProps<"div"> {
     account: BankAccount;
+    onBackClick: () => void;
     onAccountNameChange: (newName: string) => void;
 }
 
@@ -16,6 +17,7 @@ const accountNameSchema = z.string().min(3, "Account name must be at least 3 cha
 
 const BankAccountDetailsCard = ({
                                     account,
+                                    onBackClick,
                                     onAccountNameChange,
                                     className,
                                     ...props
@@ -58,11 +60,16 @@ const BankAccountDetailsCard = ({
             )}
             {...props}
         >
-            <CardHeader className="mb-2">
+
+            <CardHeader className="mb-2 flex flex-row -ml-4 items-center">
+                <Button size="icon" variant="ghost" onClick={onBackClick}>
+                    <span className="icon-[ph--caret-left] size-6" />
+                </Button>
                 <CardTitle className="font-heading text-2xl">Account details</CardTitle>
             </CardHeader>
 
             <CardContent className="relative space-y-2 font-paragraph">
+
 
                 <div className="flex flex-row items-baseline gap-2">
                     <Label htmlFor="label" className="text-xl font-light text-muted-foreground">

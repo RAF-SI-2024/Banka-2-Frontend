@@ -1,7 +1,5 @@
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select.tsx";
-import { Label } from "@/components/ui/label.tsx";
 import {Currency} from "@/types/currency.ts";
-import {useState} from "react";
 
 // Definiši props tip
 interface CurrencySelectProps {
