@@ -43,12 +43,12 @@ export const CardSwipe: React.FC<CarouselProps> = ({
                 cardsEffect={{
                   slideShadows: slideShadows,
                 }}
-                className="!max-w-90 !w-90 "
+                className="!max-size-full "
 
                 modules={[EffectCards, Autoplay, Pagination, Navigation]}
               >
                 {elements.map((element, index) => (
-                  <SwiperSlide key={index} className="!size-fit rounded-2xl  flex justify-center">
+                  <SwiperSlide key={index} className="!size-fit !max-size-full rounded-2xl  flex justify-center">
 
                         {element}
 

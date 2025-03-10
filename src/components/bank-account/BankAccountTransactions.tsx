@@ -18,7 +18,7 @@ const BankAccountTransactionsCard = ({ account, className, ...props }:BankAccoun
             </CardHeader>
             <CardContent>
             <Tabs defaultValue="transactions">
-                <TabsList className="grid w-full grid-cols-2 font-paragraph bg-gray-700">
+                <TabsList className="grid w-full md:grid-cols-2 font-paragraph bg-gray-700 sm:grid-cols-1 sm:h-full">
                     <TabsTrigger value="transactions">
                         Transactions
                        </TabsTrigger>

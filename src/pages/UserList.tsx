@@ -17,8 +17,9 @@ export default function UserListPage() {
                     variant="success"
                     onClick={() => setDialogOpen(true)}
                 >
-                    Register a new employee
                     <span className="icon-[ph--user-plus] text-lg"></span>
+                    Register a new employee
+
                 </Button>
             </div>
 
