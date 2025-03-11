@@ -14,6 +14,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardDescription } from "@/components/ui/card.tsx";
+import { Currency } from "@/types/currency.ts";
+import { getAllCurrencies } from "@/api/currency.ts";
+import { getAllUsers } from "@/api/user.ts";
 import {
     Form,
     FormField,
@@ -117,19 +120,36 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
     }, [step]);
 
 
-    const handleContinueClick = () => {
-        if (selectedOption === "new") {
-             onRegister();
-        } else if (selectedOption === "existing") {
+    const handleContinueClick = async (email: string) => {
+        if (selectedOption === "existing") {
             try {
-                emailSchema.parse(email);
-                setEmailError(null);
-                setStep(step + 1);
+                // Validate the email
+                                // emailSchema.parse({ email }); // validation
+                // Make API request to check if the user exists
+                const response = await getAllUsers(1, 10, {email});
+                
+                console.log("HANDLEONCONTINUE" + JSON.stringify(response));  
+                console.log("HANDLEONCONTINUE2" + JSON.stringify(response.items));
+                if (response.items.length > 0) {
+                    setEmailError(null);
+                    setStep(step + 1);
+                } else {
+                    emailForm.setError("email", {
+                        type: "manual",
+                        message: "User with that email does not exist.",
+                    });
+                }
             } catch (error) {
                 if (error instanceof z.ZodError) {
-                    setEmailError(error.errors[0].message);
+                    emailForm.setError("email", {
+                        type: "manual",
+                        message: error.errors[0].message,
+                    });
                 } else {
-                    setEmailError("An unexpected error occurred.");
+                    emailForm.setError("email", {
+                        type: "manual",
+                        message: "An unexpected error occurred.",
+                    });
                 }
             }
         }
@@ -272,7 +292,8 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                 <form
                                     onSubmit={emailForm.handleSubmit((data) => {
                                         console.log("Email Information:", data);
-                                        setStep(step + 1);
+                                        // setStep(step + 1);
+                                        handleContinueClick(data.email);
                                     })}
                                     className="space-y-4 mt-4"
                                 >
@@ -290,7 +311,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                         )}
                                     />
                                     <div className="flex justify-center w-full mt-4">
-                                        <Button type="submit" className="w-full" variant="default" onClick={handleContinueClick}>
+                                        <Button type="submit" className="w-full" variant="default">
                                             Continue
                                         </Button>
                                     </div>
@@ -298,7 +319,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                             </Form>
                         )}
                         {selectedOption === "new" && (
-                            <Button type="button" variant="default" className="w-full mt-6" onClick={handleContinueClick}>
+                            <Button type="button" variant="default" className="w-full mt-6" onClick={onRegister}>
                                 Continue
                             </Button>
                         )}
