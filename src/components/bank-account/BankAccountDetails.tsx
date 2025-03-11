@@ -55,7 +55,7 @@ const BankAccountDetailsCard = ({
     return (
         <Card
             className={cn(
-                "border-0 content-center",
+                "h-full border-0 content-center",
                 className
             )}
             {...props}
