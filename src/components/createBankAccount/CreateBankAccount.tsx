@@ -23,8 +23,6 @@ import {
     FormMessage,
 } from "@/components/ui/form.tsx";
 import { createBankAccount } from "@/api/bankAccount";
-import {getAllCurrencies} from "@/api/currency.ts";
-import {Currency} from "@/types/currency.ts";
 
 const businessInfoSchema = z.object({
     businessName: z.string()
@@ -137,7 +135,6 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
         }
     };
 
-
     const handleBack = () => {
         if (step > 1) {
             setStep(step - 1);
@@ -216,18 +213,18 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
         if (ownership === "Personal") {
 
             if (type === "Current Account") {
-            /*
-                // TODO: Implement personal current account creation route
-                // createBankAccount
-                // const response = createBankAccount({
-                //     accountType: type,
-                //     ownership: ownership,
-                //     plan: plan,
-                //     currency: selectedCurrency,
-                //     creditCard: creditCard === "yes",
-                // }, selectedCurrency.toUpperCase() || "RSD");
 
-             */
+                    // TODO: Implement personal current account creation route
+                    // createBankAccount
+                    // const response = createBankAccount({
+                    //     accountType: type,
+                    //     ownership: ownership,
+                    //     plan: plan,
+                    //     currency: selectedCurrency,
+                    //     creditCard: creditCard === "yes",
+                    // }, selectedCurrency.toUpperCase() || "RSD");
+
+
 
             } else {
                 // TODO: Implement personal exchange account creation route
