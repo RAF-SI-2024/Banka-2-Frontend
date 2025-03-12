@@ -88,7 +88,7 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
 
         <motion.div
           className={cn(
-            "relative h-48 w-80 overflow-hidden rounded-xl p-6 shadow-xl",
+            "relative overflow-hidden rounded-xl p-6 px-10 shadow-xl",
               randomGradient
           )}
           initial={{ opacity: 0, y: 50 }}

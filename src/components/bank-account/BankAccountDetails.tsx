@@ -60,7 +60,7 @@ const BankAccountDetailsCard = ({
     return (
         <Card
             className={cn(
-                "border-0 content-center",
+                "h-full border-0 content-center",
                 className
             )}
             {...props}
@@ -164,8 +164,11 @@ const BankAccountDetailsCard = ({
                     <span className="icon-[ph--gear] text-base"></span>
                 </Button>
 
-                <BankAccountDetailsAdjustLimitsDialog open={isAdjustLimitsDialogOpen} onClose={()=> setAdjustLimitsDialogOpen(false)}>
-
+                <BankAccountDetailsAdjustLimitsDialog
+                    accountName={account.name}
+                    accountId={account.id}
+                    open={isAdjustLimitsDialogOpen}
+                    onClose={()=> setAdjustLimitsDialogOpen(false)}>
                 </BankAccountDetailsAdjustLimitsDialog>
             </CardContent>
 

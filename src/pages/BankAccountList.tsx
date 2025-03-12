@@ -19,8 +19,8 @@ export default function BankAccountListPage() {
 
             <div className="fixed bottom-4 md:right-4 right-1/2 transform translate-x-1/2 md:translate-x-0 z-50 -mr-2 -mb-2">
                 <Button className="size16 rounded-4xl" variant="success"   onClick={() => setDialogOpen(true)} >
-                    Create a new bank account
                     <span className="icon-[ph--plus] text-lg"></span>
+                    Create a new bank account
                 </Button>
             </div>
 
