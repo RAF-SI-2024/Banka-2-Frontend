@@ -166,6 +166,7 @@ const BankAccountDetailsCard = ({
 
                 <BankAccountDetailsAdjustLimitsDialog
                     accountName={account.name}
+                    accountId={account.id}
                     open={isAdjustLimitsDialogOpen}
                     onClose={()=> setAdjustLimitsDialogOpen(false)}>
                 </BankAccountDetailsAdjustLimitsDialog>

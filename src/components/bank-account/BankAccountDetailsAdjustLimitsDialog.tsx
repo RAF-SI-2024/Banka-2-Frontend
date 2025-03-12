@@ -8,11 +8,12 @@ import {AuthContext} from "@/context/AuthContext.tsx";
 
 interface BankAccountDetailsAdjustLimitsDialogProps {
     accountName: string;
+    accountId: string;
     open: boolean;
     onClose: () => void;
 }
 
-export default function BankAccountDetailsAdjustLimitsDialog({accountName, open, onClose}: BankAccountDetailsAdjustLimitsDialogProps) {
+export default function BankAccountDetailsAdjustLimitsDialog({accountName, accountId, open, onClose}: BankAccountDetailsAdjustLimitsDialogProps) {
     const [step, setStep] = useState<"otp" | "form">("otp");
 
     const [dailyLimit, setDailyLimit] = useState<string>("");
@@ -40,12 +41,6 @@ export default function BankAccountDetailsAdjustLimitsDialog({accountName, open,
     }
 
     if(step==="form"){
-
-        const accountId = context?.user?.id;
-        if (!accountId) {
-            console.error("Account ID is not defined");
-            return;
-        }
 
         return(
             <Dialog open={open} onOpenChange={onClose}>
@@ -87,7 +82,7 @@ const OtpStep = ({
 
     return (
         <>
-            <DialogTitle className="text-center text-4xl font-semibold">Enter verification code</DialogTitle>
+            <DialogTitle className="text-center text-4xl font-heading font-semibold">Enter verification code</DialogTitle>
             <div className="p-4 w-full flex flex-col items-center">
                 <InputOTP maxLength={6} className="flex justify-center gap-4" value={value} onChange={handleChange} onComplete={handleComplete}>
                     <InputOTPGroup className="flex gap-4 justify-center">
@@ -122,7 +117,7 @@ const FormStep = ({
     setMonthlyLimit,
     }: {
     accountName: string;
-    accountId: string | undefined;
+    accountId: string;
     onClose: () => void;
     dailyLimit: string;
     setDailyLimit: React.Dispatch<React.SetStateAction<string>>;
@@ -155,6 +150,8 @@ const FormStep = ({
             const formattedDailyLimit = parseFloat(dailyLimit);
             const formattedMonthlyLimit = parseFloat(monthlyLimit);
 
+
+            console.log(" AAAA accID: " + accountId + "accName: " + accountName + "daily: " + formattedDailyLimit + "monthly: " + formattedMonthlyLimit)
             const response = await updateAccountLimits(accountId, accountName, formattedDailyLimit, formattedMonthlyLimit);
             console.log("Limits updated successfully!", response);
             onClose();
