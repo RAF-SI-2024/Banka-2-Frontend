@@ -1,18 +1,19 @@
 import { useParams } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import React from "react"
-import BankAccountBalanceCard from "@/components/bank-account/BankAccountBalance"
-import BankAccountTransactions from "@/components/bank-account/BankAccountTransactions"
-import { BankAccount } from "@/types/bankAccount"
-import { Card } from "@/types/card"
-import { CardType } from "@/types/cardType"
-import { Currency } from "@/types/currency"
-import { BankAccountType } from "@/types/bankAccountType"
+import { format } from "date-fns"
+import { Button } from "@/components/ui/button"
+import { CreditCard } from "@/components/ui/credit-card"
 import { Client, Employee } from "@/types/user"
 import { Gender, Role } from "@/types/enums"
-import BankAccountDetailsCard from "@/components/bank-account/BankAccountDetails"
-import CardDisplay from "@/components/bank-account/BankCard.tsx";
-import CardDetails from "@/components/bank-account/BankCardDetails.tsx";
+import { Card as CardType } from "@/types/card"
+import { CardType as CardKind } from "@/types/cardType"
+import { BankAccountType } from "@/types/bankAccountType"
+import { Currency } from "@/types/currency"
+import { BankAccount } from "@/types/bankAccount"
+import CardDetails from "@/components/card/BankCardDetails.tsx"
+import BankAccountTransactions from "@/components/bank-account/BankAccountTransactions"
+import CardDisplay from "@/components/card/BankCard.tsx";
 
 const client: Client = {
     firstName: "Bosko",
@@ -49,7 +50,7 @@ const currency: Currency = {
     description: "bla bla",
     status: true,
     createdAt: new Date(),
-    modifiedAt: new Date()
+    modifiedAt: new Date(),
 }
 
 const accountType: BankAccountType = {
@@ -57,7 +58,7 @@ const accountType: BankAccountType = {
     name: "Foreign Exchange",
     code: "aaa",
     createdAt: new Date(),
-    modifiedAt: new Date()
+    modifiedAt: new Date(),
 }
 
 const account: BankAccount = {
@@ -65,7 +66,7 @@ const account: BankAccount = {
     name: "Card account",
     client: client,
     accountNumber: 1111222233334444,
-    balance: 9500.50,
+    balance: 9500.5,
     employee: employee,
     currency: currency,
     accountType: accountType,
@@ -76,20 +77,20 @@ const account: BankAccount = {
     creationDate: new Date(),
     expirationDate: new Date(),
     createdAt: new Date(),
-    modifiedAt: new Date()
+    modifiedAt: new Date(),
 }
 
-const cardType: CardType = {
+const cardKind: CardKind = {
     id: "1",
     name: "Debit",
     createdAt: new Date(),
-    modifiedAt: new Date()
+    modifiedAt: new Date(),
 }
 
-const cards: Card[] = [
+const cards: CardType[] = [
     {
         id: "1",
-        type: cardType,
+        type: cardKind,
         number: "4111 1111 1111 9743",
         name: "Visa",
         expiresAt: new Date("2027-09-30"),
@@ -98,11 +99,11 @@ const cards: Card[] = [
         limit: 10000,
         status: true,
         createdAt: new Date(),
-        modifiedAt: new Date()
+        modifiedAt: new Date(),
     },
     {
         id: "2",
-        type: cardType,
+        type: cardKind,
         number: "5555 5555 5555 4444",
         name: "Mastercard",
         expiresAt: new Date("2025-06-30"),
@@ -111,15 +112,15 @@ const cards: Card[] = [
         limit: 5000,
         status: false,
         createdAt: new Date(),
-        modifiedAt: new Date()
-    }
+        modifiedAt: new Date(),
+    },
 ]
 
 export default function CardPage() {
     const { cardId } = useParams<{ cardId: string }>()
     const [showDetails, setShowDetails] = React.useState(false)
 
-    const selectedCard = cards.find(c => c.id === cardId)
+    const selectedCard = cards.find((c) => c.id === cardId)
     if (!selectedCard) return <div>Card not found</div>
 
     const sessionUserRaw = sessionStorage.getItem("user")
@@ -139,13 +140,13 @@ export default function CardPage() {
         ? {
             ...selectedCard.account.client,
             firstName: parsedUser.firstName,
-            lastName: parsedUser.lastName
+            lastName: parsedUser.lastName,
         }
         : selectedCard.account.client
 
     const finalAccount: BankAccount = {
         ...selectedCard.account,
-        client: realClient
+        client: realClient,
     }
 
     return (
@@ -153,51 +154,39 @@ export default function CardPage() {
             <h1 className="font-display font-bold text-5xl">Card overview</h1>
 
             <div className="grid md:grid-cols-2 gap-4 items-start">
-                <div className="flex flex-col h-auto">
-                    <div className="flex-grow">
-                        <AnimatePresence mode="wait">
-                            {showDetails ? (
-                                <motion.div
-                                    key="details"
-                                    layout
-                                    initial={{ opacity: 0, x: 100 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -100 }}
-                                    className="h-full"
-                                >
-                                    <BankAccountDetailsCard
-                                        account={finalAccount}
-                                        onBackClick={() => setShowDetails(false)}
-                                        onAccountNameChange={(newValue) => console.log(newValue)}
-                                    />
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    key="balance"
-                                    layout
-                                    initial={{ opacity: 0, x: 100 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -100 }}
-                                    className="h-full"
-                                >
-                                    <BankAccountBalanceCard
-                                        account={finalAccount}
-                                        onDetailsClick={() => setShowDetails(true)}
-                                    />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
+                <div className="flex flex-col gap-4">
+                    <AnimatePresence mode="wait">
+                        {showDetails ? (
+                            <motion.div
+                                key="details"
+                                layout
+                                initial={{ opacity: 0, x: 100 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -100 }}
+                                className="h-full space-y-4"
+                            >
+                                <CardDetails card={selectedCard} account={finalAccount} onBackClick={() => setShowDetails(false)}/>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="card"
+                                layout
+                                initial={{ opacity: 0, x: 100 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -100 }}
+                                className="h-full space-y-4"
+                            >
+                                <CardDisplay card={selectedCard} cardHolder={cardHolder} onDetailsClick={() => setShowDetails(true)}/>
+
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
-                <div className="flex flex-col gap-4">
-                    <CardDisplay card={selectedCard} cardHolder={cardHolder} />
-                    <CardDetails card={selectedCard} account={finalAccount} />
-                </div>
+                <div className="hidden md:block md:col-span-1" />
 
                 <BankAccountTransactions className="col-span-2" account={finalAccount} />
             </div>
-
         </main>
     )
 

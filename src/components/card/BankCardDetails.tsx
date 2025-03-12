@@ -1,18 +1,24 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Card as CardType } from "@/types/card"
-import { BankAccount } from "@/types/bankAccount"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx"
+import { Card as CardType } from "@/types/card.ts"
+import { BankAccount } from "@/types/bankAccount.ts"
+import { Button } from "@/components/ui/button.tsx"
 
 interface Props {
     card: CardType
     account: BankAccount
+    onBackClick: () => void
 }
 
-const CardDetails = ({ card, account }: Props) => {
+const CardDetails = ({ card, account, onBackClick }: Props) => {
     return (
         <Card className="border-0">
-            <CardHeader>
+            <CardHeader className="mb-2 flex flex-row -ml-4 items-center gap-2">
+                <Button size="icon" variant="ghost" onClick={onBackClick}>
+                    <span className="icon-[ph--caret-left] size-6" />
+                </Button>
                 <CardTitle className="font-heading text-2xl">Card Details</CardTitle>
             </CardHeader>
+
             <CardContent className="flex flex-col gap-4">
                 <div className="flex items-center gap-3 p-4 border rounded-lg bg-gray-50 dark:bg-muted shadow-sm">
                     <div className="text-primary">
@@ -37,8 +43,6 @@ const CardDetails = ({ card, account }: Props) => {
                             <span className="font-mono text-gray-900 dark:text-white tracking-wide">{account.accountNumber}</span>
                         </div>
                     </div>
-
-
                 </div>
 
                 {!card.status && (
