@@ -164,8 +164,10 @@ const BankAccountDetailsCard = ({
                     <span className="icon-[ph--gear] text-base"></span>
                 </Button>
 
-                <BankAccountDetailsAdjustLimitsDialog open={isAdjustLimitsDialogOpen} onClose={()=> setAdjustLimitsDialogOpen(false)}>
-
+                <BankAccountDetailsAdjustLimitsDialog
+                    accountName={account.name}
+                    open={isAdjustLimitsDialogOpen}
+                    onClose={()=> setAdjustLimitsDialogOpen(false)}>
                 </BankAccountDetailsAdjustLimitsDialog>
             </CardContent>
 
