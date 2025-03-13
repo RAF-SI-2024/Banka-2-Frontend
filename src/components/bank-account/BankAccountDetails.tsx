@@ -6,6 +6,7 @@ import React, {useState} from "react";
 import {formatCurrency} from "@/utils/format-currency.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {z} from "zod";
+import BankAccountDetailsAdjustLimitsDialog from "@/components/bank-account/BankAccountDetailsAdjustLimitsDialog.tsx";
 
 interface DetailsProps extends React.ComponentProps<"div"> {
     account: BankAccount;
@@ -26,6 +27,7 @@ const BankAccountDetailsCard = ({
     const [isEditing, setIsEditing] = useState(false);
     const [accountName, setAccountName] = useState(account.name);
     const [isValid, setIsValid] = useState(true); // Tracks if the name is valid
+    const [isAdjustLimitsDialogOpen, setAdjustLimitsDialogOpen] = useState(false);
 
     const handleToggleEdit = () => {
         if (isEditing) {
@@ -50,6 +52,9 @@ const BankAccountDetailsCard = ({
         setIsValid(result.success);
     };
 
+    const handleAdjustLimitsClick = () => {
+        setAdjustLimitsDialogOpen(true);
+    };
 
 
     return (
@@ -154,10 +159,17 @@ const BankAccountDetailsCard = ({
                         {formatCurrency(account.dailyLimit, account.currency.code)}
                     </p>
                 </div>
-                <Button size="sm" variant="outline" className="absolute bottom-4 right-4">
+                <Button size="sm" variant="outline" className="absolute bottom-4 right-4" onClick={handleAdjustLimitsClick}>
                     Adjust limits
                     <span className="icon-[ph--gear] text-base"></span>
                 </Button>
+
+                <BankAccountDetailsAdjustLimitsDialog
+                    accountName={account.name}
+                    accountId={account.id}
+                    open={isAdjustLimitsDialogOpen}
+                    onClose={()=> setAdjustLimitsDialogOpen(false)}>
+                </BankAccountDetailsAdjustLimitsDialog>
             </CardContent>
 
         </Card>
