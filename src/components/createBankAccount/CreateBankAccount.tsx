@@ -180,11 +180,8 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
 
 
-    const handleContinueClick = async (email: string) => {
-        if (selectedOption === "existing") {
+    const fetchUserByEmail = async (email: string) => {
             try {
-                // Validate the email
-                                // emailSchema.parse({ email }); // validation
                 // Make API request to check if the user exists
                 const response = await getAllUsers(1, 10, {email});
                 if (response.items.length > 0) {
@@ -210,7 +207,6 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                     });
                 }
             }
-        }
     };
 
     const handleBack = () => {
@@ -259,19 +255,16 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                 taxIdentificationNumber: data.pib,
                 activityCode: data.activityCode,
                 address: data.address,
-                majorityOwnerId: "c6f44133-08f2-4a43-bd65-9cfb6b13fa5b",
+                majorityOwnerId: clientID,
             };
 
-            const userString = sessionStorage.getItem("user");
             
-            const user = userString ? JSON.parse(userString) : null;
-            const userId = user.id;
 
             const createAccData: CreateBankAccountRequest = {
                 name: "Štedni račun",
                 dailyLimit: 2000,
                 monthlyLimit: 50000,
-                clientId: userId,
+                clientId: clientID,
                 balance: 5000.75,
                 currencyId: currencyId || "",
                 accountTypeId: selectedPlanId,
@@ -289,13 +282,9 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
             const accResponse1 = await  createAccount(createAccData);
             localStorage.setItem("accountId", accResponse1.data.id);
-            console.log("respone form step 3: " + accResponse1);
-
-
+            console.log("respone form step 3: " + accResponse1.data);
 
             const response = await createCompany(mappedData);
-
-
 
             if (creditCard === "yes") {
                 const accountId = localStorage.getItem("accountId");
@@ -334,8 +323,8 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                 }
 
                 try {
-                    console.log("DATAAA", data);
                     const response = await createAccount(data);
+                    console.log("NIKOLA:", response.data);
                     localStorage.setItem("accountId", response.data.id);
 
 
@@ -357,7 +346,6 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                 }
 
             } else if (selectedType === "Foreign Currency Account") {
-                console.log("TU SAM")
                 const selectedCurrency = data.currencyId;
 
                 if (!selectedCurrency) {
@@ -394,7 +382,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
             }
         } else {
 
-            if (selectedType === "Foreign Currency Account") {
+            if (selectedType === "Foreign Currency Account" && step === 3) {
                 try {
                     const selectedPlan = accountTypes.find((account: any) => account.name === "Business Foreign Currency Account");
                     if (selectedPlan) {
@@ -416,9 +404,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                             status: true
                         };
 
-
                        const responseCard = await createCard(cardData);
-                        console.log("Card response:" + responseCard);
                     }
                 } catch (error) {
                     console.error("Error creating Business Foreign Currency Account:", error);
@@ -478,7 +464,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                 <form
                                     onSubmit={emailForm.handleSubmit((data) => {
                                         console.log("Email Information:", data);
-                                        handleContinueClick(data.email);
+                                        fetchUserByEmail(data.email);
                                     })}
                                     className="space-y-4 mt-4"
                                 >
@@ -678,8 +664,6 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                                             if (selectedCard) {
                                                                 setSelectedCardId(selectedCard.id);
                                                                 setSelectedCardName(selectedCard.name);
-                                                                console.log("Selected Card ID:", selectedCardId);
-                                                                console.log("Selected Card Name:", selectedCardName);
                                                             }
                                                             field.onChange(value);
                                                         }}
@@ -797,7 +781,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                         </FormItem>
                                     )}
                                 />
-                                <FormField
+                                {/* <FormField
                                     control={businessForm.control}
                                     name="majorityOwner"
                                     render={({ field }) => (
@@ -809,7 +793,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                             <FormMessage />
                                         </FormItem>
                                     )}
-                                />
+                                /> */}
                                 <div className="flex gap-4 mt-4">
                                     <Button variant="ghost" onClick={handleBack}>
                                         Back
