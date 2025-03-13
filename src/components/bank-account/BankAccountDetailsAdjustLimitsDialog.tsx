@@ -1,195 +1,118 @@
-import {useContext, useEffect, useState} from "react";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog.tsx";
-import { Button } from "@/components/ui/button.tsx";
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp.tsx";
-import {updateAccountLimits} from "@/api/auth.ts";
+import React, {useState} from "react";
 import {z} from "zod";
-import {AuthContext} from "@/context/AuthContext.tsx";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {BankAccount} from "@/types/bankAccount.ts";
+import {editAccountClient} from "@/api/bankAccount.ts";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
+import SuccessNotificationCard from "@/components/createCard/SuccessNotificationCard.tsx";
+import FailNotificationCard from "@/components/createCard/FailNotificationCard.tsx";
+import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
+import AdjustLimitsOTP from "@/components/bank-account/AdjustLimitsOTP.tsx";
+import AdjustLimitsForm from "@/components/bank-account/AdjustLimitsForm.tsx";
 
 interface BankAccountDetailsAdjustLimitsDialogProps {
-    accountName: string;
-    accountId: string;
-    open: boolean;
-    onClose: () => void;
+    showDialog: boolean;
+    setShowDialog: (open: boolean) => void;
+    account: BankAccount
 }
 
-export default function BankAccountDetailsAdjustLimitsDialog({accountName, accountId, open, onClose}: BankAccountDetailsAdjustLimitsDialogProps) {
-    const [step, setStep] = useState<"otp" | "form">("otp");
 
-    const [dailyLimit, setDailyLimit] = useState<string>("");
-    const [monthlyLimit, setMonthlyLimit] = useState<string>("");
-    const context = useContext(AuthContext);
 
-    useEffect(() => {
-        if (!open) {
-            setStep("otp");
-        }
-    }, [open]);
+export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setShowDialog, account}: BankAccountDetailsAdjustLimitsDialogProps) {
+    const [error, setError] = useState<{ id: number; title: string; description: string } | null>(null);
+    const [step, setStep] = useState(0);
 
-    if(step==="otp"){
-        return(
-            <Dialog open={open} onOpenChange={onClose}>
-                <DialogContent className="!w-full !max-w-xl !max-h-[95vh] bg-card overflow-hidden">
-                        <OtpStep
-                            email = {context?.user?.email}
-                            onComplete={() => setStep("form")} />
-                </DialogContent>
-            </Dialog>
-        );
-    }
-
-    if(step==="form"){
-
-        return(
-            <Dialog open={open} onOpenChange={onClose}>
-                <DialogContent className="!w-full !max-w-xl !max-h-[95vh] bg-card overflow-hidden">
-                    <FormStep
-                        accountName = {accountName}
-                        accountId={accountId}
-                        onClose={onClose}
-                        dailyLimit={dailyLimit}
-                        setDailyLimit={setDailyLimit}
-                        monthlyLimit={monthlyLimit}
-                        setMonthlyLimit={setMonthlyLimit}
-                    />
-                </DialogContent>
-            </Dialog>
-        );
-    }
-}
-
-const OtpStep = ({
-
-    email,
-    onComplete
-}: {
-    email: string | undefined
-    onComplete: () => void }) => {
-    const [value, setValue] = useState("");
-
-    function handleChange(newValue: string) {
-        if (/^\d*$/.test(newValue)) {
-            setValue(newValue);
-        }
-    }
-
-    function handleComplete() {
-        console.log("OTP entered:", value);
-        onComplete();
-    }
-
-    return (
-        <>
-            <DialogTitle className="text-center text-4xl font-heading font-semibold">Enter verification code</DialogTitle>
-            <div className="p-4 w-full flex flex-col items-center">
-                <InputOTP maxLength={6} className="flex justify-center gap-4" value={value} onChange={handleChange} onComplete={handleComplete}>
-                    <InputOTPGroup className="flex gap-4 justify-center">
-                        <InputOTPSlot index={0} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
-                        <InputOTPSlot index={1} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
-                        <InputOTPSlot index={2} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
-                        <InputOTPSeparator />
-                        <InputOTPSlot index={3} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
-                        <InputOTPSlot index={4} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
-                        <InputOTPSlot index={5} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
-                    </InputOTPGroup>
-                </InputOTP>
-                <DialogDescription className="text-center text-lg font-light">
-                    An email has been sent to {email}
-                </DialogDescription>
-                <DialogDescription className="text-center text-lg font-light">
-                    Didn't receive the code?
-                </DialogDescription>
-                <Button variant="link" className="text-blue-500">Resend verification code</Button>
-            </div>
-        </>
-    );
-};
-
-const FormStep = ({
-    accountName,
-    accountId,
-    onClose,
-    dailyLimit,
-    setDailyLimit,
-    monthlyLimit,
-    setMonthlyLimit,
-    }: {
-    accountName: string;
-    accountId: string;
-    onClose: () => void;
-    dailyLimit: string;
-    setDailyLimit: React.Dispatch<React.SetStateAction<string>>;
-    monthlyLimit: string;
-    setMonthlyLimit: React.Dispatch<React.SetStateAction<string>>;
-}) => {
 
     const formSchema = z.object({
-        dailyLimit: z
-            .string()
-            .refine((val) => !isNaN(parseFloat(val)), {
-                message: "Daily limit must be a valid number",
-            }),
-        monthlyLimit: z
-            .string()
-            .refine((val) => !isNaN(parseFloat(val)), {
-                message: "Monthly limit must be a valid number",
-            })
+        monthlyLimit: z.coerce.number().min(1000, "Limit is too small").max(10000000, "Limit is too big"),
+        dailyLimit: z.coerce.number().min(1000, "Limit is too small").max(1000000, "Limit is too big"),
+        otp: z.string().length(6),
+        name: z.string()
     });
 
-    async function handleSubmit() {
 
-        try {
+    const form = useForm({
+        resolver: zodResolver(formSchema),
+        mode: "onChange",
+        defaultValues: {
+            monthlyLimit: account.monthlyLimit,
+            dailyLimit: account.dailyLimit,
+            name: account.name,
+        },
+    });
 
-            formSchema.parse({
-                dailyLimit,
-                monthlyLimit,
-            });
+    async function nextStepZero() {
+        const isValid = await form.trigger([
+            "dailyLimit",
+            "monthlyLimit",
+        ])
 
-            const formattedDailyLimit = parseFloat(dailyLimit);
-            const formattedMonthlyLimit = parseFloat(monthlyLimit);
-
-
-            console.log(" AAAA accID: " + accountId + "accName: " + accountName + "daily: " + formattedDailyLimit + "monthly: " + formattedMonthlyLimit)
-            const response = await updateAccountLimits(accountId, accountName, formattedDailyLimit, formattedMonthlyLimit);
-            console.log("Limits updated successfully!", response);
-            onClose();
-        } catch (error) {
-            console.error("Error updating limits:", error);
+        if (isValid) {
+            setStep((prev) => prev + 1)
         }
-
     }
 
+    async function nextStepOne() {
+
+        const isValid = await form.trigger([
+            "otp"
+        ])
+
+        if (isValid) {
+
+            try {
+                setError(null);
+
+                const response = await editAccountClient(account.id, form.getValues());
+                console.log(form.getValues());
+                if (response.status != 200) {
+                    throw new Error("API error");
+                }
+                setStep((prev) => prev + 1)
+            } catch (err) {
+                console.error(err);
+                setError({
+                    id: Date.now(),
+                    title: "Failed to adjust limits",
+                    description: "An error occurred while processing your request.",
+                });
+            }
+
+        }
+    }
+
+    const handleDialogClose = (open: boolean) => {
+        setShowDialog(open);
+        if (!open) {
+            setStep(0)
+            setError(null);
+        }
+    };
+
     return (
-        <>
-            <DialogTitle>Edit Limits</DialogTitle>
-            <div className="p-4 flex flex-col space-y-4">
-                <div className="flex flex-col">
-                    <label className="text-lg font-semibold">Daily Limit</label>
-                    <input
-                        type="text"
-                        className="border border-gray-400 rounded-lg p-2"
-                        value={dailyLimit}
-                        onChange={(e) => setDailyLimit(e.target.value)}
-                        placeholder="Enter daily limit"
-                    />
-                </div>
+        <Dialog open={showDialog} onOpenChange={handleDialogClose}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Create Credit Card</DialogTitle>
+                </DialogHeader>
+                {step === 0 ? <AdjustLimitsForm account={account} form={form} nextStep={nextStepZero}  /> : null}
+                {step === 1 ? <AdjustLimitsOTP form={form} nextStep={nextStepOne} setErrors={setError}></AdjustLimitsOTP> : null}
+                {step === 2 ? <SuccessNotificationCard></SuccessNotificationCard> : null}
 
-                <div className="flex flex-col">
-                    <label className="text-lg font-semibold">Monthly Limit</label>
-                    <input
-                        type="text"
-                        className="border border-gray-400 rounded-lg p-2"
-                        value={monthlyLimit}
-                        onChange={(e) => setMonthlyLimit(e.target.value)}
-                        placeholder="Enter monthly limit"
-                    />
-                </div>
+                {/*TODO Ovde treba da se namesti logika za prikaz ove komponente, trenutno ako ne uspe zahtev samo se ispise greska ispod ovog dijaloga, a ne prikazuje se ekran*/}
+                {step === 3 ? <FailNotificationCard></FailNotificationCard> : null}
 
-                <div className="flex justify-center gap-4 mt-6">
-                    <Button variant="secondary" onClick={onClose}>Cancel</Button>
-                    <Button variant="primary" onClick={handleSubmit}>Save Limits</Button>
-                </div>
-            </div>
-        </>
+                {error && [error].map((error) => (
+                    <ErrorAlert
+                        key={error.id}
+                        title={error.title}
+                        description={error.description}
+                        onClose={() => setError(null)}
+                    />
+                ))}
+            </DialogContent>
+        </Dialog>
     );
-};
+
+}

@@ -43,7 +43,7 @@ export interface CreateBankAccountRequest {
 }
 
 export interface AccountUpdateClientRequest{
-    name?:	string,
+    name:	string,
     dailyLimit: number,
     monthlyLimit: number,
 }

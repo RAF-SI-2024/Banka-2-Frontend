@@ -11,7 +11,6 @@ import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {createCard} from "@/api/card.ts";
-import {UpdateClientRequest} from "@/types/user.ts";
 
 
 interface CreateCardDialogProps {
@@ -107,7 +106,7 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
                 <DialogHeader>
                     <DialogTitle>Create Credit Card</DialogTitle>
                 </DialogHeader>
-                {step === 0 ? <CreateCardForm form={form} nextStep={nextStepZero}  /> : null}
+                {step === 0 ? <CreateCardForm account={account} form={form} nextStep={nextStepZero}  /> : null}
                 {step === 1 ? <OTPForm form={form} nextStep={nextStepOne} setErrors={setError}></OTPForm> : null}
                 {step === 2 ? <SuccessNotificationCard></SuccessNotificationCard> : null}
 
