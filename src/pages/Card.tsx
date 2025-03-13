@@ -94,7 +94,7 @@ const cards: CardType[] = [
         account: account,
         cvv: "123",
         limit: 10000,
-        status: true,
+        status: false,
         createdAt: new Date(),
         modifiedAt: new Date(),
     },

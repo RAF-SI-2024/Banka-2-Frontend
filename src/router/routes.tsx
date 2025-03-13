@@ -13,7 +13,7 @@ import {
 } from "@/router/utils/ProtectedRoutes.tsx";
 import BankAccountPage from "@/pages/BankAccount.tsx";
 import RoleBasedHomePage from "@/pages/RoleBasedHome.tsx";
-import CardDetailsPage from "@/pages/CardDetails.tsx";
+import CardDetailsPage from "@/pages/Card.tsx";
 
 export const AppRoutes = () => {
     return (
