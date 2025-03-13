@@ -14,3 +14,11 @@ export interface CardDTO {
     createdAt: Date;
     modifiedAt: Date;
 }
+
+export interface CardCreateRequest {
+    cardTypeId: string;
+    accountId: string;
+    name: string;
+    limit: number;
+    status: boolean;
+}

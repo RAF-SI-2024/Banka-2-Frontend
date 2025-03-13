@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx"
 import { CreditCard } from "@/components/ui/credit-card.tsx"
-import { CardDTO as CardType } from "@/types/cardDTO.ts"
+import { CardDTO as CardType } from "@/types/card.ts"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button.tsx"
 import {Client} from "@/types/user.ts";
