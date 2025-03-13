@@ -14,16 +14,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {Input} from "@/components/ui/input.tsx";
 import {formatCurrency} from "@/utils/format-currency.ts";
 import {getCardTypes} from "@/api/card.ts";
+import {BankAccount} from "@/types/bankAccount.ts";
 
 interface CreateCardProps {
+    account: BankAccount,
     form: any,
     nextStep: () => void;
 }
 
 // Form Schema
-export default function CreateCardForm({form, nextStep }: CreateCardProps) {
+export default function CreateCardForm({account, form, nextStep }: CreateCardProps) {
     const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
-    const [limitValue, setLimitValue] = useState(formatCurrency(1000));
+    const [limitValue, setLimitValue] = useState(formatCurrency(form.getValues("limit"), account.currency.code));
 
     useEffect(() => {
         // Fetch account types from API

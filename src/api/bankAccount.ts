@@ -42,15 +42,22 @@ export const getAllAccounts = async (
     }
 }
 
-export const editAccountClient = async(id: string, data: AccountUpdateClientRequest) => {
+export const editAccountClient = async (id: string, data: AccountUpdateClientRequest) => {
     try {
-        const response = await api.put(`${API_BASE}/accounts/client/${id}`, data);
+        // Make sure to omit the 'name' property if it's undefined or null
+        const requestData: AccountUpdateClientRequest = {
+            dailyLimit: data.dailyLimit,
+            monthlyLimit: data.monthlyLimit,
+            name: data.name
+        };
+
+        const response = await api.put(`${API_BASE}/accounts/client/${id}`, requestData);
         return response;
     } catch (error) {
         console.error("Failed to edit bank account! :", error);
         throw error;
     }
-}
+};
 
 
 export const createBankAccount = async (data : CreateBankAccountRequest, currency : string) => {
