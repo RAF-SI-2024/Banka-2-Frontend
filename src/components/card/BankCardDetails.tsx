@@ -29,22 +29,22 @@ const CardDetails = ({ card, account, onBackClick }: Props) => {
         <div className="flex items-center gap-3 p-4 border rounded-lg bg-muted/75 shadow-sm">
           <span className="icon-[ph--identification-card] text-2xl text-primary"></span>
           <div className="text-sm flex flex-col gap-2 p-2">
-            <div className="flex gap-2">
-              <span className="font-medium text-muted-foreground min-w-[140px]">
+            <div className="flex gap-2 flex-wrap">
+              <span className="font-medium text-muted-foreground">
                 Account name:
               </span>
-              <span className="font-semibold text-gray-900 dark:text-white">
+              <p className="font-paragraph">
                 {account.name}
-              </span>
+              </p>
             </div>
 
-            <div className="flex gap-2">
-              <span className="font-medium text-muted-foreground min-w-[140px]">
+            <div className="flex gap-2 flex-wrap">
+              <span className="font-medium text-muted-foreground">
                 Account number:
               </span>
-              <span className="font-mono text-gray-900 dark:text-white tracking-wide">
+              <p className="font-paragraph">
                 {account.accountNumber}
-              </span>
+              </p>
             </div>
           </div>
         </div>

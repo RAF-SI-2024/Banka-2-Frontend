@@ -84,36 +84,38 @@ export default function BankAccountPage() {
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
             <h1 className="font-display font-bold text-5xl">{account.name} overview</h1>
             <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-                <AnimatePresence mode="wait">
-                    {showDetails ? (
-                        <motion.div
-                            key="details"
-                            layout
-                            initial={{ opacity: 0, x: 100 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -100 }}
-                        >
-                            <BankAccountDetailsCard
-                                account={account}
-                                onBackClick={() => setShowDetails(false)}
-                                onAccountNameChange={newValue => console.log(newValue)}
-                            />
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key="balance"
-                            layout
-                            initial={{ opacity: 0, x: 100 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -100 }}
-                        >
-                            <BankAccountBalanceCard
-                                account={account}
-                                onDetailsClick={() => setShowDetails(true)}
-                            />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                <div className="flex flex-col gap-4">
+                    <AnimatePresence mode="wait">
+                        {showDetails ? (
+                            <motion.div
+                                key="details"
+                                layout
+                                initial={{ opacity: 0, x: 100 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -100 }}
+                            >
+                                <BankAccountDetailsCard
+                                    account={account}
+                                    onBackClick={() => setShowDetails(false)}
+                                    onAccountNameChange={newValue => console.log(newValue)}
+                                />
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="balance"
+                                layout
+                                initial={{ opacity: 0, x: 100 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -100 }}
+                            >
+                                <BankAccountBalanceCard
+                                    account={account}
+                                    onDetailsClick={() => setShowDetails(true)}
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
 
                 <BankAccountCardsCard account={account} />
                 <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={account}/>
