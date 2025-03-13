@@ -14,6 +14,10 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardDescription } from "@/components/ui/card.tsx";
+import { Currency } from "@/types/currency";
+import { getAllCurrencies } from "@/api/currency.ts";
+import { getAllUsers } from "@/api/user.ts";
+import {Select,SelectItem,SelectValue,SelectContent,SelectTrigger} from "@/components/ui/select.tsx"
 import {
     Form,
     FormField,
@@ -22,7 +26,14 @@ import {
     FormControl,
     FormMessage,
 } from "@/components/ui/form.tsx";
-import { createBankAccount } from "@/api/bankAccount";
+import {CardType} from "@/types/cardType.ts";
+import {getAllCardTypes} from "@/api/account.ts";
+import {createAccount} from "@/api/account.ts";
+import {fetchAccountTypes} from "@/api/account.ts";
+import {createCompany} from "@/api/account.ts";
+import {createCard} from "@/api/account.ts";
+import {CreateBankAccountRequest} from "@/types/bankAccount.ts";
+import { BankAccountType } from "@/types/bankAccountType";
 
 const businessInfoSchema = z.object({
     businessName: z.string()
@@ -30,19 +41,21 @@ const businessInfoSchema = z.object({
         .max(32, "Business name must be at most 32 characters")
         .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Only letters and spaces are allowed"),
     registrationNumber: z.string()
-        .length(9, "Must be exactly 9 digits long")
-        .regex(/^\d{9}$/, "Unique identification number must contain only numbers"),
+        .length(8, "Must be exactly 8 digits long")
+        .regex(/^\d{8}$/, "Unique identification number must contain only numbers"),
     pib: z.string()
         .length(9, "Must be exactly 9 digits long")
         .regex(/^\d{9}$/, "PIB must contain only numbers"),
-    activityCode: z.string().min(1, { message: "Activity Code is required" }),
+    activityCode: z.string()
+        .min(4, { message: "Activity Code has to be at least 4 digits long"})
+        .max(5,{message:"Activity Code can't be more than 5 digits long"}),
     address: z.string()
         .min(5, "Address is required")
         .regex(/^[0-9A-Za-zčČćĆžŽšŠđĐ /]+$/, "Only letters, numbers, spaces and / are allowed"),
-    majorityOwner: z.string()
-        .min(1, "Majority owner name is required")
-        .max(32, "Majority owner name must be at most 32 characters")
-        .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Only letters and spaces are allowed"),
+    // majorityOwner: z.string()
+    //     .min(1, "Majority owner name is required")
+    //     .max(55, "Majority owner name must be at most 32 characters")
+
 });
 
 const emailSchema = z.object({ email: z.string().email({ message: "Invalid email format" }) });
@@ -51,11 +64,12 @@ type BusinessInfo = z.infer<typeof businessInfoSchema>;
 
 interface CreateBankAccountProps {
     onRegister: () => void;
-    registeredEmail?: string;  // Add email prop
+    registeredEmail?: string;
+    onClose: () => void;
 }
 
 
-export default function CreateBankAccount({onRegister, registeredEmail}: CreateBankAccountProps) {
+export default function CreateBankAccount({onRegister, registeredEmail, onClose}: CreateBankAccountProps) {
     const location = useLocation();
 
     const [selectedOption, setSelectedOption] = useState("new");
@@ -63,11 +77,19 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
     const [step, setStep] = useState(1);
     const [ownership, setOwnership] = useState("Personal");
     const [creditCard, setCreditCard] = useState("yes");
-    const [type, setType] = useState("Current Account");
-    // const [selectedCurrency, setSelectedCurrency] = useState("EUR");
     const [currencies, setCurrencies] = useState<Currency[]>([]);
     const [plan, setPlan] = useState(ownership === "Business" ? "DOO" : "Standard");
     const [emailError, setEmailError] = useState<string | null>(null);
+    const [cardTypes, setCardTypes] = useState<CardType[]>([]);
+    const [selectedCurrency, setSelectedCurrency] = useState(null);
+    const [currencyId, setCurrencyId] = useState<string | null>(null);
+    const [accountTypes, setAccountTypes] = useState<BankAccountType[]>([]);
+    const [selectedType, setSelectedType] = useState("Current Account");
+    const [selectedPlanId, setSelectedPlanId] = useState<string>("")
+    const [selectedCardId, setSelectedCardId] = useState<string | null>(cardTypes.length > 0 ? cardTypes[0].id : null);
+    const [selectedCardName, setSelectedCardName] = useState<string | null>(null);
+    const [clientID, setClientId] = useState("");
+
 
     useEffect(() => {
         if (registeredEmail) {
@@ -93,10 +115,11 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
         }
     }, [ownership]);
 
-    // za fetch valuta
+
     useEffect(() => {
-        const fetchCurrencies = async () => {
-            if (step === 2) {
+        const fetchData = async () => {
+
+                // Dohvatanje valuta
                 const cachedCurrencies = localStorage.getItem("currencies");
                 if (cachedCurrencies) {
                     setCurrencies(JSON.parse(cachedCurrencies));
@@ -105,34 +128,86 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                         const response = await getAllCurrencies();
                         setCurrencies(response.items);
                         localStorage.setItem("currencies", JSON.stringify(response.items));
-                        console.log(response);
+                        console.log("Currencies:", response);
                     } catch (error) {
-                        console.error("Error fetching currencies:", error);
+                        console.error("❌ Error fetching currencies:", error);
                     }
                 }
+
+
+                const cachedCardTypes = localStorage.getItem("cardTypes");
+                if (cachedCardTypes) {
+                    setCardTypes(JSON.parse(cachedCardTypes));
+                } else {
+                    try {
+                        const response = await getAllCardTypes();
+                        setCardTypes(response.items);
+                        localStorage.setItem("cardTypes", JSON.stringify(response.items));
+                    
+
+                        console.log("Card Types:", response);
+                    } catch (error) {
+                        console.error("❌ Error fetching card types:", error);
+                    }
+                }
+
+        };
+
+        fetchData();
+    }, [] );
+
+    useEffect(() => {
+        if (cardTypes.length > 0 && !selectedCardId) {
+            setSelectedCardId(cardTypes[0].id);
+            setSelectedCardName(cardTypes[0].name);
+        }
+    }, [cardTypes, selectedCardId]);
+
+
+    useEffect(() => {
+        const loadAccountTypes = async () => {
+            try {
+
+                const response = await fetchAccountTypes();
+
+                setAccountTypes(response || []);
+            } catch (err) {
+                console.error("Neuspelo učitavanje tipova računa.", err);
             }
         };
 
-        fetchCurrencies();
-    }, [step]);
+        loadAccountTypes();
+    }, []);
 
 
-    const handleContinueClick = () => {
-        if (selectedOption === "new") {
-             onRegister();
-        } else if (selectedOption === "existing") {
+
+    const fetchUserByEmail = async (email: string) => {
             try {
-                emailSchema.parse(email);
-                setEmailError(null);
-                setStep(step + 1);
+                // Make API request to check if the user exists
+                const response = await getAllUsers(1, 10, {email});
+                if (response.items.length > 0) {
+                    setClientId(response.items[0].id);
+                    setEmailError(null);
+                    setStep(step + 1);
+                } else {
+                    emailForm.setError("email", {
+                        type: "manual",
+                        message: "User with that email does not exist.",
+                    });
+                }
             } catch (error) {
                 if (error instanceof z.ZodError) {
-                    setEmailError(error.errors[0].message);
+                    emailForm.setError("email", {
+                        type: "manual",
+                        message: error.errors[0].message,
+                    });
                 } else {
-                    setEmailError("An unexpected error occurred.");
+                    emailForm.setError("email", {
+                        type: "manual",
+                        message: "An unexpected error occurred.",
+                    });
                 }
             }
-        }
     };
 
     const handleBack = () => {
@@ -140,8 +215,6 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
             setStep(step - 1);
         }
     };
-
-
 
     // useForm za Business Information (korak 3)
     const businessForm = useForm<BusinessInfo>({
@@ -153,7 +226,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
             pib: "",
             activityCode: "",
             address: "",
-            majorityOwner: "",
+            // majorityOwner: "",
         },
     });
 
@@ -165,85 +238,209 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
         },
     });
 
-
     const accountForm = useForm({
         defaultValues: {
-            accountType: type,
+            accountType: selectedType,
             ownership: ownership,
             plan: plan,
-            currency: "EUR"
+            currency: "EUR",
+            cardType: ""
         },
     });
 
+    const onBusinessSubmit = async (data: BusinessInfo) => {
+        console.log("Business Data:", data);
+        try {
+            const mappedData = {
+                name: data.businessName,
+                registrationNumber: data.registrationNumber,
+                taxIdentificationNumber: data.pib,
+                activityCode: data.activityCode,
+                address: data.address,
+                majorityOwnerId: clientID,
+            };
+
+            
+
+            const createAccData: CreateBankAccountRequest = {
+                name: "Štedni račun",
+                dailyLimit: 2000,
+                monthlyLimit: 50000,
+                clientId: clientID,
+                balance: 5000.75,
+                currencyId: currencyId || "",
+                accountTypeId: selectedPlanId,
+                status: true
+            };
+
+            if(selectedType === "Current Account"){
+                const currencies = JSON.parse(localStorage.getItem("currencies") || "[]");
+                const rsdCurrency = currencies.find((currency: any) => currency.code === "RSD");
+
+                if (rsdCurrency) {
+                    createAccData.currencyId = rsdCurrency.id;
+                }
+            }
+
+            const accResponse1 = await  createAccount(createAccData);
+            localStorage.setItem("accountId", accResponse1.data.id);
+            console.log("respone form step 3: " + accResponse1.data);
+
+            const response = await createCompany(mappedData);
+
+            if (creditCard === "yes") {
+                const accountId = localStorage.getItem("accountId");
+                const cardData = {
+                    cardTypeId: selectedCardId,
+                    accountId: accountId,
+                    name: selectedCardName,
+                    limit: 5000,
+                    status: true
+                };
 
 
-    const onBusinessSubmit = (data: BusinessInfo) => {
-        console.log("Business Information:", data);
-        if (type === "Current Account") {
-            console.log("Sending request to create a business current account...");
-        } else {
-            console.log("Sending request to create a business exchange account...");
+                const responseCard = await createCard(cardData);
+                console.log("Card response:" + responseCard);
+            }
+
+            if (response.success) {
+                console.log("Company created successfully:", response.data);
+                onClose();
+            } else {
+                console.error("Failed to create company:", response.data);
+            }
+        } catch (error) {
+            console.error("Error during company creation:", error);
         }
     };
 
 
-    //  NE BRISATI OVO!!
-    //
-    // const handleFinishOrContinue = () => {
-    //     if (type === "Current Account" && ownership === "Personal") {
-    //         // TODO: Implement personal current account creation route
-    //         console.log("Sending request to create a personal current account...");
-    //     } else if (type === "Foreign Exchange Account" && ownership === "Personal") {
-    //         // TODO: Implement personal exchange account creation route
-    //         console.log("Sending request to create a personal exchange account...");
-    //     } else if (
-    //         (type === "Current Account" && ownership === "Business") ||
-    //         (type === "Foreign Exchange Account" && ownership === "Business")
-    //     ) {
-    //         if (step === 3) {
-    //             // Pokrećemo submit business forme
-    //             businessForm.handleSubmit(onBusinessSubmit)();
-    //         } else {
-    //             setStep(step + 1);
-    //         }
-    //     }
-    // };
-
-    const handleFinishOrContinue = () => {
+    const handleFinishOrContinue = async (data: any) => {
         if (ownership === "Personal") {
+            if (selectedType === "Current Account") {
+                const currencies = JSON.parse(localStorage.getItem("currencies") || "[]");
+                const rsdCurrency = currencies.find((currency: any) => currency.code === "RSD");
 
-            if (type === "Current Account") {
+                if (rsdCurrency) {
+                    data.currencyId = rsdCurrency.id;
+                }
 
-                    // TODO: Implement personal current account creation route
-                    // createBankAccount
-                    // const response = createBankAccount({
-                    //     accountType: type,
-                    //     ownership: ownership,
-                    //     plan: plan,
-                    //     currency: selectedCurrency,
-                    //     creditCard: creditCard === "yes",
-                    // }, selectedCurrency.toUpperCase() || "RSD");
-
+                try {
+                    const response = await createAccount(data);
+                    localStorage.setItem("accountId", response.data.id);
 
 
-            } else {
-                // TODO: Implement personal exchange account creation route
+                    if (creditCard === "yes") {
+                        const accountId = localStorage.getItem("accountId");
+                        const cardData = {
+                            cardTypeId: selectedCardId,
+                            accountId: accountId,
+                            name: selectedCardName,
+                            limit: 5000,
+                            status: true
+                        };
+
+
+                        const responseCard = await createCard(cardData);
+                    }
+                    onClose();
+                } catch (error) {
+                    console.error("Error creating account:", error);
+                }
+
+            } else if (selectedType === "Foreign Currency Account") {
+                const selectedCurrency = data.currencyId;
+
+                if (!selectedCurrency) {
+                    console.error("No currency selected for Foreign Currency Account.");
+                    return;
+                }
+
+                try {
+                    const selectedPlan = accountTypes.find((account: any) => account.name === "Foreign Currency Account");
+                    console.log("Selected Plan:", selectedPlan);
+                    if (selectedPlan) {
+                        setSelectedPlanId(selectedPlan.id);
+                        data.accountTypeId = selectedPlan.id;
+                    }
+
+                    const response = await createAccount(data);
+
+                    if (creditCard === "yes") {
+                        const accountId = localStorage.getItem("accountId");
+                        const cardData = {
+                            cardTypeId: selectedCardId,
+                            accountId: accountId,
+                            name: selectedCardName,
+                            limit: 5000,
+                            status: true
+                        };
+
+
+                        const responseCard = await createCard(cardData);
+                    }
+                    onClose();
+                } catch (error) {
+                    console.error("Error creating Foreign Currency Account:", error);
+                }
             }
         } else {
-            if (type === "Current Account") {
-                // TODO: Implement business current account creation route
-            } else if (type === "Foreign Exchange Account") {
-                // TODO: Implement business exchange account creation route
+
+            if (selectedType === "Foreign Currency Account" && step === 3) {
+                try {
+                    const selectedPlan = accountTypes.find((account: any) => account.name === "Business Foreign Currency Account");
+                    if (selectedPlan) {
+                        setSelectedPlanId(selectedPlan.id);
+                        data.accountTypeId = selectedPlan.id;
+                    }
+
+                    const response = await createAccount(data);
+                    console.log("Business Foreign Currency Account created successfully:", response);
+
+
+                    if (creditCard === "yes") {
+                        const accountId = localStorage.getItem("accountId");
+                        const cardData = {
+                            cardTypeId: selectedCardId,
+                            accountId: accountId,
+                            name: selectedCardName,
+                            limit: 5000,
+                            status: true
+                        };
+
+                       const responseCard = await createCard(cardData);
+                    }
+                    onClose();
+                } catch (error) {
+                    console.error("Error creating Business Foreign Currency Account:", error);
+                }
+                console.log("Usao sam u business foreign currency");
             }
 
             if (step === 3) {
-                // Pokrećemo submit business forme
-                businessForm.handleSubmit(onBusinessSubmit)();
+                try {
+                    console.log("📌 Podaci za kreiranje account-a:", data);
+                    const accountResponse = await createAccount(data);
+
+                    if (accountResponse.success) {
+                        console.log("Business account created successfully:", accountResponse.data);
+                        localStorage.setItem("accountId", accountResponse.data.id);
+
+                        await businessForm.handleSubmit(onBusinessSubmit)();
+                    } else {
+                        console.error("Failed to create business account:", accountResponse.data);
+                    }
+                } catch (error) {
+                    console.error("Error creating business account:", error);
+                }
             } else {
                 setStep(step + 1);
             }
         }
     };
+
+
+
 
     const handlePlanChange = (value: string) => {
         setPlan(value);
@@ -272,7 +469,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                 <form
                                     onSubmit={emailForm.handleSubmit((data) => {
                                         console.log("Email Information:", data);
-                                        setStep(step + 1);
+                                        fetchUserByEmail(data.email);
                                     })}
                                     className="space-y-4 mt-4"
                                 >
@@ -290,7 +487,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                         )}
                                     />
                                     <div className="flex justify-center w-full mt-4">
-                                        <Button type="submit" className="w-full" variant="default" onClick={handleContinueClick}>
+                                        <Button type="submit" className="w-full" variant="default">
                                             Continue
                                         </Button>
                                     </div>
@@ -298,7 +495,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                             </Form>
                         )}
                         {selectedOption === "new" && (
-                            <Button type="button" variant="default" className="w-full mt-6" onClick={handleContinueClick}>
+                            <Button type="button" variant="default" className="w-full mt-6" onClick={onRegister}>
                                 Continue
                             </Button>
                         )}
@@ -309,12 +506,45 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
             {step === 2 && (
                 <Card className="bg-transparent border-0 items-center">
                     <CardContent>
+
                         <Form {...accountForm}>
-                            <form
-                                onSubmit={accountForm.handleSubmit((data) => {
-                                    console.log("Account Information:", data);
-                                })}
-                                className="flex flex-col gap-4 mt-6"
+                            <form onSubmit={accountForm.handleSubmit((data) => {
+                                const clientId = clientID;
+                                const name = null;
+                                const dailyLimit = 2000;
+                                const monthlyLimit = 50000;
+                                const balance = 5000.75;
+                                const accountTypeId = selectedPlanId;
+                                const status  = true;
+
+                                const finalData = {
+                                    ...data,
+                                    clientId,
+                                    name,
+                                    dailyLimit,
+                                    monthlyLimit,
+                                    balance,
+                                    accountTypeId,
+                                    status
+                                };
+
+
+                                const finishData = {
+                                    name: finalData.name || "Štedni račun",
+                                    dailyLimit: finalData.dailyLimit,
+                                    monthlyLimit: finalData.monthlyLimit,
+                                    clientId: finalData.clientId,
+                                    balance: finalData.balance,
+                                    currencyId: finalData.currency,
+                                    accountTypeId: finalData.accountTypeId,
+                                    status: finalData.status
+                                };
+
+
+
+                                handleFinishOrContinue(finishData);
+                            })}
+                                  className="flex flex-col gap-4 mt-6"
                             >
                                 <FormField
                                     control={accountForm.control}
@@ -323,12 +553,12 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                         <FormItem>
                                             <FormLabel>Type</FormLabel>
                                             <FormControl>
-                                                <TypeSelect type={type} setType={setType} {...field} />
+                                                <TypeSelect type={selectedType} setType={setSelectedType} accountTypes={accountTypes} />
                                             </FormControl>
                                         </FormItem>
                                     )}
                                 />
-                                {type === "Current Account" ? (
+                                {selectedType === "Current Account" ? (
                                     <div className="flex gap-4 w-full ">
                                         <FormField
                                             control={accountForm.control}
@@ -357,6 +587,8 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                                             plan={plan}
                                                             handlePlanChange={handlePlanChange}
                                                             ownership={ownership}
+                                                            accountTypes={accountTypes}
+                                                            setSelectedPlanId={setSelectedPlanId}
                                                             {...field}
                                                         />
                                                     </FormControl>
@@ -390,8 +622,14 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                                     <FormLabel>Currency</FormLabel>
                                                     <FormControl>
                                                         <CurrencySelect
-                                                            value={`${currencies[5].code} - ${currencies[5].symbol}`}
-                                                            onChange={field.onChange}
+                                                            onChange={(value) => {
+                                                                const selectedCurrencyData = currencies.find(currency => `${currency.code} - ${currency.symbol}` === value);
+                                                                if (selectedCurrencyData) {
+                                                                    setCurrencyId(selectedCurrencyData.id);
+                                                                    field.onChange(selectedCurrencyData.id);
+                                                                }
+                                                            }}
+                                                            value={currencies.find(currency => currency.id === currencyId) ? `${currencies.find(currency => currency.id === currencyId)?.code} - ${currencies.find(currency => currency.id === currencyId)?.symbol}` : ''}
                                                             currencies={currencies}
                                                         />
                                                     </FormControl>
@@ -417,16 +655,53 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                         </Label>
                                     </RadioGroup>
                                 </div>
+                                {creditCard === "yes" && (
+                                    <FormField
+                                        control={accountForm.control}
+                                        name="cardType"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Card Type</FormLabel>
+                                                <FormControl>
+                                                    <Select
+                                                        onValueChange={(value) => {
+                                                            const selectedCard = cardTypes.find((card) => card.id === value);
+                                                            if (selectedCard) {
+                                                                setSelectedCardId(selectedCard.id);
+                                                                setSelectedCardName(selectedCard.name);
+                                                            }
+                                                            field.onChange(value);
+                                                        }}
+                                                        value={field.value || selectedCardId || (cardTypes.length > 0 ? cardTypes[0].id : '')}
+                                                        >
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select Card Type" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {cardTypes.map((card) => (
+                                                                <SelectItem key={card.id} value={card.id}>
+                                                                    {card.name}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
+                                    />
+                                )}
+
                                 <div className="flex gap-4">
                                     <Button variant="negative" onClick={handleBack}>
                                         Back
                                     </Button>
-                                    <Button variant={ownership === "Personal" ? "gradient" : "default" as "gradient" | "default"} onClick={handleFinishOrContinue}>
+                                    <Button variant={ownership === "Personal" ? "gradient" : "default" as "gradient" | "default"}>
                                         {ownership === "Personal" ? "Finish" : "Continue"}
                                     </Button>
                                 </div>
                             </form>
                         </Form>
+
                     </CardContent>
                 </Card>
             )}
@@ -511,7 +786,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                         </FormItem>
                                     )}
                                 />
-                                <FormField
+                                {/* <FormField
                                     control={businessForm.control}
                                     name="majorityOwner"
                                     render={({ field }) => (
@@ -523,7 +798,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                             <FormMessage />
                                         </FormItem>
                                     )}
-                                />
+                                /> */}
                                 <div className="flex gap-4 mt-4">
                                     <Button variant="ghost" onClick={handleBack}>
                                         Back

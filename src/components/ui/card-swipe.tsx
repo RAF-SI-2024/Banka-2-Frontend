@@ -37,7 +37,7 @@ export const CardSwipe: React.FC<CarouselProps> = ({
                 }}
                 effect={"cards"}
                 grabCursor={true}
-                loop={true}
+                loop={false}
                 slidesPerView={"auto"}
                 rewind={true}
                 cardsEffect={{

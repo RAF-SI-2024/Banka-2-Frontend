@@ -1,120 +1,134 @@
 import {useParams} from "react-router-dom";
-import {BankAccount} from "@/types/bankAccount.ts";
-import {Client, Employee} from "@/types/user.ts";
-import {Gender, Role} from "@/types/enums.ts";
-import {BankAccountType} from "@/types/bankAccountType.ts";
-import {Currency} from "@/types/currency.ts"
 import BankAccountBalanceCard from "@/components/bank-account/BankAccountBalance.tsx";
 import BankAccountDetailsCard from "@/components/bank-account/BankAccountDetails.tsx";
 import BankAccountTransactions from "@/components/bank-account/BankAccountTransactions.tsx";
 import { motion, AnimatePresence } from "framer-motion";
 import BankAccountCardsCard from "@/components/bank-account/BankAccountCards.tsx";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {editAccountClient, getAccountById, getAllCreditCardsForBankAccount} from "@/api/bankAccount.ts";
+import {AccountUpdateClientRequest, BankAccount} from "@/types/bankAccount.ts";
+import {CardDTO} from "@/types/card.ts";
 
-const client: Client = {
-    firstName: "Bosko",
-    lastName: "Zlatanovic",
-    dateOfBirth: "15-01-2002",
-    gender: Gender.Male,
-    uniqueIdentificationNumber: "112222193123",
-    email: "bzlatanovic@gmail.com",
-    phoneNumber: "+381 61 1111 002",
-    address: "Main st 123",
-}
 
-const employee: Employee = {
-    firstName: "Mihailo",
-    lastName: "Radovic",
-    dateOfBirth: "15-11-2002",
-    gender: Gender.Male,
-    uniqueIdentificationNumber: "112222193123",
-    email: "mradovic@gmail.com",
-    phoneNumber: "+381 62 1111 002",
-    address: "Main st 123",
-    username: "mradovic",
-    role: Role.Employee,
-    department: "IT",
-    employed: true,
-}
 
-const currency: Currency = {
-    id: "1",
-    name: "United states dollar",
-    code: "EUR",
-    symbol: "$",
-    countries: [],
-    description: "bla bla",
-    status: true,
-    createdAt: new Date(),
-    modifiedAt: new Date()
-}
 
-const accountType: BankAccountType = {
-    id: "1",
-    name: "Foreign Exchange",
-    code: "aaa",
-    createdAt: new Date(),
-    modifiedAt: new Date()
-}
-
-const account: BankAccount = {
-    id: "1",
-    name: "Racun 1",
-    client: client,
-    accountNumber: 1111222233334444,
-    balance: 99900000.25,
-    employee: employee,
-    currency: currency,
-    accountType: accountType,
-    dailyLimit: 1000,
-    monthlyLimit: 10000,
-    availableBalance: 1000,
-    status: true,
-    creationDate: new Date(),
-    expirationDate: new Date(),
-    createdAt: new Date(),
-    modifiedAt: new Date()
-}
 export default function BankAccountPage() {
+    // error
+    const [error, setError] = useState<string | null>(null);
     const { accountId } = useParams<{ accountId: string }>();
+    const [account, setAccount] = useState<BankAccount>();
+    const [cards, setCards] = useState<CardDTO[]>([]);
     const [showDetails, setShowDetails] = React.useState(false)
+
+    const getAccountInfo = async () => {
+        setError(null);
+        if (!accountId) {
+            throw new Error("AccountId is missing from URL!");
+        }
+        console.log("Fetching bank account info");
+        try {
+            const response = await getAccountById(accountId);
+            if (response.status !== 200) {
+                throw new Error("Failed to fetch bank account info");
+            }
+            setAccount(response.data);
+            console.log(response.data);
+        } catch (err) {
+            console.error(err);
+            setError("Failed to fetch bank account info");
+        }
+    }
+
+    const getCards = async () => {
+        try{
+            setError(null);
+            if (!accountId) {
+                throw new Error("AccountId is missing from URL!");
+            }
+            console.log(accountId);
+            const response = await getAllCreditCardsForBankAccount(accountId);
+            console.log(response);
+
+            if(response.status != 200){
+                throw new Error("Failed to fetch card info");
+            }
+            setCards(response.data.items);
+        } catch (err) {
+            console.error(err);
+            setError("Failed to fetch card info");
+        }
+    }
+
+    const editAccount = async (data: AccountUpdateClientRequest) => {
+        if (!accountId) {
+            throw new Error("AccountId is missing from URL!");
+        }
+        console.log("Editing bank account info");
+        console.log(data);
+        try {
+            const response = await editAccountClient(accountId, data);
+            if (response.status !== 200) {
+                throw new Error("Failed to edit bank account info");
+            }
+            setAccount(response.data);
+            console.log(response.data);
+
+            return true;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
+
+    useEffect(() => {
+        getAccountInfo();
+        getCards();
+    }, [])
+
+    if (error || account == undefined) return <h1 className="text-center text-2xl font-semibold text-destructive">{error}</h1>;
 
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            <h1 className="font-display font-bold text-5xl">{account.name} overview</h1>
+            <h1 className="font-display font-bold text-5xl">{account.name || "An unnamed account"} overview</h1>
             <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-                <AnimatePresence mode="wait">
-                    {showDetails ? (
-                        <motion.div
-                            key="details"
-                            layout
-                            initial={{ opacity: 0, x: 100 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -100 }}
-                        >
-                            <BankAccountDetailsCard
-                                account={account}
-                                onBackClick={() => setShowDetails(false)}
-                                onAccountNameChange={newValue => console.log(newValue)}
-                            />
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key="balance"
-                            layout
-                            initial={{ opacity: 0, x: 100 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -100 }}
-                        >
-                            <BankAccountBalanceCard
-                                account={account}
-                                onDetailsClick={() => setShowDetails(true)}
-                            />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                    <AnimatePresence mode="wait">
+                        {showDetails ? (
+                            <motion.div
+                                key="details"
+                                layout
+                                initial={{ opacity: 0, x: 100 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -100 }}
+                            >
+                                <BankAccountDetailsCard
+                                    account={account}
+                                    onBackClick={() => setShowDetails(false)}
+                                    onAccountNameChange={async (newValue) =>{
+                                        return  editAccount({
+                                            name: newValue,
+                                            monthlyLimit: 2000, //TODO: change to account.monthlyLimit - now causes error because it's 0
+                                            dailyLimit: 2000,  //TODO: change to account.dailyLimit - now causes error because it's 0
+                                        } as AccountUpdateClientRequest)
+                                    }}
+                                />
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="balance"
+                                layout
+                                initial={{ opacity: 0, x: 100 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -100 }}
+                            >
+                                <BankAccountBalanceCard
+                                    account={account}
+                                    onDetailsClick={() => setShowDetails(true)}
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                <BankAccountCardsCard account={account} />
+                <BankAccountCardsCard account={account} cards={cards} />
                 <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={account}/>
             </div>
         </main>

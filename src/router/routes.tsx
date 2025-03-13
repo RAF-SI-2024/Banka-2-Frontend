@@ -13,6 +13,7 @@ import {
 } from "@/router/utils/ProtectedRoutes.tsx";
 import BankAccountPage from "@/pages/BankAccount.tsx";
 import RoleBasedHomePage from "@/pages/RoleBasedHome.tsx";
+import CardDetailsPage from "@/pages/Card.tsx";
 
 export const AppRoutes = () => {
     return (
@@ -24,6 +25,7 @@ export const AppRoutes = () => {
 
                     <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
+                    <Route path="/cards/:cardId" element={<CardDetailsPage />} />
                     <Route path="/showcase" element={<ComponentShowcasePage />} />
                 </Route>
             </Route>

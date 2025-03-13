@@ -81,3 +81,17 @@ export const resetPassword = async (password: string, confirmPassword: string, t
         throw error;
     }
 }
+
+export const updateAccountLimits = async (clientId: string | undefined, name: string, dailyLimit: number, monthlyLimit: number) => {
+    try {
+        const response = await api.put(`${API_BASE}/accounts/client/${clientId}`, {
+            name: name,
+            dailyLimit: dailyLimit,
+            monthlyLimit: monthlyLimit
+        });
+        return response
+    } catch (error) {
+        console.error("❌ Update account limits failed:", error);
+        throw error;
+    }
+};
