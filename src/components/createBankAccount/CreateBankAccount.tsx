@@ -33,6 +33,7 @@ import {fetchAccountTypes} from "@/api/account.ts";
 import {createCompany} from "@/api/account.ts";
 import {createCard} from "@/api/account.ts";
 import {CreateBankAccountRequest} from "@/types/bankAccount.ts";
+import { BankAccountType } from "@/types/bankAccountType";
 
 const businessInfoSchema = z.object({
     businessName: z.string()
@@ -81,9 +82,9 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
     const [cardTypes, setCardTypes] = useState<CardType[]>([]);
     const [selectedCurrency, setSelectedCurrency] = useState(null);
     const [currencyId, setCurrencyId] = useState<string | null>(null);
-    const [accountTypes, setAccountTypes] = useState([]);
+    const [accountTypes, setAccountTypes] = useState<BankAccountType[]>([]);
     const [selectedType, setSelectedType] = useState("Current Account");
-    const [selectedPlanId, setSelectedPlanId] = useState("")
+    const [selectedPlanId, setSelectedPlanId] = useState<string>("")
     const [selectedCardId, setSelectedCardId] = useState<string | null>(cardTypes.length > 0 ? cardTypes[0].id : null);
     const [selectedCardName, setSelectedCardName] = useState<string | null>(null);
     const [clientID, setClientId] = useState("");
@@ -160,6 +161,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
             setSelectedCardName(cardTypes[0].name);
         }
     }, [cardTypes, selectedCardId]);
+
 
     useEffect(() => {
         const loadAccountTypes = async () => {
@@ -335,7 +337,6 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                     console.log("DATAAA", data);
                     const response = await createAccount(data);
                     localStorage.setItem("accountId", response.data.id);
-                    console.log("Account created successfully:", response);
 
 
                     if (creditCard === "yes") {
@@ -350,14 +351,11 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
 
                         const responseCard = await createCard(cardData);
-                        console.log("Card response:" + responseCard);
                     }
                 } catch (error) {
                     console.error("Error creating account:", error);
                 }
 
-                console.log("Usao sam u personal current");
-                console.log(data.currencyId);
             } else if (selectedType === "Foreign Currency Account") {
                 console.log("TU SAM")
                 const selectedCurrency = data.currencyId;
@@ -376,8 +374,6 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                     }
 
                     const response = await createAccount(data);
-                    console.log("Foreign Currency Account created successfully:", response);
-
 
                     if (creditCard === "yes") {
                         const accountId = localStorage.getItem("accountId");
@@ -391,14 +387,10 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
 
                         const responseCard = await createCard(cardData);
-                        console.log("Card response:" + responseCard);
                     }
                 } catch (error) {
                     console.error("Error creating Foreign Currency Account:", error);
                 }
-
-                console.log("Usao sam u personal foreign currency");
-                console.log(data.currencyId);
             }
         } else {
 
@@ -644,7 +636,6 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                                                 if (selectedCurrencyData) {
                                                                     setCurrencyId(selectedCurrencyData.id);
                                                                     field.onChange(selectedCurrencyData.id);
-                                                                    console.log(selectedCurrencyData.id);
                                                                 }
                                                             }}
                                                             value={currencies.find(currency => currency.id === currencyId) ? `${currencies.find(currency => currency.id === currencyId)?.code} - ${currencies.find(currency => currency.id === currencyId)?.symbol}` : ''}
