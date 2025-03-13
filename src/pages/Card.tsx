@@ -94,7 +94,7 @@ const cards: CardType[] = [
         account: account,
         cvv: "123",
         limit: 10000,
-        status: true,
+        status: false,
         createdAt: new Date(),
         modifiedAt: new Date(),
     },
@@ -150,7 +150,7 @@ export default function CardPage() {
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
             <h1 className="font-display font-bold text-5xl">Card overview</h1>
 
-            <div className="grid md:grid-cols-2 gap-4 items-start">
+            <div className="grid auto-rows-min gap-4 md:grid-cols-2">
                 <div className="flex flex-col gap-4">
                     <AnimatePresence mode="wait">
                         {showDetails ? (
@@ -180,9 +180,7 @@ export default function CardPage() {
                     </AnimatePresence>
                 </div>
 
-                <div className="hidden md:block md:col-span-1" />
-
-                <BankAccountTransactions className="col-span-2" account={finalAccount} />
+                <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={finalAccount} />
             </div>
         </main>
     )
