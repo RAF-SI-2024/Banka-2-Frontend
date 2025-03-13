@@ -56,20 +56,23 @@ export default function Footer({className, ...props} :
 
         return (
             <div
-                className="text-sm font-medium font-paragraph flex h-5 flex-row space-x-4 text-footer-foreground items-center">
+                className="text-sm font-medium font-paragraph flex flex-wrap justify-center gap-x-4 gap-y-2 text-footer-foreground items-center"
+            >
                 {items.map((item, index) => (
                     <React.Fragment key={item.url}>
                         <Button
                             className="p-0 text-sm text-muted-foreground underline-offset-4 hover:underline hover:text-link-hover"
                             variant="link"
                             onClick={() => {
-                                navigate(item.url, {replace: true});
+                                navigate(item.url, { replace: true });
                             }}
                         >
                             {item.title}
                         </Button>
-                        {/* Add separator only if there is another item after this one */}
+                        <div className="h-5">
                         {index < items.length - 1 && <Separator orientation="vertical"/>}
+                        </div>
+
                     </React.Fragment>
                 ))}
             </div>
