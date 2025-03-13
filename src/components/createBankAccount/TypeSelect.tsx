@@ -1,38 +1,3 @@
-//import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select.tsx";
-//import { Label } from "@/components/ui/label.tsx";
-//import {useEffect} from "react";
-
-
-// interface TypeSelectProps {
-//     type: string;
-//     setType: (value: string) => void;
-//     accountTypes: any[];
-// }
-//
-// const TypeSelect = ({ type, setType, accountTypes }: TypeSelectProps) => {
-//
-//
-//     useEffect(() => {
-//         console.log("ACCOUNTYPES:", accountTypes);
-//     }, []);  // us
-//
-//     return (
-//         <div className="flex flex-col space-y-1 w-full">
-//             <Select value={type} onValueChange={setType}>
-//                 <SelectTrigger className="w-full p-3 bg-[var(--card)] text-white border border-[var(--border)] rounded-lg">
-//                     <SelectValue placeholder="Izaberi tip" />
-//                 </SelectTrigger>
-//                 <SelectContent>
-//                     <SelectItem value="Current Account">Current Account</SelectItem>
-//                     <SelectItem value="Foreign Exchange Account">Foreign Exchange Account</SelectItem>
-//                 </SelectContent>
-//             </Select>
-//         </div>
-//     );
-// };
-
-//export default TypeSelect;
-
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select.tsx";
 import { useEffect } from "react";
 
@@ -50,7 +15,9 @@ const TypeSelect = ({ type, setType, accountTypes }: TypeSelectProps) => {
 
     return (
         <div className="flex flex-col space-y-1 w-full">
-            <Select value={type} onValueChange={setType}>
+            <Select value={type} onValueChange={(value) => {
+                    setType(value);
+                }}>
                 <SelectTrigger className="w-full p-3 bg-[var(--card)] text-white border border-[var(--border)] rounded-lg">
                     <SelectValue placeholder="Izaberi tip" />
                 </SelectTrigger>
