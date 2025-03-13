@@ -9,7 +9,7 @@ import {Button} from "@/components/ui/button.tsx";
 import InputHidable from "@/components/common/input/InputHidable.tsx";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {requestPasswordReset, resetPassword} from "@/api/auth.ts";
+import { resetPassword} from "@/api/auth.ts";
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 
 // Form field definitions
@@ -127,12 +127,10 @@ export default function ResetPassForm({ className, ...props }: React.ComponentPr
                                             <FormLabel>{field.label}</FormLabel>
                                             <FormControl>
                                                 <InputHidable
-                                                    {...fieldProps}
                                                     placeholder={field.placeholder}
-                                                    name={fieldProps.name}
-                                                    id={field.id}
-                                                    type="password"
-                                                    aria-invalid={!!form.formState.errors[fieldProps.name]}
+                                                    placeholderVisible={field.placeholderVisible}
+                                                    id={field.name}
+                                                    {...fieldProps}
                                                 />
                                             </FormControl>
                                             <FormMessage />
