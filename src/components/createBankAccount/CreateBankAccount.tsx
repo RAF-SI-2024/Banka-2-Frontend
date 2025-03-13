@@ -84,8 +84,9 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
     const [accountTypes, setAccountTypes] = useState([]);
     const [selectedType, setSelectedType] = useState("Current Account");
     const [selectedPlanId, setSelectedPlanId] = useState("")
-    const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+    const [selectedCardId, setSelectedCardId] = useState<string | null>(cardTypes.length > 0 ? cardTypes[0].id : null);
     const [selectedCardName, setSelectedCardName] = useState<string | null>(null);
+    const [clientID, setClientId] = useState("");
 
 
     useEffect(() => {
@@ -140,6 +141,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                         const response = await getAllCardTypes();
                         setCardTypes(response.items);
                         localStorage.setItem("cardTypes", JSON.stringify(response.items));
+                    
 
                         console.log("Card Types:", response);
                     } catch (error) {
@@ -151,6 +153,13 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
         fetchData();
     }, [] );
+
+    useEffect(() => {
+        if (cardTypes.length > 0 && !selectedCardId) {
+            setSelectedCardId(cardTypes[0].id);
+            setSelectedCardName(cardTypes[0].name);
+        }
+    }, [cardTypes, selectedCardId]);
 
     useEffect(() => {
         const loadAccountTypes = async () => {
@@ -176,10 +185,8 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                 // emailSchema.parse({ email }); // validation
                 // Make API request to check if the user exists
                 const response = await getAllUsers(1, 10, {email});
-                
-                console.log("HANDLEONCONTINUE" + JSON.stringify(response));  
-                console.log("HANDLEONCONTINUE2" + JSON.stringify(response.items));
                 if (response.items.length > 0) {
+                    setClientId(response.items[0].id);
                     setEmailError(null);
                     setStep(step + 1);
                 } else {
@@ -237,7 +244,8 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
             accountType: selectedType,
             ownership: ownership,
             plan: plan,
-            currency: "EUR"
+            currency: "EUR",
+            cardType: ""
         },
     });
 
@@ -253,7 +261,8 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
             };
 
             const userString = sessionStorage.getItem("user");
-            const user = JSON.parse(userString);
+            
+            const user = userString ? JSON.parse(userString) : null;
             const userId = user.id;
 
             const createAccData: CreateBankAccountRequest = {
@@ -262,7 +271,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                 monthlyLimit: 50000,
                 clientId: userId,
                 balance: 5000.75,
-                currencyId: currencyId,
+                currencyId: currencyId || "",
                 accountTypeId: selectedPlanId,
                 status: true
             };
@@ -323,6 +332,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                 }
 
                 try {
+                    console.log("DATAAA", data);
                     const response = await createAccount(data);
                     localStorage.setItem("accountId", response.data.id);
                     console.log("Account created successfully:", response);
@@ -349,6 +359,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                 console.log("Usao sam u personal current");
                 console.log(data.currencyId);
             } else if (selectedType === "Foreign Currency Account") {
+                console.log("TU SAM")
                 const selectedCurrency = data.currencyId;
 
                 if (!selectedCurrency) {
@@ -358,6 +369,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
                 try {
                     const selectedPlan = accountTypes.find((account: any) => account.name === "Foreign Currency Account");
+                    console.log("Selected Plan:", selectedPlan);
                     if (selectedPlan) {
                         setSelectedPlanId(selectedPlan.id);
                         data.accountTypeId = selectedPlan.id;
@@ -514,8 +526,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
                         <Form {...accountForm}>
                             <form onSubmit={accountForm.handleSubmit((data) => {
-                                const userData = JSON.parse(sessionStorage.getItem('user') || '{}');
-                                const clientId = userData.id;
+                                const clientId = clientID;
                                 const name = null;
                                 const dailyLimit = 2000;
                                 const monthlyLimit = 50000;
@@ -681,8 +692,8 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                                                             }
                                                             field.onChange(value);
                                                         }}
-                                                        value={field.value || (cardTypes.length > 0 ? cardTypes[0].id : "")}
-                                                    >
+                                                        value={field.value || selectedCardId || (cardTypes.length > 0 ? cardTypes[0].id : '')}
+                                                        >
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="Select Card Type" />
                                                         </SelectTrigger>
