@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { CardDTO } from "@/types/cardDTO.ts";
-import { putCardStatus } from "@/api/card.ts";
+import { changeCardStatusClient } from "@/api/card.ts";
 
 interface Props {
   card: CardDTO;
@@ -21,7 +21,7 @@ const CardDetails = ({ card, onBackClick }: Props) => {
   const onBlockClick = async (cardId: string) => {
     console.log("Blocking the card");
     try {
-      const response = await putCardStatus(cardId, false);
+      const response = await changeCardStatusClient(cardId, false);
       if (response.status !== 200) {
         throw new Error("Failed to block this card");
       }
