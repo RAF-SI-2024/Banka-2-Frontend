@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/card.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
-import { CardDTO } from "@/types/cardDTO.ts";
-import { changeCardStatusClient } from "@/api/card.ts";
+import { CardDTO } from "@/types/card.ts";
+import {changeCardStatusClient} from "@/api/card.ts";
 
 interface Props {
   card: CardDTO;

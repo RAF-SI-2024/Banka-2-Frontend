@@ -13,11 +13,12 @@ type ErrorType = {
 } | null;
 
 interface OTPFormProps {
-    setStep: (open: number) => void;
+    form: any;
+    nextStep: () => void;
     setErrors: (error: ErrorType) => void;
 }
 
-export default function OTPForm({setStep, setErrors}: OTPFormProps){
+export default function OTPForm({form, nextStep, setErrors}: OTPFormProps){
 
     const [value, setValue] = useState("")
 
@@ -52,8 +53,9 @@ export default function OTPForm({setStep, setErrors}: OTPFormProps){
             // TODO Ovde treba dodati zahtev za slanje otp na backend
             console.log(value)
             const response = true;
+            form.setValue("otp", value);
             if(response)
-                setStep(2)
+                nextStep()
 
         } catch (error) {
             console.error("Failed to confirm OTP:", error);

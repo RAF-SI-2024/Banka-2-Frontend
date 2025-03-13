@@ -1,6 +1,5 @@
 import api from "./axios";
 import { API_BASE } from "../constants/endpoints";
-import { LoginRequest } from "../types/auth";
 import {EditUserRequest, GetUserRequest, UpdateClientRequest, UpdateEmployeeRequest, User, UserResponse} from "@/types/user.ts";
 
 export const getAllUsers = async (

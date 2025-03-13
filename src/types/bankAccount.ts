@@ -11,7 +11,7 @@ export interface BankAccount {
     availableBalance: number;
     employee: Employee;
     currency: Currency;
-    accountType: BankAccountType;
+    type: BankAccountType;
     dailyLimit: number;
     monthlyLimit: number;
     status: boolean;
@@ -42,6 +42,11 @@ export interface CreateBankAccountRequest {
     status: boolean,
 }
 
+export interface AccountUpdateClientRequest{
+    name:	string,
+    dailyLimit: number,
+    monthlyLimit: number,
+}
 
 
 
