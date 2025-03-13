@@ -5,8 +5,22 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
+import {activateOrDeactivateBankAccount} from "@/api/bankAccount"
+interface BankingAccountDropdownMenuProps {
+    id: string;
+    status: boolean;
+}
 
-export default function BankingAccountDropdownMenu() {
+export default function BankingAccountDropdownMenu({id, status}: BankingAccountDropdownMenuProps) {
+    const handleActivateOrDeactivate = async () => {
+        try {
+            const newStatus = !status;
+            const response = await activateOrDeactivateBankAccount(id, newStatus);
+            console.log("Account status updated successfully:", response);
+        } catch (error) {
+            console.error("Failed to update account status:", error);
+        }
+    };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -16,8 +30,10 @@ export default function BankingAccountDropdownMenu() {
         />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem>Action TODO</DropdownMenuItem>
+      <DropdownMenuContent align="start">
+          <DropdownMenuItem onClick={handleActivateOrDeactivate}>
+              {status ? "Deactivate account" : "Activate account"}
+          </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
