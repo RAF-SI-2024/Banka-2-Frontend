@@ -4,7 +4,7 @@ import {BankAccount} from "@/types/bankAccount.ts";
 import React from "react";
 import {CardSwipe} from "@/components/ui/card-swipe.tsx";
 import {CreditCard} from "@/components/ui/credit-card.tsx";
-import {Card as CardEntity} from "@/types/card.ts"
+import {CardDTO as CardEntity} from "@/types/cardDTO.ts"
 import {CardType} from "@/types/cardType.ts";
 import {format} from "date-fns";
 import {useNavigate} from "react-router-dom";
