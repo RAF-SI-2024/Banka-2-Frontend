@@ -52,9 +52,9 @@ const businessInfoSchema = z.object({
     address: z.string()
         .min(5, "Address is required")
         .regex(/^[0-9A-Za-zčČćĆžŽšŠđĐ /]+$/, "Only letters, numbers, spaces and / are allowed"),
-    majorityOwner: z.string()
-        .min(1, "Majority owner name is required")
-        .max(55, "Majority owner name must be at most 32 characters")
+    // majorityOwner: z.string()
+    //     .min(1, "Majority owner name is required")
+    //     .max(55, "Majority owner name must be at most 32 characters")
 
 });
 
@@ -65,10 +65,11 @@ type BusinessInfo = z.infer<typeof businessInfoSchema>;
 interface CreateBankAccountProps {
     onRegister: () => void;
     registeredEmail?: string;
+    onClose: () => void;
 }
 
 
-export default function CreateBankAccount({onRegister, registeredEmail}: CreateBankAccountProps) {
+export default function CreateBankAccount({onRegister, registeredEmail, onClose}: CreateBankAccountProps) {
     const location = useLocation();
 
     const [selectedOption, setSelectedOption] = useState("new");
@@ -225,7 +226,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
             pib: "",
             activityCode: "",
             address: "",
-            majorityOwner: "",
+            // majorityOwner: "",
         },
     });
 
@@ -248,6 +249,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
     });
 
     const onBusinessSubmit = async (data: BusinessInfo) => {
+        console.log("Business Data:", data);
         try {
             const mappedData = {
                 name: data.businessName,
@@ -303,6 +305,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
             if (response.success) {
                 console.log("Company created successfully:", response.data);
+                onClose();
             } else {
                 console.error("Failed to create company:", response.data);
             }
@@ -324,7 +327,6 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
                 try {
                     const response = await createAccount(data);
-                    console.log("NIKOLA:", response.data);
                     localStorage.setItem("accountId", response.data.id);
 
 
@@ -341,6 +343,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
                         const responseCard = await createCard(cardData);
                     }
+                    onClose();
                 } catch (error) {
                     console.error("Error creating account:", error);
                 }
@@ -376,6 +379,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
                         const responseCard = await createCard(cardData);
                     }
+                    onClose();
                 } catch (error) {
                     console.error("Error creating Foreign Currency Account:", error);
                 }
@@ -406,6 +410,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
                        const responseCard = await createCard(cardData);
                     }
+                    onClose();
                 } catch (error) {
                     console.error("Error creating Business Foreign Currency Account:", error);
                 }
