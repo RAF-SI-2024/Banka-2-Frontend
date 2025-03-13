@@ -1,7 +1,7 @@
 import {BankAccount} from "@/types/bankAccount.ts";
 import {CardType} from "@/types/cardType.ts";
 
-export interface Card{
+export interface CardDTO {
     id: string;
     type: CardType;
     number: string,

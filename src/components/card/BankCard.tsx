@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx"
 import { CreditCard } from "@/components/ui/credit-card.tsx"
-import { Card as CardType } from "@/types/card.ts"
+import { CardDTO as CardType } from "@/types/cardDTO.ts"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button.tsx"
+import {Client} from "@/types/user.ts";
 
 interface Props {
     card: CardType
-    cardHolder: string
+    cardHolder: Client
     onDetailsClick?: () => void
 }
 
@@ -21,7 +22,7 @@ const CardDisplay = ({ card, cardHolder, onDetailsClick }: Props) => {
             <CardContent className="flex flex-col items-center gap-4">
                 <CreditCard
                     title={card.name}
-                    cardHolder={cardHolder}
+                    cardHolder={cardHolder.firstName + " " + cardHolder.lastName}
                     cardNumber={card.number}
                     expiryDate={expiryDate}
                 />
