@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react"
 import CardDetails from "@/components/card/BankCardDetails.tsx"
 import BankAccountTransactions from "@/components/bank-account/BankAccountTransactions"
 import CardDisplay from "@/components/card/BankCard.tsx";
-import {CardDTO} from "@/types/cardDTO.ts";
+import {CardDTO} from "@/types/card.ts";
 import { getCardById } from "@/api/card"
 import {getAccountById} from "@/api/bankAccount.ts";
 import {BankAccount} from "@/types/bankAccount.ts";

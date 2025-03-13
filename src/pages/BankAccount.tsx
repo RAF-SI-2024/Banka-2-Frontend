@@ -68,7 +68,6 @@ export default function BankAccountPage() {
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
             <h1 className="font-display font-bold text-5xl">{account.name || "An unnamed account"} overview</h1>
             <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-                <div className="flex flex-col gap-4">
                     <AnimatePresence mode="wait">
                         {showDetails ? (
                             <motion.div
@@ -105,7 +104,6 @@ export default function BankAccountPage() {
                             </motion.div>
                         )}
                     </AnimatePresence>
-                </div>
 
                 <BankAccountCardsCard account={account} />
                 <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={account}/>
