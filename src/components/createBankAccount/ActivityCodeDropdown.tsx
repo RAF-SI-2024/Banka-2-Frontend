@@ -11,7 +11,7 @@ interface ActivityCodeDropdownProps {
 
 export default function ActivityCodeDropdown({ value, onChange }: ActivityCodeDropdownProps) {
     const [open, setOpen] = React.useState(false)
-    const filteredOptions = ["112", "223", "345"]
+    const filteredOptions = ["11.20", "22.31", "34.55"]
 
 
     return (
