@@ -1,6 +1,7 @@
 import { BankAccount } from "@/types/bankAccount"
 import { ColumnDef } from "@tanstack/react-table"
 import BankingAccountDropdownMenu from "./BankingAccountDropdownMenu"
+import {Badge} from "@/components/ui/badge.tsx";
 
 export function generateAccountColumns(): ColumnDef<BankAccount>[] {
   return [
@@ -19,16 +20,22 @@ export function generateAccountColumns(): ColumnDef<BankAccount>[] {
     },
     {
       accessorKey: "type.name",
-      header: "Ownership",
+      header: "Type",
     },
     {
-      accessorKey: "type.description",
-      header: "Type",
+      accessorKey: "activated",
+      header: "Status",
+      cell: ({row}) => (
+          <Badge variant={row.original.status ? "default" : "destructive"}>
+            {row.original.status ? "Active" : "Blocked"}
+          </Badge>
+      ),
+      enableHiding: true,
     },
     {
       id: "actions",
       header: "Actions",
-      cell: () => <BankingAccountDropdownMenu />,
+      cell: ({row}) => <BankingAccountDropdownMenu id={row.original.id} status={row.original.status}/>,
       enableHiding: false,
     },
   ]

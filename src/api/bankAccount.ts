@@ -23,13 +23,15 @@ export const getAllAccounts = async (
     filters: { accountNumber?: string; firstName?: string; lastName?: string;}
 ): Promise<AccountResponse> => {
     try {
+        console.log("Page number", pageNumber);
+        console.log("Page size", pageSize);
         const response = await api.get("/accounts", {
             params: {
-                accountNumber: filters.accountNumber || undefined,
-                firstName: filters.firstName || undefined,
-                lastName: filters.lastName || undefined,
-                pageNumber,
-                pageSize,
+                number: filters.accountNumber || undefined,
+                clientFirstName: filters.firstName || undefined,
+                clientLastName: filters.lastName || undefined,
+                Page: pageNumber,
+                Size: pageSize,
             },
         });
         return response.data;
@@ -70,4 +72,18 @@ export const createBankAccount = async (data : CreateBankAccountRequest, currenc
     }
 
 }
+
+export const activateOrDeactivateBankAccount = async (accountId: string, status: boolean) => {
+    try {
+        const response = await api.put(`${API_BASE}/accounts/employee/${accountId}`, {
+            status: status
+        });
+        return response;
+    } catch (error) {
+        console.error("❌ Failed to activate/deactivate bank account:", error);
+        throw error;
+    }
+}
+
+
 
