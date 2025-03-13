@@ -12,9 +12,21 @@ export const getCardById = async (id:string) => {
     }
 }
 
-export const putCardStatus = async (id: string, status: boolean) => {
+export const changeCardStatusClient = async (id: string, status: boolean) => {
     try {
-        const response = await api.put(`${API_BASE}/cards/status/${id}`, {
+        const response = await api.put(`${API_BASE}/cards/${id}/client`, {
+            status: status
+        });
+        return response;
+    } catch (error) {
+        console.error("Failed to get card! :", error);
+        throw error;
+    }
+}
+
+export const changeCardStatusEmployee = async (id: string, status: boolean) => {
+    try {
+        const response = await api.put(`${API_BASE}/cards/${id}/employee`, {
             status: status
         });
         return response;

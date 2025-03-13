@@ -6,17 +6,20 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
 import {activateOrDeactivateBankAccount} from "@/api/bankAccount"
+
 interface BankingAccountDropdownMenuProps {
     id: string;
     status: boolean;
+    onStatusChange: (id: string, newStatus: boolean) => void;
 }
 
-export default function BankingAccountDropdownMenu({id, status}: BankingAccountDropdownMenuProps) {
+export default function BankingAccountDropdownMenu({id, status, onStatusChange}: BankingAccountDropdownMenuProps) {
     const handleActivateOrDeactivate = async () => {
         try {
             const newStatus = !status;
             const response = await activateOrDeactivateBankAccount(id, newStatus);
             console.log("Account status updated successfully:", response);
+            onStatusChange(id, newStatus);
         } catch (error) {
             console.error("Failed to update account status:", error);
         }

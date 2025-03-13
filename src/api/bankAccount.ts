@@ -74,10 +74,6 @@ export const createBankAccount = async (data : CreateBankAccountRequest, currenc
 }
 
 
-
-
-
-
 export const getAllCreditCardsForBankAccount = async (accountId: string) => {
     try {
         const response = await api.get(`${API_BASE}/accounts/${accountId}/cards`);

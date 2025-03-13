@@ -21,7 +21,7 @@ const CardDetails = ({ card, onBackClick }: Props) => {
   const onBlockClick = async (cardId: string) => {
     console.log("Blocking the card");
     try {
-      const response = await putCardStatus(cardId, false);
+      const response = await changeCardStatusClient(cardId, false);
       if (response.status !== 200) {
         throw new Error("Failed to block this card");
       }
