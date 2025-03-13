@@ -75,6 +75,7 @@ const account: BankAccount = {
     createdAt: new Date(),
     modifiedAt: new Date()
 }
+
 export default function BankAccountPage() {
     const { accountId } = useParams<{ accountId: string }>();
     const [showDetails, setShowDetails] = React.useState(false)
