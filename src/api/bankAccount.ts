@@ -1,5 +1,5 @@
 import api from "./axios"
-import {AccountResponse, CreateBankAccountRequest} from "@/types/bankAccount"
+import {AccountResponse, AccountUpdateClientRequest, CreateBankAccountRequest} from "@/types/bankAccount"
 import {API_BASE} from "@/constants/endpoints.ts";
 
 
@@ -42,6 +42,16 @@ export const getAllAccounts = async (
     }
 }
 
+export const editAccountClient = async(id: string, data: AccountUpdateClientRequest) => {
+    try {
+        const response = await api.put(`${API_BASE}/accounts/client/${id}`, data);
+        return response;
+    } catch (error) {
+        console.error("Failed to edit bank account! :", error);
+        throw error;
+    }
+}
+
 
 export const createBankAccount = async (data : CreateBankAccountRequest, currency : string) => {
 
@@ -63,6 +73,16 @@ export const createBankAccount = async (data : CreateBankAccountRequest, currenc
 
 }
 
+
+export const getAllCreditCardsForBankAccount = async (accountId: string) => {
+    try {
+        const response = await api.get(`${API_BASE}/accounts/${accountId}/cards`);
+        return response;
+    } catch (error) {
+        console.error("❌ Failed to get credit cards for bank account:", error);
+    }
+}
+
 export const activateOrDeactivateBankAccount = async (accountId: string, status: boolean) => {
     try {
         const response = await api.put(`${API_BASE}/accounts/employee/${accountId}`, {
@@ -75,15 +95,12 @@ export const activateOrDeactivateBankAccount = async (accountId: string, status:
     }
 }
 
-export const getAllCreditCardsForBankAccount = async (accountId: string) => {
+export const getAllAccountsClient = async (clientId: string) => {
     try {
-        const response = await api.get(`${API_BASE}/accounts/${accountId}/cards`);
+        const response = await api.get(`${API_BASE}/clients/${clientId}/accounts`);
         return response;
     } catch (error) {
-        console.error("❌ Failed to get credit cards for bank account:", error);
+        console.error("❌ Failed to get bank accounts for client:", error);
         throw error;
     }
 }
-
-
-
