@@ -44,7 +44,7 @@ export default function BankingAccountsTable() {
   // Not done because we still dont know which columns there will be
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
       
-    });
+  });
 
    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -52,6 +52,8 @@ export default function BankingAccountsTable() {
     console.log("Fetching accounts")
     setError(null)
     try {
+        console.log("current page", currentPage)
+        console.log("page size", pageSize)
       const accountsData: AccountResponse = await getAllAccounts(
         currentPage,
         pageSize,
