@@ -67,6 +67,10 @@ const CurrencySelect = ({ value, onChange, currencies }: CurrencySelectProps) =>
             }
         }
     }, [currencies, value, onChange]);
+    
+
+    // Filter out 'RSD' currency
+    const filteredCurrencies = currencies.filter(currency => currency.code !== 'RSD');
 
     return (
         <div className="flex flex-col space-y-1 w-full">
@@ -78,7 +82,7 @@ const CurrencySelect = ({ value, onChange, currencies }: CurrencySelectProps) =>
                     <SelectValue>{defaultCurrency || "Izaberi valutu"}</SelectValue>
                 </SelectTrigger>
                 <SelectContent side="bottom">
-                    {currencies.map((currency: Currency) => {
+                    {filteredCurrencies.map((currency: Currency) => {
                         const currencyLabel = currency.code === currency.symbol ? currency.code : `${currency.code} - ${currency.symbol}`;
                         return (
                             <SelectItem key={currency.id} value={`${currency.code} - ${currency.symbol}`}>

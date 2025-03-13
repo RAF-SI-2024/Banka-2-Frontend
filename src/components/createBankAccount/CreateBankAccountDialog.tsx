@@ -24,6 +24,7 @@ export default function CreateBankAccountDialog({ open, onClose, onRegister, reg
                         <CreateBankAccount
                             onRegister={onRegister}
                             registeredEmail={registeredEmail}
+                            onClose={onClose}
                         />
                     </div>
                 </DialogContent>
@@ -40,6 +41,7 @@ export default function CreateBankAccountDialog({ open, onClose, onRegister, reg
                     <CreateBankAccount
                         onRegister={onRegister}
                         registeredEmail={registeredEmail}
+                        onClose={onClose}
                     />
                 </div>
                 <DrawerFooter className="pt-2 self-center w-full max-w-3xl ">
