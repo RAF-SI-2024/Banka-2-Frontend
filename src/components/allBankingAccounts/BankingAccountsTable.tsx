@@ -86,8 +86,16 @@ export default function BankingAccountsTable() {
     setFetchFlag(!fetchFlag);
   };
 
+    const updateAccountStatus = (id: string, newStatus: boolean) => {
+        setAccounts((prevAccounts) =>
+            prevAccounts.map((account) =>
+                account.id === id ? { ...account, status: newStatus } : account
+            )
+        );
+    };
+
   const columns = useMemo(() => {
-    return generateAccountColumns()
+    return generateAccountColumns(updateAccountStatus)
   }, [])
 
   const table = useReactTable({
@@ -127,6 +135,8 @@ export default function BankingAccountsTable() {
   useEffect(() => {
     fetchAccounts()
   }, [currentPage, pageSize, fetchFlag])
+
+
 
   if (error)
     return (
