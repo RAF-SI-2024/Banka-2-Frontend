@@ -1,6 +1,21 @@
 import api from "./axios"
 import {AccountResponse, CreateBankAccountRequest} from "@/types/bankAccount"
+import {API_BASE} from "@/constants/endpoints.ts";
 
+
+export const getAccountById = async (id:string) => {
+    try {
+        const response = await api.get(`${API_BASE}/accounts/${id}`, {
+            params:{
+                id: id
+            } //  TODO: izbaciti kada backend popravi
+        });
+        return response;
+    } catch (error) {
+        console.error("Failed to get bank account! :", error);
+        throw error;
+    }
+}
 
 export const getAllAccounts = async (
     pageNumber: number,

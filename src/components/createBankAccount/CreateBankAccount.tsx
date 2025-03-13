@@ -164,10 +164,6 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
 
     useEffect(() => {
-        console.log("selectedType changed to:", selectedType);
-    }, [selectedType]);
-
-    useEffect(() => {
         const loadAccountTypes = async () => {
             try {
 
@@ -338,6 +334,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                 }
 
                 try {
+                    console.log("DATAAA", data);
                     const response = await createAccount(data);
                     localStorage.setItem("accountId", response.data.id);
 
@@ -360,6 +357,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
                 }
 
             } else if (selectedType === "Foreign Currency Account") {
+                console.log("TU SAM")
                 const selectedCurrency = data.currencyId;
 
                 if (!selectedCurrency) {
@@ -369,6 +367,7 @@ export default function CreateBankAccount({onRegister, registeredEmail}: CreateB
 
                 try {
                     const selectedPlan = accountTypes.find((account: any) => account.name === "Foreign Currency Account");
+                    console.log("Selected Plan:", selectedPlan);
                     if (selectedPlan) {
                         setSelectedPlanId(selectedPlan.id);
                         data.accountTypeId = selectedPlan.id;
