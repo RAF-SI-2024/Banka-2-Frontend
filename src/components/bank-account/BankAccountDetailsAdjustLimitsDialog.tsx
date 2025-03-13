@@ -20,8 +20,6 @@ export default function BankAccountDetailsAdjustLimitsDialog({accountName, accou
     const [monthlyLimit, setMonthlyLimit] = useState<string>("");
     const context = useContext(AuthContext);
 
-    console.log("ID context: ", context?.user?.id);
-
     useEffect(() => {
         if (!open) {
             setStep("otp");

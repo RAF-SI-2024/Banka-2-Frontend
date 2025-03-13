@@ -1,5 +1,5 @@
 import api from "./axios"
-import {AccountResponse, CreateBankAccountRequest} from "@/types/bankAccount"
+import {AccountResponse, AccountUpdateClientRequest, CreateBankAccountRequest} from "@/types/bankAccount"
 import {API_BASE} from "@/constants/endpoints.ts";
 
 
@@ -36,6 +36,16 @@ export const getAllAccounts = async (
     }
     catch(error) {
         console.error("❌ Error fetching bank accounts:", error);
+        throw error;
+    }
+}
+
+export const editAccountClient = async(id: string, data: AccountUpdateClientRequest) => {
+    try {
+        const response = await api.put(`${API_BASE}/accounts/client/${id}`, data);
+        return response;
+    } catch (error) {
+        console.error("Failed to edit bank account! :", error);
         throw error;
     }
 }

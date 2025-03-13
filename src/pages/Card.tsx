@@ -10,8 +10,6 @@ import {getAccountById} from "@/api/bankAccount.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
 
 
-
-
 export default function CardPage() {
     // error
     const [error, setError] = useState<string | null>(null);
