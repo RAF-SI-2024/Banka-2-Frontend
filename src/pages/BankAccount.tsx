@@ -84,8 +84,8 @@ export default function BankAccountPage() {
                                     onAccountNameChange={async (newValue) =>{
                                         return  editAccount({
                                             name: newValue,
-                                            monthlyLimit: 2000,
-                                            dailyLimit: 2000,
+                                            monthlyLimit: 2000, //TODO: change to account.monthlyLimit - now causes error because it's 0
+                                            dailyLimit: 2000,  //TODO: change to account.dailyLimit - now causes error because it's 0
                                         } as AccountUpdateClientRequest)
                                     }}
                                 />
