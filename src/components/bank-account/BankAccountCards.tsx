@@ -5,17 +5,11 @@ import React, {useState} from "react";
 import {CardSwipe} from "@/components/ui/card-swipe.tsx";
 import {CreditCard} from "@/components/ui/credit-card.tsx";
 import {CardDTO} from "@/types/card.ts"
-import {CardType} from "@/types/cardType.ts";
 import {format} from "date-fns";
 import {useNavigate} from "react-router-dom";
 import {Tooltip, TooltipProvider, TooltipTrigger, TooltipContent} from "@/components/ui/tooltip.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import CreateCardDialog from "@/components/createCard/CreateCardDialog.tsx";
-
-
-interface BalanceCardProps extends React.ComponentProps<"div">{
-    account: BankAccount,
-}
 
 const NewCreditCardButton = ({ setDialogOpen }: { setDialogOpen: (open:boolean) => void }) => (
     <Button
@@ -28,7 +22,7 @@ const NewCreditCardButton = ({ setDialogOpen }: { setDialogOpen: (open:boolean) 
     </Button>
 );
 
-const CreditCardSwipe = (setDialogOpen: (open:boolean) => void, account: BankAccount, cards : CardDTO[], handleCardClick: (id: string) => void) => {
+const CreditCardSwipe = (setDialogOpen: (open:boolean) => void, account: BankAccount, cards: CardDTO[], handleCardClick: (id: string) => void) => {
     return (
         <div className="flex flex-col w-full items-center gap-4 ">
             <TooltipProvider>
@@ -80,32 +74,15 @@ const CreditCardSwipe = (setDialogOpen: (open:boolean) => void, account: BankAcc
 
 }
 
-const BankAccountCardsCard = ({ account, className, ...props }: BalanceCardProps) => {
+interface BankAccountCardsProps extends React.ComponentProps<"div">{
+    account: BankAccount,
+    cards: CardDTO[],
+}
+
+const BankAccountCardsCard = ({ account, cards, className, ...props }: BankAccountCardsProps) => {
 
     const [isDialogOpen, setDialogOpen] = useState(false);
 
-    const cardType: CardType = {
-        id: "1",
-        name: "Debit",
-        createdAt: new Date(),
-        modifiedAt: new Date(),
-    }
-
-    const card: CardDTO = {
-        id: "1",
-        type: cardType,
-        name: "Visa",
-        expiresAt: new Date(),
-        account: account,
-        cvv: "255",
-        number: "4111 1111 1111 9743",
-        limit: 10000,
-        status: true,
-        createdAt: new Date(),
-        modifiedAt: new Date(),
-    }
-
-    const cards: CardDTO[] = [card, ];
     const navigate = useNavigate();
 
     const handleCardClick = (cardId: string) => {

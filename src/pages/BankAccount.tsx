@@ -5,8 +5,9 @@ import BankAccountTransactions from "@/components/bank-account/BankAccountTransa
 import { motion, AnimatePresence } from "framer-motion";
 import BankAccountCardsCard from "@/components/bank-account/BankAccountCards.tsx";
 import React, {useEffect, useState} from "react";
-import {editAccountClient, getAccountById} from "@/api/bankAccount.ts";
+import {editAccountClient, getAccountById, getAllCreditCardsForBankAccount} from "@/api/bankAccount.ts";
 import {AccountUpdateClientRequest, BankAccount} from "@/types/bankAccount.ts";
+import {CardDTO} from "@/types/card.ts";
 
 
 
@@ -16,6 +17,7 @@ export default function BankAccountPage() {
     const [error, setError] = useState<string | null>(null);
     const { accountId } = useParams<{ accountId: string }>();
     const [account, setAccount] = useState<BankAccount>();
+    const [cards, setCards] = useState<CardDTO[]>([]);
     const [showDetails, setShowDetails] = React.useState(false)
 
     const getAccountInfo = async () => {
@@ -34,6 +36,26 @@ export default function BankAccountPage() {
         } catch (err) {
             console.error(err);
             setError("Failed to fetch bank account info");
+        }
+    }
+
+    const getCards = async () => {
+        try{
+            setError(null);
+            if (!accountId) {
+                throw new Error("AccountId is missing from URL!");
+            }
+            console.log(accountId);
+            const response = await getAllCreditCardsForBankAccount(accountId);
+            console.log(response);
+
+            if(response.status != 200){
+                throw new Error("Failed to fetch card info");
+            }
+            setCards(response.data.items);
+        } catch (err) {
+            console.error(err);
+            setError("Failed to fetch card info");
         }
     }
 
@@ -60,6 +82,7 @@ export default function BankAccountPage() {
 
     useEffect(() => {
         getAccountInfo();
+        getCards();
     }, [])
 
     if (error || account == undefined) return <h1 className="text-center text-2xl font-semibold text-destructive">{error}</h1>;
@@ -105,7 +128,7 @@ export default function BankAccountPage() {
                         )}
                     </AnimatePresence>
 
-                <BankAccountCardsCard account={account} />
+                <BankAccountCardsCard account={account} cards={cards} />
                 <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={account}/>
             </div>
         </main>
