@@ -14,7 +14,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardDescription } from "@/components/ui/card.tsx";
-import { Currency } from "@/types/currency.ts";
+import { Currency } from "@/types/currency";
 import { getAllCurrencies } from "@/api/currency.ts";
 import { getAllUsers } from "@/api/user.ts";
 import {Select,SelectItem,SelectValue,SelectContent,SelectTrigger} from "@/components/ui/select.tsx"
@@ -26,7 +26,6 @@ import {
     FormControl,
     FormMessage,
 } from "@/components/ui/form.tsx";
-import {Currency} from "@/types/currency.ts";
 import {CardType} from "@/types/cardType.ts";
 import {getAllCardTypes} from "@/api/account.ts";
 import {createAccount} from "@/api/account.ts";

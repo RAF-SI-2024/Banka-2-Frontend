@@ -45,7 +45,7 @@ interface TypeSelectProps {
 const TypeSelect = ({ type, setType, accountTypes }: TypeSelectProps) => {
     // Filtriraj accountTypes da prikaže samo "Current Account" i "Foreign Currency Account"
     const filteredAccountTypes = accountTypes.filter(accountType =>
-        accountType.name === "Current Account" || accountType.name === "Foreign Currency Account"
+        accountType.name === "Current Account" || accountType.name === "Foreign Currency Account" // ovo treba izmeniti
     );
 
     useEffect(() => {
