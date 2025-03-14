@@ -1,13 +1,17 @@
 {
-  "files": [],
+  "files": [
+    "./cypress.config.ts"
+  ],
   "references": [
     { "path": "./tsconfig.app.json"},
     { "path": "./tsconfig.node.json"}
   ],
   "compilerOptions": { // shadcn
+    "module": "ESNext",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "allowSyntheticDefaultImports": true // zbog cypressa
   }
 }
