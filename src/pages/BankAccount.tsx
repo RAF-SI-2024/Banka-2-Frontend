@@ -49,7 +49,8 @@ export default function BankAccountPage() {
             const response = await getAllCreditCardsForBankAccount(accountId);
             console.log(response);
 
-            if(response.status != 200){
+
+            if(!response || response.status != 200){
                 throw new Error("Failed to fetch card info");
             }
             setCards(response.data.items);

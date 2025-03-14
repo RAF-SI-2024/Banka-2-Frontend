@@ -1,8 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronRight } from "lucide-react";
 import { AccountResponse, BankAccount } from "@/types/bankAccount.ts";
 import { getAllAccounts, getAllCreditCardsForBankAccount  } from "@/api/bankAccount";
 import {
@@ -14,16 +12,14 @@ import {
     ColumnFiltersState,
     getFilteredRowModel,
     useReactTable,
-    flexRender,
     createColumnHelper,
     getExpandedRowModel,
 } from "@tanstack/react-table";
 import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
 import { DataTableViewOptions } from "@/components/common/datatable/DataTableViewOptions";
 import { generateAccountColumns } from "./BankingAccountsColumnDef";
-import {formatCurrency} from "@/utils/format-currency.ts";
 import {Currency} from "@/types/currency.ts";
-import CreditCardDropdownMenu from "@/components/allBankingAccounts/CreditCardDropdownMenu.tsx";
+import {ExpandableDataTable} from "@/components/allBankingAccounts/ExpandableDataTable.tsx";
 
 // Define credit card interface
 interface CreditCard {
@@ -84,13 +80,17 @@ export default function BankingAccountsTable() {
     setLoadingCards(prev => ({ ...prev, [account.id]: true }));
     try {
         const response = await getAllCreditCardsForBankAccount(account.id);
-        setCardsByAccount(prev => ({
-            ...prev,
-            [account.id]: {
-                cards: response.data?.items || [],
-                currency: account.currency
-            }
-        }));
+        if (response) {
+            setCardsByAccount(prev => ({
+                ...prev,
+                [account.id]: {
+                    cards: response.data?.items || [],
+                    currency: account.currency
+                }
+            }));
+        } else {
+            console.error("Response is undefined");
+        }
     } catch (err) {
         console.error("Failed to fetch credit cards:", err);
     } finally {
@@ -151,9 +151,9 @@ export default function BankingAccountsTable() {
                             className="p-0 h-8 w-8"
                         >
                             {row.getIsExpanded() ? (
-                                <ChevronDown className="h-4 w-4" />
+                                <span className="icon-[ph--caret-down]"></span>
                             ) : (
-                                <ChevronRight className="h-4 w-4" />
+                                <span className="icon-[ph--caret-right]"></span>
                             )}
                         </Button>
                     );
@@ -235,84 +235,6 @@ export default function BankingAccountsTable() {
             });
         }
     };
-
-    // TODO : needs refactoring to a new component/file
-    const ExpandableDataTable = () => (
-        <div className="rounded-md border">
-            <table className="w-full caption-bottom text-sm">
-                <thead className="[&_tr]:border-b">
-                {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => (
-                            <th key={header.id} className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                                {flexRender(header.column.columnDef.header, header.getContext())}
-                            </th>
-                        ))}
-                    </tr>
-                ))}
-                </thead>
-                <tbody className="[&_tr:last-child]:border-0">
-                {table.getRowModel().rows.map((row) => (
-                    <>
-                        <tr key={row.id} className="border-b transition-colors hover:bg-muted/50">
-                            {row.getVisibleCells().map((cell) => (
-                                <td key={cell.id} className="p-4 align-middle">
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </td>
-                            ))}
-                        </tr>
-                        {row.getIsExpanded() && (
-                            <tr>
-                                <td colSpan={row.getVisibleCells().length} className="p-0">
-                                    <div className="p-4 pl-12 border-t border-b border-muted bg-muted/30">
-                                        <h4 className="text-sm font-semibold mb-3">Credit Cards for Account {row.original.accountNumber}</h4>
-
-                                        {loadingCards[row.original.id] ? (
-                                            <div className="py-2 text-sm text-muted-foreground">Loading credit cards...</div>
-                                        ) : cardsByAccount[row.original.id]?.cards?.length ? (
-                                            <div className="space-y-2">
-                                                <div className="grid grid-cols-5 gap-4 text-xs font-medium text-muted-foreground pb-1">
-                                                    <div>Card Number</div>
-                                                    <div>Name</div>
-                                                    <div>Limit</div>
-                                                    <div>Status</div>
-                                                    <div>Actions</div>
-                                                </div>
-
-                                                {cardsByAccount[row.original.id].cards.map((card) => (
-                                                    <div key={card.id} className="grid grid-cols-5 gap-4 text-sm py-2 border-t border-muted items-center">
-                                                        <div>{card.number.replace(/\d(?=\d{4})/g, "•")}</div>
-                                                        <div>{card.name}</div>
-                                                        <div>{formatCurrency(card.limit, cardsByAccount[row.original.id].currency.code)}</div>
-                                                        <div>
-                                                            <Badge variant={card.status ? "default" : "destructive"}>
-                                                                {card.status ? "Active" : "Blocked"}
-                                                            </Badge>
-                                                        </div>
-                                                        <div>
-                                                            <CreditCardDropdownMenu
-                                                                id={card.id}
-                                                                status={card.status}
-                                                                onStatusChange={handleCardStatusChange}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <div className="py-2 text-sm text-muted-foreground">No credit cards found for this account</div>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                        )}
-                    </>
-                ))}
-                </tbody>
-            </table>
-        </div>
-    );
-
     if (error)
         return (
             <h1 className="text-center text-2xl font-semibold text-destructive">
@@ -362,7 +284,12 @@ export default function BankingAccountsTable() {
                 </div>}
             </div>
 
-            <ExpandableDataTable />
+            <ExpandableDataTable
+                table={table}
+                cardsByAccount={cardsByAccount}
+                loadingCards={loadingCards}
+                handleCardStatusChange={handleCardStatusChange}
+            />
 
             <DataTablePagination table={table} />
         </div>
