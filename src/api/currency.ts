@@ -1,5 +1,4 @@
 import api from "./axios"
-import {Currency} from "@/types/currency"
 
 export const getAllCurrencies = async () => {
     try {

@@ -2,15 +2,16 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { BankAccount } from "@/types/bankAccount";
-import React, {useState} from "react";
+import React, { useState} from "react";
 import {formatCurrency} from "@/utils/format-currency.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {z} from "zod";
+import BankAccountDetailsAdjustLimitsDialog from "@/components/bank-account/BankAccountDetailsAdjustLimitsDialog.tsx";
 
 interface DetailsProps extends React.ComponentProps<"div"> {
     account: BankAccount;
     onBackClick: () => void;
-    onAccountNameChange: (newName: string) => void;
+    onAccountNameChange: (newName: string) => Promise<boolean>;
 }
 
 const accountNameSchema = z.string().min(3, "Account name must be at least 3 characters long");
@@ -24,16 +25,26 @@ const BankAccountDetailsCard = ({
                                 }: DetailsProps) => {
 
     const [isEditing, setIsEditing] = useState(false);
-    const [accountName, setAccountName] = useState(account.name);
+    const [accountName, setAccountName] = useState(account?.name ?? "");
     const [isValid, setIsValid] = useState(true); // Tracks if the name is valid
+    const [isAdjustLimitsDialogOpen, setAdjustLimitsDialogOpen] = useState(false);
 
-    const handleToggleEdit = () => {
+    const handleToggleEdit = async () => {
         if (isEditing) {
             // Final validation when leaving edit mode
             const result = accountNameSchema.safeParse(accountName);
             setIsValid(result.success);
             if (result.success) {
-                onAccountNameChange(accountName); // Only propagate if valid
+                try {
+                    const res = await onAccountNameChange(accountName); // Wait for async function
+                    if (!res) {
+                        setAccountName(account.name);
+                        console.log(accountName);
+                    }
+                } catch (error) {
+                    console.error("Failed to update account name", error);
+                    setAccountName(account.name); // Reset name on failure
+                }
             } else {
                 return; // Don't exit edit mode if invalid
             }
@@ -50,12 +61,15 @@ const BankAccountDetailsCard = ({
         setIsValid(result.success);
     };
 
+    const handleAdjustLimitsClick = () => {
+        setAdjustLimitsDialogOpen(true);
+    };
 
 
     return (
         <Card
             className={cn(
-                "border-0 content-center",
+                "h-full border-0 content-center",
                 className
             )}
             {...props}
@@ -90,16 +104,22 @@ const BankAccountDetailsCard = ({
                                     }
                                 }}
                                 className={cn(
-                                    "text-xl font-medium border-b focus:outline-none focus:ring-0 transition-all duration-200",
+                                    "text-xl font-medium border-b w-full focus:outline-none focus:ring-0 transition-all duration-200",
                                     isValid ? "border-muted-foreground focus:border-primary" : "border-destructive focus:border-destructive"
                                 )}
                                 />
                         </div>
                     ) : (
                         <div className="flex items-center gap-1 group">
-                            <p className="text-xl font-medium">
-                                {accountName}
-                            </p>
+                            {accountName  ?
+                                <p className="text-xl font-medium">
+                                    {accountName}
+                                </p> :
+                                <p className="text-xl font-medium text-muted-foreground">
+                                    Unnamed
+                                </p>
+                            }
+
                             <Button
                                 variant="ghost"
                                 className="icon-[ph--pencil-fill] w-4 h-4 text-muted-foreground cursor-pointer"
@@ -124,7 +144,7 @@ const BankAccountDetailsCard = ({
                         Type:
                     </Label>
                     <p className="text-xl font-medium">
-                        {account.accountType.name} ({account.accountType.code})
+                        {account.type.name} ({account.type.code})
                     </p>
                 </div>
 
@@ -154,10 +174,14 @@ const BankAccountDetailsCard = ({
                         {formatCurrency(account.dailyLimit, account.currency.code)}
                     </p>
                 </div>
-                <Button size="sm" variant="outline" className="absolute bottom-4 right-4">
+                <Button size="sm" variant="outline" className="absolute bottom-4 right-4" onClick={handleAdjustLimitsClick}>
                     Adjust limits
                     <span className="icon-[ph--gear] text-base"></span>
                 </Button>
+
+                <BankAccountDetailsAdjustLimitsDialog account={account}
+                                                      showDialog={isAdjustLimitsDialogOpen}
+                                                      setShowDialog={setAdjustLimitsDialogOpen}/>
             </CardContent>
 
         </Card>

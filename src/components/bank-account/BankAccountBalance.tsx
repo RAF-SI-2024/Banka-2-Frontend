@@ -20,7 +20,7 @@ const BankAccountBalanceCard = ({ account, income=0, expensses=0, onSendClick, o
     return (
         <Card
             className={cn(
-                "border-0 p-6 flex flex-col lg:flex-row lg:items-center justify-center ",
+                "border-0 h-full p-6 flex flex-col lg:flex-row lg:items-center justify-center ",
                 className
             )}
             {...props}
