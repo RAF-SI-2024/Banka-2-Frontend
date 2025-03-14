@@ -9,11 +9,8 @@ import {editAccountClient, getAccountById, getAllCreditCardsForBankAccount} from
 import {AccountUpdateClientRequest, BankAccount} from "@/types/bankAccount.ts";
 import {CardDTO} from "@/types/card.ts";
 
-
-
-
 export default function BankAccountPage() {
-    // error
+    
     const [error, setError] = useState<string | null>(null);
     const { accountId } = useParams<{ accountId: string }>();
     const [account, setAccount] = useState<BankAccount>();
@@ -49,8 +46,8 @@ export default function BankAccountPage() {
             const response = await getAllCreditCardsForBankAccount(accountId);
             console.log(response);
 
-
             if(!response || response.status != 200){
+
                 throw new Error("Failed to fetch card info");
             }
             setCards(response.data.items);
