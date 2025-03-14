@@ -75,6 +75,7 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
 
 
     return (
+        //@ts-ignore
       <motion.div
         ref={ref}
         initial="hidden"
@@ -97,7 +98,7 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
         >
           <div className="flex items-center justify-between">
             <motion.div
-              className="text-2xl font-bold cursor"
+              className="text-2xl font-bold cursor text-wrap max-w-70"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: INITIAL_DELAY, duration: CARD_ANIMATION_DURATION }}

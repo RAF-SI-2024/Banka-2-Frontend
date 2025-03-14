@@ -1,36 +1,30 @@
 import { cn } from "@/lib/utils";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {BankAccount} from "@/types/bankAccount.ts";
-import React from "react";
+import React, {useState} from "react";
 import {CardSwipe} from "@/components/ui/card-swipe.tsx";
 import {CreditCard} from "@/components/ui/credit-card.tsx";
-import {Card as CardEntity} from "@/types/card.ts"
-import {CardType} from "@/types/cardType.ts";
+import {CardDTO} from "@/types/card.ts"
 import {format} from "date-fns";
 import {useNavigate} from "react-router-dom";
 import {Tooltip, TooltipProvider, TooltipTrigger, TooltipContent} from "@/components/ui/tooltip.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import CreateCardDialog from "@/components/createCard/CreateCardDialog.tsx";
 
+const NewCreditCardButton = ({ setDialogOpen }: { setDialogOpen: (open:boolean) => void }) => (
+    <Button
+        className="w-fit"
+        variant="success"
+        onClick={() => setDialogOpen(true)}
+    >
+        <span className="icon-[ph--plus] text-lg"></span>
+        Create a new credit card
+    </Button>
+);
 
-interface BalanceCardProps extends React.ComponentProps<"div">{
-    account: BankAccount,
-}
-
-const NewCreditCardButton = (
-        <Button
-            className="w-fit"
-            variant="success"
-            onClick={() => {/*TODO: Create card dialog open*/}}
-        >
-            <span className="icon-[ph--plus] text-lg"></span>
-            Create a new credit card
-
-        </Button>
-)
-
-const CreditCardSwipe = (account: BankAccount, cards : CardEntity[], handleCardClick: (id: string) => void) => {
+const CreditCardSwipe = (setDialogOpen: (open:boolean) => void, account: BankAccount, cards: CardDTO[], handleCardClick: (id: string) => void) => {
     return (
-        <div className="flex flex-col w-full items-center gap-4">
+        <div className="flex flex-col w-full items-center gap-4 ">
             <TooltipProvider>
 
                 <CardSwipe
@@ -70,9 +64,9 @@ const CreditCardSwipe = (account: BankAccount, cards : CardEntity[], handleCardC
 
             </TooltipProvider>
             {/*Add a button if less then 2 credit cards (from spec)*/}
-            {account.accountType.name.toLowerCase()!=="business" //TODO: CHECK WITH BACKEND ACC TYPE
+            {account.type.name.toLowerCase()!=="business" //TODO: CHECK WITH BACKEND ACC TYPE
                 && cards.length < 2
-                && NewCreditCardButton
+                && NewCreditCardButton({setDialogOpen: setDialogOpen})
             }
 
         </div>
@@ -80,31 +74,15 @@ const CreditCardSwipe = (account: BankAccount, cards : CardEntity[], handleCardC
 
 }
 
-const BankAccountCardsCard = ({ account, className, ...props }: BalanceCardProps) => {
+interface BankAccountCardsProps extends React.ComponentProps<"div">{
+    account: BankAccount,
+    cards: CardDTO[],
+}
 
+const BankAccountCardsCard = ({ account, cards, className, ...props }: BankAccountCardsProps) => {
 
-    const cardType: CardType = {
-        id: "1",
-        name: "Debit",
-        createdAt: new Date(),
-        modifiedAt: new Date(),
-    }
+    const [isDialogOpen, setDialogOpen] = useState(false);
 
-    const card: CardEntity = {
-        id: "1",
-        type: cardType,
-        name: "Visa",
-        expiresAt: new Date(),
-        account: account,
-        cvv: "255",
-        number: "4111 1111 1111 9743",
-        limit: 10000,
-        status: true,
-        createdAt: new Date(),
-        modifiedAt: new Date(),
-    }
-
-    const cards: CardEntity[] = [card, card];
     const navigate = useNavigate();
 
     const handleCardClick = (cardId: string) => {
@@ -117,16 +95,17 @@ const BankAccountCardsCard = ({ account, className, ...props }: BalanceCardProps
                 <>
                     <CardDescription className="font-paragraph flex flex-col items-center gap-4">
                         You do not have any cards for this bank account.
-                        {NewCreditCardButton}
+                        {NewCreditCardButton({setDialogOpen: setDialogOpen})}
                     </CardDescription>
 
                 </>
             )
         }
-        else return CreditCardSwipe(account, cards, handleCardClick);
+        else return CreditCardSwipe(setDialogOpen, account, cards, handleCardClick);
     }
 
     return (
+        <>
         <Card
             className={cn(
                 "border-0 content-center",
@@ -141,6 +120,9 @@ const BankAccountCardsCard = ({ account, className, ...props }: BalanceCardProps
                 {cardsList()}
             </CardContent>
         </Card>
+
+        <CreateCardDialog account={account} showDialog={isDialogOpen} setShowDialog={setDialogOpen}/>
+        </>
     );
 }
 
