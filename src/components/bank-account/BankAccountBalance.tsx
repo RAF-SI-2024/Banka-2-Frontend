@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import PiggyBank from "@/assets/PiggyBank.tsx";
 import {BankAccount} from "@/types/bankAccount.ts";
 import React from "react";
 import {formatCurrency} from "@/utils/format-currency.ts";
@@ -72,7 +71,7 @@ const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expe
             </div>
 
             <div className="flex justify-center lg:justify-end pt-8 lg:pt-0">
-                {cardPageVersion ? <Wallet className="size-full"/>: <PiggyBank className="size-full"/>}
+                <Wallet className="size-full"/>
             </div>
         </Card>
     );

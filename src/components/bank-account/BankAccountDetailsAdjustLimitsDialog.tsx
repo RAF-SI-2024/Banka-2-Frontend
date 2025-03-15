@@ -13,12 +13,14 @@ import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 interface BankAccountDetailsAdjustLimitsDialogProps {
     showDialog: boolean;
     setShowDialog: (open: boolean) => void;
+    setMonthlyLimit: (val: number) => void;
+    setDailyLimit: (val: number) => void;
     account: BankAccount
 }
 
 
 
-export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setShowDialog, account}: BankAccountDetailsAdjustLimitsDialogProps) {
+export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setShowDialog, setMonthlyLimit, setDailyLimit, account}: BankAccountDetailsAdjustLimitsDialogProps) {
     const [step, setStep] = useState(0);
 
 
@@ -81,14 +83,12 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
 
         if (isValid) {
             try {
-                console.log(form.getValues().dailyLimit);
                 const payload = {
                     name: account.name,
                     otp: form.getValues().otp,
                     dailyLimit: parseFloat(form.getValues().dailyLimit.toString().replace(/\./g, "").replace(",", ".")),
                     monthlyLimit: parseFloat(form.getValues().monthlyLimit.toString().replace(/\./g, "").replace(",", "."))
                 }
-                console.log('Submitted values:', payload);
                 const response = await editAccountClient(account.id, payload);
                 showSuccessToast({title: "Edit successful", description: "Limits adjusted successfully!"})
 
@@ -96,6 +96,9 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
                     throw new Error("API error");
                 }
                 setStep((prev) => prev + 1);
+
+                setMonthlyLimit(response.data.monthlyLimit ?? account.monthlyLimit);
+                setDailyLimit(response.data.dailyLimit ?? account.dailyLimit);
             } catch (err) {
                 console.error(err);
                 showErrorToast({error: err, defaultMessage: "Limits could not be adjusted."})

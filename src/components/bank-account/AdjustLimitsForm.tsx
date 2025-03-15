@@ -36,10 +36,11 @@ export default function AdjustLimitsForm({account, form, nextStep }: AdjustLimit
                             name="dailyLimit"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Monthly Limit</FormLabel>
+                                    <FormLabel>Daily Limit</FormLabel>
                                     <FormControl>
                                         <MoneyInput
-                                            id="monthlyLimit"
+                                            defaultValue={account.dailyLimit}
+                                            id="daiilyLimit"
                                             currency={account.currency.code}
                                             onChange={field.onChange}
                                             min={1000}
@@ -62,6 +63,7 @@ export default function AdjustLimitsForm({account, form, nextStep }: AdjustLimit
                                     <FormLabel>Monthly Limit</FormLabel>
                                     <FormControl>
                                         <MoneyInput
+                                            defaultValue={account.monthlyLimit}
                                             id="monthlyLimit"
                                             currency={account.currency.code}
                                             onChange={field.onChange}
@@ -76,7 +78,7 @@ export default function AdjustLimitsForm({account, form, nextStep }: AdjustLimit
 
 
                         {/* Submit Button */}
-                        <Button type="button" variant="gradient" className="w-full" onClick={nextStep}>
+                        <Button type="button" variant="gradient" className="w-fit" onClick={nextStep}>
                             Continue
                         </Button>
                     </form>
