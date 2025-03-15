@@ -7,19 +7,12 @@ import {Card, CardContent, CardDescription} from "@/components/ui/card.tsx";
 import {cn} from "@/lib/utils.ts";
 
 
-type ErrorType = {
-    id: number;
-    title: string;
-    description: string
-} | null;
-
 interface OTPFormProps {
     form: any;
     nextStep: () => void;
-    setErrors: (error: ErrorType) => void;
 }
 
-export default function VerificationOTP({form, nextStep, setErrors}: OTPFormProps) {
+export default function VerificationOTP({form, nextStep}: OTPFormProps) {
 
     const [value, setValue] = useState("");
     const context = useContext(AuthContext);
@@ -39,13 +32,6 @@ export default function VerificationOTP({form, nextStep, setErrors}: OTPFormProp
 
         } catch (error) {
             console.error("Failed to confirm OTP:", error);
-            setErrors({
-                id: Date.now(),
-                title: "Failed to confirm OTP",
-                description: error && typeof error === "object" && "message" in error
-                    ? String(error.message)
-                    : String(error || "An error occurred"),
-            });
         }
     }
 
@@ -55,13 +41,6 @@ export default function VerificationOTP({form, nextStep, setErrors}: OTPFormProp
 
         } catch (error) {
             console.error("Failed to reach backend:", error);
-            setErrors({
-                id: Date.now(),
-                title: "Failed to reach backend",
-                description: error && typeof error === "object" && "message" in error
-                    ? String(error.message)
-                    : String(error || "An error occurred"),
-            });
         }
     }
 

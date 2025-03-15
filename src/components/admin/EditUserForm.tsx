@@ -1,17 +1,17 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {getAllUsers, getUserById, updateClient, updateEmployee} from "@/api/user.ts";
+import {getUserById, updateClient, updateEmployee} from "@/api/user.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { ErrorAlert } from "@/components/common/ErrorAlert.tsx";
 import { UpdateClientRequest, UpdateEmployeeRequest, User } from "@/types/user.ts";
 import { createFormSchema, getFormFields } from "@/components/utils/form-fields.tsx";
 import { FormFieldRenderer } from "@/components/admin/FormFieldRendered.tsx";
 import {Role} from "@/types/enums.ts";
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 
 interface EditFormProps extends React.ComponentProps<"div"> {
     id_: string;
@@ -19,7 +19,6 @@ interface EditFormProps extends React.ComponentProps<"div"> {
 }
 
 export default function EditUserForm({ id_, className, onClose, ...props }: EditFormProps) {
-    const [errors, setErrors] = useState<Array<{ id: number; title: string, description: string }>>([]);
     const [userData, setUserData] = useState<User | null>(null);
     const [formFields, setFormFields] = useState<any[]>([]);
     const [hasChanges, setHasChanges] = useState(false);
@@ -83,11 +82,7 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
                 form.reset(formDefaultValues);
             } catch (error) {
                 console.error("❌ Failed to fetch user data:", error);
-                setErrors(prev => [...prev, {
-                    id: Date.now(),
-                    title: "Failed to fetch user data",
-                    description: "An error occurred while fetching user data"
-                }]);
+                showErrorToast({error, defaultMessage: "Error fetching user data"});
             }
         }
 
@@ -120,14 +115,9 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
 
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        setErrors([]); // Clear errors on submit
 
         if (!userData) {
-            setErrors(prev => [...prev, {
-                id: Date.now(),
-                title: "User data missing",
-                description: "Cannot update user because the original data is missing"
-            }]);
+            showErrorToast({defaultMessage: "Could not update user. The original data is missing."})
             return;
         }
 
@@ -156,29 +146,17 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
             if (response.success) {
 
                 onClose();
+                showSuccessToast({title: "Edit successful", description: "Successfully updated user data"});
                 return;
             } else {
-                setErrors(prev => [...prev, {
-                    id: Date.now(),
-                    title: "Failed to update user",
-                    description: "An error occurred while updating user details"
-                }]);
+                throw new Error("Error updating user data");
             }
         } catch (error) {
             console.error("❌ Update failed:", error);
-            setErrors(prev => [...prev, {
-                id: Date.now(),
-                title: "Failed to update user",
-                description: error && typeof error === "object" && "message" in error
-                    ? String(error.message)
-                    : String(error || "An error occurred"),
-            }]);
+            showErrorToast({error, defaultMessage: "Error updating user data"});
         }
     }
 
-    const removeError = (id: number) => {
-        setErrors(prev => prev.filter(error => error.id !== id));
-    };
 
 
     return (
@@ -221,15 +199,6 @@ export default function EditUserForm({ id_, className, onClose, ...props }: Edit
                     </Button>
                 </form>
             </Form>
-
-            {errors.map((error) => (
-                <ErrorAlert
-                    key={error.id}
-                    title={error.title}
-                    description={error.description}
-                    onClose={() => removeError(error.id)}
-                />
-            ))}
         </div>
     );
 }

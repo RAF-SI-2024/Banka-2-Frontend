@@ -5,10 +5,10 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {BankAccount} from "@/types/bankAccount.ts";
 import {editAccountClient} from "@/api/bankAccount.ts";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
-import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import VerificationOTP from "@/components/common/VerificationOTP.tsx";
 import AdjustLimitsForm from "@/components/bank-account/AdjustLimitsForm.tsx";
 import OTPSuccessCard from "@/components/createCard/OTPSuccessNotifiaction.tsx";
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 
 interface BankAccountDetailsAdjustLimitsDialogProps {
     showDialog: boolean;
@@ -19,7 +19,6 @@ interface BankAccountDetailsAdjustLimitsDialogProps {
 
 
 export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setShowDialog, account}: BankAccountDetailsAdjustLimitsDialogProps) {
-    const [error, setError] = useState<{ id: number; title: string; description: string } | null>(null);
     const [step, setStep] = useState(0);
 
 
@@ -82,7 +81,6 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
 
         if (isValid) {
             try {
-                setError(null);
                 console.log(form.getValues().dailyLimit);
                 const payload = {
                     name: account.name,
@@ -92,8 +90,7 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
                 }
                 console.log('Submitted values:', payload);
                 const response = await editAccountClient(account.id, payload);
-
-
+                showSuccessToast({title: "Edit successful", description: "Limits adjusted successfully!"})
 
                 if (response.status !== 200) {
                     throw new Error("API error");
@@ -101,11 +98,7 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
                 setStep((prev) => prev + 1);
             } catch (err) {
                 console.error(err);
-                setError({
-                    id: Date.now(),
-                    title: "Failed to adjust limits",
-                    description: "An error occurred while processing your request.",
-                });
+                showErrorToast({error: err, defaultMessage: "Limits could not be adjusted."})
             }
         }
     }
@@ -114,7 +107,6 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
         setShowDialog(open);
         if (!open) {
             setStep(0)
-            setError(null);
         }
     };
 
@@ -125,7 +117,7 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
                     <DialogTitle></DialogTitle>
                 </DialogHeader>
                 {step === 0 ? <AdjustLimitsForm account={account} form={form} nextStep={nextStepZero}  /> : null}
-                {step === 1 ? <VerificationOTP form={form} nextStep={nextStepOne} setErrors={setError}></VerificationOTP> : null}
+                {step === 1 ? <VerificationOTP form={form} nextStep={nextStepOne}></VerificationOTP> : null}
                 {step === 2 ? <OTPSuccessCard className="bg-transparent border-0 w-lg"
                                               title="Verification successful!"
                                               icon="icon-[ph--check-circle-fill]"
@@ -137,14 +129,6 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
                                               icon="icon-[ph--x-circle-fill]"
                                               message="Limits could not be adjusted." /> : null}
 
-                {error && [error].map((error) => (
-                    <ErrorAlert
-                        key={error.id}
-                        title={error.title}
-                        description={error.description}
-                        onClose={() => setError(null)}
-                    />
-                ))}
             </DialogContent>
         </Dialog>
     );
