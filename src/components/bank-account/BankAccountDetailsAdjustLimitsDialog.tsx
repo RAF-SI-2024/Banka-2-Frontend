@@ -72,8 +72,6 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
             "dailyLimit",
             "monthlyLimit",
         ])
-
-
         if (isValid) {
             setStep((prev) => prev + 1)
         }

@@ -48,7 +48,6 @@ const BankAccountDetailsCard = ({
                 } catch (error) {
                     console.error("Failed to update account name", error);
                     setAccountName(account.name); // Reset name on failure
-
                 }
             } else {
                 return; // Don't exit edit mode if invalid

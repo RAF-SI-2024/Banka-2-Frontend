@@ -81,6 +81,7 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
 
 
     return (
+        //@ts-ignore
       <motion.div
         ref={ref}
         initial="hidden"
