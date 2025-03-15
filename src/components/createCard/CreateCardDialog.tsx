@@ -13,6 +13,7 @@ import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 import {useNavigate} from "react-router-dom";
 
 
+
 interface CreateCardDialogProps {
     account: BankAccount;
     showDialog: boolean;
@@ -94,6 +95,7 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
                 }
 
                 const response = await createCard(payload);
+
 
                 if(response.status != 200){
                     throw new Error("API error");
