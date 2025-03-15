@@ -9,6 +9,7 @@ import { getCardById } from "@/api/card"
 import {getAccountById} from "@/api/bankAccount.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
 import BankAccountBalanceCard from "@/components/bank-account/BankAccountBalance.tsx";
+import {Toaster} from "@/components/ui/sonner.tsx";
 
 
 export default function BankCardPage() {
@@ -70,6 +71,7 @@ export default function BankCardPage() {
 
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            <Toaster richColors />
             <h1 className="font-display font-bold text-5xl">{card.name}</h1>
             <div className="grid auto-rows-min gap-4 md:grid-cols-2">
                 <AnimatePresence mode="wait">

@@ -8,6 +8,7 @@ import {CardDTO} from "@/types/card.ts";
 import { getCardById } from "@/api/card"
 import {getAccountById} from "@/api/bankAccount.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
+import {Toaster} from "@/components/ui/sonner.tsx";
 
 
 export default function CardPage() {
@@ -67,6 +68,7 @@ export default function CardPage() {
 
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            <Toaster richColors />
             <h1 className="font-display font-bold text-5xl">{card.name}</h1>
 
             <div className="grid auto-rows-min gap-4 md:grid-cols-2">

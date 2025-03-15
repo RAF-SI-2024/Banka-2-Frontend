@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button.tsx";
 import {useNavigate} from "react-router-dom";
 import {LoginRequest, RequestPasswordReset} from "@/types/auth.ts";
 import {loginUser, requestPasswordReset} from "@/api/auth.ts";
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 
 const formSchema = z.object({
   email: z.string().min(1).optional(),
@@ -19,18 +20,11 @@ const formSchema = z.object({
     // .regex(/[0-9]/, "Password must contain at least one number"),
 });
 
-type ErrorType = {
-  id: number;
-  title: string;
-  description: string
-} | null;
-
 interface ConfirmProps {
-  setErrors: (error: ErrorType) => void;
   setShowDialog: (open: boolean) => void;
 }
 
-export default function ConfirmCurrentPassword({setErrors, setShowDialog}: ConfirmProps) {
+export default function ConfirmCurrentPassword({ setShowDialog}: ConfirmProps) {
 
   const navigate = useNavigate();
 
@@ -55,6 +49,7 @@ export default function ConfirmCurrentPassword({setErrors, setShowDialog}: Confi
       const response = await requestPasswordReset(requestData.email);
       console.log(response)
     } catch (error) {
+      showErrorToast({error, defaultMessage: "Password reset request failed."})
       console.log(error)
     }
   }
@@ -64,26 +59,18 @@ export default function ConfirmCurrentPassword({setErrors, setShowDialog}: Confi
       const loginData: LoginRequest = { email: email, password: values.password };
       const response = await loginUser(loginData);
       if (response.token) {
-        console.log("✅ Login successful", response);
+        console.log("✅ Old password confirmation successful", response);
         setShowDialog(false)
+
         await sendPasswordResetRequest();
-        navigate("/resetNotification")
+        showSuccessToast({title: "Password change request sent", description: "Check your email to continue resetting your password"});
+        // navigate("/resetNotification", { state: { email: values.email }})
       } else {
-        setErrors({
-          id: Date.now(),
-          title: "Error authentication",
-          description: "Password is incorrect"
-        });
+        throw new Error("Password reset request failed.");
       }
     } catch (error) {
       console.error("Failed to authenticate:", error);
-      setErrors({
-        id: Date.now(),
-        title: "Password is incorrect",
-        description: error && typeof error === "object" && "message" in error
-          ? String(error.message)
-          : String(error || "An error occurred"),
-      });
+      showErrorToast({error, defaultMessage: "Password is incorrect."})
     }
   }
 

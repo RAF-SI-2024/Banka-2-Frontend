@@ -1,6 +1,5 @@
 import {useState} from "react";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
-import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import * as React from "react";
 import CreateCardForm from "@/components/createCard/CreateCardForm.tsx";
 import {BankAccount} from "@/types/bankAccount.ts";
@@ -10,6 +9,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {createCard} from "@/api/card.ts";
 import OTPSuccessCard from "@/components/createCard/OTPSuccessNotifiaction.tsx";
 import VerificationOTP from "@/components/common/VerificationOTP.tsx";
+import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 
 
 interface CreateCardDialogProps {
@@ -22,7 +22,6 @@ interface CreateCardDialogProps {
 
 export default function CreateCardDialog({account, showDialog, setShowDialog} : CreateCardDialogProps) {
 
-    const [error, setError] = useState<{ id: number; title: string; description: string } | null>(null);
     const [step, setStep] = useState(0);
 
     const formSchema = z.object({
@@ -69,9 +68,9 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
         if (isValid) {
 
             try{
-                setError(null);
 
                 const response = await createCard(form.getValues());
+
 
                 if(response.status != 200){
                     throw new Error("API error");
@@ -80,11 +79,7 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
             }
             catch(err) {
                 console.error(err);
-                setError({
-                    id: Date.now(),
-                    title: "Failed to create card",
-                    description: "An error occurred while processing your request.",
-                });
+                showErrorToast({error: err, defaultMessage: "Failed to create a card"});
             }
 
         }
@@ -95,7 +90,6 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
         setShowDialog(open);
         if (!open) {
             setStep(0)
-            setError(null);
         }
     };
 
@@ -106,7 +100,7 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
                     <DialogTitle>Create Credit Card</DialogTitle>
                 </DialogHeader>
                 {step === 0 ? <CreateCardForm account={account} form={form} nextStep={nextStepZero}  /> : null}
-                {step === 1 ? <VerificationOTP form={form} nextStep={nextStepOne} setErrors={setError}></VerificationOTP> : null}
+                {step === 1 ? <VerificationOTP form={form} nextStep={nextStepOne}></VerificationOTP> : null}
                 {step === 2 ? <OTPSuccessCard className="bg-transparent border-0"
                                               title="Verification successful"
                                               icon="icon-[ph--check-circle-fill]"
@@ -118,14 +112,6 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
                                               icon="icon-[ph--x-circle-fill]"
                                               message="Card could not be created." /> : null}
 
-                {error && [error].map((error) => (
-                    <ErrorAlert
-                        key={error.id}
-                        title={error.title}
-                        description={error.description}
-                        onClose={() => setError(null)}
-                    />
-                ))}
             </DialogContent>
         </Dialog>
     );

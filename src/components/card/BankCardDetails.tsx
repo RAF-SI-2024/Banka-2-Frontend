@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { CardDTO } from "@/types/card.ts";
 import {changeCardStatusClient} from "@/api/card.ts";
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 
 interface Props {
   card: CardDTO;
@@ -25,9 +26,11 @@ const CardDetails = ({ card, onBackClick }: Props) => {
       if (response.status !== 200) {
         throw new Error("Failed to block this card");
       }
+      showSuccessToast({description:"Card blocked successfully"});
       setIsBlocked(true);
     } catch (err) {
       console.error(err);
+      showErrorToast({error: err, defaultMessage: "Failed to block this card"});
     }
   };
 

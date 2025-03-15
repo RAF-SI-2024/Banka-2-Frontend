@@ -8,8 +8,8 @@ import React, {useEffect, useState} from "react";
 import {editAccountClient, getAccountById, getAllCreditCardsForBankAccount} from "@/api/bankAccount.ts";
 import {AccountUpdateClientRequest, BankAccount} from "@/types/bankAccount.ts";
 import {CardDTO} from "@/types/card.ts";
-import {showToast, Toaster} from "@/components/ui/sonner"
-import {AxiosError} from "axios";
+import { Toaster} from "@/components/ui/sonner"
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 
 
 
@@ -37,6 +37,7 @@ export default function BankAccountPage() {
             console.log(response.data);
         } catch (err) {
             console.error(err);
+            showErrorToast({error, defaultMessage: "Failed to fetch bank account info"});
             setError("Failed to fetch bank account info");
         }
     }
@@ -55,7 +56,7 @@ export default function BankAccountPage() {
             setCards(response.data.items);
         } catch (err) {
             console.error(err);
-            setError("Failed to fetch card info");
+            showErrorToast({error, defaultMessage: "Failed to fetch card info"})
         }
     }
 
@@ -73,40 +74,11 @@ export default function BankAccountPage() {
             setAccount(response.data);
             console.log(response.data);
 
-            showToast({
-                title:"Edit successful!",
-                variant:"success",
-                description: "Account edited successfully.",
-                icon: <span className="icon-[ph--check-circle] text-background text-xl"></span>
-            });
+            showSuccessToast({title: "Edit successful!", description: "Account edited successfully."})
 
             return true;
         } catch (err) {
-            if (err instanceof AxiosError) {
-                // Loop through each error field in the response data
-                const errors = err?.response?.data?.errors || {}
-
-                Object.entries(errors).forEach(([key, messages]) => {
-                    // For each field (key), show a toast for every message in the array
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error
-                    messages.forEach((message: string) => {
-                        showToast({
-                            title: `Error in ${key}`,
-                            variant: "error",
-                            description: message,
-                            icon:  <span className="icon-[ph--x-circle] text-destructive-foreground text-xl"></span>
-                        })
-                    })
-                })
-            } else {
-                showToast({
-                    title:"An error occured",
-                    variant:"error",
-                    description: "Account could not be edited.",
-                    icon: <span className="icon-[ph--x-circle] text-destructive-foreground text-xl"></span>
-                });
-                }
+            showErrorToast({error, defaultMessage: "Failed to edit bank account info"})
             console.error(err);
             return false;
         }

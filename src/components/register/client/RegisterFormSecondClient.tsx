@@ -1,19 +1,16 @@
 import * as React from "react";
-import {useState} from "react";
 import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import { PhoneInput } from "@/components/common/input/PhoneInput.tsx"
-import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import {onSubmitClient} from "@/components/register/RegisterRequests.tsx";
 import Stepper from "@/components/common/Stepper.tsx";
 
 
 // @ts-expect-error Need to add type to the props
 export default function RegisterFormSecondClient({ prevStep, nextStep, form, className, ...props }) {
-    const [error, setError] = useState<{ id: number; title: string; description: string } | null>(null);
     async function goToNextStepClient() {
         const isValid = await form.trigger([
             "email",
@@ -21,7 +18,7 @@ export default function RegisterFormSecondClient({ prevStep, nextStep, form, cla
             "address",
         ]);
         if (isValid) {
-            await onSubmitClient({form, nextStep, setError});
+            await onSubmitClient({form, nextStep});
 
         }
     }
@@ -98,14 +95,6 @@ export default function RegisterFormSecondClient({ prevStep, nextStep, form, cla
                         </Form>
                     </CardContent>
                 </Card>
-                {error && [error].map((error) => (
-                    <ErrorAlert
-                        key={error.id}
-                        title={error.title}
-                        description={error.description}
-                        onClose={() => setError(null)}
-                    />
-                ))}
             </div>
         </>
 

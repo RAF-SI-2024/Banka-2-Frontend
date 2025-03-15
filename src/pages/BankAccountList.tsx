@@ -4,6 +4,7 @@ import {useState} from "react";
 import CreateBankAccountDialog from "@/components/createBankAccount/CreateBankAccountDialog.tsx";
 import RegisterDialog from "@/components/register/RegisterDialog.tsx";
 import {Role} from "@/types/enums.ts";
+import {Toaster} from "@/components/ui/sonner.tsx";
 
 export default function BankAccountListPage() {
     const [isDialogOpen, setDialogOpen] = useState(false);
@@ -15,6 +16,7 @@ export default function BankAccountListPage() {
     }
     return (
         <main>
+            <Toaster richColors />
             <BankingAccountsTable  />
 
             <div className="fixed bottom-4 md:right-4 right-1/2 transform translate-x-1/2 md:translate-x-0 z-50 -mr-2 -mb-2">
