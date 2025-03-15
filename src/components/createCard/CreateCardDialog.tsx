@@ -127,7 +127,6 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
                     />
                 ))}
             </DialogContent>
-
         </Dialog>
     );
 }
