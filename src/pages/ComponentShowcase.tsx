@@ -4,11 +4,13 @@ import {Input} from "@/components/ui/input.tsx";
 import {Label} from "@/components/ui/label.tsx";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar.tsx";
 import {ThemeSwitch} from "@/components/common/ThemeSwitch.tsx";
+import {Toaster} from "@/components/ui/sonner.tsx";
 
 export default function ComponentShowcasePage(){
     return (
         <>
                 <main className="py-8">
+                    <Toaster richColors />
                     {/*display button variants*/}
                     <div className="flex flex-wrap gap-10 m-4">
                         <Button variant="default">default</Button>

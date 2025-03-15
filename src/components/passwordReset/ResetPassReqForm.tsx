@@ -16,9 +16,8 @@ import {useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {requestPasswordReset} from "@/api/auth.ts";
-import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
+import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 
 
 const formSchema = z.object({
@@ -28,7 +27,6 @@ const formSchema = z.object({
 export default function ResetPassReqForm({ className, ...props }: React.ComponentProps<"div">) {
 
     const navigate = useNavigate();
-    const [errors, setErrors] = useState<Array<{ id: number; title: string; description: string }>>([]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -39,32 +37,20 @@ export default function ResetPassReqForm({ className, ...props }: React.Componen
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        setErrors([]); // Clear errors on submit
         try {
             const response = await requestPasswordReset(values.email);
 
             if (response.status==202) {
                 navigate("/resetNotification", { state: { email: values.email } });
             } else {
-                setErrors(prev => [...prev, {
-                    id: Date.now(),
-                    title: "Failed to send reset request",
-                    description: response.data.message() || "An unexpected error occurred.",
-                }]);
+                throw new Error("Failed to reset password");
             }
         } catch (error) {
             console.error("❌ Password reset request failed:", error);
-            setErrors(prev => [...prev, {
-                id: Date.now(),
-                title: "Failed to send reset request",
-                description: error instanceof Error ? error.message : "An unknown error occurred",
-            }]);
+            showErrorToast({error, defaultMessage: "Failed to send the request for password reset."})
         }
     }
 
-    const removeError = (id: number) => {
-        setErrors(prev => prev.filter(error => error.id !== id));
-    };
 
 return (
     <div className="flex flex-col gap-2">
@@ -105,15 +91,6 @@ return (
                 </Form>
             </CardContent>
         </Card>
-
-        {errors.map((error) => (
-            <ErrorAlert
-                key={error.id}
-                title={error.title}
-                description={error.description}
-                onClose={() => removeError(error.id)}
-            />
-        ))}
 
     </div>
 );

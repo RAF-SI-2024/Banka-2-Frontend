@@ -38,11 +38,11 @@ function generateFooterItems(): FooterNavItem[] {
     const items = getNavDataByRole(role);
 
     // Flatten items so only subitems appear if present, otherwise include the parent
-    return items.flatMap(item =>
-        item.items
-            ? item.items // Include subitems if present
-            : [item] // Otherwise include the item itself
-    );
+    return items
+        .filter(item => !["bank accounts", "cards"].includes(item.title.toLowerCase())) // Filter out specific items
+        .flatMap(item =>
+            item.items ? item.items : [item] // Include subitems if present, otherwise include the item itself
+        );
 }
 
 export default function Footer({className, ...props} :
@@ -56,7 +56,7 @@ export default function Footer({className, ...props} :
 
         return (
             <div
-                className="text-sm font-medium font-paragraph flex flex-wrap justify-center gap-x-4 gap-y-2 text-footer-foreground items-center"
+                className="text-sm font-medium font-paragraph flex flex-wrap gap-x-4 gap-y-2 text-footer-foreground items-center"
             >
                 {items.map((item, index) => (
                     <React.Fragment key={item.url}>

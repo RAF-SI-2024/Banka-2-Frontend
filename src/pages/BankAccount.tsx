@@ -8,9 +8,14 @@ import React, {useEffect, useState} from "react";
 import {editAccountClient, getAccountById, getAllCreditCardsForBankAccount} from "@/api/bankAccount.ts";
 import {AccountUpdateClientRequest, BankAccount} from "@/types/bankAccount.ts";
 import {CardDTO} from "@/types/card.ts";
+import { Toaster} from "@/components/ui/sonner"
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
+
+
+
 
 export default function BankAccountPage() {
-    
+    // error
     const [error, setError] = useState<string | null>(null);
     const { accountId } = useParams<{ accountId: string }>();
     const [account, setAccount] = useState<BankAccount>();
@@ -32,6 +37,7 @@ export default function BankAccountPage() {
             console.log(response.data);
         } catch (err) {
             console.error(err);
+            showErrorToast({error, defaultMessage: "Failed to fetch bank account info"});
             setError("Failed to fetch bank account info");
         }
     }
@@ -42,18 +48,15 @@ export default function BankAccountPage() {
             if (!accountId) {
                 throw new Error("AccountId is missing from URL!");
             }
-            console.log(accountId);
             const response = await getAllCreditCardsForBankAccount(accountId);
-            console.log(response);
 
             if(!response || response.status != 200){
-
                 throw new Error("Failed to fetch card info");
             }
             setCards(response.data.items);
         } catch (err) {
             console.error(err);
-            setError("Failed to fetch card info");
+            showErrorToast({error, defaultMessage: "Failed to fetch card info"})
         }
     }
 
@@ -71,8 +74,11 @@ export default function BankAccountPage() {
             setAccount(response.data);
             console.log(response.data);
 
+            showSuccessToast({title: "Edit successful!", description: "Account edited successfully."})
+
             return true;
         } catch (err) {
+            showErrorToast({error, defaultMessage: "Failed to edit bank account info"})
             console.error(err);
             return false;
         }
@@ -87,6 +93,7 @@ export default function BankAccountPage() {
 
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            <Toaster richColors />
             <h1 className="font-display font-bold text-5xl">{account.name || "An unnamed account"} overview</h1>
             <div className="grid auto-rows-min gap-4 md:grid-cols-2">
                     <AnimatePresence mode="wait">

@@ -66,6 +66,7 @@
     --destructive-foreground: hsl(233, 100%, 97%);
 
     --success: hsl(121, 90%, 19%);
+    --success-foreground: hsl(233, 100%, 97%);
 
 }
 
@@ -116,6 +117,7 @@
     --destructive-foreground: hsl(233, 100%, 97%);
 
     --success: hsl(121, 90%, 81%);
+    --success-foreground: hsl(233, 36%, 9%);
 }
 
 @theme inline {
@@ -193,6 +195,7 @@
     --color-popover-foreground: var(--popover-foreground);
 
     --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
 
 }
 

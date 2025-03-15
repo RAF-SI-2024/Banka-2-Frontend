@@ -15,7 +15,7 @@ interface RegisterPageProps {
   onClose: (email?: string) => void;
 }
 
-export default function RegisterPage({variant, onClose}: RegisterPageProps) {
+export default function RegisterDialogContent({variant, onClose}: RegisterPageProps) {
 
   // your existing code...
 

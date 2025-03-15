@@ -35,50 +35,59 @@ export function NavMain({
   return (
       <SidebarMenu className="font-paragraph">
         {items.map((item) => {
-          const isSelected = location.pathname.startsWith(item.url)  // ✅ Check current route
+          const isSelected = location.pathname.startsWith(item.url); // ✅ Check current route
+
           return (
-              <Collapsible key={item.title} asChild defaultOpen={item.isCollapsed}>
+              <Collapsible key={item.title + "-" + item.url} asChild defaultOpen={item.isCollapsed}>
                 <SidebarMenuItem className={isSelected ? "bg-primary/25 rounded-lg text-foreground" : ""}>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton asChild tooltip={item.title}>
                       <a href={item.url} className="h-10 items-center">
-                        <span className="text-lg font-heading inline-flex items-center gap-2">
-                          <span className="inline-flex items-center">{item.icon}</span>
-                          <span>{item.title}</span>
-                        </span>
+                  <span className="text-lg font-heading inline-flex items-center gap-2">
+                    <span className="inline-flex items-center">{item.icon}</span>
+                    <span>{item.title}</span>
+                  </span>
                       </a>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
+
                   {item.items?.length ? (
                       <>
                         <CollapsibleTrigger asChild>
                           <SidebarMenuAction className="data-[state=open]:rotate-90">
-                            <span className="icon-[ph--caret-right]" />
+                            <span className="icon-[ph--caret-right]"/>
                             <span className="sr-only">Toggle</span>
                           </SidebarMenuAction>
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <SidebarMenuSub>
-                            {item.items.map((subItem) => (
-                                <SidebarMenuSubItem key={subItem.title}>
-                                  <SidebarMenuSubButton asChild>
-                                    <a href={subItem.url} className="h-4 items-center">
-                                       <span className="font-paragraph inline-flex items-center gap-2">
-                                        <span className="inline-flex items-center">{subItem.icon}</span>
-                                        <span>{subItem.title}</span>
-                                      </span>
-                                    </a>
-                                  </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
-                            ))}
+                            {item.items.map((subItem) => {
+                              const isSubItemSelected = location.pathname.startsWith(subItem.url); // Check for subitem route
+                              return (
+                                  <SidebarMenuSubItem
+                                      key={subItem.title + "-" + subItem.url}
+                                      className={isSubItemSelected ? "bg-primary/25 rounded-lg text-foreground" : ""}
+                                  >
+                                    <SidebarMenuSubButton asChild>
+                                      <a href={subItem.url} className="h-4 items-center">
+                              <span className="font-paragraph inline-flex items-center gap-2">
+                                <span className="inline-flex items-center">{subItem.icon}</span>
+                                <span>{subItem.title}</span>
+                              </span>
+                                      </a>
+                                    </SidebarMenuSubButton>
+                                  </SidebarMenuSubItem>
+                              );
+                            })}
                           </SidebarMenuSub>
                         </CollapsibleContent>
                       </>
                   ) : null}
                 </SidebarMenuItem>
               </Collapsible>
-          )
+          );
         })}
       </SidebarMenu>
-  )
+  );
+
 }
