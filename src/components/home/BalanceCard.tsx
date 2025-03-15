@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Wallet from "@/assets/Wallet.tsx";
+import PiggyBank from "@/assets/PiggyBank.tsx";
 
 
 interface BalanceCardProps extends React.ComponentProps<"div">{
@@ -58,7 +58,7 @@ const BalanceCard = ({ balance="0 RSD", income="0 RSD", expensses="0 RSD", onSen
             </div>
 
             <div className="flex justify-center lg:justify-end pt-8 lg:pt-0">
-                <Wallet className="size-full"/>
+                <PiggyBank className="size-full"/>
             </div>
         </Card>
     );

@@ -1,13 +1,15 @@
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Wallet from "@/assets/Wallet.tsx";
+import PiggyBank from "@/assets/PiggyBank.tsx";
 import {BankAccount} from "@/types/bankAccount.ts";
 import React from "react";
 import {formatCurrency} from "@/utils/format-currency.ts";
+import Wallet from "@/assets/Wallet.tsx";
 
 
 interface BalanceCardProps extends React.ComponentProps<"div">{
+    cardPageVersion?: boolean,
     account: BankAccount,
     income?: number,
     expensses?: number,
@@ -16,7 +18,7 @@ interface BalanceCardProps extends React.ComponentProps<"div">{
 }
 
 
-const BankAccountBalanceCard = ({ account, income=0, expensses=0, onSendClick, onDetailsClick, className, ...props }: BalanceCardProps) => {
+const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expensses=0, onSendClick, onDetailsClick, className, ...props }: BalanceCardProps) => {
     return (
         <Card
             className={cn(
@@ -34,7 +36,7 @@ const BankAccountBalanceCard = ({ account, income=0, expensses=0, onSendClick, o
                             }
 
                         </h6>
-                        <p className="text-sm text-secondary-foreground font-paragraph">Balance</p>
+                        <p className="text-sm text-secondary-foreground font-paragraph">Account balance</p>
                     </div>
 
                     <div className="flex items-center justify-center lg:justify-start gap-7 py-9 font-paragraph">
@@ -43,7 +45,7 @@ const BankAccountBalanceCard = ({ account, income=0, expensses=0, onSendClick, o
                                 <span className="icon-[ph--arrow-up-fill] w-4 h-4 text-success" />
                             </Button>
                             <div className="ml-3">
-                                <p className="font-semibold">{formatCurrency(income, "EUR")}</p>
+                                <p className="font-semibold">{formatCurrency(income, account.currency.code)}</p>
                                 <p className="text-sm text-secondary-foreground">Income</p>
                             </div>
                         </div>
@@ -53,21 +55,24 @@ const BankAccountBalanceCard = ({ account, income=0, expensses=0, onSendClick, o
                                 <span className="icon-[ph--arrow-down-fill] w-4 h-4 text-destructive" />
                             </Button>
                             <div className="ml-3">
-                                <p className="font-semibold">{formatCurrency(expensses, "EUR")}</p>
+                                <p className="font-semibold">{formatCurrency(expensses, account.currency.code)}</p>
                                 <p className="text-sm text-secondary-foreground">Expenses</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-center lg:justify-start gap-4">
-                        <Button variant="primary" size="lg" onClick={onSendClick}>Send</Button>
-                        <Button variant="negative" size="lg" onClick={onDetailsClick}>Details</Button>
-                    </div>
+                        <div className="flex items-center justify-center lg:justify-start gap-4">
+                            <Button variant="primary" size="lg" onClick={onSendClick}>Send</Button>
+                            <Button variant="negative" size="lg" onClick={onDetailsClick}>
+                                {cardPageVersion ? "Account info": "Details"}
+                            </Button>
+                        </div>
+
                 </div>
             </div>
 
             <div className="flex justify-center lg:justify-end pt-8 lg:pt-0">
-                <Wallet className="size-full"/>
+                {cardPageVersion ? <Wallet className="size-full"/>: <PiggyBank className="size-full"/>}
             </div>
         </Card>
     );

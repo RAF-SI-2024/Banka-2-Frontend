@@ -39,7 +39,7 @@ const CreditCardSwipe = (setDialogOpen: (open:boolean) => void, account: BankAcc
                                     onMouseDown={(e) => e.preventDefault()}
                                 >
                                     <CreditCard
-                                        title={card.name}
+                                        title={card.type.name}
                                         cardHolder={`${card.account.client.firstName} ${card.account.client.lastName}`}
                                         cardNumber={card.number}
                                         expiryDate={format(card.expiresAt, "MM/yy")}

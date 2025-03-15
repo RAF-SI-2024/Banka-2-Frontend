@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx"
+import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx"
 import { CreditCard } from "@/components/ui/credit-card.tsx"
 import { CardDTO as CardType } from "@/types/card.ts"
 import { format } from "date-fns"
@@ -15,13 +15,13 @@ const CardDisplay = ({ card, cardHolder, onDetailsClick }: Props) => {
     const expiryDate = format(card.expiresAt, "MM/yy")
 
     return (
-        <Card className="border-0">
+        <Card className="border-0 content-center h-full">
             <CardHeader>
-                <CardTitle className="font-heading text-2xl">Card</CardTitle>
+                {/*<CardTitle className="font-heading text-2xl">Card</CardTitle>*/}
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-4">
                 <CreditCard
-                    title={card.name}
+                    title={card.type.name}
                     cardHolder={cardHolder.firstName + " " + cardHolder.lastName}
                     cardNumber={card.number}
                     expiryDate={expiryDate}

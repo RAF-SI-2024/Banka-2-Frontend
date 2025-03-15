@@ -1,16 +1,17 @@
-import { useParams } from "react-router-dom"
+import {useNavigate, useParams} from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import React, {useEffect, useState} from "react"
 import CardDetails from "@/components/card/BankCardDetails.tsx"
 import BankAccountTransactions from "@/components/bank-account/BankAccountTransactions"
-import CardDisplay from "@/components/card/BankCard.tsx";
+import CardDisplay from "@/components/card/BankCardDisplay.tsx";
 import {CardDTO} from "@/types/card.ts";
 import { getCardById } from "@/api/card"
 import {getAccountById} from "@/api/bankAccount.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
+import BankAccountBalanceCard from "@/components/bank-account/BankAccountBalance.tsx";
 
 
-export default function CardPage() {
+export default function BankCardPage() {
     // error
     const [error, setError] = useState<string | null>(null);
 
@@ -21,6 +22,8 @@ export default function CardPage() {
     const { cardId } = useParams<{ cardId: string }>()
 
     const [showDetails, setShowDetails] = React.useState(false);
+
+    const navigate = useNavigate();
 
     const getCardInfo = async () => {
         setError(null);
@@ -61,43 +64,42 @@ export default function CardPage() {
     },[]);
 
 
-    if (error || card == undefined || bankAccount == undefined) return <h1 className="text-center text-2xl font-semibold text-destructive">{error}</h1>;
+    if (error || card == null || bankAccount == null) return <h1 className="text-center text-2xl font-semibold text-destructive">{error}</h1>;
 
 
 
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
             <h1 className="font-display font-bold text-5xl">{card.name}</h1>
-
             <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-                <div className="flex flex-col gap-4">
-                    <AnimatePresence mode="wait">
-                        {showDetails ? (
-                            <motion.div
-                                key="details"
-                                layout
-                                initial={{ opacity: 0, x: 100 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -100 }}
-                                className="h-full space-y-4"
-                            >
-                                <CardDetails card={card} onBackClick={() => setShowDetails(false)}/>
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key="card"
-                                layout
-                                initial={{ opacity: 0, x: 100 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -100 }}
-                                className="h-full space-y-4"
-                            >
-                                <CardDisplay card={card} cardHolder={card.account.client} onDetailsClick={() => setShowDetails(true)}/>
+                <AnimatePresence mode="wait">
+                    {showDetails ? (
+                        <motion.div
+                            key="details"
+                            layout
+                            initial={{ opacity: 0, x: 100 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -100 }}
+                        >
+                            <CardDetails card={card} onBackClick={() => setShowDetails(false)}/>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key="card"
+                            layout
+                            initial={{ opacity: 0, x: 100 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -100 }}
+                        >
+                            <CardDisplay card={card} cardHolder={card.account.client} onDetailsClick={() => setShowDetails(true)}/>
 
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <BankAccountBalanceCard cardPageVersion={true}
+                                        onDetailsClick={() => navigate(`/bank-account/${bankAccount.id}`)}
+                                        account={bankAccount} />
 
                 <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={bankAccount} />
             </div>
