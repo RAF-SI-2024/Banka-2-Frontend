@@ -36,6 +36,11 @@ export function ClientNavMainData() {
                     url: "/payments/exchange",
                 },
                 {
+                    icon: <span className="icon-[ph--hand-coins]"/>,
+                    title: "Transfers",
+                    url: "/payments/transfers",
+                },
+                {
                     icon: <span className="icon-[ph--users-three]"/>,
                     title: "Recipients",
                     url: "/payments/recipients",
