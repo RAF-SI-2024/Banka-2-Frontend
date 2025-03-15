@@ -2,15 +2,14 @@ import {useState} from "react";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import * as React from "react";
-import SuccessNotificationCard from "@/components/createCard/SuccessNotificationCard.tsx";
-import OTPForm from "@/components/createCard/OTPForm.tsx";
-import FailNotificationCard from "@/components/createCard/FailNotificationCard.tsx";
 import CreateCardForm from "@/components/createCard/CreateCardForm.tsx";
 import {BankAccount} from "@/types/bankAccount.ts";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {createCard} from "@/api/card.ts";
+import OTPSuccessCard from "@/components/createCard/OTPSuccessNotifiaction.tsx";
+import VerificationOTP from "@/components/common/VerificationOTP.tsx";
 
 
 interface CreateCardDialogProps {
@@ -102,16 +101,22 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
 
     return (
         <Dialog open={showDialog} onOpenChange={handleDialogClose}>
-            <DialogContent>
+            <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle>Create Credit Card</DialogTitle>
                 </DialogHeader>
                 {step === 0 ? <CreateCardForm account={account} form={form} nextStep={nextStepZero}  /> : null}
-                {step === 1 ? <OTPForm form={form} nextStep={nextStepOne} setErrors={setError}></OTPForm> : null}
-                {step === 2 ? <SuccessNotificationCard></SuccessNotificationCard> : null}
+                {step === 1 ? <VerificationOTP form={form} nextStep={nextStepOne} setErrors={setError}></VerificationOTP> : null}
+                {step === 2 ? <OTPSuccessCard className="bg-transparent border-0"
+                                              title="Verification successful"
+                                              icon="icon-[ph--check-circle-fill]"
+                                              message="Card created successfully!" /> : null}
 
                 {/*TODO Ovde treba da se namesti logika za prikaz ove komponente, trenutno ako ne uspe zahtev samo se ispise greska ispod ovog dijaloga, a ne prikazuje se ekran*/}
-                {step === 3 ? <FailNotificationCard></FailNotificationCard> : null}
+                {step === 3 ? <OTPSuccessCard className="bg-transparent border-0 w-lg"
+                                              title="Verification failed!"
+                                              icon="icon-[ph--x-circle-fill]"
+                                              message="Card could not be created." /> : null}
 
                 {error && [error].map((error) => (
                     <ErrorAlert
@@ -122,6 +127,7 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
                     />
                 ))}
             </DialogContent>
+
         </Dialog>
     );
 }

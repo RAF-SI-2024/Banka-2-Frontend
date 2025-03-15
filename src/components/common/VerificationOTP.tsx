@@ -3,6 +3,8 @@ import {DialogDescription} from "@/components/ui/dialog.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import React, {useContext, useEffect, useState} from "react";
 import {AuthContext} from "@/context/AuthContext.tsx";
+import {Card, CardContent, CardDescription} from "@/components/ui/card.tsx";
+import {cn} from "@/lib/utils.ts";
 
 
 type ErrorType = {
@@ -17,7 +19,7 @@ interface OTPFormProps {
     setErrors: (error: ErrorType) => void;
 }
 
-export default function AdjustLimitsOTP({form, nextStep, setErrors}: OTPFormProps) {
+export default function VerificationOTP({form, nextStep, setErrors}: OTPFormProps) {
 
     const [value, setValue] = useState("");
     const context = useContext(AuthContext);
@@ -72,25 +74,30 @@ export default function AdjustLimitsOTP({form, nextStep, setErrors}: OTPFormProp
 
 
     return (
-        <div className="p-4 w-full flex flex-col items-center">
+        <Card className={cn("flex flex-col gap-6 bg-transparent border-0")}>
+            <CardContent>
+            <h2 className="text-2xl font-heading font-semibold text-center mt-4 mb-8">Verification required</h2>
             <InputOTP maxLength={6} className="flex justify-center gap-4" value={value} onChange={handleChange}>
                 <InputOTPGroup className="flex gap-4 justify-center">
-                    <InputOTPSlot index={0} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
-                    <InputOTPSlot index={1} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
-                    <InputOTPSlot index={2} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
+                    <InputOTPSlot index={0} className="w-14 h-14 text-2xl font-bold text-center border border-border rounded-lg" />
+                    <InputOTPSlot index={1} className="w-14 h-14 text-2xl font-bold text-center border border-border rounded-lg" />
+                    <InputOTPSlot index={2} className="w-14 h-14 text-2xl font-bold text-center border border-border rounded-lg" />
                     <InputOTPSeparator />
-                    <InputOTPSlot index={3} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
-                    <InputOTPSlot index={4} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
-                    <InputOTPSlot index={5} className="w-14 h-14 text-2xl font-bold text-center border border-gray-400 rounded-lg" />
+                    <InputOTPSlot index={3} className="w-14 h-14 text-2xl font-bold text-center border border-border rounded-lg" />
+                    <InputOTPSlot index={4} className="w-14 h-14 text-2xl font-bold text-center border border-border rounded-lg" />
+                    <InputOTPSlot index={5} className="w-14 h-14 text-2xl font-bold text-center border border-border rounded-lg" />
                 </InputOTPGroup>
             </InputOTP>
-            <DialogDescription className="text-center text-lg font-light">
+            </CardContent>
+            <CardDescription>
+            <DialogDescription className="text-center font-light">
                 An email has been sent to {context?.user?.email}
             </DialogDescription>
-            <DialogDescription className="text-center text-lg font-light">
-                Didn't receive the code?
+            <DialogDescription className="text-center font-light">
+                Didn't receive the code? <Button size="tight" variant="link">Resend verification code</Button>
             </DialogDescription>
-            <Button variant="link" className="text-blue-500">Resend verification code</Button>
-        </div>
+            </CardDescription>
+
+        </Card>
     )
 }
