@@ -7,6 +7,7 @@ import {
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { changeCardStatusEmployee } from "@/api/card";
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 
 export interface CreditCardDropdownMenuProps {
     id: string;
@@ -23,10 +24,12 @@ const CreditCardDropdownMenu: React.FC<CreditCardDropdownMenuProps> = ({
         try {
             const newStatus = !status;
             const response = await changeCardStatusEmployee(id, newStatus);
+            showSuccessToast({description: "Card status updated successfully."})
             console.log("Card status updated successfully:", response);
             onStatusChange(id, newStatus);
         } catch (error) {
             console.error("Failed to update card status:", error);
+            showErrorToast({error, defaultMessage: "Failed to update card status"});
         }
     };
 
@@ -40,7 +43,7 @@ const CreditCardDropdownMenu: React.FC<CreditCardDropdownMenuProps> = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
                 <DropdownMenuItem onClick={handleActivateOrDeactivate}>
-                    {status ? "Deactivate card" : "Activate card"}
+                    {status ? "Block card" : "Unblock card"}
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
