@@ -32,6 +32,8 @@ const BankAccountDetailsCard = ({
     const [accountName, setAccountName] = useState(account?.name ?? "");
     const [isValid, setIsValid] = useState(true); // Tracks if the name is valid
     const [isAdjustLimitsDialogOpen, setAdjustLimitsDialogOpen] = useState(false);
+    const [monthlyLimit, setMonthlyLimit] = useState(account?.monthlyLimit ?? 0);
+    const [dailyLimit, setDailyLimit] = useState(account?.dailyLimit ?? 0);
 
     const handleToggleEdit = async () => {
         if (isEditing) {
@@ -166,7 +168,7 @@ const BankAccountDetailsCard = ({
                         Monthly limit:
                     </Label>
                     <p className="text-xl font-medium">
-                        {formatCurrency(account.monthlyLimit, account.currency.code)}
+                        {formatCurrency(monthlyLimit, account.currency.code)}
                     </p>
                 </div>
 
@@ -175,7 +177,7 @@ const BankAccountDetailsCard = ({
                         Daily limit:
                     </Label>
                     <p className="text-xl font-medium">
-                        {formatCurrency(account.dailyLimit, account.currency.code)}
+                        {formatCurrency(dailyLimit, account.currency.code)}
                     </p>
                 </div>
                 <Button size="sm" variant="outline" className="absolute bottom-4 right-4" onClick={handleAdjustLimitsClick}>
@@ -185,7 +187,9 @@ const BankAccountDetailsCard = ({
 
                 <BankAccountDetailsAdjustLimitsDialog account={account}
                                                       showDialog={isAdjustLimitsDialogOpen}
-                                                      setShowDialog={setAdjustLimitsDialogOpen}/>
+                                                      setShowDialog={setAdjustLimitsDialogOpen}
+                                                      setMonthlyLimit={setMonthlyLimit}
+                                                      setDailyLimit={setDailyLimit}/>
             </CardContent>
 
         </Card>

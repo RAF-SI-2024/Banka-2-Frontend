@@ -5,6 +5,7 @@ import { NumericFormat, NumericFormatProps } from 'react-number-format';
 
 interface MoneyInputProps extends Omit<NumericFormatProps, 'value' | 'onValueChange'> {
     value?: number;
+    defaultValue?: number;
     onValueChange?: (value: number | undefined) => void;
     decimalScale?: number;
     currency?: string;
@@ -16,6 +17,7 @@ interface MoneyInputProps extends Omit<NumericFormatProps, 'value' | 'onValueCha
 const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>((
     {
         value: controlledValue,
+        defaultValue = 0,
         onValueChange,
         decimalScale = 2,
         currency = 'RSD',
@@ -63,6 +65,7 @@ const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>((
     return (
         <div className="flex flex-row">
             <NumericFormat
+                defaultValue={defaultValue}
                 placeholder={placeholder}
                 value={value}
                 onValueChange={handleChange}
