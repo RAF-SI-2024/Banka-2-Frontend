@@ -14,7 +14,11 @@ interface DetailsProps extends React.ComponentProps<"div"> {
     onAccountNameChange: (newName: string) => Promise<boolean>;
 }
 
-const accountNameSchema = z.string().min(3, "Account name must be at least 3 characters long");
+const accountNameSchema = z.string()
+    .min(3, "Account name must be at least 3 characters long")
+    .max(64, "Account name must be less than 64 characters long")
+    .regex(/^\S+$/, "Account name cannot contain spaces");
+
 
 const BankAccountDetailsCard = ({
                                     account,

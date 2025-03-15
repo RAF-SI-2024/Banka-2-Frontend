@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React from "react";
 import { cn } from "@/lib/utils.ts";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 import {
@@ -10,9 +10,8 @@ import {
     FormMessage
 } from "@/components/ui/form.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import {Input} from "@/components/ui/input.tsx";
-import {formatCurrency} from "@/utils/format-currency.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
+import MoneyInput from "@/components/common/input/MoneyInput.tsx";
 
 interface AdjustLimitsFormProps {
     account: BankAccount;
@@ -22,48 +21,29 @@ interface AdjustLimitsFormProps {
 
 // Form Schema
 export default function AdjustLimitsForm({account, form, nextStep }: AdjustLimitsFormProps) {
-    const [monthlyLimitValue, setMonthlyLimitValue] = useState(formatCurrency(form.getValues("monthlyLimit"), account.currency.code));
-    const [dailyLimitValue, setDailyLimitValue] = useState(formatCurrency(form.getValues("dailyLimit"), account.currency.code));
-
-
-    const handleMonthlyLimitChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
-        let rawValue = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-        if (rawValue === "") rawValue = "0";
-
-        const numericValue = parseFloat(rawValue) || 0;
-        setMonthlyLimitValue(formatCurrency(numericValue)); // Format for display
-        field.onChange(numericValue); // Pass raw value to form
-    };
-
-    const handleDailyLimitChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
-        let rawValue = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-        if (rawValue === "") rawValue = "0";
-
-        const numericValue = parseFloat(rawValue) || 0;
-        setDailyLimitValue(formatCurrency(numericValue)); // Format for display
-        field.onChange(numericValue); // Pass raw value to form
-    };
-
     return (
-        <Card className={cn("flex flex-col gap-6")}>
+        <Card className={cn("flex flex-col gap-6 bg-transparent border-0")}>
             <CardContent className="mt-4 font-paragraph">
+                <h2 className="text-2xl font-heading font-semibold text-center mt-4 mb-8">Adjust limits</h2>
                 <Form {...form}>
                     <form className="flex flex-col gap-6">
                         {/* Name Input */}
 
                         {/* Limit Input */}
                         <FormField
+                            key="dailyLimit"
                             control={form.control}
                             name="dailyLimit"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Daily Limit</FormLabel>
+                                    <FormLabel>Monthly Limit</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="text"
-                                            className="input"
-                                            value={dailyLimitValue} // Show formatted value
-                                            onChange={(e) => handleDailyLimitChange(e, field)}
+                                        <MoneyInput
+                                            id="monthlyLimit"
+                                            currency={account.currency.code}
+                                            onChange={field.onChange}
+                                            min={1000}
+                                            max={10000000}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -71,18 +51,22 @@ export default function AdjustLimitsForm({account, form, nextStep }: AdjustLimit
                             )}
                         />
 
+
+
                         <FormField
+                            key="monthlyLimit"
                             control={form.control}
                             name="monthlyLimit"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Monthly Limit</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="text"
-                                            className="input"
-                                            value={monthlyLimitValue} // Show formatted value
-                                            onChange={(e) => handleMonthlyLimitChange(e, field)}
+                                        <MoneyInput
+                                            id="monthlyLimit"
+                                            currency={account.currency.code}
+                                            onChange={field.onChange}
+                                            min={1000}
+                                            max={10000000}
                                         />
                                     </FormControl>
                                     <FormMessage />

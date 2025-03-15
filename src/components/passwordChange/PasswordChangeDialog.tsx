@@ -22,7 +22,7 @@ export default function PasswordChangeDialog({showDialog, setShowDialog}: Passwo
 
   return (
     <Dialog open={showDialog} onOpenChange={handleDialogClose}>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>Change password</DialogTitle>
         </DialogHeader>

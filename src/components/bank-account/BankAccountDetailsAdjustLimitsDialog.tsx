@@ -5,11 +5,10 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {BankAccount} from "@/types/bankAccount.ts";
 import {editAccountClient} from "@/api/bankAccount.ts";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
-import SuccessNotificationCard from "@/components/createCard/SuccessNotificationCard.tsx";
-import FailNotificationCard from "@/components/createCard/FailNotificationCard.tsx";
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
-import AdjustLimitsOTP from "@/components/bank-account/AdjustLimitsOTP.tsx";
+import VerificationOTP from "@/components/common/VerificationOTP.tsx";
 import AdjustLimitsForm from "@/components/bank-account/AdjustLimitsForm.tsx";
+import OTPSuccessCard from "@/components/createCard/OTPSuccessNotifiaction.tsx";
 
 interface BankAccountDetailsAdjustLimitsDialogProps {
     showDialog: boolean;
@@ -25,10 +24,36 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
 
 
     const formSchema = z.object({
-        monthlyLimit: z.coerce.number().min(1000, "Limit is too small").max(10000000, "Limit is too big"),
-        dailyLimit: z.coerce.number().min(1000, "Limit is too small").max(1000000, "Limit is too big"),
+        monthlyLimit: z.preprocess(
+            (val) => {
+                if (typeof val === "string") {
+                    if(val.length == 0)
+                        return 0;
+                    // Convert "231.323,00" -> 231323.00
+                    return parseFloat(val.replace(/\./g, "").replace(",", "."));
+                }
+                return Number(val);
+            },
+            z.number()
+                .min(1000, "Limit is too small")
+                .max(10000000, "Limit is too big")
+        ),
+        dailyLimit: z.preprocess(
+            (val) => {
+                if (typeof val === "string") {
+                    if(val.length == 0)
+                        return 0;
+                    // Convert "231.323,00" -> 231323.00
+                    return parseFloat(val.replace(/\./g, "").replace(",", "."));
+                }
+                return Number(val);
+            },
+            z.number()
+                .min(1000, "Limit is too small")
+                .max(10000000, "Limit is too big")
+        ),
         otp: z.string().length(6),
-        name: z.string()
+        name: z.string(),
     });
 
 
@@ -47,29 +72,33 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
             "dailyLimit",
             "monthlyLimit",
         ])
-
         if (isValid) {
             setStep((prev) => prev + 1)
         }
     }
 
     async function nextStepOne() {
-
-        const isValid = await form.trigger([
-            "otp"
-        ])
+        const isValid = await form.trigger(["otp"]);
 
         if (isValid) {
-
             try {
                 setError(null);
+                console.log(form.getValues().dailyLimit);
+                const payload = {
+                    name: account.name,
+                    otp: form.getValues().otp,
+                    dailyLimit: parseFloat(form.getValues().dailyLimit.toString().replace(/\./g, "").replace(",", ".")),
+                    monthlyLimit: parseFloat(form.getValues().monthlyLimit.toString().replace(/\./g, "").replace(",", "."))
+                }
+                console.log('Submitted values:', payload);
+                const response = await editAccountClient(account.id, payload);
 
-                const response = await editAccountClient(account.id, form.getValues());
-                console.log(form.getValues());
-                if (response.status != 200) {
+
+
+                if (response.status !== 200) {
                     throw new Error("API error");
                 }
-                setStep((prev) => prev + 1)
+                setStep((prev) => prev + 1);
             } catch (err) {
                 console.error(err);
                 setError({
@@ -78,7 +107,6 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
                     description: "An error occurred while processing your request.",
                 });
             }
-
         }
     }
 
@@ -92,16 +120,22 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
 
     return (
         <Dialog open={showDialog} onOpenChange={handleDialogClose}>
-            <DialogContent>
+            <DialogContent className="min-w-fit" aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>Create Credit Card</DialogTitle>
+                    <DialogTitle></DialogTitle>
                 </DialogHeader>
                 {step === 0 ? <AdjustLimitsForm account={account} form={form} nextStep={nextStepZero}  /> : null}
-                {step === 1 ? <AdjustLimitsOTP form={form} nextStep={nextStepOne} setErrors={setError}></AdjustLimitsOTP> : null}
-                {step === 2 ? <SuccessNotificationCard></SuccessNotificationCard> : null}
+                {step === 1 ? <VerificationOTP form={form} nextStep={nextStepOne} setErrors={setError}></VerificationOTP> : null}
+                {step === 2 ? <OTPSuccessCard className="bg-transparent border-0 w-lg"
+                                              title="Verification successful!"
+                                              icon="icon-[ph--check-circle-fill]"
+                                              message="Limits have been adjusted successfuly." /> : null}
 
                 {/*TODO Ovde treba da se namesti logika za prikaz ove komponente, trenutno ako ne uspe zahtev samo se ispise greska ispod ovog dijaloga, a ne prikazuje se ekran*/}
-                {step === 3 ? <FailNotificationCard></FailNotificationCard> : null}
+                {step === 3 ? <OTPSuccessCard className="bg-transparent border-0 w-lg"
+                                              title="Verification failed!"
+                                              icon="icon-[ph--x-circle-fill]"
+                                              message="Limits could not be adjusted." /> : null}
 
                 {error && [error].map((error) => (
                     <ErrorAlert

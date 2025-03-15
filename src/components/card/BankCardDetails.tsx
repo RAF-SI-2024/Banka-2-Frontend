@@ -32,7 +32,7 @@ const CardDetails = ({ card, onBackClick }: Props) => {
   };
 
   return (
-      <Card className="border-0">
+      <Card className="h-full border-0 content-center">
         <CardHeader className="mb-2 flex flex-row -ml-4 items-center gap-2">
           <Button size="icon" variant="ghost" onClick={onBackClick}>
             <span className="icon-[ph--caret-left] size-6" />

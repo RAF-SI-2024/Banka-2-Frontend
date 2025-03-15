@@ -8,9 +8,14 @@ import React, {useEffect, useState} from "react";
 import {editAccountClient, getAccountById, getAllCreditCardsForBankAccount} from "@/api/bankAccount.ts";
 import {AccountUpdateClientRequest, BankAccount} from "@/types/bankAccount.ts";
 import {CardDTO} from "@/types/card.ts";
+import {showToast, Toaster} from "@/components/ui/sonner"
+import {AxiosError} from "axios";
+
+
+
 
 export default function BankAccountPage() {
-    
+    // error
     const [error, setError] = useState<string | null>(null);
     const { accountId } = useParams<{ accountId: string }>();
     const [account, setAccount] = useState<BankAccount>();
@@ -42,12 +47,9 @@ export default function BankAccountPage() {
             if (!accountId) {
                 throw new Error("AccountId is missing from URL!");
             }
-            console.log(accountId);
             const response = await getAllCreditCardsForBankAccount(accountId);
-            console.log(response);
 
             if(!response || response.status != 200){
-
                 throw new Error("Failed to fetch card info");
             }
             setCards(response.data.items);
@@ -71,8 +73,40 @@ export default function BankAccountPage() {
             setAccount(response.data);
             console.log(response.data);
 
+            showToast({
+                title:"Edit successful!",
+                variant:"success",
+                description: "Account edited successfully.",
+                icon: <span className="icon-[ph--check-circle] text-background text-xl"></span>
+            });
+
             return true;
         } catch (err) {
+            if (err instanceof AxiosError) {
+                // Loop through each error field in the response data
+                const errors = err?.response?.data?.errors || {}
+
+                Object.entries(errors).forEach(([key, messages]) => {
+                    // For each field (key), show a toast for every message in the array
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    messages.forEach((message: string) => {
+                        showToast({
+                            title: `Error in ${key}`,
+                            variant: "error",
+                            description: message,
+                            icon:  <span className="icon-[ph--x-circle] text-destructive-foreground text-xl"></span>
+                        })
+                    })
+                })
+            } else {
+                showToast({
+                    title:"An error occured",
+                    variant:"error",
+                    description: "Account could not be edited.",
+                    icon: <span className="icon-[ph--x-circle] text-destructive-foreground text-xl"></span>
+                });
+                }
             console.error(err);
             return false;
         }
@@ -87,6 +121,7 @@ export default function BankAccountPage() {
 
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            <Toaster richColors />
             <h1 className="font-display font-bold text-5xl">{account.name || "An unnamed account"} overview</h1>
             <div className="grid auto-rows-min gap-4 md:grid-cols-2">
                     <AnimatePresence mode="wait">
