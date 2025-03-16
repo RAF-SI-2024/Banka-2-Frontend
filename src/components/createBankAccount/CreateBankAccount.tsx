@@ -34,6 +34,7 @@ import {createCompany} from "@/api/account.ts";
 import {createCard} from "@/api/account.ts";
 import {CreateBankAccountRequest} from "@/types/bankAccount.ts";
 import { BankAccountType } from "@/types/bankAccountType";
+import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 
 const businessInfoSchema = z.object({
     businessName: z.string()
@@ -92,13 +93,21 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
 
 
     useEffect(() => {
-        if (registeredEmail) {
-            setSelectedOption("existing");
-            setEmail(registeredEmail);
+        const effectFunc = async() => {
+            if (registeredEmail) {
+                setSelectedOption("existing");
+                setEmail(registeredEmail);
+                await fetchUserByEmail(registeredEmail);
+                setStep(2);
+                setEmailError(null);
+            }
+
+            console.log("AAAAAAAAA");
             console.log(registeredEmail);
-            setStep(2);
-            setEmailError(null);
+            console.log(step);
         }
+        effectFunc();
+
     }, [registeredEmail]);
 
     useEffect(() => {
@@ -307,10 +316,12 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
             if (response.success) {
                 console.log("Company created successfully:", response.data);
                 onClose();
+                window.location.reload();
             } else {
                 console.error("Failed to create company:", response.data);
             }
         } catch (error) {
+            showErrorToast({error, defaultMessage: "Error during company creation."})
             console.error("Error during company creation:", error);
         }
     };
@@ -345,7 +356,9 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                         const responseCard = await createCard(cardData);
                     }
                     onClose();
+                    window.location.reload();
                 } catch (error) {
+                    showErrorToast({error, defaultMessage: "Error creating account."})
                     console.error("Error creating account:", error);
                 }
 
@@ -381,7 +394,9 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                         const responseCard = await createCard(cardData);
                     }
                     onClose();
+                    window.location.reload();
                 } catch (error) {
+                    showErrorToast({error, defaultMessage: "Error creating Foreign Currency Account."})
                     console.error("Error creating Foreign Currency Account:", error);
                 }
             }
@@ -413,9 +428,9 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                     }
                     onClose();
                 } catch (error) {
+                    showErrorToast({error, defaultMessage: "Error creating Business Foreign Currency Account."})
                     console.error("Error creating Business Foreign Currency Account:", error);
                 }
-                console.log("Usao sam u business foreign currency");
             }
 
             if (step === 3) {
@@ -429,9 +444,10 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
 
                         await businessForm.handleSubmit(onBusinessSubmit)();
                     } else {
-                        console.error("Failed to create business account:", accountResponse.data);
+                        throw new Error("Failed to create business account");
                     }
                 } catch (error) {
+                    showErrorToast({error, defaultMessage: "Error creating business account."})
                     console.error("Error creating business account:", error);
                 }
             } else {
