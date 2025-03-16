@@ -18,8 +18,6 @@ export  function useBankAccountsData() {
                     throw new Error("User ID not found");
                 }
 
-                console.log(id);
-
                 const response = await getAllAccountsClient(id);
                 console.log(response);
 
@@ -41,7 +39,6 @@ export  function useBankAccountsData() {
         }
 
         fetchBankAccounts()
-        console.log("Fetched bank accounts")
     }, [])
 
     return bankAccounts;

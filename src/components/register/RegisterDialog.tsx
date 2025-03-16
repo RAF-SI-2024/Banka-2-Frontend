@@ -1,5 +1,5 @@
 import {Dialog, DialogContent, DialogDescription, DialogTitle} from "@/components/ui/dialog.tsx";
-import RegisterPage from "@/pages/Register.tsx";
+import RegisterDialogContent from "@/components/register/RegisterDialogContent.tsx";
 import {Role} from "@/types/enums.ts";
 import {useMediaQuery} from "@/hooks/use-media-query.ts";
 import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerTitle} from "../ui/drawer";
@@ -22,7 +22,7 @@ export default function RegisterDialog({ variant, open, onClose, onSuccess }: Re
                     <DialogTitle></DialogTitle>
                     <DialogDescription></DialogDescription>
                     <div className="p-4 w-full overflow-y-auto h-full">
-                        <RegisterPage
+                        <RegisterDialogContent
                             onClose={(email) => {
                                 onClose();
                                 if (email && onSuccess) {
@@ -43,7 +43,7 @@ export default function RegisterDialog({ variant, open, onClose, onSuccess }: Re
                 <DrawerTitle></DrawerTitle>
                 <DrawerDescription></DrawerDescription>
                 <div className="p-4 w-full overflow-y-auto h-full">
-                    <RegisterPage
+                    <RegisterDialogContent
                         onClose={(email) => {
                             onClose();
                             if (email && onSuccess) {

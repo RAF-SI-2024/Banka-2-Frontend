@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
 import {activateOrDeactivateBankAccount} from "@/api/bankAccount"
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 
 interface BankingAccountDropdownMenuProps {
     id: string;
@@ -18,10 +19,12 @@ export default function BankingAccountDropdownMenu({id, status, onStatusChange}:
         try {
             const newStatus = !status;
             const response = await activateOrDeactivateBankAccount(id, newStatus);
+            showSuccessToast({description: "Account status updated successfully."})
             console.log("Account status updated successfully:", response);
             onStatusChange(id, newStatus);
         } catch (error) {
             console.error("Failed to update account status:", error);
+            showErrorToast({error, defaultMessage: "Failed to update account status"});
         }
     };
   return (
@@ -35,7 +38,7 @@ export default function BankingAccountDropdownMenu({id, status, onStatusChange}:
 
       <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={handleActivateOrDeactivate}>
-              {status ? "Deactivate account" : "Activate account"}
+              {status ? "Block account" : "Unblock account"}
           </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

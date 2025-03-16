@@ -4,6 +4,7 @@ import { Particles } from "@/components/common/Particles.tsx";
 import * as React from "react";
 import HeaderWithLogo from "@/components/common/header/HeaderWithLogo.tsx";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
+import {Toaster} from "@/components/ui/sonner.tsx";
 
 export default function AuthorizationLayout() {
     const navigate = useNavigate();
@@ -32,6 +33,7 @@ export default function AuthorizationLayout() {
                 </HeaderWithLogo>
 
                 <main>
+                    <Toaster richColors className="z-10000" />
                     {/*absolute so that they overlap with other parts of the page,
                     z is set as well. mix = blending mode hard light for cooler effect*/}
                     <Particles className="absolute inset-0 pointer-events-none z-10 mix-blend-hard-light" quantity={8}/>
