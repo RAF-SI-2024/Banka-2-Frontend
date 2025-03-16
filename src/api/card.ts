@@ -56,3 +56,13 @@ export const createCard = async (data: CardCreateRequest) => {
         throw error;
     }
 };
+
+export const getAllCardsForClient = async (clientId: string) => {
+    try {
+        const response = await api.get(`${API_BASE}/clients/${clientId}/cards`);
+        return response;
+    } catch (error) {
+        console.error("❌ Failed to get cards for client:", error);
+        throw error;
+    }
+}
