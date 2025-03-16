@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {getAllAccountsClient} from "@/api/bankAccount.ts";
 import {BankAccount} from "@/types/bankAccount.ts"
+import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 
 
 export  function useBankAccountsData() {
@@ -34,6 +35,7 @@ export  function useBankAccountsData() {
 
             } catch (error) {
                 console.error("Failed to fetch bank accounts:", error)
+                showErrorToast({error, defaultMessage: "Failed to fetch bank accounts"})
                 setBankAccounts([])
             }
         }
