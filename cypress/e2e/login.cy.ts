@@ -1,4 +1,4 @@
-import {apiBaseUrl} from "./register.cy";
+import {apiBaseUrl} from "../support/commands";
 
 describe("Login Page", () => {
     beforeEach(() => {

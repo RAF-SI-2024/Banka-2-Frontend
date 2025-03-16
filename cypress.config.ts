@@ -3,7 +3,7 @@ dotenv.config();
 
 const config = {
   e2e: {
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on: any, config: any) {
       return config;
     },
     testIsolation: false,
