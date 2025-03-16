@@ -126,8 +126,9 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                 } else {
                     try {
                         const response = await getAllCurrencies();
-                        setCurrencies(response.items);
-                        localStorage.setItem("currencies", JSON.stringify(response.items));
+                        console.log("Response:", response);
+                        setCurrencies(response);
+                        localStorage.setItem("currencies", JSON.stringify(response));
                         console.log("Currencies:", response);
                     } catch (error) {
                         console.error("❌ Error fetching currencies:", error);
