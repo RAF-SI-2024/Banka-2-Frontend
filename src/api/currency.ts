@@ -32,8 +32,3 @@ export const getExchangeRate = async (currencyFromCode: string, currencyToCode: 
         throw error;
     }
 };
-
-
-
-
-
