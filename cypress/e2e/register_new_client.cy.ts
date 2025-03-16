@@ -14,13 +14,13 @@ describe('Register Client and make him a bank account', () => {
     });
 
     it("Fill out the first registration form", () => {
-        cy.get('#firstName').should('be.visible').type('Bosko');
-        cy.get('#lastName').clear().type('Zlatanovic');
+        cy.get('#firstName').should('be.visible').type('Klijent');
+        cy.get('#lastName').clear().type('Klijentic');
         cy.contains('Date of birth').click();
         cy.get('.rdp-dropdown_month > .bg-card').select('0');
-        cy.get('.rdp-dropdown_year > .bg-card').select('2003');
-        cy.get(':nth-child(3) > :nth-child(3) > .rdp-button_reset').click();
-        cy.get('#uniqueIdentificationNumber').type('1401003710252');
+        cy.get('.rdp-dropdown_year > .bg-card').select('1986');
+        cy.get(':nth-child(1) > :nth-child(4) > .rdp-button_reset').click();
+        cy.get('#uniqueIdentificationNumber').type('0101986500406');
         cy.get('[value="1"]').first().click();
         cy.get('.flex-col.gap-4 > .border-transparent').click();
     });
