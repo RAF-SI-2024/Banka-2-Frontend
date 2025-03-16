@@ -1,5 +1,6 @@
 import * as React from "react";
 import {useBankAccountsData} from "@/hooks/sidebar/use-bank-accounts-data.ts";
+import {useCreditCardsData} from "@/hooks/sidebar/use-credit-cards-data.ts";
 
 
 export function ClientNavMainData() {
@@ -36,6 +37,11 @@ export function ClientNavMainData() {
                     url: "/payments/exchange",
                 },
                 {
+                    icon: <span className="icon-[ph--hand-coins]"/>,
+                    title: "Transfers",
+                    url: "/payments/transfers",
+                },
+                {
                     icon: <span className="icon-[ph--users-three]"/>,
                     title: "Recipients",
                     url: "/payments/recipients",
@@ -49,9 +55,10 @@ export function ClientNavMainData() {
         },
         {
             title: "Cards",
-            url: "/cards",
+            url: "#",
             icon: <span className="icon-[ph--credit-card]"/>,
             isCollapsed: false,
+            items: useCreditCardsData()
         },
         {
             title: "Loans",
