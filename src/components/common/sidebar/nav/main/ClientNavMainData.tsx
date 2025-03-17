@@ -33,23 +33,18 @@ export function ClientNavMainData() {
                 },
                 {
                     icon: <span className="icon-[ph--arrows-clockwise]"/>,
-                    title: "Exchange",
-                    url: "/payments/exchange",
-                },
-                {
-                    icon: <span className="icon-[ph--hand-coins]"/>,
-                    title: "Transfers",
-                    url: "/payments/transfers",
-                },
-                {
-                    icon: <span className="icon-[ph--users-three]"/>,
-                    title: "Recipients",
-                    url: "/payments/recipients",
+                    title: "New transfer/exchange",
+                    url: "/payments/transfer",
                 },
                 {
                     icon: <span className="icon-[ph--list-magnifying-glass]"/>,
-                    title: "Overview",
-                    url: "/payments/overview",
+                    title: "Exchange rate list",
+                    url: "/payments/exchange-rate",
+                },
+                {
+                    icon: <span className="icon-[ph--money-wavy]"/>,
+                    title: "My payments",
+                    url: "/payments",
                 }
             ]
         },
@@ -62,9 +57,21 @@ export function ClientNavMainData() {
         },
         {
             title: "Loans",
-            url: "/loans",
+            url: "#",
             icon: <span className="icon-[ph--bank]"/>,
             isCollapsed: false,
+            items: [
+                {
+                    title: "New loan request",
+                    urls: "/loans/new",
+                    icon: <span className="icon-[ph--folder-simple-plus]"/>,
+                },
+                {
+                    title: "My loans",
+                    urls: "/loans",
+                    icon: <span className="icon-[ph--bank]"/>,
+                }
+            ]
         },
     ]
 }
