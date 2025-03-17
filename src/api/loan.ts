@@ -1,13 +1,25 @@
 import api from "./axios";
-import { API_BASE } from "../constants/endpoints";
+import { LoanResponse } from "@/types/loan";
 
 
-export const getAllLoans = async () => {
+// TODO: dodati filter po vrsti kredita kada backend zavrsi 
+export const getAllLoans = async (
+    page: number,
+    size: number,
+    filters: { accountNumber?: string; }
+): Promise<LoanResponse> => {
     try {
-        const response = await api.get("/loans");
-        return response.data;
+        const response = await api.get("/loans", {
+            params: {
+                accountNumber: filters.accountNumber || undefined,
+                page,
+                size,
+            },
+        });
+
+        return response.data; // API returns an array of u
     } catch (error) {
-        console.error("❌ Error fetching loans:", error);
+        console.error("❌ Error fetching users:", error);
         throw error;
     }
-}
+};

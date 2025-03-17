@@ -9,7 +9,7 @@ export function EmployeeNavMainData() {
         },
         {
             title: "Loans Requests",
-            url: "/loan-request",
+            url: "/loan/request",
             icon: <span className="icon-[ph--bank]"/>,
             isCollapsed: true,
         }
