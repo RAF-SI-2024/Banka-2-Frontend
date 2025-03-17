@@ -33,7 +33,7 @@ export const AppRoutes = () => {
                     {/*protected employee routes*/}
 
                     <Route element={<ProtectedEmployee />}>
-                        <Route path="loan-request" element={ <LoanRequestList />} />
+                        <Route path="loan/request" element={ <LoanRequestList />} />
                         <Route path="client-list" element={<ClientList />} />
                     </Route>
 
