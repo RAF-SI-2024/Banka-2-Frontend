@@ -25,8 +25,7 @@ export const AppRoutes = () => {
 
                     <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
-                    <Route path="/cards/:cardId" element={<CardDetailsPage />} />
-                    <Route path="/showcase" element={<ComponentShowcasePage />} />
+                    <Route path="/card/:cardId" element={<CardDetailsPage />} />
                 </Route>
             </Route>
 
