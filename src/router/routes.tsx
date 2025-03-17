@@ -16,6 +16,7 @@ import BankAccountPage from "@/pages/BankAccount.tsx";
 import RoleBasedHomePage from "@/pages/RoleBasedHome.tsx";
 import CardDetailsPage from "@/pages/BankCard.tsx";
 import LoanRequestList from "@/pages/LoanRequestList";
+import ClientList from "@/pages/ClientList.tsx";
 
 export const AppRoutes = () => {
     return (
@@ -33,6 +34,7 @@ export const AppRoutes = () => {
 
                     <Route element={<ProtectedEmployee />}>
                         <Route path="loan-request" element={ <LoanRequestList />} />
+                        <Route path="client-list" element={<ClientList />} />
                     </Route>
 
                 </Route>
