@@ -7,9 +7,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { NumberInput } from "@/components/common/input/NumberInput.tsx";
 import {useState, useEffect} from "react";
 import {Button} from "@/components/ui/button";
+import MoneyInput from "@/components/common/input/MoneyInput.tsx";
 
 export interface Currency {
     name: string;
@@ -66,7 +66,7 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
 
     function handleAmount1Change(val:string) {
         console.log("A1");
-        const numericValue = parseFloat(val.replace(/[^0-9.]+/g, ''));
+        const numericValue = parseFloat(val.replace(/\./g, "").replace(",", "."));
 
         setAmount2(convertCurrency(currency1, currency2, numericValue));
         setAmount1(numericValue);
@@ -83,7 +83,7 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
 
     function handleAmount2Change(val:string) {
         console.log("A2");
-        const numericValue = parseFloat(val.replace(/[^0-9.]+/g, ''));
+        const numericValue = parseFloat(val.replace(/\./g, "").replace(",", "."));
         setAmount1(convertCurrency(currency2, currency1, numericValue));
         setAmount2(numericValue);
     }
@@ -121,16 +121,12 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
                             </SelectContent>
                         </Select>
                     </div>
-                    <NumberInput
+                    <MoneyInput
                         id="currency1"
-                        min={0}
                         value={amount1}
                         onChange={e => handleAmount1Change(e.target.value)}
-                        prefix={!currency1.isAfter ? currency1.symbol : ""}
-                        suffix={currency1.isAfter ? " " + currency1.symbol : ""}
-                        thousandSeparator=","
+                        currency={currency1.name}
                         decimalScale={2}
-                        buttons={false}
                     />
                 </div>
 
@@ -158,16 +154,11 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
                             </SelectContent>
                         </Select>
                     </div>
-                    <NumberInput
+                    <MoneyInput
                         id="currency2"
-                        min={0}
                         value={amount2}
                         onChange={e => handleAmount2Change(e.target.value)}
-                        prefix={!currency2.isAfter ? currency2.symbol : ""}
-                        suffix={currency2.isAfter ? " " + currency2.symbol : ""}
-                        thousandSeparator=","
-                        decimalScale={2}
-                        buttons={false}
+                        currency={currency2.name}
                     />
                 </div>
             </CardContent>

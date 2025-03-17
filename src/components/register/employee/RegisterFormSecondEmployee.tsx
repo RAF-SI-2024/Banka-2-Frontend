@@ -1,19 +1,16 @@
 import * as React from "react";
-import {useState} from "react";
 import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import { PhoneInput } from "@/components/common/input/PhoneInput.tsx"
-import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import { onSubmitEmployee} from "@/components/register/RegisterRequests.tsx";
 import Stepper from "@/components/common/Stepper.tsx";
 
 
 // @ts-expect-error Need to add type to the props
 export default function RegisterFormSecondEmployee({ prevStep, nextStep, form, className, ...props }) {
-    const [error, setError] = useState<{ id: number; title: string; description: string } | null>(null);
 
     async function goToNextStepEmployee() {
         const isValid = await form.trigger([
@@ -26,7 +23,7 @@ export default function RegisterFormSecondEmployee({ prevStep, nextStep, form, c
         ]);
 
         if (isValid) {
-            await onSubmitEmployee({form, nextStep, setError});
+            await onSubmitEmployee({form, nextStep});
         }
     }
 
@@ -133,14 +130,6 @@ export default function RegisterFormSecondEmployee({ prevStep, nextStep, form, c
                         </Form>
                     </CardContent>
                 </Card>
-                {error && [error].map((error) => (
-                    <ErrorAlert
-                        key={error.id}
-                        title={error.title}
-                        description={error.description}
-                        onClose={() => setError(null)}
-                    />
-                ))}
             </div>
         </>
 

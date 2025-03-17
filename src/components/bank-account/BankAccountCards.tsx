@@ -39,7 +39,7 @@ const CreditCardSwipe = (setDialogOpen: (open:boolean) => void, account: BankAcc
                                     onMouseDown={(e) => e.preventDefault()}
                                 >
                                     <CreditCard
-                                        title={card.name}
+                                        title={card.type.name}
                                         cardHolder={`${card.account.client.firstName} ${card.account.client.lastName}`}
                                         cardNumber={card.number}
                                         expiryDate={format(card.expiresAt, "MM/yy")}
@@ -86,7 +86,7 @@ const BankAccountCardsCard = ({ account, cards, className, ...props }: BankAccou
     const navigate = useNavigate();
 
     const handleCardClick = (cardId: string) => {
-        navigate(`/cards/${cardId}`); // Navigate to the card's route
+        navigate(`/card/${cardId}`); // Navigate to the card's route
     };
 
     const cardsList = () => {

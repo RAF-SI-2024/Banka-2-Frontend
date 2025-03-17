@@ -15,7 +15,7 @@ export default function HeaderWithLogo({
                 {/*<Label className="font-display text-3xl my-4">*/}
                 {/*    BankToo*/}
                 {/*</Label>*/}
-                <a href="#" className="my-4 h-full">
+                <a href="/home" className="my-4 h-full">
                     <Logo className="size-full hover:animate-pulse"></Logo>
                 </a>
 

@@ -1,16 +1,17 @@
 import {useState} from "react";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
-import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 import * as React from "react";
-import SuccessNotificationCard from "@/components/createCard/SuccessNotificationCard.tsx";
-import OTPForm from "@/components/createCard/OTPForm.tsx";
-import FailNotificationCard from "@/components/createCard/FailNotificationCard.tsx";
 import CreateCardForm from "@/components/createCard/CreateCardForm.tsx";
 import {BankAccount} from "@/types/bankAccount.ts";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {createCard} from "@/api/card.ts";
+import OTPSuccessCard from "@/components/createCard/OTPSuccessNotifiaction.tsx";
+import VerificationOTP from "@/components/common/VerificationOTP.tsx";
+import {showErrorToast} from "@/utils/show-toast-utils.tsx";
+import {useNavigate} from "react-router-dom";
+
 
 
 interface CreateCardDialogProps {
@@ -23,14 +24,28 @@ interface CreateCardDialogProps {
 
 export default function CreateCardDialog({account, showDialog, setShowDialog} : CreateCardDialogProps) {
 
-    const [error, setError] = useState<{ id: number; title: string; description: string } | null>(null);
     const [step, setStep] = useState(0);
+    const navigate = useNavigate();
+    const [cardId, setCardId] = useState<string | null>(null);
 
     const formSchema = z.object({
         accountId: z.string(),
         name: z.string().min(3, "Name is required"),
         cardTypeId: z.string().min(1, "Card Type is required"), // Store type ID
-        limit: z.coerce.number().min(1000, "Limit is too small").max(1000000, "Limit is too big"),
+        limit: z.preprocess(
+            (val) => {
+                if (typeof val === "string") {
+                    if(val.length == 0)
+                        return 0;
+                    // Convert "231.323,00" -> 231323.00
+                    return parseFloat(val.replace(/\./g, "").replace(",", "."));
+                }
+                return Number(val);
+            },
+            z.number()
+                .min(1000, "Limit is too small")
+                .max(10000000, "Limit is too big")
+        ),
         status: z.boolean(),
         otp: z.string().length(6)
     });
@@ -70,22 +85,27 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
         if (isValid) {
 
             try{
-                setError(null);
+                const payload = {
+                    name: form.getValues().name,
+                    otp: form.getValues().otp,
+                    accountId: form.getValues().accountId,
+                    cardTypeId: form.getValues().cardTypeId,
+                    limit: parseFloat(form.getValues().limit.toString().replace(/\./g, "").replace(",", ".")),
+                    status: form.getValues().status,
+                }
 
-                const response = await createCard(form.getValues());
+                const response = await createCard(payload);
+
 
                 if(response.status != 200){
                     throw new Error("API error");
                 }
+                setCardId(response.data.id);
                 setStep((prev) => prev + 1)
             }
             catch(err) {
                 console.error(err);
-                setError({
-                    id: Date.now(),
-                    title: "Failed to create card",
-                    description: "An error occurred while processing your request.",
-                });
+                showErrorToast({error: err, defaultMessage: "Failed to create a card"});
             }
 
         }
@@ -96,31 +116,32 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
         setShowDialog(open);
         if (!open) {
             setStep(0)
-            setError(null);
         }
+        if(step==2 && cardId!=null){
+            navigate("/card/"+cardId);
+        }
+
     };
 
     return (
         <Dialog open={showDialog} onOpenChange={handleDialogClose}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Create Credit Card</DialogTitle>
-                </DialogHeader>
+            <DialogHeader>
+                <DialogTitle></DialogTitle>
+            </DialogHeader>
+            <DialogContent aria-describedby={undefined} className="min-w-fit" >
                 {step === 0 ? <CreateCardForm account={account} form={form} nextStep={nextStepZero}  /> : null}
-                {step === 1 ? <OTPForm form={form} nextStep={nextStepOne} setErrors={setError}></OTPForm> : null}
-                {step === 2 ? <SuccessNotificationCard></SuccessNotificationCard> : null}
+                {step === 1 ? <VerificationOTP form={form} nextStep={nextStepOne}></VerificationOTP> : null}
+                {step === 2 ? <OTPSuccessCard className="bg-transparent border-0"
+                                              title="Verification successful"
+                                              icon="icon-[ph--check-circle-fill]"
+                                              message="Card created successfully!" /> : null}
 
                 {/*TODO Ovde treba da se namesti logika za prikaz ove komponente, trenutno ako ne uspe zahtev samo se ispise greska ispod ovog dijaloga, a ne prikazuje se ekran*/}
-                {step === 3 ? <FailNotificationCard></FailNotificationCard> : null}
+                {step === 3 ? <OTPSuccessCard className="bg-transparent border-0 w-lg"
+                                              title="Verification failed!"
+                                              icon="icon-[ph--x-circle-fill]"
+                                              message="Card could not be created." /> : null}
 
-                {error && [error].map((error) => (
-                    <ErrorAlert
-                        key={error.id}
-                        title={error.title}
-                        description={error.description}
-                        onClose={() => setError(null)}
-                    />
-                ))}
             </DialogContent>
         </Dialog>
     );

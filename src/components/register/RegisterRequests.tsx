@@ -2,10 +2,10 @@ import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
 import {format} from "date-fns";
 import {Role} from "@/types/enums.ts";
 import {registerClient, registerEmployee} from "@/api/auth.ts";
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 
 // @ts-expect-error Need to add type to the props
-export async function onSubmitEmployee({form, nextStep, setError}) {
-    setError(null);
+export async function onSubmitEmployee({form, nextStep}) {
     try {
         const registerData: RegisterRequestEmployee = {
             username: form.getValues("username"),
@@ -23,25 +23,18 @@ export async function onSubmitEmployee({form, nextStep, setError}) {
 
         const response = await registerEmployee(registerData);
         if (response.status === 200) {
-            // console.log("NEXT STEP");
+            showSuccessToast({description: "Employee registered successfully"})
             nextStep(registerData);
         }
 
     } catch (error) {
         console.error("Register for employee failed:", error);
-        setError({
-            id: Date.now(),
-            title: "Failed to register employee",
-            description: error && typeof error === "object" && "message" in error
-                ? String(error.message)
-                : String(error || "An error occurred"),
-        });
+        showErrorToast({error, defaultMessage:"Employee registration failed."});
     }
 }
 
 // @ts-expect-error Need to add type to the props
-export async function onSubmitClient({form, nextStep, setError}) {
-    setError(null);
+export async function onSubmitClient({form, nextStep}) {
     try {
         const registerData: RegisterRequestClient = {
             email: form.getValues("email"),
@@ -58,18 +51,12 @@ export async function onSubmitClient({form, nextStep, setError}) {
         await registerClient(registerData).then(
             (response) => {
                 if (response.status === 200) {
-                    // console.log("NEXT STEP");
+                    showSuccessToast({description: "Client registered successfully"})
                     nextStep(registerData);
                 }}
         )
     } catch (error) {
         console.error("Register for client failed:", error);
-        setError({
-            id: Date.now(),
-            title: "Failed to register",
-            description: error && typeof error === "object" && "message" in error
-                ? String(error.message)
-                : String(error || "An error occurred"),
-        });
+        showErrorToast({error, defaultMessage:"Client registration failed."});
     }
 }

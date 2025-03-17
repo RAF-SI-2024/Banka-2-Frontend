@@ -12,9 +12,9 @@ import {
 import { Button } from "@/components/ui/button.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import {Input} from "@/components/ui/input.tsx";
-import {formatCurrency} from "@/utils/format-currency.ts";
 import {getCardTypes} from "@/api/card.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
+import MoneyInput from "@/components/common/input/MoneyInput.tsx";
 
 interface CreateCardProps {
     account: BankAccount,
@@ -25,7 +25,6 @@ interface CreateCardProps {
 // Form Schema
 export default function CreateCardForm({account, form, nextStep }: CreateCardProps) {
     const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
-    const [limitValue, setLimitValue] = useState(formatCurrency(form.getValues("limit"), account.currency.code));
 
     useEffect(() => {
         // Fetch account types from API
@@ -46,18 +45,10 @@ export default function CreateCardForm({account, form, nextStep }: CreateCardPro
     }, []);
 
 
-    const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
-        let rawValue = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-        if (rawValue === "") rawValue = "0";
-
-        const numericValue = parseFloat(rawValue) || 0;
-        setLimitValue(formatCurrency(numericValue)); // Format for display
-        field.onChange(numericValue); // Pass raw value to form
-    };
-
     return (
-        <Card className={cn("flex flex-col gap-6")}>
+        <Card className={cn("flex flex-col gap-6 bg-transparent border-0")}>
             <CardContent className="mt-4 font-paragraph">
+                <h2 className="text-2xl font-heading font-semibold text-center mt-4 mb-8">Create a new card</h2>
                 <Form {...form}>
                     <form className="flex flex-col gap-6">
                         {/* Name Input */}
@@ -111,11 +102,13 @@ export default function CreateCardForm({account, form, nextStep }: CreateCardPro
                                 <FormItem>
                                     <FormLabel>Limit</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="text"
-                                            className="input"
-                                            value={limitValue} // Show formatted value
-                                            onChange={(e) => handleLimitChange(e, field)}
+                                        <MoneyInput
+                                            id="limit"
+                                            currency={account.currency.code}
+                                            onChange={field.onChange}
+                                            min={1000}
+                                            max={10000000}
+                                            defaultValue={100000}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -124,7 +117,7 @@ export default function CreateCardForm({account, form, nextStep }: CreateCardPro
                         />
 
                         {/* Submit Button */}
-                        <Button type="button" variant="gradient" className="w-full" onClick={nextStep}>
+                        <Button type="button" variant="gradient" className="w-fit" onClick={nextStep}>
                             Continue
                         </Button>
                     </form>
