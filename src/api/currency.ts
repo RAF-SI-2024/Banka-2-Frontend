@@ -1,5 +1,4 @@
 import api from "./axios"
-
 export const getAllCurrencies = async () => {
     try {
         const response = await api.get("/currencies");
@@ -54,4 +53,3 @@ export const getExchangeRate = async (currencyFromCode: string, currencyToCode: 
     }
 };
 
-// Primer zahteva: GET http://localhost:5075/api/v1/exchanges/currencies?currencyFromCode=RSD&currencyToCode=EUR
