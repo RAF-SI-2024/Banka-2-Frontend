@@ -101,3 +101,25 @@ export const getUser = async (data: GetUserRequest) => {
         throw error
     }
 }
+
+export const getAllClients = async (
+    page: number,
+    size: number,
+    filters: { email?: string; firstName?: string; lastName?: string;}
+): Promise<UserResponse> => {
+    try{
+        const response = await api.get("/clients", {
+            params: {
+                email: filters.email || undefined,
+                firstName: filters.firstName || undefined,
+                lastName: filters.lastName || undefined,
+                page,
+                size,
+            },
+        });
+        return response.data;
+    }catch (error){
+        console.error("❌ Error fetching clients:", error);
+        throw error;
+    }
+}
