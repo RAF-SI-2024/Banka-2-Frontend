@@ -3,3 +3,13 @@ export interface LoanType{
     name: string,
     margin: number
 }
+
+
+export interface LoanTypeResponse{
+    items: LoanType[];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+}
+
