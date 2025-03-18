@@ -1,86 +1,104 @@
 import { useEffect, useState } from "react"
-import { Input } from "@/components/ui/input"
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage
-} from "@/components/ui/form"
-import { Button } from "@/components/ui/button"
-import { Control, UseFormWatch } from "react-hook-form"
+import { Controller } from "react-hook-form"
+import type { Control } from "react-hook-form"
 import { PaymentFormValues } from "@/pages/NewPayment"
+import MoneyInput from "@/components/common/input/MoneyInput.tsx"
+import { Label } from "@/components/ui/label.tsx"
+import { Button } from "@/components/ui/button.tsx"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip.tsx"
 
 interface AmountInputWithInfoProps {
     control: Control<PaymentFormValues>
-    watch: UseFormWatch<PaymentFormValues>
     limit: number
-    onLimitExceeded: (exceeded: boolean) => void
+    currency: string
+    onLimitExceeded: (val: boolean) => void
 }
 
-export function AmountInputWithInfo({
-                                        control,
-                                        watch,
-                                        limit,
-                                        onLimitExceeded
-                                    }: AmountInputWithInfoProps) {
+const AmountInputWithInfo = ({
+                                 control,
+                                 limit,
+                                 currency,
+                                 onLimitExceeded
+                             }: AmountInputWithInfoProps) => {
+    const [amount, setAmount] = useState<number | undefined>(undefined)
     const [showInfo, setShowInfo] = useState(false)
-    const amountValue = watch("amount") ?? 0
-    const numeric = Number(amountValue) || 0
-    const remaining = limit - numeric
+
+    const remaining = Math.round((limit - (amount ?? 0)) * 100) / 100
 
     useEffect(() => {
-        onLimitExceeded(numeric > limit)
-    }, [numeric, limit, onLimitExceeded])
+        onLimitExceeded(remaining < 0)
+    }, [remaining, onLimitExceeded])
+
+    const parseAmount = (val: string): number | undefined => {
+        const parsed = parseFloat(val.replace(/\./g, "").replace(",", "."))
+        return isNaN(parsed) ? undefined : Math.round(parsed * 100) / 100
+    }
 
     return (
-        <FormField
-            control={control}
-            name="amount"
-            render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Amount</FormLabel>
-                    <div className="relative">
-                        <FormControl>
-                            <Input
-                                type="number"
-                                placeholder="e.g. 1000.00"
-                                {...field}
-                                className="pr-10 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                            />
-                        </FormControl>
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setShowInfo((prev) => !prev)}
-                            className="absolute right-1 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:bg-transparent"
-                            title="More info"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 256 256"
-                                fill="currentColor"
+        <div className="form-field">
+            <div className="flex items-center justify-between mb-1">
+                <Label>Amount</Label>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setShowInfo(prev => !prev)}
+                                className="p-1 text-muted-foreground hover:bg-transparent"
+                                title="More info"
                             >
-                                <path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m0 192a88 88 0 1 1 88-88a88.1 88.1 0 0 1-88 88m16-40a8 8 0 0 1-8 8a16 16 0 0 1-16-16v-40a8 8 0 0 1 0-16a16 16 0 0 1 16 16v40a8 8 0 0 1 8 8m-32-92a12 12 0 1 1 12 12a12 12 0 0 1-12-12"/>
-                            </svg>
-                        </Button>
-                    </div>
-                    <FormMessage />
-                    {showInfo && (
-                        <div className="mt-2 text-sm text-muted-foreground">
-                            Your daily limit: <strong>{limit.toLocaleString()} RSD</strong>
-                            <br />
-                            Remaining:{" "}
-                            <strong className={remaining < 0 ? "text-red-500" : ""}>
-                                {remaining.toLocaleString()} RSD
-                            </strong>
-                        </div>
-                    )}
-                </FormItem>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 256 256"
+                                    fill="currentColor"
+                                >
+                                    <path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m0 192a88 88 0 1 1 88-88a88.1 88.1 0 0 1-88 88m16-40a8 8 0 0 1-8 8a16 16 0 0 1-16-16v-40a8 8 0 0 1 0-16a16 16 0 0 1 16 16v40a8 8 0 0 1 8 8m-32-92a12 12 0 1 1 12 12a12 12 0 0 1-12-12" />
+                                </svg>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                            Click for limit info
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
+
+            <Controller
+                name="amount"
+                control={control}
+                render={({ field }) => (
+                    <MoneyInput
+                        {...field}
+                        value={field.value ?? undefined}
+                        onChange={(e) => {
+                            const parsed = parseAmount(e.target.value)
+                            setAmount(parsed)
+                            field.onChange(parsed)
+                        }}
+                        currency={currency}
+                        placeholder="Enter amount"
+                    />
+                )}
+            />
+
+            {showInfo && (
+                <div className="mt-2 text-sm text-muted-foreground">
+                    Your daily limit: <strong>{limit.toLocaleString()} {currency}</strong><br />
+                    Remaining: <strong className={remaining < 0 ? "text-red-500" : ""}>{remaining.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}</strong>
+                </div>
             )}
-        />
+
+            {remaining < 0 && (
+                <div className="mt-2 text-sm font-medium text-red-600">
+                    You have exceeded your daily limit by {Math.abs(remaining).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}
+                </div>
+            )}
+        </div>
     )
 }
+
+export default AmountInputWithInfo

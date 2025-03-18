@@ -39,7 +39,7 @@ export function RecipientInput({ control }: RecipientInputProps) {
                     <div className="relative">
                         <FormControl>
                             <Input
-                                placeholder="e.g. 123-4567890123456-89"
+                                placeholder="123-4567890123456-89"
                                 {...field}
                                 className="pr-10"
                             />

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react"
 import { Controller } from "react-hook-form"
+import type { Control } from "react-hook-form"
+import { PaymentFormValues } from "@/pages/NewPayment"
+import api from "@/api/axios"
+import { useAuth } from "@/hooks/useAuth.ts"
 import {
     Select,
     SelectContent,
@@ -7,22 +11,22 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select"
-import type { Control } from "react-hook-form"
-import { PaymentFormValues } from "@/pages/NewPayment"
-import api from "@/api/axios"
-import { useAuth } from "@/hooks/useAuth.ts"
+import { Label } from "@/components/ui/label"
 
 interface Currency {
+    id: string
     symbol: string
+    name?: string
+    code?: string
 }
 
-interface AccountCurrency {
+export interface AccountCurrency {
     currency?: Currency | null
     availableBalance: number
     dailyLimit: number
 }
 
-interface FetchedAccount {
+export interface FetchedAccount {
     id: string
     accountNumber: string
     name?: string
@@ -38,12 +42,24 @@ interface FetchedAccount {
 interface PayerAccountSelectProps {
     control: Control<PaymentFormValues>
     onLimitChange: (limit: number) => void
+    onCurrencyChange: (code: string) => void
+    onSelectAccount?: (acc: FetchedAccount) => void
 }
 
-const PayerAccountSelect = ({ control, onLimitChange }: PayerAccountSelectProps) => {
+const symbolToCurrencyCodeMap: Record<string, string> = {
+    "$": "USD",
+    "€": "EUR",
+    "RSD": "RSD"
+}
+
+const PayerAccountSelect = ({
+                                control,
+                                onLimitChange,
+                                onCurrencyChange,
+                                onSelectAccount,
+    }: PayerAccountSelectProps) => {
     const [accounts, setAccounts] = useState<FetchedAccount[]>([])
     const [loading, setLoading] = useState(true)
-
     const { token } = useAuth()
 
     useEffect(() => {
@@ -55,11 +71,10 @@ const PayerAccountSelect = ({ control, onLimitChange }: PayerAccountSelectProps)
                         Accept: "application/json"
                     }
                 })
-
                 const data = response.data
                 setAccounts(data.items || [])
             } catch (err) {
-                console.error("❌ Error loading accounts:", err)
+                console.error("Error loading accounts:", err)
             } finally {
                 setLoading(false)
             }
@@ -71,8 +86,6 @@ const PayerAccountSelect = ({ control, onLimitChange }: PayerAccountSelectProps)
     function getDisplayValues(acc: FetchedAccount) {
         const typeName = acc.type?.name ?? acc.name ?? "Account"
         const accountNumber = acc.accountNumber
-
-        // Try to use accountCurrencies first if available
         const accountCurrency = acc.accountCurrencies?.find((c) => c.currency?.symbol)
         const currencySymbol = accountCurrency?.currency?.symbol ?? acc.currency?.symbol ?? ""
         const availableBalance = accountCurrency?.availableBalance ?? acc.availableBalance ?? 0
@@ -81,33 +94,47 @@ const PayerAccountSelect = ({ control, onLimitChange }: PayerAccountSelectProps)
     }
 
     function extractLimit(acc: FetchedAccount): number {
-        // Try to extract dailyLimit from accountCurrencies if exists and > 0
         const accountCurrencyLimit = acc.accountCurrencies?.find((c) => c.dailyLimit > 0)?.dailyLimit
         return accountCurrencyLimit ?? acc.dailyLimit ?? 0
     }
 
     return (
-        <Controller
-            name="payerAccount"
-            control={control}
-            render={({ field }) => (
-                <div className="form-field">
-                    <label htmlFor="payerAccount" className="form-label">
-                        Payer Account
-                    </label>
-
+        <div className="form-field">
+            <Label>Your Account</Label>
+            <Controller
+                name="payerAccount"
+                control={control}
+                render={({ field }) => (
                     <Select
                         onValueChange={(val) => {
+                            console.log("Izabrani accountNumber:", val)
                             field.onChange(val)
+
                             const selected = accounts.find((a) => String(a.accountNumber) === val)
+                            console.log("Pronađen selected account:", selected)
+
                             const limit = selected ? extractLimit(selected) : 0
-                            console.log("✅ New limit selected:", limit)
+                            const accountCurrency = selected?.accountCurrencies?.find((c) => c.currency?.symbol)
+                            const symbol = accountCurrency?.currency?.symbol ?? selected?.currency?.symbol ?? "RSD"
+                            const code = symbolToCurrencyCodeMap[symbol] || "RSD"
+
+                            console.log("Limit:", limit)
+                            console.log("Currency symbol:", symbol)
+                            console.log("Currency code:", code)
+
                             onLimitChange(limit)
+                            onCurrencyChange(code)
+
+                            if (selected && onSelectAccount) {
+                                console.log("Pozivam onSelectAccount sa:", selected)
+                                onSelectAccount(selected)
+                            }
                         }}
                         value={field.value || ""}
                     >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select Payer Account" />
+
+                    <SelectTrigger>
+                            <SelectValue placeholder="Select Your Account" />
                         </SelectTrigger>
                         <SelectContent>
                             {loading ? (
@@ -123,9 +150,9 @@ const PayerAccountSelect = ({ control, onLimitChange }: PayerAccountSelectProps)
                             )}
                         </SelectContent>
                     </Select>
-                </div>
-            )}
-        />
+                )}
+            />
+        </div>
     )
 }
 

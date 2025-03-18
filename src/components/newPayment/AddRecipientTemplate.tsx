@@ -4,13 +4,11 @@ import { Card } from "@/components/ui/card"
 
 interface Props {
     recipientAccount: string
-    recipientNumber: string
     existingRecipients: string[] // lista postojećih brojeva računa
 }
 
 export default function AddRecipientTemplate({
                                                  recipientAccount,
-                                                 recipientNumber,
                                                  existingRecipients
                                              }: Props) {
     const [recipientExists, setRecipientExists] = useState(false)
@@ -32,7 +30,6 @@ export default function AddRecipientTemplate({
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     account: recipientAccount,
-                    name: recipientNumber
                 })
             })
 
