@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_BASE } from "../constants/endpoints";
+import {globalLogout} from "@/types/auth.ts";
 
-// Create an Axios instance with the base API URL
 const api = axios.create({
     baseURL: API_BASE,
     headers: { "Content-Type": "application/json" },
@@ -30,4 +30,16 @@ api.interceptors.request.use(
     }
 );
 
+api.interceptors.response.use(
+    (response) => response, // If response is successful, return it
+    (error) => {
+        if (error.response?.status === 401 || error.response?.status === 403) {
+
+            if (typeof globalLogout === "function") {
+                globalLogout(); // Call the globally stored logout function
+            }
+        }
+        return Promise.reject(error);
+    }
+);
 export default api;
