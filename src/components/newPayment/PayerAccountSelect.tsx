@@ -2,8 +2,6 @@ import { useEffect, useState } from "react"
 import { Controller } from "react-hook-form"
 import type { Control } from "react-hook-form"
 import { PaymentFormValues } from "@/pages/NewPayment"
-import api from "@/api/axios"
-import { useAuth } from "@/hooks/useAuth.ts"
 import {
     Select,
     SelectContent,
@@ -12,6 +10,8 @@ import {
     SelectValue
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
+import {fetchAccountByNumber, getAllAccountsClient} from "@/api/bankAccount"
+import {useAuth} from "@/hooks/useAuth.ts";
 
 interface Currency {
     id: string
@@ -46,56 +46,73 @@ interface PayerAccountSelectProps {
     onSelectAccount?: (acc: FetchedAccount) => void
 }
 
-const symbolToCurrencyCodeMap: Record<string, string> = {
-    "$": "USD",
-    "€": "EUR",
-    "RSD": "RSD"
-}
-
 const PayerAccountSelect = ({
                                 control,
                                 onLimitChange,
                                 onCurrencyChange,
                                 onSelectAccount,
-    }: PayerAccountSelectProps) => {
+                            }: PayerAccountSelectProps) => {
     const [accounts, setAccounts] = useState<FetchedAccount[]>([])
     const [loading, setLoading] = useState(true)
-    const { token } = useAuth()
+    const { user } = useAuth();
 
     useEffect(() => {
         async function fetchAccounts() {
+            if (!user?.id) return;
+
             try {
-                const response = await api.get("/accounts", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: "application/json"
-                    }
-                })
-                const data = response.data
-                setAccounts(data.items || [])
+                const response = await getAllAccountsClient(user.id);
+                setAccounts(response.data.items || []);
             } catch (err) {
-                console.error("Error loading accounts:", err)
+                console.error("Error loading client accounts:", err);
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
         }
 
-        fetchAccounts()
-    }, [token])
+        fetchAccounts();
+    }, [user?.id]);
+
+    const handleAccountChange = async (val: string, fieldOnChange: (val: string) => void) => {
+        fieldOnChange(val);
+
+        const selected = accounts.find((a) => String(a.accountNumber) === val);
+        const limit = selected ? extractLimit(selected) : 0;
+        onLimitChange(limit);
+
+        if (selected) {
+            try {
+                const response = await fetchAccountByNumber(selected.accountNumber);
+                const currencyCode =
+                    response.data.items?.[0]?.accountCurrencies?.[0]?.currency?.code ??
+                    response.data.items?.[0]?.currency?.code ??
+                    "RSD";
+
+                onCurrencyChange(currencyCode);
+
+                if (onSelectAccount) {
+                    onSelectAccount(selected);
+                }
+            } catch (err) {
+                console.error("Failed to fetch currency by account number:", err);
+                onCurrencyChange("RSD"); // fallback
+            }
+        }
+    };
 
     function getDisplayValues(acc: FetchedAccount) {
         const typeName = acc.type?.name ?? acc.name ?? "Account"
         const accountNumber = acc.accountNumber
-        const accountCurrency = acc.accountCurrencies?.find((c) => c.currency?.symbol)
-        const currencySymbol = accountCurrency?.currency?.symbol ?? acc.currency?.symbol ?? ""
-        const availableBalance = accountCurrency?.availableBalance ?? acc.availableBalance ?? 0
+        const accountCurrency = acc.accountCurrencies?.[0]?.currency
+        const currencySymbol = accountCurrency?.symbol ?? acc.currency?.symbol ?? ""
+        const availableBalance =
+            acc.accountCurrencies?.[0]?.availableBalance ?? acc.availableBalance ?? 0
 
         return `${typeName} – ${accountNumber} – ${availableBalance.toLocaleString()} ${currencySymbol}`
     }
 
     function extractLimit(acc: FetchedAccount): number {
-        const accountCurrencyLimit = acc.accountCurrencies?.find((c) => c.dailyLimit > 0)?.dailyLimit
-        return accountCurrencyLimit ?? acc.dailyLimit ?? 0
+        return acc.accountCurrencies?.[0]?.dailyLimit ?? acc.dailyLimit ?? 0
     }
 
     return (
@@ -106,30 +123,7 @@ const PayerAccountSelect = ({
                 control={control}
                 render={({ field }) => (
                     <Select
-                        onValueChange={(val) => {
-                            console.log("Izabrani accountNumber:", val)
-                            field.onChange(val)
-
-                            const selected = accounts.find((a) => String(a.accountNumber) === val)
-                            console.log("Pronađen selected account:", selected)
-
-                            const limit = selected ? extractLimit(selected) : 0
-                            const accountCurrency = selected?.accountCurrencies?.find((c) => c.currency?.symbol)
-                            const symbol = accountCurrency?.currency?.symbol ?? selected?.currency?.symbol ?? "RSD"
-                            const code = symbolToCurrencyCodeMap[symbol] || "RSD"
-
-                            console.log("Limit:", limit)
-                            console.log("Currency symbol:", symbol)
-                            console.log("Currency code:", code)
-
-                            onLimitChange(limit)
-                            onCurrencyChange(code)
-
-                            if (selected && onSelectAccount) {
-                                console.log("Pozivam onSelectAccount sa:", selected)
-                                onSelectAccount(selected)
-                            }
-                        }}
+                        onValueChange={(val) => handleAccountChange(val, field.onChange)}
                         value={field.value || ""}
                     >
 

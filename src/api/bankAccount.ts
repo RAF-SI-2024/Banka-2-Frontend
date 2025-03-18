@@ -111,3 +111,9 @@ export const getAllAccountsClient = async (clientId: string) => {
         throw error;
     }
 }
+
+export const fetchAccountByNumber = async (number: string) => {
+    return api.get(`/accounts`, {
+        params: { number },
+    });
+};
