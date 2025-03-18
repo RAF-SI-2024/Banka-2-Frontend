@@ -34,6 +34,7 @@ export const getAllCurrencies = async () => {
 //     }
 // };
 
+
 // U SLUCAJU DA SE SALJE GET ZAHTEV SA PARAMETRIMA
 export const getExchangeRate = async (currencyFromCode: string, currencyToCode: string) => {
     try {

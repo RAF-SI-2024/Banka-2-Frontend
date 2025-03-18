@@ -57,6 +57,7 @@ const EditTemplateDialog: React.FC<EditTemplateDialogProps> = ({ open, onClose, 
                         placeholder="Account Number"
                     />
                     <DialogFooter>
+
                         <Button variant="negative" onClick={onClose}>Cancel</Button>
                         <Button variant="primary" onClick={handleConfirm} disabled={isConfirmDisabled}>
                             Confirm edit

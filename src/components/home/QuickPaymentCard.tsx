@@ -10,7 +10,6 @@ import EditTemplateDialog from "./EditTemplateDialog"; // Importuj EditTemplateD
 import { getTemplates } from "@/api/templates.ts";
 import {Template} from "@/types/templates.ts";
 
-
 const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) => {
     const [templates, setTemplates] = useState<Template[]>([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);

@@ -43,6 +43,7 @@ const AddTemplateDialog = ({ open, onOpenChange, onAddTemplate }: AddTemplateDia
     };
 
     return (
+
             <Dialog open={open} onOpenChange={onOpenChange}>
                 <DialogContent>
 

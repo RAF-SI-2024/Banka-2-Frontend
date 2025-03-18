@@ -64,4 +64,3 @@ export const updateTemplate = async (id: string, name: string, accountNumber: st
         throw error;
     }
 };
-

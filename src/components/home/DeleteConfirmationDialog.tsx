@@ -8,6 +8,7 @@ interface DeleteConfirmationDialogProps {
 }
 
 const DeleteConfirmationDialog = ({ open, onClose, onConfirm }: DeleteConfirmationDialogProps) => {
+
     return (
         <Dialog open={open} onOpenChange={onClose}>
             <DialogContent>
