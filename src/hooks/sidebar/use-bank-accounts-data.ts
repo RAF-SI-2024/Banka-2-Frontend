@@ -20,7 +20,6 @@ export  function useBankAccountsData() {
                 }
 
                 const response = await getAllAccountsClient(id, 1, 100);
-                console.log(response);
 
                 if (response.status != 200){
                     throw new Error("Bank accounts not found");
