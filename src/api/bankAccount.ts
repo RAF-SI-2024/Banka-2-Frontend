@@ -117,3 +117,10 @@ export const fetchAccountByNumber = async (number: string) => {
         params: { number },
     });
 };
+
+export const addTransactionTemplate = (payload: {
+    name: string;
+    accountNumber: string;
+}) => {
+    return api.post("/transactions/templates", payload);
+};

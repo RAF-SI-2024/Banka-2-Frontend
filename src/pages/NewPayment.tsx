@@ -218,14 +218,6 @@ function NewPaymentPage() {
                                     {loadingToCurrency ? "Loading currency..." : "Continue"}
                                 </Button>
 
-                                <Button
-                                    type="submit"
-                                    className="w-full"
-                                    disabled={isLimitExceeded || loadingToCurrency}
-                                >
-                                    {loadingToCurrency ? "Loading currency..." : "Continue"}
-                                </Button>
-
                                 {Object.keys(form.formState.errors).length > 0 && (
                                     <pre className="text-red-500 text-xs">
                     {JSON.stringify(form.formState.errors, null, 2)}

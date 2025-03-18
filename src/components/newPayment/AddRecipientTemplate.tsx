@@ -1,48 +1,48 @@
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {addTransactionTemplate} from "@/api/bankAccount.ts";
 
 interface Props {
-    recipientAccount: string
-    existingRecipients: string[] // lista postojećih brojeva računa
+    recipientAccount: string;
+    existingRecipients: string[];
 }
 
 export default function AddRecipientTemplate({
                                                  recipientAccount,
                                                  existingRecipients
                                              }: Props) {
-    const [recipientExists, setRecipientExists] = useState(false)
-    const [isAdding, setIsAdding] = useState(false)
+    const [recipientExists, setRecipientExists] = useState(false);
+    const [isAdding, setIsAdding] = useState(false);
+    const [templateName, setTemplateName] = useState("");
 
-    // Proverava da li korisnik već postoji u listi
     useEffect(() => {
-        const exists = existingRecipients.includes(recipientAccount)
-        setRecipientExists(exists)
-    }, [recipientAccount, existingRecipients])
+        const exists = existingRecipients.includes(recipientAccount);
+        setRecipientExists(exists);
+    }, [recipientAccount, existingRecipients]);
 
     const handleAdd = async () => {
-        try {
-            setIsAdding(true)
-
-            /// TODO: Bad API request, need to fix
-            const response = await fetch("/api/v1/recipients", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    account: recipientAccount,
-                })
-            })
-
-            if (!response.ok) throw new Error("Failed to add recipient")
-
-            console.log("✅ Recipient added successfully")
-            setRecipientExists(true)
-        } catch (error) {
-            console.error("❌ Add recipient failed:", error)
-        } finally {
-            setIsAdding(false)
+        if (!templateName.trim()) {
+            alert("Please enter a template name.");
+            return;
         }
-    }
+
+        try {
+            setIsAdding(true);
+            await addTransactionTemplate({
+                name: templateName.trim(),
+                accountNumber: recipientAccount
+            });
+
+            console.log("Recipient added successfully");
+            setRecipientExists(true);
+        } catch (error) {
+            console.error("Add recipient failed:", error);
+        } finally {
+            setIsAdding(false);
+        }
+    };
 
     return (
         <Card className="text-center p-8 space-y-4">
@@ -52,10 +52,17 @@ export default function AddRecipientTemplate({
             </p>
 
             {!recipientExists && (
-                <Button onClick={handleAdd} disabled={isAdding} variant="outline">
-                    {isAdding ? "Adding..." : "Add recipient"}
-                </Button>
+                <div className="space-y-4">
+                    <Input
+                        placeholder="Enter template name"
+                        value={templateName}
+                        onChange={(e) => setTemplateName(e.target.value)}
+                    />
+                    <Button onClick={handleAdd} disabled={isAdding || !templateName.trim()} variant="outline">
+                        {isAdding ? "Adding..." : "Add recipient"}
+                    </Button>
+                </div>
             )}
         </Card>
-    )
+    );
 }
