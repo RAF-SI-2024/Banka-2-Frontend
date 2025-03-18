@@ -23,10 +23,7 @@ export const fetchRecipientCurrencyId = async (
 
     const account = response.data.items?.[0];
 
-    const currencyId =
-        account?.accountCurrencies?.find((c: AccountCurrency) => c.currency?.id)?.currency?.id ??
+    return account?.accountCurrencies?.find((c: AccountCurrency) => c.currency?.id)?.currency?.id ??
         account?.currency?.id ??
         null;
-
-    return currencyId;
 };
