@@ -17,7 +17,6 @@ export const loanFormSchema = z.object({
             .min(1000, "Amount is too small")
             .max(500000000, "Amount is too big")
     ),
-    currency: z.string(),
     purpose: z.string(),
     monthlySalary: z.preprocess(
         (val) => {
@@ -32,7 +31,7 @@ export const loanFormSchema = z.object({
         z.number().min(0)
     ),
     employmentStatus: z.string(),
-    employmentDuration: z.string(),
+    employmentPeriod: z.string(),
     numInstallments: z.string(),
     phoneNumber: z.string()
         .min(12, "Phone number does not have enough digits")
@@ -41,7 +40,7 @@ export const loanFormSchema = z.object({
             /^\+\d{11,12}$/,
             "Phone number must start with + followed by 11-12 digits"
         ),
-    accountNumber: z.string(),
+    accountId: z.string(),
 });
 
 

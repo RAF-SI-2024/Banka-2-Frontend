@@ -1,13 +1,24 @@
-import React from "react";
+import React, {useState} from "react";
 import {Card, CardContent, CardDescription, CardHeader} from "@/components/ui/card.tsx";
 import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
+import {LoanType} from "@/types/loanType.ts";
 
-// <span className="text-lg font-heading inline-flex items-center gap-2">
-//                     <span className="inline-flex items-center">{item.icon}</span>
-//                     <span>{item.title}</span>
-//                   </span>
-export default function LoanRequestLoanDetails() {
+
+interface LoanRequestLoanDetailsProps{
+    loanTypes: LoanType[];
+}
+
+export default function LoanRequestLoanDetails({loanTypes}: LoanRequestLoanDetailsProps) {
+    const [selectedLoanType, setSelectedLoanType] = useState<LoanType | null>(null);
+
+    // Define installment options based on selected loan type
+    const installmentOptions =
+        selectedLoanType?.id === "6302513e-9bf2-4de0-abdf-93bad3e20a35"
+            ? [60, 120, 180, 240, 300, 360]
+            : [12, 24, 36, 48, 60, 72, 84];
+
+
     return (
         <div className="flex flex-col">
             <h2 className="font-heading font-medium text-3xl inline-flex items-center w-full pb-4 gap-2">
@@ -27,22 +38,30 @@ export default function LoanRequestLoanDetails() {
                                 <FormItem className="w-full">
                                     <FormLabel>Loan type</FormLabel>
                                     <FormControl>
-                                        <Select {...field}>
+                                        <Select
+                                            value={selectedLoanType?.id || ""}
+                                            onValueChange={(value) => {
+                                                const loanType = loanTypes.find((lt) => lt.id === value) || null;
+                                                setSelectedLoanType(loanType);
+                                                field.onChange(value);
+                                            }}
+                                        >
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select a loan type" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="Type 1">
-                                                    Type 1
-                                                </SelectItem>
+                                                {loanTypes.map((loanType) => (
+                                                    <SelectItem key={loanType.id} value={loanType.id}>
+                                                        {loanType.name}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
                                     <FormDescription>Choose the type of loan that best fits your needs</FormDescription>
                                     <FormMessage />
                                 </FormItem>
-
-                                )}
+                            )}
                         />
 
                         <FormField
@@ -52,21 +71,24 @@ export default function LoanRequestLoanDetails() {
                                 <FormItem className="w-full">
                                     <FormLabel>Number of installments</FormLabel>
                                     <FormControl>
-                                        <Select {...field}>
+                                        <Select {...field} onValueChange={(value) => { field.onChange(value);}}>
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Choose a loan type" />
+                                                <SelectValue placeholder="Select number of installments" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="Type 1">
-                                                    Type 1
-                                                </SelectItem>
+                                                {installmentOptions.map((option) => (
+                                                    <SelectItem key={option} value={option.toString()}>
+                                                        {option}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormDescription>Indicate the number of payments over which you want to repay the loan</FormDescription>
+                                    <FormDescription>
+                                        Indicate the number of payments over which you want to repay the loan
+                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
-
                             )}
                         />
                     </div>
@@ -78,7 +100,7 @@ export default function LoanRequestLoanDetails() {
                             <FormItem className="md:w-1/2 md:pr-2">
                                 <FormLabel>Interest rate type</FormLabel>
                                 <FormControl>
-                                    <Select {...field} defaultValue="0">
+                                    <Select {...field} onValueChange={(value) => { field.onChange(value);}}>
                                         <SelectTrigger>
                                             <SelectValue/>
                                         </SelectTrigger>

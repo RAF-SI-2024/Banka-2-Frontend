@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {Card, CardContent, CardDescription, CardHeader} from "@/components/ui/card.tsx";
 import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
@@ -10,6 +10,8 @@ interface LaonRequestFinancialInformationProps {
     bankAccounts: BankAccount[];
 }
 export default function LoanRequestFinancialInformation({bankAccounts}: LaonRequestFinancialInformationProps) {
+    const [selectedBankAccount, setSelectedBankAccount] = useState<BankAccount | null>(null);
+
     return (
         <div className="flex flex-col">
             <h2 className="font-heading font-medium text-3xl inline-flex items-center w-full pb-4 gap-2">
@@ -23,13 +25,19 @@ export default function LoanRequestFinancialInformation({bankAccounts}: LaonRequ
                 <CardContent className=" font-paragraph flex flex-col gap-8">
 
                     <FormField
-                        key="accountNumber"
-                        name="accountNumber"
+                        key="accountId"
+                        name="accountId"
                         render={({ field }) => (
                             <FormItem className="md:w-1/2 md:pr-2">
                                 <FormLabel>Bank account</FormLabel>
                                 <FormControl>
-                                    <Select {...field}>
+                                    <Select {...field} value={selectedBankAccount?.id || ""}
+                                            onValueChange={(value) => {
+                                                const account = bankAccounts.find(acc => acc.id === value) || null;
+                                                setSelectedBankAccount(account);
+
+                                                field.onChange(value);
+                                            }}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a bank account" />
                                         </SelectTrigger>
@@ -59,7 +67,7 @@ export default function LoanRequestFinancialInformation({bankAccounts}: LaonRequ
                                 <FormLabel>Amount</FormLabel>
                                 <FormControl>
                                     <MoneyInput
-                                        currency={"RSD"} //TODO CHANGE  TO BANK ACCOUNT CURRENCY || RSD
+                                        currency={selectedBankAccount?.currency?.code || "RSD"}
                                         onChange={field.onChange}
                                         min={1000}
                                         max={100000000}
@@ -72,6 +80,7 @@ export default function LoanRequestFinancialInformation({bankAccounts}: LaonRequ
 
                         )}
                     />
+
 
                     <FormField
                         key="purpose"

@@ -25,3 +25,12 @@ export interface LoanResponse{
     totalElements: number;
     totalPages: number;
 }
+
+export interface LoanCreateRequest{
+    typeId: string,
+    accountId: string,
+    amount: number,
+    period: number,
+    currencyId: string,
+    interestType: number
+}

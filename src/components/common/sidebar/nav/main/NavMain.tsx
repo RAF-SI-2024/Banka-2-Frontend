@@ -82,7 +82,7 @@ export function NavMain({
                                       <a href={subItem.url} className="h-4 items-center">
                               <span className="font-paragraph inline-flex items-center gap-2">
                                 <span className="inline-flex items-center">{subItem.icon}</span>
-                                <span>{subItem.title}</span>
+                                <span className="truncate">{subItem.title}</span>
                               </span>
                                       </a>
                                     </SidebarMenuSubButton>
