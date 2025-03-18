@@ -49,7 +49,6 @@ export const deleteTemplate = async (id: string, name: string, accountNumber: st
     }
 };
 
-
 export const updateTemplate = async (id: string, name: string, accountNumber: string) => {
     try {
         const response = await api.put(`/transactions/templates/${id}`, {

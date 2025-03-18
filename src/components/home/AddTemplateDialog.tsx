@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Dialog,
     DialogContent,
@@ -17,7 +19,7 @@ const templateSchema = z.object({
         .max(32, "Name can't have more than 32 characters.")
         .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Name can only have letters and spaces."),
     accountNumber: z.string()
-        .length(18, "Account number must be exacly 18 characters long.")
+        .length(18, "Account number must be exactly 18 characters long.")
         .regex(/^\d{18}$/, "Account number must contain only numbers.")
 });
 
@@ -28,56 +30,54 @@ interface AddTemplateDialogProps {
 }
 
 const AddTemplateDialog = ({ open, onOpenChange, onAddTemplate }: AddTemplateDialogProps) => {
-    const [name, setName] = useState("");
-    const [accountNumber, setAccountNumber] = useState("");
-    const [errors, setErrors] = useState<{ name?: string; accountNumber?: string }>({});
-
-    const handleAdd = () => {
-        const result = templateSchema.safeParse({ name, accountNumber });
-        if (!result.success) {
-            const fieldErrors = result.error.flatten().fieldErrors;
-            setErrors({
-                name: fieldErrors.name?.[0],
-                accountNumber: fieldErrors.accountNumber?.[0]
-            });
-            return;
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm({
+        resolver: zodResolver(templateSchema),
+        defaultValues: {
+            name: "",
+            accountNumber: ""
         }
+    });
 
-        onAddTemplate(name, accountNumber);
-        setName("");
-        setAccountNumber("");
-        setErrors({});
+    const onSubmit = (data: { name: string; accountNumber: string }) => {
+        onAddTemplate(data.name, data.accountNumber);
+        reset(); // Resetuje formu nakon uspešnog dodavanja
+        onOpenChange(false); // Zatvori modal
     };
 
     return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Add new template</DialogTitle>
+                    <DialogDescription>
+                        Here you can add a new template.
+                    </DialogDescription>
+                </DialogHeader>
 
-            <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    <div>
+                        <Input placeholder="Name" {...register("name")} />
+                        {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
+                    </div>
 
-                        <DialogHeader>
-                            <DialogTitle>Add new template</DialogTitle>
-                            <DialogDescription>
-                                Here you can add new template.
-                            </DialogDescription>
-                        </DialogHeader>
+                    <div>
+                        <Input placeholder="Account number" {...register("accountNumber")} />
+                        {errors.accountNumber && <p className="text-destructive text-sm">{errors.accountNumber.message}</p>}
+                    </div>
 
-
-
-                <div className="space-y-4">
-                     <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-                            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-                    <Input placeholder="Account number" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} />
-                            {errors.accountNumber && <p className="text-red-500 text-sm">{errors.accountNumber}</p>}
-                </div>
-
-                        <DialogFooter>
-                                <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-                                <Button variant="success" onClick={handleAdd}>Submit</Button>
-                        </DialogFooter>
-
-                    </DialogContent>
-                </Dialog>
-        );
+                    <DialogFooter>
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+                        <Button type="submit" variant="success">Submit</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
 };
 
 export default AddTemplateDialog;

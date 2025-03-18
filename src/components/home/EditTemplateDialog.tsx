@@ -1,7 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { Dialog, DialogTrigger, DialogContent, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog.tsx"
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogTitle,
+    DialogDescription
+} from "@/components/ui/dialog.tsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input.tsx";
+
+const templateSchema = z.object({
+    name: z.string()
+        .min(1, "Name is mandatory.")
+        .max(32, "Name can't have more than 32 characters.")
+        .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Name can only have letters and spaces."),
+    accountNumber: z.string()
+        .length(18, "Account number must be exactly 18 characters long.")
+        .regex(/^\d{18}$/, "Account number must contain only numbers.")
+});
 
 interface EditTemplateDialogProps {
     open: boolean;
@@ -11,61 +30,65 @@ interface EditTemplateDialogProps {
 }
 
 const EditTemplateDialog: React.FC<EditTemplateDialogProps> = ({ open, onClose, template, onConfirm }) => {
-    const [name, setName] = useState("");
-    const [accountNumber, setAccountNumber] = useState("");
-    const [isConfirmDisabled, setIsConfirmDisabled] = useState(true);
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isDirty },
+        reset
+    } = useForm({
+        resolver: zodResolver(templateSchema),
+        defaultValues: {
+            name: template?.name || "",
+            accountNumber: template?.accountNumber || ""
+        }
+    });
 
     useEffect(() => {
         if (template) {
-            setName(template.name);
-            setAccountNumber(template.accountNumber);
-            setIsConfirmDisabled(false); // Ako je template popunjen, dugme za potvrdu nije onemogućeno
+            reset({
+                name: template.name,
+                accountNumber: template.accountNumber
+            });
         }
-    }, [template]);
+    }, [template, reset]);
 
-    useEffect(() => {
-        if (name === template?.name && accountNumber === template?.accountNumber) {
-            setIsConfirmDisabled(true); // Ako su podaci isti, onemogući dugme
-        } else {
-            setIsConfirmDisabled(false); // Ako su podaci promenjeni, omogući dugme
-        }
-    }, [name, accountNumber, template]);
-
-    const handleConfirm = () => {
+    const onSubmit = (data: { name: string; accountNumber: string }) => {
         if (template) {
-            onConfirm(name, accountNumber);
-            onClose(); // Zatvori dijalog
+            onConfirm(data.name, data.accountNumber);
+            onClose();
         }
     };
 
     return (
-        open && (
-            <Dialog open={open} onOpenChange={onClose}>
-                <DialogContent>
-                    <DialogTitle>Edit Template</DialogTitle>
-                    <DialogDescription>
-                        Here you can edit the template details such as name and account number.
-                    </DialogDescription>
-                    <Input
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Template Name"
-                    />
-                    <Input
-                        value={accountNumber}
-                        onChange={(e) => setAccountNumber(e.target.value)}
-                        placeholder="Account Number"
-                    />
-                    <DialogFooter>
+        <Dialog open={open} onOpenChange={onClose}>
+            <DialogContent>
+                <DialogTitle>Edit Template</DialogTitle>
+                <DialogDescription>
+                    Here you can edit the template details such as name and account number.
+                </DialogDescription>
 
-                        <Button variant="outline" onClick={onClose}>Cancel</Button>
-                        <Button variant="success" onClick={handleConfirm} disabled={isConfirmDisabled}>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    <div>
+                        <Input placeholder="Template Name" {...register("name")} />
+                        {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
+                    </div>
+
+                    <div>
+                        <Input placeholder="Account Number" {...register("accountNumber")} />
+                        {errors.accountNumber && <p className="text-destructive text-sm">{errors.accountNumber.message}</p>}
+                    </div>
+
+                    <DialogFooter>
+                        <Button type="button" variant="outline" onClick={onClose}>
+                            Cancel
+                        </Button>
+                        <Button type="submit" variant="success" disabled={!isDirty}>
                             Confirm edit
                         </Button>
                     </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        )
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 };
 

@@ -7,7 +7,6 @@ type Props = {
 };
 
 export default function TemplateDropdownMenu({ onEdit, onDelete }: Props) {
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

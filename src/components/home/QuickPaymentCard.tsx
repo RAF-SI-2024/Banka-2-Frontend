@@ -41,7 +41,6 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
         fetchTemplates();
     }, []); // Pokreće se samo pri prvom renderovanju
 
-
     const handleAddTemplate = async (name: string, accountNumber: string) => {
         try {
             const newTemplate = await createTransactionTemplate(name, accountNumber);
