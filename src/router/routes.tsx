@@ -9,12 +9,15 @@ import AppLayout from "@/layouts/AppLayout.tsx";
 import LoginPage from "@/pages/Login.tsx";
 import {
     AllProtectedRoutes,
-    ProtectedLoggedUser
+    ProtectedLoggedUser,
+    ProtectedEmployee,
 } from "@/router/utils/ProtectedRoutes.tsx";
 import BankAccountPage from "@/pages/BankAccount.tsx";
 import RoleBasedHomePage from "@/pages/RoleBasedHome.tsx";
 import CardDetailsPage from "@/pages/BankCard.tsx";
 import TransfersPage from "@/pages/TransferPage.tsx";
+import LoanRequestList from "@/pages/LoanRequestList";
+import ClientList from "@/pages/ClientList.tsx";
 
 export const AppRoutes = () => {
     return (
@@ -28,6 +31,14 @@ export const AppRoutes = () => {
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
                     <Route path="/card/:cardId" element={<CardDetailsPage />} />
                     <Route path="/payments/transfers" element={<TransfersPage />}/>
+
+                    {/*protected employee routes*/}
+
+                    <Route element={<ProtectedEmployee />}>
+                        <Route path="loan/request" element={ <LoanRequestList />} />
+                        <Route path="client-list" element={<ClientList />} />
+                    </Route>
+
                 </Route>
             </Route>
 
