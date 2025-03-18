@@ -116,15 +116,16 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
                         {templates.map((template) => (
                             <TableRow key={template.id} className="font-medium border-border text-secondary-foreground">
                                 <TableCell className="p-0 rounded-2xl">
-                                    <Button className="size-full font-paragraph text-base py-4 font-semibold rounded-none flex justify-between items-center px-4" variant="negative">
+                                    <span className="size-full font-paragraph text-base py-4 font-semibold rounded-none flex justify-between items-center px-4 bg-negative text-white cursor-pointer">
                                         {template.name}
                                         <TemplateDropdownMenu
                                             onEdit={() => handleEdit(template.id)}
                                             onDelete={() => handleDelete(template.id)}
                                         />
-                                    </Button>
+                                    </span>
                                 </TableCell>
                             </TableRow>
+
                         ))}
                     </TableBody>
                 </Table>

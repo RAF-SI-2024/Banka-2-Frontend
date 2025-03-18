@@ -19,10 +19,16 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
         const fetchCurrencies = async () => {
             try {
                 const data = await getAllCurrencies();
-                if (data.length >= 2) {
-                    setCurrencies(data);
-                    setCurrency1(data.find(c => c.code === "RSD") || data[0]);
-                    setCurrency2(data.find(c => c.code === "EUR") || data[1]);
+
+                // Filtriramo duplikate gde su code i symbol isti
+                const uniqueCurrencies = data.filter(
+                    (c, index, self) => self.findIndex((el) => el.code === c.code) === index
+                );
+
+                if (uniqueCurrencies.length >= 2) {
+                    setCurrencies(uniqueCurrencies);
+                    setCurrency1(uniqueCurrencies.find(c => c.code === "RSD") || uniqueCurrencies[0]);
+                    setCurrency2(uniqueCurrencies.find(c => c.code === "EUR") || uniqueCurrencies[1]);
                 }
             } catch (error) {
                 console.error("❌ Error fetching currencies:", error);
@@ -78,11 +84,13 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
                                 <SelectValue>{currency1?.code || "Select"}</SelectValue>
                             </SelectTrigger>
                             <SelectContent>
-                                {currencies.map((item) => (
-                                    <SelectItem key={item.code} value={item.code}>
-                                        {item.code} ({item.symbol})
-                                    </SelectItem>
-                                ))}
+                                {currencies
+                                    .filter((item) => item.code !== currency2?.code) // Isključujemo već selektovanu valutu
+                                    .map((item) => (
+                                        <SelectItem key={item.code} value={item.code}>
+                                            {item.code !== item.symbol ? `${item.code} (${item.symbol})` : item.code}
+                                        </SelectItem>
+                                    ))}
                             </SelectContent>
                         </Select>
                     </div>
@@ -111,11 +119,13 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
                                 <SelectValue>{currency2?.code || "Select"}</SelectValue>
                             </SelectTrigger>
                             <SelectContent>
-                                {currencies.map((item) => (
-                                    <SelectItem key={item.code} value={item.code}>
-                                        {item.code} ({item.symbol})
-                                    </SelectItem>
-                                ))}
+                                {currencies
+                                    .filter((item) => item.code !== currency1?.code) // Isključujemo već selektovanu valutu
+                                    .map((item) => (
+                                        <SelectItem key={item.code} value={item.code}>
+                                            {item.code !== item.symbol ? `${item.code} (${item.symbol})` : item.code}
+                                        </SelectItem>
+                                    ))}
                             </SelectContent>
                         </Select>
                     </div>
@@ -124,7 +134,8 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
                         value={amount2}
                         onChange={(e) => setAmount2(parseFloat(e.target.value))}
                         currency={currency2?.code ?? "USD"}
-                        disabled/>
+                        disabled
+                    />
                 </div>
             </CardContent>
             <CardFooter className="w-full justify-center">
@@ -132,7 +143,7 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
             </CardFooter>
         </Card>
     );
-
 };
 
 export default ConverterCard;
+

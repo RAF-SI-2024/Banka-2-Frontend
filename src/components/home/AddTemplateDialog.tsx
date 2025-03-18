@@ -1,5 +1,12 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import React, { useState } from "react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogDescription
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
@@ -49,7 +56,12 @@ const AddTemplateDialog = ({ open, onOpenChange, onAddTemplate }: AddTemplateDia
 
                         <DialogHeader>
                             <DialogTitle>Add new template</DialogTitle>
+                            <DialogDescription>
+                                Here you can add new template.
+                            </DialogDescription>
                         </DialogHeader>
+
+
 
                 <div className="space-y-4">
                      <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />

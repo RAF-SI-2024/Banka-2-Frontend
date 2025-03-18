@@ -58,8 +58,8 @@ const EditTemplateDialog: React.FC<EditTemplateDialogProps> = ({ open, onClose, 
                     />
                     <DialogFooter>
 
-                        <Button variant="negative" onClick={onClose}>Cancel</Button>
-                        <Button variant="primary" onClick={handleConfirm} disabled={isConfirmDisabled}>
+                        <Button variant="outline" onClick={onClose}>Cancel</Button>
+                        <Button variant="success" onClick={handleConfirm} disabled={isConfirmDisabled}>
                             Confirm edit
                         </Button>
                     </DialogFooter>
