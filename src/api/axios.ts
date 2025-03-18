@@ -1,7 +1,9 @@
 import axios from "axios";
 import { API_BASE } from "../constants/endpoints";
+import { AuthContext } from "@/context/AuthContext";
+import { useContext } from "react";
 
-// Create an Axios instance with the base API URL
+
 const api = axios.create({
     baseURL: API_BASE,
     headers: { "Content-Type": "application/json" },
@@ -26,6 +28,25 @@ api.interceptors.request.use(
         return config;
     },
     (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Add an interceptor to handle unauthorized responses
+api.interceptors.response.use(
+    (response) => response, // If response is successful, return it
+    (error) => {
+        console.log("STATAIS", error.response?.status);
+        if (error.response?.status === 401 || error.response?.status === 403) {
+            console.error("🔑 Unauthorized! Logging out...");
+
+            // Access AuthContext to call logout function
+            const authContext = useContext(AuthContext);
+
+            if (authContext) {
+                authContext.logout();
+            }
+        }
         return Promise.reject(error);
     }
 );

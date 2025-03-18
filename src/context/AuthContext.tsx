@@ -1,8 +1,6 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import { setAuthToken } from "../api/axios";
-import { jwtDecode } from "jwt-decode";
-import { Role } from "@/types/enums"; // Import the Role enum
-import { User } from "@/types/user"; // Assuming you have a User type defined
+import { User } from "@/types/user";
 
 interface AuthContextType {
     user: User | null;
@@ -63,6 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // localStorage.removeItem("currencies");
         setAuthToken(null);
         console.log("🚪 User logged out!");
+
     };
 
     return (
