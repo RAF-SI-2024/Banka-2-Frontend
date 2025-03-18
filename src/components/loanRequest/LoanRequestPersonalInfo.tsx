@@ -36,7 +36,7 @@ export default function LoanRequestPersonalInfo() {
                             <FormItem className="md:w-1/2 md:pr-2">
                                 <FormLabel>Contact phone number</FormLabel>
                                 <FormControl>
-                                    <PhoneInput {...field} />
+                                    <PhoneInput {...field} placeholder="063 1234567"/>
                                 </FormControl>
                                 <FormMessage />
                                 <FormDescription>Enter your phone number</FormDescription>
@@ -81,7 +81,7 @@ export default function LoanRequestPersonalInfo() {
                             key="employmentPeriod"
                             name="employmentPeriod"
                             render={({ field }) => (
-                                <FormItem className="md:w-1/2 md:pr-2">
+                                <FormItem className="md:w-1/2 md:pr-2 sm:w-full">
                                     <FormLabel>Employment period</FormLabel>
                                     <FormControl>
                                         <Input
@@ -106,7 +106,7 @@ export default function LoanRequestPersonalInfo() {
                             key="monthlySalary"
                             name="monthlySalary"
                             render={({ field }) => (
-                                <FormItem className="md:w-1/2 md:pr-2">
+                                <FormItem className="md:w-1/2 md:pr-2 sm:w-full">
                                     <FormLabel>Monthly salary</FormLabel>
                                     <FormControl>
                                         <MoneyInput

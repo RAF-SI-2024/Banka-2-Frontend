@@ -31,7 +31,8 @@ export function LoanRequestForm() {
             amount: 100000,
             monthlySalary: 0,
             interestRateType: "0",
-            employmentPeriod: "0 months"
+            employmentPeriod: "0 months",
+            phoneNumber: JSON.parse(sessionStorage.user).phoneNumber
         },
     });
 
