@@ -44,7 +44,7 @@ export function ClientNavMainData() {
                 {
                     icon: <span className="icon-[ph--money-wavy]"/>,
                     title: "My payments",
-                    url: "/payments",
+                    url: "/payments/overview",
                 }
             ]
         },
@@ -63,12 +63,12 @@ export function ClientNavMainData() {
             items: [
                 {
                     title: "New loan request",
-                    urls: "/loans/new",
+                    url: "/loan/new",
                     icon: <span className="icon-[ph--folder-simple-plus]"/>,
                 },
                 {
                     title: "My loans",
-                    urls: "/loans",
+                    url: "/loan/overview",
                     icon: <span className="icon-[ph--bank]"/>,
                 }
             ]

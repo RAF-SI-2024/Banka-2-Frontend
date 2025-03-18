@@ -42,19 +42,29 @@ export function NavMain({
                 <SidebarMenuItem className={isSelected ? "bg-primary/25 rounded-lg text-foreground" : ""}>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton asChild tooltip={item.title}>
-                      <a href={item.url} className="h-10 items-center">
-                  <span className="text-lg font-heading inline-flex items-center gap-2">
-                    <span className="inline-flex items-center">{item.icon}</span>
-                    <span>{item.title}</span>
-                  </span>
-                      </a>
+                      {item.url !== "#" ? (
+                          <a href={item.url} className="h-10 items-center">
+                            <span className="text-lg font-heading inline-flex items-center gap-2">
+                              <span className="inline-flex items-center">{item.icon}</span>
+                              <span>{item.title}</span>
+                            </span>
+                          </a>
+                      ) : (
+                          <div className="h-10 items-center">
+                            <span className="text-lg font-heading inline-flex items-center gap-2">
+                              <span className="inline-flex items-center">{item.icon}</span>
+                              <span>{item.title}</span>
+                            </span>
+                          </div>
+                      )}
+
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
 
                   {item.items?.length ? (
                       <>
                         <CollapsibleTrigger asChild>
-                          <SidebarMenuAction className="data-[state=open]:rotate-90">
+                          <SidebarMenuAction className="data-[state=open]:rotate-90 hover:cursor-pointer">
                             <span className="icon-[ph--caret-right]"/>
                             <span className="sr-only">Toggle</span>
                           </SidebarMenuAction>
