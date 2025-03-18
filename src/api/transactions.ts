@@ -1,5 +1,6 @@
 import api from "@/api/axios.ts";
 import {TransactionCodeResponse} from "@/types/transfers.ts";
+import {CreateTransactionRequest} from "@/types/transaction.ts";
 
 export const getTransactionCodes = async (
     pageNumber: number,
@@ -19,7 +20,7 @@ export const getTransactionCodes = async (
     }
 };
 
-export const createTransaction = async (transactionData) => {
+export const createTransaction = async (transactionData: CreateTransactionRequest) => {
     try {
         const response = await api.post("/transactions", transactionData);
         return response.data;

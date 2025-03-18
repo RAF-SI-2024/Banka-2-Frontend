@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import {useForm, useWatch} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
@@ -11,13 +11,17 @@ import {getAccountById, getAllAccounts} from "@/api/bankAccount.ts";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {createTransaction, getTransactionCodes} from "@/api/transactions.ts";
 import {AuthContext} from "@/context/AuthContext.tsx";
+import MoneyInput from "@/components/common/input/MoneyInput.tsx";
+import {getAllCurrencies, getCurrencyById} from "@/api/currency.ts";
 
 const formSchema = z.object({
     bankAccount: z.string().min(8, "Account must have at least 8 digits"),
     recipientAccount: z.string().min(8, "Receiver account must have at least 8 digits"),
-    amount: z.coerce.number().min(1, "Amount must be greater than 0"),
-    transactionCode: z.coerce.string(),
-    referenceNumber: z.coerce.string(),
+    amount: z.coerce
+        .string()
+        .refine((val) => parseFloat(val.replace(",", ".")) > 0, {
+            message: "Amount must be greater than 0",
+        }),
     purpose: z.coerce.string(),
 });
 
@@ -27,40 +31,43 @@ export default function TransfersPage() {
         defaultValues: {
             bankAccount: "",
             recipientAccount: "",
-            amount: "",
-            transactionCode: "",
-            referenceNumber: "",
+            amount: 0,
             purpose: "",
         },
     });
 
-    const [transactionCodes, setTransactionCodes] = useState([]);
     const [userAccounts, setUserAccounts] = useState([]);
     const context = useContext(AuthContext);
+    const [accountCurrency, setAccountCurrency] = useState("")
 
     useEffect(() => {
-        async function fetchTransactionCodes() {
+        const accountId = form.watch("bankAccount")
+        async function getCurrency(){
             try {
-                const response = await getTransactionCodes(1,50);
-                setTransactionCodes(response.items);
+                const response = await getAccountById(accountId)
+                const currencyId = response.data.currency.id
+                const response2 = await  getCurrencyById(currencyId);
+                setAccountCurrency(response2.data.code)
             } catch (error) {
-                console.error("❌ Error while fetching transaction codes:", error);
-                showErrorToast({ error, defaultMessage: "Transaction codes fetching failed" });
+                console.error("❌ Error while fetching currency for account:", error);
+                showErrorToast({ error, defaultMessage: "Currency for account fecthing failed" });
             }
         }
+        getCurrency()
+    }, [form.watch("bankAccount")]);
+
+    useEffect(() => {
 
         async function fetchUserAccounts(){
             try {
                 const response = await  getAllAccounts(1,50,{firstName: context?.user?.firstName, lastName: context?.user?.lastName})
                 setUserAccounts(response.items);
-                // console.log("AAA ",response.items.length)
             } catch (error) {
                 console.error("❌ Error while fetching user accounts:", error);
                 showErrorToast({ error, defaultMessage: "User accounts fecthing failed" });
             }
         }
         fetchUserAccounts();
-        fetchTransactionCodes();
     }, []);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -83,15 +90,17 @@ export default function TransfersPage() {
             const receiverAccount = response2.data
             const receiverAccountCurrencyId = receiverAccount.currency.id
             const receiverAccountNumber = receiverAccount.accountNumber
+            const transactionCode = "2b170aad-9572-498d-a92a-63cb58ea59c3"
+            const referenceNumber = "2025-2025"
 
             const transactionData = {
                 fromAccountId: senderAccountId,
                 fromCurrencyId: senderAccountCurrencyId,
                 toAccountNumber: receiverAccountNumber,
                 toCurrencyId: receiverAccountCurrencyId,
-                amount: values.amount,
-                codeId: values.transactionCode,
-                referenceNumber: values.referenceNumber,
+                amount: Number(values.amount.replace(",",".")),
+                codeId: transactionCode,
+                referenceNumber: referenceNumber,
                 purpose: values.purpose,
             };
 
@@ -175,48 +184,18 @@ export default function TransfersPage() {
                             <FormItem>
                                 <FormLabel>Amount</FormLabel>
                                 <FormControl>
-                                    <Input type="number" placeholder="1000" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                                    {/*<Input type="number" placeholder="1000" {...field} />*/}
+                                    <MoneyInput defaultValue={0} id={"amount"} currency={accountCurrency || "EUR"} onChange={field.onChange} min={1} max={100000}>
 
-                    {/* Transaction code */}
-                    <FormField
-                        control={form.control}
-                        name="transactionCode"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Transaction code</FormLabel>
-                                <FormControl>
-                                    <Select key={field.value} onValueChange={field.onChange} defaultValue={field.value}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Choose a code" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {transactionCodes.map((code) => (
-                                                <SelectItem key={code.id} value={code.id}>
-                                                    {code.code}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Reference number */}
-                    <FormField
-                        control={form.control}
-                        name="referenceNumber"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Reference number</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="123456" {...field} />
+                                    </MoneyInput>
+                                    {/*<MoneyInput*/}
+                                    {/*    defaultValue={0}*/}
+                                    {/*    id="amount"*/}
+                                    {/*    currency={senderCurrency}*/}
+                                    {/*    onChange={field.onChange}*/}
+                                    {/*    min={1}*/}
+                                    {/*    max={10000000}*/}
+                                    {/*/>*/}
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
