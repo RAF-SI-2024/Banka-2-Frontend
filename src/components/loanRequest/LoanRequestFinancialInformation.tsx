@@ -4,8 +4,12 @@ import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessag
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import MoneyInput from "@/components/common/input/MoneyInput.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
+import {BankAccount} from "@/types/bankAccount.ts";
 
-export default function LoanRequestFinancialInformation() {
+interface LaonRequestFinancialInformationProps {
+    bankAccounts: BankAccount[];
+}
+export default function LoanRequestFinancialInformation({bankAccounts}: LaonRequestFinancialInformationProps) {
     return (
         <div className="flex flex-col">
             <h2 className="font-heading font-medium text-3xl inline-flex items-center w-full pb-4 gap-2">
@@ -30,18 +34,22 @@ export default function LoanRequestFinancialInformation() {
                                             <SelectValue placeholder="Select a bank account" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Type 1">
-                                                Type 1
-                                            </SelectItem>
+                                            {bankAccounts.map((bankAccount) => (
+                                                <SelectItem key={bankAccount.id} value={bankAccount.id}>
+                                                    {bankAccount.accountNumber}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                 </FormControl>
-                                <FormDescription>Provide the account where the approved loan funds should be deposited.</FormDescription>
+                                <FormDescription>
+                                    Provide the account where the approved loan funds should be deposited.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
-
                         )}
                     />
+
 
                     <FormField
                         key="amount"

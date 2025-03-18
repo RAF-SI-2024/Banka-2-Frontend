@@ -102,9 +102,14 @@ export const activateOrDeactivateBankAccount = async (accountId: string, status:
     }
 }
 
-export const getAllAccountsClient = async (clientId: string) => {
+export const getAllAccountsClient = async (clientId: string, page?:number, size?:number) => {
     try {
-        const response = await api.get(`${API_BASE}/clients/${clientId}/accounts`);
+        const response = await api.get(`${API_BASE}/clients/${clientId}/accounts`, {
+            params: {
+                page,      // Prosleđujemo broj stranice
+                size,  // Prosleđujemo veličinu stranice
+            }
+        });
         return response;
     } catch (error) {
         console.error("❌ Failed to get bank accounts for client:", error);

@@ -7,18 +7,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button.tsx";
 import { loanFormSchema } from "@/components/loanRequest/LoanRequestFormFieldsDef.tsx";
 import * as React from "react";
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import { getAllCurrencies } from "@/api/currency.ts";
-import { Currency } from "@/types/currency.ts";
 import {cn} from "@/lib/utils.ts";
 import {Card, CardContent } from "../ui/card";
 import LoanRequestLoanDetails from "@/components/loanRequest/LoanRequestLoanDetails.tsx";
 import LoanRequestPersonalInfo from "@/components/loanRequest/LoanRequestPersonalInfo.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
 import LoanRequestFinancialInformation from "@/components/loanRequest/LoanRequestFinancialInformation.tsx";
+import {getAllAccountsClient} from "@/api/bankAccount.ts";
+import {BankAccount} from "@/types/bankAccount.ts";
 
 async function onSubmit(values: z.infer<typeof loanFormSchema>) {
-
+    console.log(values);
 }
 
 export function LoanRequestForm() {
@@ -31,20 +32,20 @@ export function LoanRequestForm() {
         },
     });
 
+    const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
+
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const currenciesResponse = await getAllCurrencies();
                 console.log("Currencies:", currenciesResponse);
+                const bankAccountsResponse = await getAllAccountsClient(JSON.parse(sessionStorage.user).id, 1, 100);
 
-                // Find the currency with code "RSD"
-                const defaultCurrency = currenciesResponse.find((currency: Currency) => currency.code === "RSD");
+                if (bankAccountsResponse.status !== 200)
+                    throw new Error("Failed to fetch bank accounts");
 
-                // Update the form's default values
-                if (defaultCurrency) {
-                    form.reset({ currency: defaultCurrency.code }); // Reset form with default currency ID
-                }
+                setBankAccounts(bankAccountsResponse.data.items)
 
             } catch (error) {
                 console.error("❌ Error fetching currencies:", error);
@@ -64,7 +65,7 @@ export function LoanRequestForm() {
                         <div className="flex flex-col gap-8">
                             <LoanRequestLoanDetails />
                             <Separator className="bg-gradient-to-r from-transparent via-border to-transparent" />
-                            <LoanRequestFinancialInformation />
+                            <LoanRequestFinancialInformation bankAccounts={bankAccounts}/>
                             <Separator className="bg-gradient-to-r from-transparent via-border to-transparent" />
                             <LoanRequestPersonalInfo />
                         </div>
