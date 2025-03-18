@@ -10,7 +10,7 @@ export function useCreditCardsData() {
     useEffect(() => {
         const fetchCreditCards = async () => {
             try {
-                const clientId = JSON.parse(sessionStorage.user).clientId;
+                const clientId = JSON.parse(sessionStorage.user).id;
 
                 if(clientId == null){
                     showErrorToast({defaultTitle: "Error", defaultMessage: "Client id is missing from session storage"});
