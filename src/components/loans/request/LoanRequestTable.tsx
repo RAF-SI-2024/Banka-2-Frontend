@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, UserResponse } from "@/types/user.ts";
 import { getAllUsers } from "@/api/user.ts";
-import { EditUserDialog } from "../admin/EditUserDialog";
+import { EditUserDialog } from "../../admin/EditUserDialog";
 import { DataTable } from "@/components/common/datatable/DataTable.tsx";
 import { getCoreRowModel} from "@tanstack/react-table";
 import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
@@ -19,16 +19,19 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import {generateUserColumns} from "@/components/usertable/UserListColumnDef.tsx";
-import { getAllLoans } from "@/api/loan";
+import { getAllLoans, getAllLoanTypes } from "@/api/loan";
 import { Loan, LoanResponse } from "@/types/loan";
 import { generateLoanColumns } from "./LoanListColumnDef";
+import { LoanType, LoanTypeResponse } from "@/types/loanType";
+import { showErrorToast } from "@/utils/show-toast-utils";
 
 // Postoji filter po vrsti kredita i broju računa
 export default function LoanRequestTable() {
     /* STATES */
     const [search, setSearch] = useState({
-        // loanType: "",
+        loanTypeName: "",
         accountNumber: "",
+        loanStatus: "0",
     });
 
     // search active - to display clear button
@@ -37,8 +40,11 @@ export default function LoanRequestTable() {
     // Clear/Filter button clicked
     const [fetchFlag, setFetchFlag] = useState(false);
 
-    // current user list
+    // current loans list
     const [loans, setLoans] = useState<Loan[]>([]);
+
+    // loan types list
+    const [loanTypes, setLoanTypes] = useState<LoanType[]>([]);
 
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -49,13 +55,12 @@ export default function LoanRequestTable() {
     const [error, setError] = useState<string | null>(null);
 
     // sorting state
-    const [sorting, setSorting] = useState<SortingState>([]);
+    const [sorting, setSorting] = useState<SortingState>([{id: "creationDate", desc: true}]); // newest first
 
     // visibility state - make some columns invisible by default
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
         id: false,
         creationDate: false,
-        uniqueIdentificationNumber: false,
         currency: false,
         interestType: false,
         period: false,
@@ -67,22 +72,47 @@ export default function LoanRequestTable() {
     /* FUNCTIONS */
     // fetch loan reqests function
     const fetchAllLoans = async () => {
-        console.log("Fetching loan requests");
+        let searchParams = { ...search };
+        if (search.loanTypeName !== "") {
+            fetchAllLoanTypes();
+            for (let i = 0; i < loanTypes.length; i++) {
+                if (loanTypes[i].name === search.loanTypeName) {
+                    searchParams.loanTypeName = loanTypes[i].id;
+                    console.log("Loan type id: " + searchParams.loanTypeName);
+                    break;
+                }
+            }
+        }
+
         setError(null);
         try {
             const loansData: LoanResponse = await getAllLoans(
                 currentPage,
                 pageSize,
-                search
+                searchParams
             );
             setLoans(loansData.items);
             setTotalPages(loansData.totalPages);
             console.log(loansData)
         } catch (err) {
             console.log(err);
-            setError("Failed to fetch users");
+            showErrorToast({error, defaultMessage: "Error fetching loans (filters must be written precisely)."});
         }
     };
+
+    const fetchAllLoanTypes = async () => {
+        console.log("Fetching loan types...");
+        try {
+            const loanTypesData: LoanTypeResponse = await getAllLoanTypes(
+                currentPage,
+                pageSize
+            );
+            setLoanTypes(loanTypesData.items);
+        } catch (err) {
+            console.error("Failed to fetch loan types:", err);
+            setError("Failed to fetch loan types");
+        }
+    }
 
     // handle search change
     const handleSearchChange = (field: string, value: string) => {
@@ -99,8 +129,9 @@ export default function LoanRequestTable() {
         console.log("Clearing search...");
         // Reset search and fetch immediately
         setSearch({
-            // loanType: "",
+            loanTypeName: "",
             accountNumber: "",
+            loanStatus: "0",
         });
         setFetchFlag(!fetchFlag);
     };
@@ -173,8 +204,15 @@ export default function LoanRequestTable() {
                         placeholder="Filter by account number"
                         value={search.accountNumber}
                         onChange={(e) => handleSearchChange("accountNumber", e.target.value)}
-                        className="w-88"
+                        className="w-58"
                     />
+                    <Input
+                        placeholder="Filter by loan type"
+                        value={search.loanTypeName}
+                        onChange={(e) => handleSearchChange("loanTypeName", e.target.value)}
+                        className="w-58"
+                    />
+                    
                     <div className="flex items-center space-x-2">
                         <Button onClick={handleFilter} variant="primary">
                             <span className="icon-[ph--funnel]" />

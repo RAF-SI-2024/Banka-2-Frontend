@@ -20,3 +20,22 @@ export const getCurrencyById = async (currencyId: string) => {
         throw error;
     }
 }
+
+export const getExchangeRate = async (currencyFromCode: string, currencyToCode: string) => {
+    try {
+        const response = await api.get("/exchanges/currencies", {
+            params: {
+                currencyFromCode: currencyFromCode,
+                currencyToCode: currencyToCode
+            },
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("Failed to fetch exchange rate:", error);
+        throw error;
+    }
+};
