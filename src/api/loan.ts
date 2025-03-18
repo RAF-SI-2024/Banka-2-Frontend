@@ -1,6 +1,6 @@
 import { LoanTypeResponse } from "@/types/loanType";
 import api from "./axios";
-import { LoanResponse } from "@/types/loan";
+import { LoanResponse, LoanUpdateRequest } from "@/types/loan";
 
 
 // TODO: dodati filter po vrsti kredita kada backend zavrsi 
@@ -42,6 +42,20 @@ export const getAllLoanTypes = async (
         return response.data; // API returns an array of loan types
     } catch (error) {
         console.error("❌ Error fetching users:", error);
+        throw error;
+    }
+};
+
+
+// put request to update loan status, LoanUpdateRequest
+
+// put request to update loan status, LoanUpdateRequest
+export const updateLoanStatus = async (loanId: string, loanUpdateRequest: LoanUpdateRequest) => {
+    try {
+        const response = await api.put(`/loans/${loanId}`, loanUpdateRequest);
+        return response.data;
+    } catch (error) {
+        console.error("❌ Failed to update loan status:", error);
         throw error;
     }
 };

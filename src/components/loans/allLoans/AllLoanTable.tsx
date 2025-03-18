@@ -1,4 +1,4 @@
-import {useState, useEffect, useMemo} from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -6,7 +6,7 @@ import { User, UserResponse } from "@/types/user.ts";
 import { getAllUsers } from "@/api/user.ts";
 import { EditUserDialog } from "../../admin/EditUserDialog";
 import { DataTable } from "@/components/common/datatable/DataTable.tsx";
-import { getCoreRowModel} from "@tanstack/react-table";
+import { getCoreRowModel } from "@tanstack/react-table";
 import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
 import { DataTableViewOptions } from "@/components/common/datatable/DataTableViewOptions";
 import {
@@ -54,7 +54,7 @@ export default function AllLoanTable() {
     const [error, setError] = useState<string | null>(null);
 
     // sorting state
-    const [sorting, setSorting] = useState<SortingState>([{id: "accountNumber", desc: true}]); // newest first
+    const [sorting, setSorting] = useState<SortingState>([{ id: "accountNumber", desc: true }]); // newest first
 
     // visibility state - make some columns invisible by default
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -94,7 +94,7 @@ export default function AllLoanTable() {
             console.log(loansData)
         } catch (err) {
             console.log(err);
-            showErrorToast({error, defaultMessage: "Error fetching loans (filters must be written precisely)."});
+            showErrorToast({ error, defaultMessage: "Error fetching loans (filters must be written precisely)." });
         }
     };
 
@@ -180,6 +180,7 @@ export default function AllLoanTable() {
     // fetch loans effect (triggered on currentpage, pagesize or search change
     useEffect(() => {
         fetchAllLoans();
+        fetchAllLoanTypes();
     }, [currentPage, pageSize, fetchFlag]); // Add dependencies
 
     // display error
@@ -188,7 +189,7 @@ export default function AllLoanTable() {
     return (
         <div className="p-6 space-y-4">
             <div className="w-full flex flex-row items-baseline">
-            {/* 🔍 Search Filters */}
+                {/* 🔍 Search Filters */}
                 <div className="flex flex-wrap gap-4 items-center">
 
                     <Input
@@ -197,19 +198,43 @@ export default function AllLoanTable() {
                         onChange={(e) => handleSearchChange("accountNumber", e.target.value)}
                         className="w-58"
                     />
-                    <Input
+                    {/* <Input
                         placeholder="Filter by loan type"
                         value={search.loanTypeName}
                         onChange={(e) => handleSearchChange("loanTypeName", e.target.value)}
                         className="w-58"
-                    />
-                    <Input
+                    /> */}
+
+                    <Select onValueChange={(value) => handleSearchChange("loanTypeName", value)} value={search.loanTypeName}>
+                        <SelectTrigger className="w-42">
+                            <SelectValue placeholder="Filter by loan type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {loanTypes.map((loanType) => (
+                                <SelectItem key={loanType.id} value={loanType.id}>
+                                    {loanType.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    {/* <Input
                         placeholder="Filter by status"
                         value={search.loanStatus}
                         onChange={(e) => handleSearchChange("loanStatus", e.target.value)}
                         className="w-58"
-                    />
-                    
+                    /> */}
+                    <Select onValueChange={(value) => handleSearchChange("loanStatus", value)} value={search.loanStatus}>
+                        <SelectTrigger className="w-42">
+                            <SelectValue placeholder="Filter by status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="1">Approved</SelectItem>
+                            <SelectItem value="0">Pending</SelectItem>
+                            <SelectItem value="-1">Rejected</SelectItem>
+                        </SelectContent>
+                    </Select>
+
                     <div className="flex items-center space-x-2">
                         <Button onClick={handleFilter} variant="primary">
                             <span className="icon-[ph--funnel]" />

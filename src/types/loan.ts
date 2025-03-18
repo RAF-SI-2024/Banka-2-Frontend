@@ -25,3 +25,9 @@ export interface LoanResponse{
     totalElements: number;
     totalPages: number;
 }
+
+
+export interface LoanUpdateRequest{
+    status: number;
+    maturityDate: Date,
+}
