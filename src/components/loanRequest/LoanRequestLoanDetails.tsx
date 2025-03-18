@@ -1,6 +1,6 @@
 import React from "react";
 import {Card, CardContent, CardDescription, CardHeader} from "@/components/ui/card.tsx";
-import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
+import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 
 // <span className="text-lg font-heading inline-flex items-center gap-2">
@@ -19,7 +19,7 @@ export default function LoanRequestLoanDetails() {
                     <CardDescription>Help us understand the specifics of the loan you are applying for.</CardDescription>
                 </CardHeader>
                 <CardContent className=" font-paragraph flex flex-col gap-8">
-                    <div className="flex flex-col gap-8 md:flex md:flex-row  md:gap-4">
+                    <div className="flex flex-col gap-8 md:flex md:flex-row  md:gap-4 items-baseline">
                         <FormField
                             key="loanType"
                             name="loanType"
@@ -29,7 +29,7 @@ export default function LoanRequestLoanDetails() {
                                     <FormControl>
                                         <Select {...field}>
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Choose a loan type" />
+                                                <SelectValue placeholder="Select a loan type" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="Type 1">
@@ -38,6 +38,7 @@ export default function LoanRequestLoanDetails() {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
+                                    <FormDescription>Choose the type of loan that best fits your needs</FormDescription>
                                     <FormMessage />
                                 </FormItem>
 
@@ -62,6 +63,7 @@ export default function LoanRequestLoanDetails() {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
+                                    <FormDescription>Indicate the number of payments over which you want to repay the loan</FormDescription>
                                     <FormMessage />
                                 </FormItem>
 
@@ -76,17 +78,21 @@ export default function LoanRequestLoanDetails() {
                             <FormItem className="md:w-1/2 md:pr-2">
                                 <FormLabel>Interest rate type</FormLabel>
                                 <FormControl>
-                                    <Select {...field}>
+                                    <Select {...field} defaultValue="0">
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Choose a loan type" />
+                                            <SelectValue/>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Type 1">
-                                                Type 1
+                                            <SelectItem value="0">
+                                                Fixed
+                                            </SelectItem>
+                                            <SelectItem value="1">
+                                                Variable
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </FormControl>
+                                <FormDescription>Select whether you prefer a fixed or variable interest rate.</FormDescription>
                                 <FormMessage />
                             </FormItem>
 
