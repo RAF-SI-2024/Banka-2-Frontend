@@ -36,7 +36,7 @@ export default function LoanRequestFinancialInformation({bankAccounts}: LaonRequ
                                         <SelectContent>
                                             {bankAccounts.map((bankAccount) => (
                                                 <SelectItem key={bankAccount.id} value={bankAccount.id}>
-                                                    {bankAccount.accountNumber}
+                                                    {bankAccount.accountNumber} {"(" + bankAccount.currency.code + ")"}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>

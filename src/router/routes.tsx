@@ -16,6 +16,8 @@ import RoleBasedHomePage from "@/pages/RoleBasedHome.tsx";
 import CardDetailsPage from "@/pages/BankCard.tsx";
 import LoanRequestList from "@/pages/LoanRequestList";
 import NewLoanRequest from "@/pages/NewLoanRequest.tsx";
+import ClientList from "@/pages/ClientList.tsx";
+import AllLoanList from "@/pages/AllLoanList";
 
 export const AppRoutes = () => {
     return (
@@ -33,7 +35,10 @@ export const AppRoutes = () => {
                     {/*protected employee routes*/}
 
                     <Route element={<ProtectedEmployee />}>
-                        <Route path="loan-request" element={ <LoanRequestList />} />
+                        <Route path="loan/request" element={ <LoanRequestList />} />
+                        <Route path="client-list" element={<ClientList />} />
+                        <Route path="loan/all" element={<AllLoanList />} />
+
                     </Route>
 
                 </Route>

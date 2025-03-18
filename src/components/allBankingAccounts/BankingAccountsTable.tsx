@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { AccountResponse, BankAccount } from "@/types/bankAccount.ts";
-import { getAllAccounts, getAllCreditCardsForBankAccount  } from "@/api/bankAccount";
+import { getAllAccounts, getAllCreditCardsForBankAccount } from "@/api/bankAccount";
 import {
     getCoreRowModel,
     getPaginationRowModel,
@@ -55,11 +55,8 @@ export default function BankingAccountsTable() {
 
     // Fetch accounts function (existing)
     const fetchAccounts = async () => {
-        console.log("Fetching accounts");
         setError(null);
         try {
-            console.log("current page", currentPage);
-            console.log("page size", pageSize);
             const accountsData: AccountResponse = await getAllAccounts(
                 currentPage,
                 pageSize,
@@ -67,36 +64,35 @@ export default function BankingAccountsTable() {
             );
             setAccounts(accountsData.items);
             setTotalPages(accountsData.totalPages);
-            console.log(accountsData);
         } catch (err) {
-            console.log(err);
             setError("Failed to fetch accounts");
         }
     };
 
-   const fetchCreditCards = async (account: BankAccount) => {
-    if (cardsByAccount[account.id] || loadingCards[account.id]) return;
+    const fetchCreditCards = async (account: BankAccount) => {
+        if (cardsByAccount[account.id] || loadingCards[account.id])
+            return;
 
-    setLoadingCards(prev => ({ ...prev, [account.id]: true }));
-    try {
-        const response = await getAllCreditCardsForBankAccount(account.id);
-        if (response) {
-            setCardsByAccount(prev => ({
-                ...prev,
-                [account.id]: {
-                    cards: response.data?.items || [],
-                    currency: account.currency
-                }
-            }));
-        } else {
-            console.error("Response is undefined");
+        setLoadingCards(prev => ({ ...prev, [account.id]: true }));
+        try {
+            const response = await getAllCreditCardsForBankAccount(account.id);
+            if (response) {
+                setCardsByAccount(prev => ({
+                    ...prev,
+                    [account.id]: {
+                        cards: response.data?.items || [],
+                        currency: account.currency
+                    }
+                }));
+            } else {
+                console.error("Response is undefined");
+            }
+        } catch (err) {
+            console.error("Failed to fetch credit cards:", err);
+        } finally {
+            setLoadingCards(prev => ({ ...prev, [account.id]: false }));
         }
-    } catch (err) {
-        console.error("Failed to fetch credit cards:", err);
-    } finally {
-        setLoadingCards(prev => ({ ...prev, [account.id]: false }));
-    }
-};
+    };
 
     // Your existing handlers
     const handleSearchChange = (field: string, value: string) => {
@@ -125,6 +121,11 @@ export default function BankingAccountsTable() {
         );
     };
 
+    // Handle row expansion
+    const handleRowClick = (row: any) => {
+        fetchCreditCards(row.original);
+    };
+
     // Add expansion indicator to columns
     const columnHelper = createColumnHelper<BankAccount>();
     const columns = useMemo(() => {
@@ -136,26 +137,13 @@ export default function BankingAccountsTable() {
                 header: () => null,
                 cell: ({ row }) => {
                     return (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                row.toggleExpanded();
-
-                                // Fetch credit cards if expanding and not already loaded
-                                if (!row.getIsExpanded() && !cardsByAccount[row.original.id] && !loadingCards[row.original.id]) {
-                                    fetchCreditCards(row.original);
-                                }
-                            }}
-                            className="p-0 h-8 w-8"
-                        >
+                        <div className="p-0 h-4 w-4">
                             {row.getIsExpanded() ? (
                                 <span className="icon-[ph--caret-down]"></span>
                             ) : (
                                 <span className="icon-[ph--caret-right]"></span>
                             )}
-                        </Button>
+                        </div>
                     );
                 },
             }),
@@ -199,6 +187,9 @@ export default function BankingAccountsTable() {
         },
         manualPagination: true,
         pageCount: totalPages,
+        meta: {
+            handleRowClick, // Pass the handler to the table meta
+        },
     });
 
     useEffect(() => {
@@ -289,6 +280,7 @@ export default function BankingAccountsTable() {
                 cardsByAccount={cardsByAccount}
                 loadingCards={loadingCards}
                 handleCardStatusChange={handleCardStatusChange}
+                fetchCreditCards={fetchCreditCards}
             />
 
             <DataTablePagination table={table} />
