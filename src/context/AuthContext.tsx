@@ -58,9 +58,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("user");
-        localStorage.removeItem("accountId");
-        localStorage.removeItem("cardTypes");
-        localStorage.removeItem("currencies");
+        // localStorage.removeItem("accountId");
+        // localStorage.removeItem("cardTypes");
+        // localStorage.removeItem("currencies");
         setAuthToken(null);
         console.log("🚪 User logged out!");
     };
