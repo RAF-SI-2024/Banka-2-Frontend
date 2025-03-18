@@ -118,7 +118,7 @@ export default function CreateCardDialog({account, showDialog, setShowDialog} : 
             setStep(0)
         }
         if(step==2 && cardId!=null){
-            navigate("/cards/"+cardId);
+            navigate("/card/"+cardId);
         }
 
     };

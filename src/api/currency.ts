@@ -56,3 +56,4 @@ export const getExchangeRate = async (currencyFromCode: string, currencyToCode: 
 };
 
 // Primer zahteva: GET http://localhost:5075/api/v1/exchanges/currencies?currencyFromCode=RSD&currencyToCode=EUR
+

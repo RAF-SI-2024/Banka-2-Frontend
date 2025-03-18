@@ -86,7 +86,7 @@ const BankAccountCardsCard = ({ account, cards, className, ...props }: BankAccou
     const navigate = useNavigate();
 
     const handleCardClick = (cardId: string) => {
-        navigate(`/cards/${cardId}`); // Navigate to the card's route
+        navigate(`/card/${cardId}`); // Navigate to the card's route
     };
 
     const cardsList = () => {
