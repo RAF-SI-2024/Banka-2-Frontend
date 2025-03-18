@@ -1,6 +1,5 @@
 import axios from "axios";
 import { API_BASE } from "../constants/endpoints";
-import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 import {globalLogout} from "@/types/auth.ts";
 
 const api = axios.create({
