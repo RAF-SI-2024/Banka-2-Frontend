@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import { setAuthToken } from "../api/axios";
 import { User } from "@/types/user";
+import { setGlobalLogout } from "@/types/auth";
 
 interface AuthContextType {
     user: User | null;
@@ -61,8 +62,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // localStorage.removeItem("currencies");
         setAuthToken(null);
         console.log("🚪 User logged out!");
-
+        window.location.href = "/login"; // Force redirect to login
     };
+
+    setGlobalLogout(logout);
 
     return (
         <AuthContext.Provider value={{ user, token, login, logout }}>
