@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, UserResponse } from "@/types/user.ts";
 import { getAllUsers } from "@/api/user.ts";
-import { EditUserDialog } from "../../admin/EditUserDialog";
+import { EditUserDialog } from "../../../admin/EditUserDialog";
 import { DataTable } from "@/components/common/datatable/DataTable.tsx";
 import { getCoreRowModel } from "@tanstack/react-table";
 import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
@@ -68,7 +68,7 @@ export default function AllLoanTable() {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
     /* FUNCTIONS */
-    // fetch loan reqests function
+    // fetch all loans function
     const fetchAllLoans = async () => {
         let searchParams = { ...search };
         if (search.loanTypeName !== "") {
@@ -198,12 +198,6 @@ export default function AllLoanTable() {
                         onChange={(e) => handleSearchChange("accountNumber", e.target.value)}
                         className="w-58"
                     />
-                    {/* <Input
-                        placeholder="Filter by loan type"
-                        value={search.loanTypeName}
-                        onChange={(e) => handleSearchChange("loanTypeName", e.target.value)}
-                        className="w-58"
-                    /> */}
 
                     <Select onValueChange={(value) => handleSearchChange("loanTypeName", value)} value={search.loanTypeName}>
                         <SelectTrigger className="w-42">
@@ -218,12 +212,6 @@ export default function AllLoanTable() {
                         </SelectContent>
                     </Select>
 
-                    {/* <Input
-                        placeholder="Filter by status"
-                        value={search.loanStatus}
-                        onChange={(e) => handleSearchChange("loanStatus", e.target.value)}
-                        className="w-58"
-                    /> */}
                     <Select onValueChange={(value) => handleSearchChange("loanStatus", value)} value={search.loanStatus}>
                         <SelectTrigger className="w-42">
                             <SelectValue placeholder="Filter by status" />

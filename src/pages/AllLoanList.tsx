@@ -1,5 +1,5 @@
 import {Toaster} from "@/components/ui/sonner.tsx";
-import AllLoanTable from "@/components/loans/allLoans/AllLoanTable";
+import AllLoanTable from "@/components/loans/employee/allLoansTable/AllLoanTable";
 
 
 export default function AllLoanList() {

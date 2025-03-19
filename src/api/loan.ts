@@ -60,14 +60,6 @@ export const updateLoanStatus = async (loanId: string, loanUpdateRequest: LoanUp
         throw error;
     }
 };
-// {
-//     "typeId": "af94b480-4c67-4281-962d-0d73efe48e4a",
-//     "accountId": "69434456-99a3-4cef-a366-b98877b5d4fc",
-//     "amount": 50000,
-//     "period": 60,
-//     "currencyId": "2ae3889c-609f-4988-a334-0a37f3992e96",
-//     "interestType": 2
-// }
 
 export const createLoan = async(
     data: LoanCreateRequest
@@ -79,6 +71,28 @@ export const createLoan = async(
     }
     catch(error){
         console.error("Error creating loan", error);
+        throw error;
+    }
+}
+
+
+export const getLoansByClientId = async (
+    page: number,
+    size: number,
+    clientId: string
+): Promise<LoanResponse> => {
+    try {
+        const response = await api.get(`/loans/clients/${clientId}`, {
+            params: {
+                clientId: clientId,
+                page,
+                size,
+            },
+        });
+
+        return response.data; // API returns an array of u
+    } catch (error) {
+        console.error("❌ Error fetching users:", error);
         throw error;
     }
 }

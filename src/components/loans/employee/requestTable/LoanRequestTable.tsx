@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, UserResponse } from "@/types/user.ts";
 import { getAllUsers } from "@/api/user.ts";
-import { EditUserDialog } from "../../admin/EditUserDialog";
+import { EditUserDialog } from "../../../admin/EditUserDialog";
 import { DataTable } from "@/components/common/datatable/DataTable.tsx";
 import { getCoreRowModel } from "@tanstack/react-table";
 import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
