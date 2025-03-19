@@ -1,6 +1,6 @@
 import { LoanTypeResponse } from "@/types/loanType";
 import api from "./axios";
-import {InstallmentResponsePage, Loan, LoanCreateRequest, LoanResponse} from "@/types/loan";
+import {InstallmentResponsePage, Loan, LoanCreateRequest, LoanResponse, LoanUpdateRequest} from "@/types/loan";
 
 
 export const getAllLoans = async (
@@ -88,7 +88,7 @@ export const getLoanById = async(loanId: string): Promise<Loan> => {
 
 export const getLoanInstallments = async(loanId: string, page: number, size: number)
     : Promise<InstallmentResponsePage> => {
-    try{
+    try {
         const response = await api.get("/installments", {
             params: {
                 loanId: loanId,
@@ -98,10 +98,11 @@ export const getLoanInstallments = async(loanId: string, page: number, size: num
         });
 
         return response.data;
-    }
-    catch(error){
+    } catch (error) {
         console.error("Error fetching installments", error);
-
+        throw error;
+    }
+}
       
 export const getLoansByClientId = async (
     page: number,
