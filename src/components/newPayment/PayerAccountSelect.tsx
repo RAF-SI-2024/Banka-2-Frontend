@@ -6,8 +6,7 @@ import {
     Select,
     SelectContent,
     SelectItem,
-    SelectTrigger,
-    SelectValue
+    SelectTrigger
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { fetchAccountByNumber, getAllAccountsClient } from "@/api/bankAccount"
