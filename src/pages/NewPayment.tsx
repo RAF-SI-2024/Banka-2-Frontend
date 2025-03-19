@@ -15,12 +15,23 @@ import {
     Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle
 } from "@/components/ui/dialog";
 import AddRecipientTemplate from "@/components/newPayment/AddRecipientTemplate";
-import AmountInputWithInfo from "@/components/newPayment/AmountInputWithInfo";
+import AmountInput from "@/components/newPayment/AmountInput.tsx";
 import { fetchRecipientCurrencyId, fetchPaymentCodes, RawPaymentCode } from "@/api/transactionCode";
 
 export const paymentSchema = z.object({
     recipientAccount: z.string().min(1, "Recipient account is required."),
-    amount: z.coerce.number().positive("Amount must be greater than 0.").optional(),
+    amount: z.preprocess(
+        (val) => {
+            if (typeof val === "string") {
+                if (val.length === 0) return 0;
+                return parseFloat(val.replace(/\./g, "").replace(",", "."));
+            }
+            return Number(val);
+        },
+        z.number()
+            .min(1000, "Amount is too small")
+            .max(500000000, "Amount is too big")
+    ),
     referenceNumber: z
         .string()
         .max(20, "Maximum 20 characters.")
@@ -31,6 +42,7 @@ export const paymentSchema = z.object({
     purpose: z.string().min(1, "Payment purpose is required."),
     payerAccount: z.string().min(1, "Payer account is required."),
 });
+
 
 export type PaymentFormValues = z.infer<typeof paymentSchema>;
 
@@ -63,25 +75,29 @@ function NewPaymentPage() {
             const recipientAccount = value.recipientAccount?.trim();
             if (!recipientAccount) return;
 
-            setLoadingToCurrency(true);
+            const timeout = setTimeout(() => {
+                setLoadingToCurrency(true);
 
-            fetchRecipientCurrencyId(recipientAccount)
-                .then((currencyId) => {
-                    if (currencyId) {
-                        setToCurrencyId(currencyId);
-                        console.log("toCurrencyId set:", currencyId);
-                    } else {
-                        console.warn("Currency ID not found in account response.");
+                fetchRecipientCurrencyId(recipientAccount)
+                    .then((currencyId) => {
+                        if (currencyId) {
+                            setToCurrencyId(currencyId);
+                            console.log("toCurrencyId set:", currencyId);
+                        } else {
+                            console.warn("Currency ID not found in account response.");
+                            setToCurrencyId(null);
+                        }
+                    })
+                    .catch((err) => {
+                        console.error("Error fetching recipient account:", err);
                         setToCurrencyId(null);
-                    }
-                })
-                .catch((err) => {
-                    console.error("Error fetching recipient account:", err);
-                    setToCurrencyId(null);
-                })
-                .finally(() => {
-                    setLoadingToCurrency(false);
-                });
+                    })
+                    .finally(() => {
+                        setLoadingToCurrency(false);
+                    });
+            }, 500); // debounce delay (ms)
+
+            return () => clearTimeout(timeout);
         });
 
         const loadPaymentCodes = async () => {
@@ -96,7 +112,9 @@ function NewPaymentPage() {
 
         loadPaymentCodes();
 
-        return () => subscription.unsubscribe();
+        return () => {
+            subscription.unsubscribe();
+        };
     }, [watch]);
 
     const onSubmit = async (values: PaymentFormValues) => {
@@ -158,16 +176,16 @@ function NewPaymentPage() {
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                                 <div className="flex items-end gap-4">
-                                    <div className="flex-1">
+                                    <div className="min-w-[240px] flex-1 flex flex-col">
                                         <PayerAccountSelect
                                             control={form.control}
                                             onLimitChange={(limit) => {
-                                                setPaymentLimit(limit);
-                                                form.setValue("amount", undefined);
+                                                setPaymentLimit(limit)
+                                                form.setValue("amount", 0)
                                             }}
                                             onCurrencyChange={(code) => setPayerCurrency(code)}
                                             onSelectAccount={(account) => {
-                                                setSelectedAccount(account);
+                                                setSelectedAccount(account)
                                             }}
                                         />
                                     </div>
@@ -181,12 +199,13 @@ function NewPaymentPage() {
                                     </div>
                                 </div>
 
-                                <AmountInputWithInfo
+                                <AmountInput
                                     control={form.control}
                                     limit={paymentLimit}
                                     onLimitExceeded={setLimitExceeded}
-                                    currency={payerCurrency}
+                                    account={selectedAccount}
                                 />
+
 
                                 <PaymentFormField
                                     name="referenceNumber"
@@ -213,9 +232,9 @@ function NewPaymentPage() {
                                 <Button
                                     type="submit"
                                     className="w-full"
-                                    disabled={isLimitExceeded || loadingToCurrency || !toCurrencyId}
+                                    disabled={isLimitExceeded || !toCurrencyId}
                                 >
-                                    {loadingToCurrency ? "Loading currency..." : "Continue"}
+                                    Continue
                                 </Button>
 
                                 {Object.keys(form.formState.errors).length > 0 && (

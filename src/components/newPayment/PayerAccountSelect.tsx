@@ -10,8 +10,8 @@ import {
     SelectValue
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import {fetchAccountByNumber, getAllAccountsClient} from "@/api/bankAccount"
-import {useAuth} from "@/hooks/useAuth.ts";
+import { fetchAccountByNumber, getAllAccountsClient } from "@/api/bankAccount"
+import { useAuth } from "@/hooks/useAuth.ts"
 
 interface Currency {
     id: string
@@ -50,55 +50,105 @@ const PayerAccountSelect = ({
                                 control,
                                 onLimitChange,
                                 onCurrencyChange,
-                                onSelectAccount,
+                                onSelectAccount
                             }: PayerAccountSelectProps) => {
     const [accounts, setAccounts] = useState<FetchedAccount[]>([])
     const [loading, setLoading] = useState(true)
-    const { user } = useAuth();
+    const { user } = useAuth()
 
     useEffect(() => {
         async function fetchAccounts() {
-            if (!user?.id) return;
+            if (!user?.id) return
 
             try {
-                const response = await getAllAccountsClient(user.id);
-                setAccounts(response.data.items || []);
+                const response = await getAllAccountsClient(user.id)
+                const realAccounts = response.data.items || []
+
+                const mockJPYAccount = {
+                    id: "mock-jpy",
+                    accountNumber: "000000000000000001",
+                    name: "Test JPY Account",
+                    type: { name: "Mock" },
+                    accountCurrencies: [
+                        {
+                            currency: {
+                                code: "JPY",
+                                symbol: "¥",
+                                name: "Japanese Yen",
+                                id: "JPY"
+                            },
+                            availableBalance: 999999,
+                            dailyLimit: 50000
+                        }
+                    ]
+                }
+
+                const mockEURAccount = {
+                    id: "mock-eur",
+                    accountNumber: "000000000000000002",
+                    name: "Test EUR Account",
+                    type: { name: "Mock" },
+                    accountCurrencies: [
+                        {
+                            currency: {
+                                code: "EUR",
+                                symbol: "€",
+                                name: "Euro",
+                                id: "EUR"
+                            },
+                            availableBalance: 999999,
+                            dailyLimit: 2000
+                        }
+                    ]
+                }
+
+                setAccounts([...realAccounts, mockJPYAccount, mockEURAccount])
             } catch (err) {
-                console.error("Error loading client accounts:", err);
+                console.error("❌ Error loading client accounts:", err)
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
         }
 
-        fetchAccounts();
-    }, [user?.id]);
+        fetchAccounts()
+    }, [user?.id])
 
     const handleAccountChange = async (val: string, fieldOnChange: (val: string) => void) => {
-        fieldOnChange(val);
+        fieldOnChange(val)
 
-        const selected = accounts.find((a) => String(a.accountNumber) === val);
-        const limit = selected ? extractLimit(selected) : 0;
-        onLimitChange(limit);
+        const selected = accounts.find((a) => String(a.accountNumber) === val)
+        const limit = selected ? extractLimit(selected) : 0
+        onLimitChange(limit)
 
         if (selected) {
             try {
-                const response = await fetchAccountByNumber(selected.accountNumber);
-                const currencyCode =
-                    response.data.items?.[0]?.accountCurrencies?.[0]?.currency?.code ??
-                    response.data.items?.[0]?.currency?.code ??
-                    "RSD";
+                const response = await fetchAccountByNumber(selected.accountNumber)
+                const fullAccount = response.data.items?.[0] ?? {}
 
-                onCurrencyChange(currencyCode);
-
-                if (onSelectAccount) {
-                    onSelectAccount(selected);
+                // Ako fali accountCurrencies, koristi iz `selected`
+                if (!fullAccount.accountCurrencies?.length && selected.accountCurrencies?.length) {
+                    fullAccount.accountCurrencies = selected.accountCurrencies
                 }
+
+                // Isto i za currency
+                if (!fullAccount.currency?.code && selected.accountCurrencies?.[0]?.currency?.code) {
+                    fullAccount.currency = selected.accountCurrencies[0].currency
+                }
+
+                const currencyCode =
+                    fullAccount?.accountCurrencies?.[0]?.currency?.code ??
+                    fullAccount?.currency?.code ??
+                    "RSD"
+
+                onCurrencyChange(currencyCode)
+                onSelectAccount?.(fullAccount)
             } catch (err) {
-                console.error("Failed to fetch currency by account number:", err);
-                onCurrencyChange("RSD"); // fallback
+                console.error("Failed to fetch currency by account number:", err)
+                onCurrencyChange("RSD")
             }
         }
-    };
+
+    }
 
     function getDisplayValues(acc: FetchedAccount) {
         const typeName = acc.type?.name ?? acc.name ?? "Account"
@@ -121,30 +171,45 @@ const PayerAccountSelect = ({
             <Controller
                 name="payerAccount"
                 control={control}
-                render={({ field }) => (
-                    <Select
-                        onValueChange={(val) => handleAccountChange(val, field.onChange)}
-                        value={field.value || ""}
-                    >
+                render={({ field }) => {
+                    const selectedAccount = accounts.find(
+                        (acc) => acc.accountNumber === field.value
+                    )
 
-                    <SelectTrigger>
-                            <SelectValue placeholder="Select Your Account" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {loading ? (
-                                <SelectItem value="loading" disabled>
-                                    Loading...
-                                </SelectItem>
-                            ) : (
-                                accounts.map((acc) => (
-                                    <SelectItem key={acc.id} value={acc.accountNumber}>
-                                        {getDisplayValues(acc)}
-                                    </SelectItem>
-                                ))
+                    return (
+                        <>
+                            <Select
+                                onValueChange={(val) => handleAccountChange(val, field.onChange)}
+                                value={field.value || ""}
+                            >
+                                <SelectTrigger>
+                                    <span className="truncate">
+                                        {selectedAccount?.accountNumber || "Select Your Account"}
+                                    </span>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {loading ? (
+                                        <SelectItem value="loading" disabled>
+                                            Loading...
+                                        </SelectItem>
+                                    ) : (
+                                        accounts.map((acc) => (
+                                            <SelectItem key={acc.id} value={acc.accountNumber}>
+                                                {getDisplayValues(acc)}
+                                            </SelectItem>
+                                        ))
+                                    )}
+                                </SelectContent>
+                            </Select>
+
+                            {selectedAccount?.name && (
+                                <p className="text-sm text-muted-foreground mt-1">
+                                    {selectedAccount.name}
+                                </p>
                             )}
-                        </SelectContent>
-                    </Select>
-                )}
+                        </>
+                    )
+                }}
             />
         </div>
     )
