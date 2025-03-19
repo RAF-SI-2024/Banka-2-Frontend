@@ -15,6 +15,7 @@ import {Installment, InstallmentResponsePage} from "@/types/loan.ts";
 import {getLoanInstallments} from "@/api/loan.ts";
 import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 import {generateInstallmentColumns} from "@/components/loans/loanDetailsClient/InstallmentTableColumnDef.tsx";
+import { DataTableViewOptions } from "@/components/common/datatable/DataTableViewOptions";
 
 interface InstallmentTableProps {
     loanId: string;
@@ -169,7 +170,7 @@ export default function InstallmentTable({loanId}:InstallmentTableProps) {
 
     return (
         <div className="p-6 space-y-4">
-            {/*<div className="w-full flex flex-row items-baseline">*/}
+            <div className="w-full flex flex-row items-baseline">
                 {/* 🔍 Search Filters */}
             {/*    <div className="flex flex-wrap gap-4 items-center">*/}
 
@@ -219,10 +220,10 @@ export default function InstallmentTable({loanId}:InstallmentTableProps) {
 
             {/*        </div>*/}
             {/*    </div>*/}
-            {/*    <div className="flex ml-auto">*/}
-            {/*        <DataTableViewOptions table={table} />*/}
-            {/*    </div>*/}
-            {/*</div>*/}
+                <div className="flex ml-auto">
+                    <DataTableViewOptions table={table} />
+                </div>
+            </div>
 
             {/* 📋 Users Table */}
 

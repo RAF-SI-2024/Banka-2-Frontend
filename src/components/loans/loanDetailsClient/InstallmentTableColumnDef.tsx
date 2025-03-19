@@ -18,6 +18,9 @@ export function generateInstallmentColumns(): ColumnDef<Installment>[] {
             accessorKey: "amount",
             header: "Amount",
             enableHiding: false,
+            cell: ({row} )=> {
+                return formatCurrency(row.original.loan.amount / row.original.loan.period, row.original.loan.currency.code);
+            }
         },
         {
             accessorKey: "expectedDueDate",
