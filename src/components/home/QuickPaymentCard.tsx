@@ -135,7 +135,7 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
 
             <CardContent className="overflow-y-auto max-h-50 mb-4 mr-4 pr-1">
                 {(!templates || templates.length == 0) && (
-                    <CardDescription>You don't have any quick payment templates. Click the button below</CardDescription>
+                    <CardDescription>You don't have any quick payment templates. Click the button below to create a new payment template.</CardDescription>
                 )}
                 <Table>
                     <TableBody>
