@@ -34,6 +34,7 @@ import {createCompany} from "@/api/account.ts";
 import {createCard} from "@/api/account.ts";
 import {CreateBankAccountRequest} from "@/types/bankAccount.ts";
 import { BankAccountType } from "@/types/bankAccountType";
+import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 
 const businessInfoSchema = z.object({
     businessName: z.string()
@@ -55,7 +56,6 @@ const businessInfoSchema = z.object({
     // majorityOwner: z.string()
     //     .min(1, "Majority owner name is required")
     //     .max(55, "Majority owner name must be at most 32 characters")
-
 });
 
 const emailSchema = z.object({ email: z.string().email({ message: "Invalid email format" }) });
@@ -67,7 +67,6 @@ interface CreateBankAccountProps {
     registeredEmail?: string;
     onClose: () => void;
 }
-
 
 export default function CreateBankAccount({onRegister, registeredEmail, onClose}: CreateBankAccountProps) {
     const location = useLocation();
@@ -86,19 +85,21 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
     const [accountTypes, setAccountTypes] = useState<BankAccountType[]>([]);
     const [selectedType, setSelectedType] = useState("Current Account");
     const [selectedPlanId, setSelectedPlanId] = useState<string>("")
-    const [selectedCardId, setSelectedCardId] = useState<string | null>(cardTypes.length > 0 ? cardTypes[0].id : null);
+    const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
     const [selectedCardName, setSelectedCardName] = useState<string | null>(null);
     const [clientID, setClientId] = useState("");
 
-
     useEffect(() => {
-        if (registeredEmail) {
-            setSelectedOption("existing");
-            setEmail(registeredEmail);
-            console.log(registeredEmail);
-            setStep(2);
-            setEmailError(null);
+        const effectFunc = async() => {
+            if (registeredEmail) {
+                setSelectedOption("existing");
+                setEmail(registeredEmail);
+                await fetchUserByEmail(registeredEmail);
+                setStep(2);
+                setEmailError(null);
+            }
         }
+        effectFunc();
     }, [registeredEmail]);
 
     useEffect(() => {
@@ -115,47 +116,27 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
         }
     }, [ownership]);
 
-
     useEffect(() => {
         const fetchData = async () => {
+            try {
+                const currenciesResponse = await getAllCurrencies();
+                setCurrencies(currenciesResponse);
+                console.log("Currencies:", currenciesResponse);
+            } catch (error) {
+                console.error("❌ Error fetching currencies:", error);
+            }
 
-                // Dohvatanje valuta
-                const cachedCurrencies = localStorage.getItem("currencies");
-                if (cachedCurrencies) {
-                    setCurrencies(JSON.parse(cachedCurrencies));
-                } else {
-                    try {
-                        const response = await getAllCurrencies();
-                        console.log("Response:", response);
-                        setCurrencies(response);
-                        localStorage.setItem("currencies", JSON.stringify(response));
-                        console.log("Currencies:", response);
-                    } catch (error) {
-                        console.error("❌ Error fetching currencies:", error);
-                    }
-                }
-
-
-                const cachedCardTypes = localStorage.getItem("cardTypes");
-                if (cachedCardTypes) {
-                    setCardTypes(JSON.parse(cachedCardTypes));
-                } else {
-                    try {
-                        const response = await getAllCardTypes();
-                        setCardTypes(response.items);
-                        localStorage.setItem("cardTypes", JSON.stringify(response.items));
-                    
-
-                        console.log("Card Types:", response);
-                    } catch (error) {
-                        console.error("❌ Error fetching card types:", error);
-                    }
-                }
-
+            try {
+                const cardTypesResponse = await getAllCardTypes();
+                setCardTypes(cardTypesResponse.items);
+                console.log("Card Types:", cardTypesResponse);
+            } catch (error) {
+                console.error("❌ Error fetching card types:", error);
+            }
         };
 
         fetchData();
-    }, [] );
+    }, []);
 
     useEffect(() => {
         if (cardTypes.length > 0 && !selectedCardId) {
@@ -164,13 +145,10 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
         }
     }, [cardTypes, selectedCardId]);
 
-
     useEffect(() => {
         const loadAccountTypes = async () => {
             try {
-
                 const response = await fetchAccountTypes();
-
                 setAccountTypes(response || []);
             } catch (err) {
                 console.error("Neuspelo učitavanje tipova računa.", err);
@@ -180,35 +158,33 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
         loadAccountTypes();
     }, []);
 
-
-
     const fetchUserByEmail = async (email: string) => {
-            try {
-                // Make API request to check if the user exists
-                const response = await getAllUsers(1, 10, {email});
-                if (response.items.length > 0) {
-                    setClientId(response.items[0].id);
-                    setEmailError(null);
-                    setStep(step + 1);
-                } else {
-                    emailForm.setError("email", {
-                        type: "manual",
-                        message: "User with that email does not exist.",
-                    });
-                }
-            } catch (error) {
-                if (error instanceof z.ZodError) {
-                    emailForm.setError("email", {
-                        type: "manual",
-                        message: error.errors[0].message,
-                    });
-                } else {
-                    emailForm.setError("email", {
-                        type: "manual",
-                        message: "An unexpected error occurred.",
-                    });
-                }
+        try {
+            // Make API request to check if the user exists
+            const response = await getAllUsers(1, 10, {email});
+            if (response.items.length > 0) {
+                setClientId(response.items[0].id);
+                setEmailError(null);
+                setStep(step + 1);
+            } else {
+                emailForm.setError("email", {
+                    type: "manual",
+                    message: "User with that email does not exist.",
+                });
             }
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                emailForm.setError("email", {
+                    type: "manual",
+                    message: error.errors[0].message,
+                });
+            } else {
+                emailForm.setError("email", {
+                    type: "manual",
+                    message: "An unexpected error occurred.",
+                });
+            }
+        }
     };
 
     const handleBack = () => {
@@ -261,8 +237,6 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                 majorityOwnerId: clientID,
             };
 
-            
-
             const createAccData: CreateBankAccountRequest = {
                 name: "Štedni račun",
                 dailyLimit: 2000,
@@ -275,7 +249,6 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
             };
 
             if(selectedType === "Current Account"){
-                const currencies = JSON.parse(localStorage.getItem("currencies") || "[]");
                 const rsdCurrency = currencies.find((currency: any) => currency.code === "RSD");
 
                 if (rsdCurrency) {
@@ -283,22 +256,19 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                 }
             }
 
-            const accResponse1 = await  createAccount(createAccData);
-            localStorage.setItem("accountId", accResponse1.data.id);
+            const accResponse1 = await createAccount(createAccData);
             console.log("respone form step 3: " + accResponse1.data);
 
             const response = await createCompany(mappedData);
 
             if (creditCard === "yes") {
-                const accountId = localStorage.getItem("accountId");
                 const cardData = {
                     cardTypeId: selectedCardId,
-                    accountId: accountId,
+                    accountId: accResponse1.data.id,
                     name: selectedCardName,
                     limit: 5000,
                     status: true
                 };
-
 
                 const responseCard = await createCard(cardData);
                 console.log("Card response:" + responseCard);
@@ -307,19 +277,19 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
             if (response.success) {
                 console.log("Company created successfully:", response.data);
                 onClose();
+                window.location.reload();
             } else {
                 console.error("Failed to create company:", response.data);
             }
         } catch (error) {
+            showErrorToast({error, defaultMessage: "Error during company creation."})
             console.error("Error during company creation:", error);
         }
     };
 
-
     const handleFinishOrContinue = async (data: any) => {
         if (ownership === "Personal") {
             if (selectedType === "Current Account") {
-                const currencies = JSON.parse(localStorage.getItem("currencies") || "[]");
                 const rsdCurrency = currencies.find((currency: any) => currency.code === "RSD");
 
                 if (rsdCurrency) {
@@ -328,24 +298,21 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
 
                 try {
                     const response = await createAccount(data);
-                    localStorage.setItem("accountId", response.data.id);
-
-
                     if (creditCard === "yes") {
-                        const accountId = localStorage.getItem("accountId");
                         const cardData = {
                             cardTypeId: selectedCardId,
-                            accountId: accountId,
+                            accountId: response.data.id,
                             name: selectedCardName,
                             limit: 5000,
                             status: true
                         };
 
-
                         const responseCard = await createCard(cardData);
                     }
                     onClose();
+                    window.location.reload();
                 } catch (error) {
+                    showErrorToast({error, defaultMessage: "Error creating account."})
                     console.error("Error creating account:", error);
                 }
 
@@ -368,25 +335,24 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                     const response = await createAccount(data);
 
                     if (creditCard === "yes") {
-                        const accountId = localStorage.getItem("accountId");
                         const cardData = {
                             cardTypeId: selectedCardId,
-                            accountId: accountId,
+                            accountId: response.data.id,
                             name: selectedCardName,
                             limit: 5000,
                             status: true
                         };
 
-
                         const responseCard = await createCard(cardData);
                     }
                     onClose();
+                    window.location.reload();
                 } catch (error) {
+                    showErrorToast({error, defaultMessage: "Error creating Foreign Currency Account."})
                     console.error("Error creating Foreign Currency Account:", error);
                 }
             }
         } else {
-
             if (selectedType === "Foreign Currency Account" && step === 3) {
                 try {
                     const selectedPlan = accountTypes.find((account: any) => account.name === "Business Foreign Currency Account");
@@ -398,12 +364,10 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                     const response = await createAccount(data);
                     console.log("Business Foreign Currency Account created successfully:", response);
 
-
                     if (creditCard === "yes") {
-                        const accountId = localStorage.getItem("accountId");
                         const cardData = {
                             cardTypeId: selectedCardId,
-                            accountId: accountId,
+                            accountId: response.data.id,
                             name: selectedCardName,
                             limit: 5000,
                             status: true
@@ -413,9 +377,9 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                     }
                     onClose();
                 } catch (error) {
+                    showErrorToast({error, defaultMessage: "Error creating Business Foreign Currency Account."})
                     console.error("Error creating Business Foreign Currency Account:", error);
                 }
-                console.log("Usao sam u business foreign currency");
             }
 
             if (step === 3) {
@@ -425,13 +389,14 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
 
                     if (accountResponse.success) {
                         console.log("Business account created successfully:", accountResponse.data);
-                        localStorage.setItem("accountId", accountResponse.data.id);
+                        // setCreatedAccountId(accountResponse.data.id);
 
                         await businessForm.handleSubmit(onBusinessSubmit)();
                     } else {
-                        console.error("Failed to create business account:", accountResponse.data);
+                        throw new Error("Failed to create business account");
                     }
                 } catch (error) {
+                    showErrorToast({error, defaultMessage: "Error creating business account."})
                     console.error("Error creating business account:", error);
                 }
             } else {
@@ -439,9 +404,6 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
             }
         }
     };
-
-
-
 
     const handlePlanChange = (value: string) => {
         setPlan(value);
@@ -507,7 +469,6 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
             {step === 2 && (
                 <Card className="bg-transparent border-0 items-center">
                     <CardContent>
-
                         <Form {...accountForm}>
                             <form onSubmit={accountForm.handleSubmit((data) => {
                                 const clientId = clientID;
@@ -516,7 +477,7 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                                 const monthlyLimit = 50000;
                                 const balance = 5000.75;
                                 const accountTypeId = selectedPlanId;
-                                const status  = true;
+                                const status = true;
 
                                 const finalData = {
                                     ...data,
@@ -529,7 +490,6 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                                     status
                                 };
 
-
                                 const finishData = {
                                     name: finalData.name || "Štedni račun",
                                     dailyLimit: finalData.dailyLimit,
@@ -540,8 +500,6 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                                     accountTypeId: finalData.accountTypeId,
                                     status: finalData.status
                                 };
-
-
 
                                 handleFinishOrContinue(finishData);
                             })}
@@ -702,11 +660,9 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                                 </div>
                             </form>
                         </Form>
-
                     </CardContent>
                 </Card>
             )}
-
 
             {step === 3 && (
                 <Card className="bg-transparent border-0 items-center">
@@ -787,19 +743,6 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                                         </FormItem>
                                     )}
                                 />
-                                {/* <FormField
-                                    control={businessForm.control}
-                                    name="majorityOwner"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Majority Owner</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="Jon Doe" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                /> */}
                                 <div className="flex gap-4 mt-4">
                                     <Button variant="ghost" onClick={handleBack}>
                                         Back

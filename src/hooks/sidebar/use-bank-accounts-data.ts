@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {getAllAccountsClient} from "@/api/bankAccount.ts";
 import {BankAccount} from "@/types/bankAccount.ts"
+import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 
 
 export  function useBankAccountsData() {
@@ -18,8 +19,7 @@ export  function useBankAccountsData() {
                     throw new Error("User ID not found");
                 }
 
-                const response = await getAllAccountsClient(id);
-                console.log(response);
+                const response = await getAllAccountsClient(id, 1, 100);
 
                 if (response.status != 200){
                     throw new Error("Bank accounts not found");
@@ -34,6 +34,7 @@ export  function useBankAccountsData() {
 
             } catch (error) {
                 console.error("Failed to fetch bank accounts:", error)
+                showErrorToast({error, defaultMessage: "Failed to fetch bank accounts"})
                 setBankAccounts([])
             }
         }

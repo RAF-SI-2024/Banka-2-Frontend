@@ -51,3 +51,15 @@ export const getGenderString = (gender: Gender) => {
     }
 };
 
+export const getInterestRate = (type: number) => {
+    switch (type) {
+        case 0: 
+            return "Fixed";
+        case 1:
+            return "Variable";
+        default:
+            return "Unknown";
+    
+    }
+}
+

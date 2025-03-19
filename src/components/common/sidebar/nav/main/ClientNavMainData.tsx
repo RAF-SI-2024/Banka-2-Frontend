@@ -1,5 +1,6 @@
 import * as React from "react";
 import {useBankAccountsData} from "@/hooks/sidebar/use-bank-accounts-data.ts";
+import {useCreditCardsData} from "@/hooks/sidebar/use-credit-cards-data.ts";
 
 
 export function ClientNavMainData() {
@@ -32,37 +33,45 @@ export function ClientNavMainData() {
                 },
                 {
                     icon: <span className="icon-[ph--arrows-clockwise]"/>,
-                    title: "Exchange",
-                    url: "/payments/exchange",
-                },
-                {
-                    icon: <span className="icon-[ph--hand-coins]"/>,
-                    title: "Transfers",
-                    url: "/payments/transfers",
-                },
-                {
-                    icon: <span className="icon-[ph--users-three]"/>,
-                    title: "Recipients",
-                    url: "/payments/recipients",
+                    title: "New transfer/exchange",
+                    url: "/payments/transfer",
                 },
                 {
                     icon: <span className="icon-[ph--list-magnifying-glass]"/>,
-                    title: "Overview",
+                    title: "Exchange rate list",
+                    url: "/payments/exchange-rate",
+                },
+                {
+                    icon: <span className="icon-[ph--money-wavy]"/>,
+                    title: "My payments",
                     url: "/payments/overview",
                 }
             ]
         },
         {
             title: "Cards",
-            url: "/cards",
+            url: "#",
             icon: <span className="icon-[ph--credit-card]"/>,
             isCollapsed: false,
+            items: useCreditCardsData()
         },
         {
             title: "Loans",
-            url: "/loans",
+            url: "#",
             icon: <span className="icon-[ph--bank]"/>,
             isCollapsed: false,
+            items: [
+                {
+                    title: "New loan request",
+                    url: "/loan/new",
+                    icon: <span className="icon-[ph--folder-simple-plus]"/>,
+                },
+                {
+                    title: "My loans",
+                    url: "/loan/overview",
+                    icon: <span className="icon-[ph--bank]"/>,
+                }
+            ]
         },
     ]
 }
