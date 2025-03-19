@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import ComponentShowcasePage from "@/pages/ComponentShowcase";
 import ResetPassReqPage from "@/pages/ResetPassRequest.tsx";
 import ResetPassPage from "@/pages/ResetPassword.tsx";
 import ResetPasswordNotificationPage from "@/pages/ResetPassNotification";
@@ -21,6 +22,7 @@ import NewLoanRequest from "@/pages/NewLoanRequest.tsx";
 import ClientList from "@/pages/ClientList.tsx";
 import AllLoanList from "@/pages/AllLoanList";
 import LoanOverviewList from "@/pages/LoanOverviewList";
+import NewPaymentPage from "@/pages/NewPayment.tsx";
 
 export const AppRoutes = () => {
     return (
@@ -36,6 +38,7 @@ export const AppRoutes = () => {
                         <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
                         <Route path="/card/:cardId" element={<CardDetailsPage />} />
                         <Route path="/payments/transfers" element={<TransfersPage />}/>
+                        <Route path="/payments/new" element={<NewPaymentPage />} />    
                         <Route path="/loan/new" element={<NewLoanRequest />} />
                         <Route path="/loan/overview" element={<LoanOverviewList />} />
                     </Route>
@@ -47,7 +50,6 @@ export const AppRoutes = () => {
                         <Route path="loan/all" element={<AllLoanList />} />
 
                     </Route>
-
                 </Route>
             </Route>
 
