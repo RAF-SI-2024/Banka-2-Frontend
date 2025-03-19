@@ -1,6 +1,7 @@
 import { LoanTypeResponse } from "@/types/loanType";
 import api from "./axios";
 import { LoanResponse, LoanUpdateRequest } from "@/types/loan";
+import {LoanCreateRequest} from "@/types/loan";
 
 
 // TODO: dodati filter po vrsti kredita kada backend zavrsi 
@@ -28,8 +29,8 @@ export const getAllLoans = async (
 };
 
 export const getAllLoanTypes = async (
-    page: number,
-    size: number
+    page?: number,
+    size?: number
 ): Promise<LoanTypeResponse> => {
     try {
         const response = await api.get("/loans/types", {
@@ -59,3 +60,25 @@ export const updateLoanStatus = async (loanId: string, loanUpdateRequest: LoanUp
         throw error;
     }
 };
+// {
+//     "typeId": "af94b480-4c67-4281-962d-0d73efe48e4a",
+//     "accountId": "69434456-99a3-4cef-a366-b98877b5d4fc",
+//     "amount": 50000,
+//     "period": 60,
+//     "currencyId": "2ae3889c-609f-4988-a334-0a37f3992e96",
+//     "interestType": 2
+// }
+
+export const createLoan = async(
+    data: LoanCreateRequest
+): Promise<LoanResponse> => {
+    try{
+        const response = await api.post("/loans", data);
+
+        return response.data;
+    }
+    catch(error){
+        console.error("Error creating loan", error);
+        throw error;
+    }
+}

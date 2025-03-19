@@ -31,3 +31,13 @@ export interface LoanUpdateRequest{
     status: number;
     maturityDate: Date,
 }
+
+
+export interface LoanCreateRequest{
+    typeId: string,
+    accountId: string,
+    amount: number,
+    period: number,
+    currencyId: string,
+    interestType: number
+}

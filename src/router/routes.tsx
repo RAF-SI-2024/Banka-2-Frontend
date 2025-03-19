@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import ComponentShowcasePage from "@/pages/ComponentShowcase";
 import ResetPassReqPage from "@/pages/ResetPassRequest.tsx";
 import ResetPassPage from "@/pages/ResetPassword.tsx";
 import ResetPasswordNotificationPage from "@/pages/ResetPassNotification";
@@ -15,7 +14,9 @@ import {
 import BankAccountPage from "@/pages/BankAccount.tsx";
 import RoleBasedHomePage from "@/pages/RoleBasedHome.tsx";
 import CardDetailsPage from "@/pages/BankCard.tsx";
+import TransfersPage from "@/pages/TransferPage.tsx";
 import LoanRequestList from "@/pages/LoanRequestList";
+import NewLoanRequest from "@/pages/NewLoanRequest.tsx";
 import ClientList from "@/pages/ClientList.tsx";
 import AllLoanList from "@/pages/AllLoanList";
 
@@ -30,6 +31,8 @@ export const AppRoutes = () => {
                     <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
                     <Route path="/card/:cardId" element={<CardDetailsPage />} />
+                    <Route path="/payments/transfers" element={<TransfersPage />}/>
+                    <Route path="/loan/new" element={<NewLoanRequest />} />
 
                     {/*protected employee routes*/}
 
