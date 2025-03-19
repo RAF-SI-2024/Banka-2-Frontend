@@ -1,6 +1,7 @@
 import api from "./axios"
 import {AccountResponse, AccountUpdateClientRequest, CreateBankAccountRequest} from "@/types/bankAccount"
 import {API_BASE} from "@/constants/endpoints.ts";
+import {Transaction, TransactionResponse} from "@/types/transaction.ts";
 
 
 export const getAccountById = async (id:string) => {
@@ -117,6 +118,60 @@ export const getAllAccountsClient = async (clientId: string, page?:number, size?
     }
 }
 
+
+export const getAllTransactions = async (
+    pageNumber: number,
+    pageSize: number,
+    transactionType: number,
+): Promise<TransactionResponse> => {
+    try {
+        const response = await api.get(`${API_BASE}/transactions`, {
+                params: {
+                    Page: pageNumber,
+                    Size: pageSize,
+                    Type: transactionType
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("❌ Failed to get all transactions:", error);
+        throw error;
+    }
+}
+
+export const getAccountTransactions = async (
+    pageNumber: number,
+    pageSize: number,
+    transactionType: number,
+    // account moze biti undefined
+    account: string | undefined
+): Promise<TransactionResponse> => {
+    try {
+        const response = await api.get(`${API_BASE}/accounts/${account}/transactions`, {
+                params: {
+                    Page: pageNumber,
+                    Size: pageSize,
+                    Type: transactionType
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("❌ Failed to get all transactions for your bank account:", error);
+        throw error;
+    }
+}
+
+export const getNewTransactions = async (): Promise<TransactionResponse> => {
+    try {
+        const response = await api.get(`${API_BASE}/transactions/new`);
+        return response.data;
+    } catch (error) {
+        console.error("❌ Failed to get recent transactions:", error);
+        throw error;
+    }
+}
 export const fetchAccountByNumber = async (number: string) => {
     return api.get(`/accounts`, {
         params: { number },

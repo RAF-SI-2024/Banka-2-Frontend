@@ -13,14 +13,17 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import {generateTransactionColumns} from "@/components/bank-account/TransactionsDataTableColumnDef.tsx";
-import {Transaction} from "@/types/transaction.ts";
+import {Transaction, TransactionResponse} from "@/types/transaction.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
+import {getAccountTransactions, getAllTransactions} from "@/api/bankAccount.ts";
 
 interface TransactionsDataTableProps {
-    account: BankAccount
+    account: BankAccount | null;
+    // Id transactionType = 0 show all transactions, if its 1 show exchange/transfer
+    transactionType: number;
 }
 
-export default function TransactionsDataTable({account}: TransactionsDataTableProps) {
+export default function TransactionsDataTable({account, transactionType}: TransactionsDataTableProps) {
     /* STATES */
     // edit
 
@@ -52,59 +55,27 @@ export default function TransactionsDataTable({account}: TransactionsDataTablePr
     // column filters
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-    /* FUNCTIONS */
-    // fetch users function
-    const fetchTransactions = async () => {
+
+    // fetch users effect (triggered on currentpage, pagesize or search change
+    useEffect(() => {
+        // account is null when we open overview page, account has a value if we open account component
+        if (account === null) {
+            fetchAllTransactions();
+        } else {
+            fetchAccountTransactions();
+        }
+    }, [currentPage, pageSize]); // Add dependencies
+
+    // If the data table is used in the overview page
+    const fetchAllTransactions = async () => {
         console.log("Fetching transactions");
         setError(null);
         try {
-            // const transactionsData: TransactionsResponse = await getAllTransactions(
-            //     currentPage,
-            //     pageSize,
-            // );
-            const transactionsData = {
-                items: [
-                    {
-                        id: "1",
-                        name: "Transaction 1",
-                        amount: 1000,
-                        date: new Date(),
-                    },
-                    {
-                        id: "2",
-                        name: "Transaction 2",
-                        amount: 2000,
-                        date: new Date(),
-                    },
-                    {
-                        id: "3",
-                        name: "Transaction 1",
-                        amount: 10000.26,
-                        date: new Date(),
-                    },
-                    {
-                        id: "4",
-                        name: "Transaction 2",
-                        amount: 999.99,
-                        date: new Date(),
-                    },
-                    {
-                        id: "5",
-                        name: "Transaction 1",
-                        amount: -1000,
-                        date: new Date(),
-                    },
-                    {
-                        id: "6",
-                        name: "Transaction 2",
-                        amount: -30,
-                        date: new Date(),
-                    },
-                ],
-                totalPages: 1,
-                currentPage: 1,
-            }
-
+            const transactionsData: TransactionResponse = await getAllTransactions(
+                currentPage,
+                pageSize,
+                transactionType
+            );
             setTransactions(transactionsData.items);
             setTotalPages(transactionsData.totalPages);
             console.log(transactionsData)
@@ -114,13 +85,33 @@ export default function TransactionsDataTable({account}: TransactionsDataTablePr
         }
     };
 
+    // If the data table is used in the account component
+    const fetchAccountTransactions = async () => {
+        console.log("Fetching transactions");
+        setError(null);
+        try {
+            const transactionsData: TransactionResponse = await getAccountTransactions(
+                currentPage,
+                pageSize,
+                transactionType,
+                account?.id,
+            );
+            setTransactions(transactionsData.items);
+            setTotalPages(transactionsData.totalPages);
+            console.log(transactionsData)
 
+        } catch (err) {
+            console.log(err);
+            setError("Failed to fetch transactions");
+        }
+    };
 
     /* TABLE */
     // generate columns
     const columns = useMemo(() => {
-        // Return generated columns
-        return generateTransactionColumns(account.currency);
+        if(account != null)
+            return generateTransactionColumns();
+        else return []
     }, []); // Empty dependency array since handleOpenEditDialog is now inside
 
     // create the table instance with pagination, sorting, and column visibility
@@ -159,10 +150,6 @@ export default function TransactionsDataTable({account}: TransactionsDataTablePr
         pageCount: totalPages,
     });
 
-    // fetch users effect (triggered on currentpage, pagesize or search change
-    useEffect(() => {
-        fetchTransactions();
-    }, [currentPage, pageSize]); // Add dependencies
 
     // display error
     if (error) return <h1 className="text-center text-2xl font-semibold text-destructive">{error}</h1>;

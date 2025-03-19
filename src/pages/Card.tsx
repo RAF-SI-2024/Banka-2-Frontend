@@ -101,7 +101,7 @@ export default function CardPage() {
                     </AnimatePresence>
                 </div>
 
-                <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={bankAccount} />
+                <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={bankAccount} cardTitle="AKKKOOO"/>
             </div>
         </main>
     )

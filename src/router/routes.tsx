@@ -16,6 +16,7 @@ import {
 import BankAccountPage from "@/pages/BankAccount.tsx";
 import RoleBasedHomePage from "@/pages/RoleBasedHome.tsx";
 import CardDetailsPage from "@/pages/BankCard.tsx";
+import TransactionsOverviewPage from "@/pages/TransactionsOverview.tsx";
 import TransfersPage from "@/pages/TransferPage.tsx";
 import LoanRequestList from "@/pages/LoanRequestList";
 import NewLoanRequest from "@/pages/NewLoanRequest.tsx";
@@ -32,6 +33,11 @@ export const AppRoutes = () => {
 
                     <Route path="/home" element={<RoleBasedHomePage />} />
                     <Route path="/" element={<Navigate to="/home" replace />} />
+                    <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
+
+                    <Route path="/payments/overview" element={<TransactionsOverviewPage />} />
+
+                    <Route path="/card/:cardId" element={<CardDetailsPage />} />
 
                     {/*protected client routes*/}
                     <Route element={<ProtectedClient />}>
