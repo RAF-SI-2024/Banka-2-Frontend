@@ -60,4 +60,14 @@ export enum TransactionStatus
     Failed = 4
 }
 
-
+export const getInterestRate = (type: number) => {
+    switch (type) {
+        case 0: 
+            return "Fixed";
+        case 1:
+            return "Variable";
+        default:
+            return "Unknown";
+    
+    }
+}
