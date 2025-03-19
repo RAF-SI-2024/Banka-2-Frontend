@@ -17,9 +17,15 @@ import {
 import AddRecipientTemplate from "@/components/newPayment/AddRecipientTemplate";
 import AmountInput from "@/components/newPayment/AmountInput.tsx";
 import { fetchRecipientCurrencyId, fetchPaymentCodes, RawPaymentCode } from "@/api/transactionCode";
+import {CreateTransactionRequest} from "@/types/transaction.ts";
+import {createTransaction} from "@/api/transactions.ts";
 
 export const paymentSchema = z.object({
-    recipientAccount: z.string().min(1, "Recipient account is required."),
+    recipientAccount: z
+        .string()
+        .regex(/^\d{18}$/, "Recipient account must be exactly 18 digits")
+        .min(18, "Recipient account must be exactly 18 digits")
+        .max(18, "Recipient account must be exactly 18 digits"),
     amount: z.preprocess(
         (val) => {
             if (typeof val === "string") {
@@ -48,6 +54,7 @@ export type PaymentFormValues = z.infer<typeof paymentSchema>;
 
 function NewPaymentPage() {
     const form = useForm<PaymentFormValues>({
+        mode: "onChange",
         resolver: zodResolver(paymentSchema),
         defaultValues: {
             paymentCode: "289",
@@ -69,10 +76,21 @@ function NewPaymentPage() {
     const [toCurrencyId, setToCurrencyId] = useState<string | null>(null);
     const [loadingToCurrency, setLoadingToCurrency] = useState(false);
     const [paymentCodes, setPaymentCodes] = useState<RawPaymentCode[]>([]);
+    const [transactionPayload, setTransactionPayload] = useState<CreateTransactionRequest>({
+        fromAccountId: "",
+        fromCurrencyId: "",
+        toAccountNumber: "",
+        toCurrencyId: "",
+        amount: 0,
+        codeId: "",
+        referenceNumber: "",
+        purpose: "",
+    });
 
     useEffect(() => {
         const subscription = watch((value) => {
-            const recipientAccount = value.recipientAccount?.trim();
+            const recipientAccount = value.recipientAccount?.trim().substring(7,16);
+            console.log(recipientAccount)
             if (!recipientAccount) return;
 
             const timeout = setTimeout(() => {
@@ -147,20 +165,23 @@ function NewPaymentPage() {
             fromCurrencyId: selectedAccount.currency.id,
             toAccountNumber: values.recipientAccount,
             toCurrencyId: toCurrencyId,
-            amount: values.amount,
+            amount: values.amount || 0,
             codeId: codeId,
-            referenceNumber: values.referenceNumber,
+            referenceNumber: values.referenceNumber || "",
             purpose: values.purpose,
         };
+
+        setTransactionPayload(payload)
 
         console.log("Submitting payment:", payload);
         setStep("otp");
     };
 
-    const handleOTPConfirmed = () => {
+    async function handleOTPConfirmed (){
         console.log("OTP confirmed, payment finalized!");
+        await createTransaction(transactionPayload);
         setStep("success");
-    };
+    }
 
     return (
         <div className="max-w-2xl mx-auto py-10">
@@ -175,29 +196,31 @@ function NewPaymentPage() {
                     <CardContent>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                                <div className="flex items-end gap-4">
-                                    <div className="min-w-[240px] flex-1 flex flex-col">
-                                        <PayerAccountSelect
-                                            control={form.control}
-                                            onLimitChange={(limit) => {
-                                                setPaymentLimit(limit)
-                                                form.setValue("amount", 0)
-                                            }}
-                                            onCurrencyChange={(code) => setPayerCurrency(code)}
-                                            onSelectAccount={(account) => {
-                                                setSelectedAccount(account)
-                                            }}
-                                        />
-                                    </div>
+                                <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-4">
+                                    {/* PayerAccountSelect */}
+                                    <PayerAccountSelect
+                                        control={form.control}
+                                        onLimitChange={(limit) => {
+                                            setPaymentLimit(limit);
+                                            form.setValue("amount", 0);
+                                        }}
+                                        onCurrencyChange={(code) => setPayerCurrency(code)}
+                                        onSelectAccount={(account) => {
+                                            setSelectedAccount(account);
+                                        }}
+                                    />
 
-                                    <div className="flex items-center justify-center pb-[6px]">
-                                        <span className="icon-[ph--arrow-right-light] text-2xl leading-none text-muted-foreground" />
+                                    {/* Strelica */}
+                                    <div className="flex items-center justify-center h-[40px] mt-5">
+                                        <span
+                                            className="icon-[ph--arrow-right-light] text-2xl leading-none text-muted-foreground"/>
                                     </div>
 
                                     <div className="flex-1">
-                                        <RecipientInput control={form.control} />
+                                        <RecipientInput control={form.control} ></RecipientInput>
                                     </div>
                                 </div>
+
 
                                 <AmountInput
                                     control={form.control}
@@ -232,16 +255,16 @@ function NewPaymentPage() {
                                 <Button
                                     type="submit"
                                     className="w-full"
-                                    disabled={isLimitExceeded || !toCurrencyId}
+                                    disabled={!form.formState.isValid || !toCurrencyId}
                                 >
                                     Continue
                                 </Button>
 
-                                {Object.keys(form.formState.errors).length > 0 && (
-                                    <pre className="text-red-500 text-xs">
-                    {JSON.stringify(form.formState.errors, null, 2)}
-                  </pre>
-                                )}
+                  {/*              {Object.keys(form.formState.errors).length > 0 && (*/}
+                  {/*                  <pre className="text-red-500 text-xs">*/}
+                  {/*  {JSON.stringify(form.formState.errors, null, 2)}*/}
+                  {/*</pre>*/}
+                  {/*              )}*/}
                             </form>
                         </Form>
                     </CardContent>

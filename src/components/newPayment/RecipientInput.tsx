@@ -41,7 +41,7 @@ export function RecipientInput({ control }: RecipientInputProps) {
                             <Input
                                 placeholder="123-4567890123456-89"
                                 {...field}
-                                className="pr-10"
+
                             />
                         </FormControl>
 

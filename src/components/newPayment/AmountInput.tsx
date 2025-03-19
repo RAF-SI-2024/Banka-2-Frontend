@@ -45,13 +45,6 @@ const AmountInput = ({
             ? parseFloat(watchedAmount.replace(/\./g, "").replace(",", "."))
             : watchedAmount
 
-    const remaining = limit - numericValue
-    const exceeded = remaining < 0
-
-    useEffect(() => {
-        onLimitExceeded(exceeded)
-    }, [exceeded, onLimitExceeded])
-
     return (
         <FormField
             name="amount"
@@ -103,24 +96,10 @@ const AmountInput = ({
                             </strong>
                             <br />
                             Remaining:{" "}
-                            <strong className={exceeded ? "text-red-500" : ""}>
-                                {remaining.toLocaleString("sr-RS", {
-                                    style: "currency",
-                                    currency: currency,
-                                })}
-                            </strong>
                         </div>
                     )}
 
-                    {exceeded && (
-                        <div className="mt-2 text-sm font-medium text-red-600">
-                            You have exceeded your daily limit by{" "}
-                            {Math.abs(remaining).toLocaleString("sr-RS", {
-                                style: "currency",
-                                currency: currency,
-                            })}
-                        </div>
-                    )}
+
                 </FormItem>
             )}
         />

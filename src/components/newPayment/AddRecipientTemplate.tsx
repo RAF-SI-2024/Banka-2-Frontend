@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {addTransactionTemplate} from "@/api/bankAccount.ts";
+import {useNavigate} from "react-router-dom";
 
 interface Props {
     recipientAccount: string;
@@ -16,6 +17,7 @@ export default function AddRecipientTemplate({
     const [recipientExists, setRecipientExists] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const [templateName, setTemplateName] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         const exists = existingRecipients.includes(recipientAccount);
@@ -30,12 +32,14 @@ export default function AddRecipientTemplate({
 
         try {
             setIsAdding(true);
+
             await addTransactionTemplate({
                 name: templateName.trim(),
                 accountNumber: recipientAccount
             });
 
-            console.log("Recipient added successfully");
+            alert("Recipient added successfully")
+            navigate("/home")
             setRecipientExists(true);
         } catch (error) {
             console.error("Add recipient failed:", error);
@@ -50,6 +54,9 @@ export default function AddRecipientTemplate({
             <p className="text-muted-foreground">
                 Your payment has been verified and processed.
             </p>
+            <p className="text-muted-foreground">
+                Do you wish to add the recipient?
+            </p>
 
             {!recipientExists && (
                 <div className="space-y-4">
@@ -58,10 +65,16 @@ export default function AddRecipientTemplate({
                         value={templateName}
                         onChange={(e) => setTemplateName(e.target.value)}
                     />
-                    <Button onClick={handleAdd} disabled={isAdding || !templateName.trim()} variant="outline">
-                        {isAdding ? "Adding..." : "Add recipient"}
-                    </Button>
+                    <div className="flex justify-center gap-4"> {/* Ovo pravi razmak između dugmadi */}
+                        <Button onClick={handleAdd} disabled={isAdding || !templateName.trim()} variant="outline">
+                            {isAdding ? "Adding..." : "Add recipient"}
+                        </Button>
+                        <Button onClick={()=>navigate("/home")} variant="outline">
+                            No, thanks
+                        </Button>
+                    </div>
                 </div>
+
             )}
         </Card>
     );
