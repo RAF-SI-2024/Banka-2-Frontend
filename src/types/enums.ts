@@ -28,8 +28,8 @@ export enum LoanStatus {
 }
 
 export enum InstallmentStatus {
-    Panding,
-    Payed,
+    Pending,
+    Paid,
     Overdue,
     Cancelled
 }

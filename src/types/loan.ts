@@ -39,6 +39,8 @@ export interface LoanCreateRequest{
 export interface Installment {
     loan: Loan,
     interestRate: number,
+    expectedDueDate: Date,
+    actualDueDate: Date,
     status: InstallmentStatus,
     createdAt: Date,
     modifiedAt: Date,
