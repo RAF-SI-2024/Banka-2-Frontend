@@ -7,6 +7,7 @@ import MoneyInput from "@/components/common/input/MoneyInput.tsx";
 import { getExchangeRate, getAllCurrencies } from "@/api/currency.ts";
 import { Currency } from "@/types/currency.ts";
 import {showErrorToast} from "@/utils/show-toast-utils.tsx";
+import {useNavigate} from "react-router-dom";
 
 const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => {
     const [currencies, setCurrencies] = useState<Currency[]>([]);
@@ -16,6 +17,7 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
     const [amount2, setAmount2] = useState(0);
     const [rate, setRate] = useState(1);
     const [initRate, setInitRate] = useState(false);
+    const navigate = useNavigate();
 
 
 
@@ -190,8 +192,14 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
                 </div>
             </CardContent> )}
 
-            <CardFooter className="w-full justify-center">
-                <CardDescription>Convert between currencies with real-time exchange rates.</CardDescription>
+            <CardFooter className="flex flex-col w-full justify-center">
+
+                <CardDescription>
+                    Convert between currencies with real-time exchange rates.
+                </CardDescription>
+                <Button variant="link" size="tight" className="w-fit"
+                        onClick={() => navigate("/payments/exchange-rate")}>See current exchange rates</Button>
+
             </CardFooter>
         </Card>
     );
