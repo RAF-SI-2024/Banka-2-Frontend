@@ -1,6 +1,6 @@
 import api from "@/api/axios.ts";
 import {API_BASE} from "@/constants/endpoints.ts";
-import {CardCreateRequest, CardDTO} from "@/types/card.ts";
+import {CardCreateRequest} from "@/types/card.ts";
 
 export const getCardById = async (id:string) => {
     try {
