@@ -1,60 +1,51 @@
-import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import React, {useEffect} from "react";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {z} from "zod";
 import {
     Dialog,
     DialogContent,
     DialogFooter,
     DialogTitle,
-    DialogDescription
+    DialogDescription, DialogHeader
 } from "@/components/ui/dialog.tsx";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input.tsx";
-
-const templateSchema = z.object({
-    name: z.string()
-        .min(1, "Name is mandatory.")
-        .max(32, "Name can't have more than 32 characters.")
-        .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Name can only have letters and spaces."),
-    accountNumber: z.string()
-        .length(18, "Account number must be exactly 18 characters long.")
-        .regex(/^\d{18}$/, "Account number must contain only numbers.")
-});
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input.tsx";
+import {Card, CardContent} from "@/components/ui/card.tsx";
+import {cn} from "@/lib/utils.ts";
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage
+} from "@/components/ui/form.tsx";
 
 interface EditTemplateDialogProps {
+    form: any,
     open: boolean;
     onClose: () => void;
     template: { id: string; name: string; accountNumber: string } | null;
     onConfirm: (name: string, accountNumber: string) => void;
 }
 
-const EditTemplateDialog: React.FC<EditTemplateDialogProps> = ({ open, onClose, template, onConfirm }) => {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors, isDirty },
-        reset
-    } = useForm({
-        resolver: zodResolver(templateSchema),
-        defaultValues: {
-            name: template?.name || "",
-            accountNumber: template?.accountNumber || ""
-        }
-    });
+const EditTemplateDialog: React.FC<EditTemplateDialogProps> = ({form, open, onClose, template, onConfirm}) => {
 
     useEffect(() => {
         if (template) {
-            reset({
+            form.reset({
                 name: template.name,
                 accountNumber: template.accountNumber
             });
         }
-    }, [template, reset]);
+    }, [template]);
 
     const onSubmit = (data: { name: string; accountNumber: string }) => {
         if (template) {
             onConfirm(data.name, data.accountNumber);
+            console.log(data);
             onClose();
         }
     };
@@ -62,31 +53,54 @@ const EditTemplateDialog: React.FC<EditTemplateDialogProps> = ({ open, onClose, 
     return (
         <Dialog open={open} onOpenChange={onClose}>
             <DialogContent>
-                <DialogTitle>Edit Template</DialogTitle>
-                <DialogDescription>
-                    Here you can edit the template details such as name and account number.
-                </DialogDescription>
+                <DialogHeader>
+                    <DialogTitle></DialogTitle>
+                </DialogHeader>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    <div>
-                        <Input placeholder="Template Name" {...register("name")} />
-                        {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
-                    </div>
+                <Card className={cn("flex flex-col gap-6 bg-transparent border-0")}>
+                    <CardContent className="mt-4 font-paragraph">
+                        <h2 className="text-2xl font-heading font-semibold text-center mt-4 mb-8">Edit template</h2>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-8">
+                                <FormField
+                                    key="name"
+                                    name="name"
+                                    render={({field}) => (
+                                        <FormItem className="w-full">
+                                            <FormLabel>Name</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Template" {...field}></Input>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    key="accountNumber"
+                                    name="accountNumber"
+                                    render={({field}) => (
+                                        <FormItem className="w-full">
+                                            <FormLabel>Account number</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Template's account number" {...field}></Input>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
 
-                    <div>
-                        <Input placeholder="Account Number" {...register("accountNumber")} />
-                        {errors.accountNumber && <p className="text-destructive text-sm">{errors.accountNumber.message}</p>}
-                    </div>
+                                <DialogFooter>
+                                    <Button type="button" variant="outline" onClick={() => {
+                                        form.reset();
+                                        onClose();
+                                    }}>Cancel</Button>
+                                    <Button type="submit" variant="primary" >Confirm</Button>
+                                </DialogFooter>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
 
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={onClose}>
-                            Cancel
-                        </Button>
-                        <Button type="submit" variant="success" disabled={!isDirty}>
-                            Confirm edit
-                        </Button>
-                    </DialogFooter>
-                </form>
             </DialogContent>
         </Dialog>
     );

@@ -1,14 +1,19 @@
 import React, { useState,useEffect } from "react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import {createTransactionTemplate, deleteTemplate, updateTemplate} from "@/api/templates";
 import AddTemplateDialog from "./AddTemplateDialog";
-import TemplateDropdownMenu from "./TemplateDropdownMenu";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import EditTemplateDialog from "./EditTemplateDialog"; // Importuj EditTemplateDialog
 import { getTemplates } from "@/api/templates.ts";
 import {Template} from "@/types/templates.ts";
+import TemplateDropdownMenu from "@/components/home/TemplateDropDownMenu.tsx";
+import {cn} from "@/lib/utils.ts";
+import {useForm} from "react-hook-form";
+import {z} from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 
 const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) => {
     const [templates, setTemplates] = useState<Template[]>([]);
@@ -17,6 +22,23 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
     const [templateToDelete, setTemplateToDelete] = useState<string | null>(null);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false); // State za edit dijalog
     const [templateToEdit, setTemplateToEdit] = useState<Template | null>(null); // Šablon koji se edituje
+
+
+    const templateSchema = z.object({
+        name: z.string()
+            .min(1, "Name is mandatory.")
+            .max(32, "Name can't have more than 32 characters.")
+            .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Name can only have letters and spaces."),
+        accountNumber: z.string()
+            .length(18, "Account number must be exactly 18 characters long.")
+            .regex(/^\d{18}$/, "Account number must contain only numbers.")
+    });
+
+    const form = useForm<z.infer<typeof templateSchema>>({
+        resolver: zodResolver(templateSchema),
+        mode: "onChange",
+    });
+
 
     useEffect(() => {
         // Dohvatanje templejta kada se komponenta učita
@@ -46,8 +68,9 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
             const newTemplate = await createTransactionTemplate(name, accountNumber);
             setTemplates((prev) => [...prev, newTemplate]);
             setIsDialogOpen(false);
+            showSuccessToast({description: "Template successfully created."})
         } catch (error) {
-            console.error("Neuspelo dodavanje transakcijskog šablona.");
+            showErrorToast({error, defaultMessage: "Error adding template."})
         }
     };
 
@@ -73,9 +96,9 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
                 await deleteTemplate(template.id, template.name, template.accountNumber);
 
                 setTemplates((prev) => prev.filter((t) => t.id !== template.id)); // Ažuriraj UI
-                console.log("Template uspešno obrisan!");
+                showSuccessToast({description: "Template successfully deleted."})
             } catch (error) {
-                console.error("Greška pri brisanju templejta:", error);
+                showErrorToast({error, defaultMessage: "Error deleting template."})
             } finally {
                 setTemplateToDelete(null);
                 setIsDeleteDialogOpen(false);
@@ -92,9 +115,9 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
                         template.id === templateToEdit.id ? updatedTemplate : template
                     )
                 );
-                console.log("Template uspešno ažuriran!");
+                showSuccessToast({description: "Template successfully edited."})
             } catch (error) {
-                console.error("Greška pri ažuriranju templejta:", error);
+                showErrorToast({error, defaultMessage: "Error modifying template."})
             } finally {
                 setTemplateToEdit(null); // Resetuj template koji se edituje
                 setIsEditDialogOpen(false);
@@ -104,18 +127,22 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
 
 
     return (
-        <Card className={className} {...props}>
+        <Card className={cn("border-0 content-center", className)} {...props}>
             <CardHeader className="mb-2">
                 <CardTitle className="font-heading text-2xl">Quick payment</CardTitle>
             </CardHeader>
 
+
             <CardContent className="overflow-y-auto max-h-50 mb-4 mr-4 pr-1">
+                {(!templates || templates.length == 0) && (
+                    <CardDescription>You don't have any quick payment templates. Click the button below</CardDescription>
+                )}
                 <Table>
                     <TableBody>
                         {templates.map((template) => (
-                            <TableRow key={template.id} className="font-medium border-border text-secondary-foreground">
+                            <TableRow key={template.id} className="bg-background font-medium border-border text-foreground">
                                 <TableCell className="p-0 rounded-2xl">
-                                    <span className="size-full font-paragraph text-base py-4 font-semibold rounded-none flex justify-between items-center px-4 bg-negative text-white cursor-pointer">
+                                    <span className="size-full font-paragraph text-base py-4 font-semibold rounded-none flex justify-between items-center px-4 bg-negative text-foreground cursor-pointer">
                                         {template.name}
                                         <TemplateDropdownMenu
                                             onEdit={() => handleEdit(template.id)}
@@ -131,15 +158,26 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
             </CardContent>
 
             <CardFooter className="justify-center">
-                <Button size="icon" variant="success" className="rounded-full" onClick={() => setIsDialogOpen(true)}>
-                    <span className="icon-[ph--plus-bold]"></span>
+                <Button
+                    className="size16"
+                    variant="success"
+                    onClick={() => setIsDialogOpen(true)}
+                >
+                    <span className="icon-[ph--plus] text-lg"></span>
+                    Add a new template
+
                 </Button>
             </CardFooter>
 
-            <AddTemplateDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} onAddTemplate={handleAddTemplate} />
+            <AddTemplateDialog form={form} open={isDialogOpen} onOpenChange={(open) =>
+            {
+                form.reset();
+                setIsDialogOpen(open);}
+            }
+                               onAddTemplate={handleAddTemplate} />
 
-            <DeleteConfirmationDialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)} onConfirm={confirmDelete}/>
-            <EditTemplateDialog open={isEditDialogOpen} onClose={() => setIsEditDialogOpen(false)} template={templateToEdit} onConfirm={confirmEdit}/>
+            <DeleteConfirmationDialog open={isDeleteDialogOpen} onClose={() => {form.reset(); setIsDeleteDialogOpen(false)}} onConfirm={confirmDelete}/>
+            <EditTemplateDialog form={form} open={isEditDialogOpen} onClose={() => {form.reset(); setIsEditDialogOpen(false)}} template={templateToEdit} onConfirm={confirmEdit}/>
         </Card>
     );
 };
