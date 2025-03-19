@@ -65,12 +65,30 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
             setRate(1);
             return 1;
         }
-
+        let rateX = 1;
         try {
-            const data = await getExchangeRate(from.code, to.code);
-            setRate(data.rate);
+            if(from.code == "RSD" || to.code == "RSD"){
+                if(from.code=="RSD"){
+                    const data = await getExchangeRate("RSD", to.code);
+                    rateX = data.inverseRate;
+                    setRate(rateX);
+                }
+                else {
+                    const data = await getExchangeRate("RSD", from.code);
+                    rateX = data.rate;
+                    setRate(rateX);
+                }
+            }
+            else{
+                const data1 = await getExchangeRate("RSD", to.code);
+                const data2 = await getExchangeRate("RSD", from.code);
+                rateX = data1.rate / data2.rate;
+                setRate(rateX);
+            }
+
             if(!initRate) setInitRate(true);
-            return data.rate;
+
+            return rateX;
         } catch (error) {
             showErrorToast({error, defaultMessage:"Error fetching exchange rate."})
         }
@@ -119,7 +137,7 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
 
         setCurrency2(selectedCurrency);
         const newRate = await updateExchangeRate(currency1, selectedCurrency);
-
+        console.log(newRate);
         // Recalculate amount1 based on new rate
         setAmount1(amount2 * newRate);
     }
