@@ -197,7 +197,7 @@ const PlanSelect: React.FC<PlanSelectProps> = ({ plan, handlePlanChange, ownersh
                     setSelectedPlanId(selectedPlan.id);
                 }
             }}>
-                <SelectTrigger className="w-full p-3 bg-[var(--card)] text-white border border-[var(--border)] rounded-lg">
+                <SelectTrigger data-cy="plan-select" className="w-full p-3 bg-[var(--card)] text-white border border-[var(--border)] rounded-lg">
                     <SelectValue>{defaultPlan || "Izaberi plan"}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>

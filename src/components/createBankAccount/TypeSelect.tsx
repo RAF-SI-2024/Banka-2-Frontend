@@ -15,10 +15,10 @@ const TypeSelect = ({ type, setType, accountTypes }: TypeSelectProps) => {
 
     return (
         <div className="flex flex-col space-y-1 w-full">
-            <Select value={type} onValueChange={(value) => {
+            <Select value={type}  onValueChange={(value) => {
                     setType(value);
                 }}>
-                <SelectTrigger className="w-full p-3 bg-[var(--card)] text-white border border-[var(--border)] rounded-lg">
+                <SelectTrigger data-cy="account-type-select" className="w-full p-3 bg-[var(--card)] text-white border border-[var(--border)] rounded-lg">
                     <SelectValue placeholder="Izaberi tip" />
                 </SelectTrigger>
                 <SelectContent>
