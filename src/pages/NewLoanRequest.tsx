@@ -1,5 +1,5 @@
 import {Toaster} from "@/components/ui/sonner.tsx";
-import {LoanRequestForm} from "@/components/loanRequest/LoanRequestForm.tsx";
+import {LoanRequestForm} from "@/components/loans/newLoanRequest/LoanRequestForm.tsx";
 import React from "react";
 
 export default function NewLoanRequest() {
