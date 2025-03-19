@@ -14,7 +14,7 @@ export const getCardById = async (id:string) => {
 
 export const changeCardStatusClient = async (id: string, status: boolean) => {
     try {
-        const response = await api.put(`${API_BASE}/cards/${id}/client`, {
+        const response = await api.put(`${API_BASE}/cards/${id}/client/status`, {
             status: status
         });
         return response;
