@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import MoneyInput from "@/components/common/input/MoneyInput.tsx";
 import { getExchangeRate, getAllCurrencies } from "@/api/currency.ts";
 import { Currency } from "@/types/currency.ts";
+import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 
 const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => {
     const [currencies, setCurrencies] = useState<Currency[]>([]);
@@ -37,11 +38,17 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
                     setCurrency2(defaultCurrency2);
                 }
             } catch (error) {
-                console.error("❌ Error fetching currencies:", error);
+                showErrorToast({error, defaultMessage:"Error fetching currencies."})
             }
         };
         fetchCurrencies();
     }, []);
+
+    useEffect(() => {
+        if (currency1 && currency2 && !initRate) {
+            updateExchangeRate(currency1, currency2);
+        }
+    }, [currency1, currency2]);
 
     useEffect(() => {
         if (rate !== 0) {
@@ -49,28 +56,25 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
         }
     }, [initRate]);
 
-    const updateExchangeRate = async (from: Currency, to: Currency) => {
-        if (!from || !to) return;
+    const updateExchangeRate = async (from: Currency, to: Currency): Promise<number> => {
+        if (!from || !to) return 1;
 
         if (from.code === to.code) {
             setRate(1);
-            return;
+            return 1;
         }
 
         try {
             const data = await getExchangeRate(from.code, to.code);
             setRate(data.rate);
             if(!initRate) setInitRate(true);
+            return data.rate;
         } catch (error) {
-            console.error("❌ Error fetching exchange rate:", error);
+            showErrorToast({error, defaultMessage:"Error fetching exchange rate."})
         }
+        return 1;
     };
 
-    useEffect(() => {
-        if (currency1 && currency2) {
-            updateExchangeRate(currency1, currency2);
-        }
-    }, [currency1, currency2]);
 
     function handleAmount1Change(val: string) {
         if (!currency1 || !currency2) return;
@@ -98,10 +102,10 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
         if (!selectedCurrency) return;
 
         setCurrency1(selectedCurrency);
-        await updateExchangeRate(selectedCurrency, currency2);
+        const newRate = await updateExchangeRate(selectedCurrency, currency2);
 
         // Recalculate amount2 based on new rate
-        setAmount2(amount1 * rate);
+        setAmount2(amount1 * newRate);
     }
 
     async function handleCurrency2Change(val: string) {
@@ -112,10 +116,10 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
         if (!selectedCurrency) return;
 
         setCurrency2(selectedCurrency);
-        await updateExchangeRate(currency1, selectedCurrency);
+        const newRate = await updateExchangeRate(currency1, selectedCurrency);
 
         // Recalculate amount1 based on new rate
-        setAmount1(amount2 / rate);
+        setAmount1(amount2 * newRate);
     }
 
 
