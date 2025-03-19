@@ -27,3 +27,13 @@ export const ProtectedEmployee = () => {
     const role = JSON.parse(user).role;
     return role === Role.Employee ? <Outlet/> : <Navigate to="/home" replace/>
 }
+
+
+export const ProtectedClient = () => {
+    const user = sessionStorage.getItem("user");
+    if (user == null)
+        return <Navigate to="/login" replace/>
+
+    const role = JSON.parse(user).role;
+    return role === Role.Client ? <Outlet/> : <Navigate to="/home" replace/>
+}
