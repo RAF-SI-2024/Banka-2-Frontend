@@ -7,9 +7,10 @@ type ButtonVariantType = VariantProps<typeof buttonVariants>["variant"];
 
 interface ThemeSwitchProps {
     variant?: ButtonVariantType;
+    className?: string;
 }
 
-export function ThemeSwitch({ variant = "ghost" }: ThemeSwitchProps) {
+export function ThemeSwitch({ variant = "ghost", className="fixed mr-4"}: ThemeSwitchProps) {
     const { setTheme, theme } = useTheme();
     const [rotating, setRotating] = useState(false);
 
@@ -24,7 +25,7 @@ export function ThemeSwitch({ variant = "ghost" }: ThemeSwitchProps) {
             variant={variant}
             size="icon"
             onClick={handleClick}
-            className={`fixed right-1 transition-transform duration-300 ${rotating ? "rotate-180" : ""}`}
+            className={`${className} right-1 transition-transform duration-300 ${rotating ? "rotate-180" : ""}`}
         >
             <span className="icon-[ph--sun] h-[1.5rem] w-[1.3rem] dark:hidden transition-opacity duration-300" />
             <span className="icon-[ph--moon] hidden h-5 w-5 dark:block transition-opacity duration-300" />
