@@ -73,6 +73,15 @@ export const getGenderString = (gender: Gender) => {
     }
 };
 
+export enum TransactionStatus
+{
+    Invalid = 0,
+    Pending = 1,
+    Canceled = 2,
+    Completed = 3,
+    Failed = 4
+}
+
 export const getInterestRate = (type: number) => {
     switch (type) {
         case 0: 
@@ -84,4 +93,3 @@ export const getInterestRate = (type: number) => {
     
     }
 }
-

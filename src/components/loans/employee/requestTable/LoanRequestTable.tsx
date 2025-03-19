@@ -1,12 +1,12 @@
-import {useState, useEffect, useMemo} from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, UserResponse } from "@/types/user.ts";
 import { getAllUsers } from "@/api/user.ts";
-import { EditUserDialog } from "../../admin/EditUserDialog";
+import { EditUserDialog } from "../../../admin/EditUserDialog";
 import { DataTable } from "@/components/common/datatable/DataTable.tsx";
-import { getCoreRowModel} from "@tanstack/react-table";
+import { getCoreRowModel } from "@tanstack/react-table";
 import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
 import { DataTableViewOptions } from "@/components/common/datatable/DataTableViewOptions";
 import {
@@ -18,9 +18,9 @@ import {
     getFilteredRowModel,
     useReactTable
 } from "@tanstack/react-table";
-import {generateUserColumns} from "@/components/usertable/UserListColumnDef.tsx";
-import { getAllLoans, getAllLoanTypes } from "@/api/loan";
-import { Loan, LoanResponse } from "@/types/loan";
+import { generateUserColumns } from "@/components/usertable/UserListColumnDef.tsx";
+import { getAllLoans, getAllLoanTypes, updateLoanStatus } from "@/api/loan";
+import { Loan, LoanResponse, LoanUpdateRequest } from "@/types/loan";
 import { generateLoanColumns } from "./LoanListColumnDef";
 import { LoanType, LoanTypeResponse } from "@/types/loanType";
 import { showErrorToast } from "@/utils/show-toast-utils";
@@ -40,6 +40,9 @@ export default function LoanRequestTable() {
     // Clear/Filter button clicked
     const [fetchFlag, setFetchFlag] = useState(false);
 
+    // status state
+    const [status, setStatus] = useState<number>(0);
+
     // current loans list
     const [loans, setLoans] = useState<Loan[]>([]);
 
@@ -55,7 +58,7 @@ export default function LoanRequestTable() {
     const [error, setError] = useState<string | null>(null);
 
     // sorting state
-    const [sorting, setSorting] = useState<SortingState>([{id: "creationDate", desc: true}]); // newest first
+    const [sorting, setSorting] = useState<SortingState>([{ id: "creationDate", desc: true }]); // newest first
 
     // visibility state - make some columns invisible by default
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -74,7 +77,7 @@ export default function LoanRequestTable() {
     const fetchAllLoans = async () => {
         let searchParams = { ...search };
         if (search.loanTypeName !== "") {
-            fetchAllLoanTypes();
+            // fetchAllLoanTypes();
             for (let i = 0; i < loanTypes.length; i++) {
                 if (loanTypes[i].name === search.loanTypeName) {
                     searchParams.loanTypeName = loanTypes[i].id;
@@ -94,25 +97,54 @@ export default function LoanRequestTable() {
             setLoans(loansData.items);
             setTotalPages(loansData.totalPages);
             console.log(loansData)
+            return loansData.items; // Return the loans data
         } catch (err) {
             console.log(err);
-            showErrorToast({error, defaultMessage: "Error fetching loans (filters must be written precisely)."});
+            showErrorToast({ error, defaultMessage: "Error fetching loans (filters must be written precisely)." });
+            return [];
         }
     };
 
-    const fetchAllLoanTypes = async () => {
+    const fetchAllLoanTypes = async (currentLoans: Loan[]) => {
         console.log("Fetching loan types...");
         try {
             const loanTypesData: LoanTypeResponse = await getAllLoanTypes(
                 currentPage,
                 pageSize
             );
-            setLoanTypes(loanTypesData.items);
+
+
+            // Only include loan types that exist in the loans table with status 0
+            const existingLoanTypeIds = new Set(currentLoans.map(loan => loan.type.id));
+            
+            console.log("LOANS: ", currentLoans);
+            const filteredLoanTypes = loanTypesData.items.filter(loanType =>
+                existingLoanTypeIds.has(loanType.id)
+            );
+
+            setLoanTypes(filteredLoanTypes);
+
+            // setLoanTypes(loanTypesData.items);
         } catch (err) {
             console.error("Failed to fetch loan types:", err);
             setError("Failed to fetch loan types");
         }
     }
+
+    const handleUpdateLoanStatus = async (loan: Loan, status: number) => {
+        const loanUpdateRequest = {
+            status: status,
+            maturityDate: loan.maturityDate,
+        };
+        try {
+            const response = await updateLoanStatus(loan.id, loanUpdateRequest);
+            setFetchFlag(!fetchFlag); // Fetch loans and loan types again
+        } catch (error) {
+            console.error("Failed to update loan status:", error);
+            showErrorToast({ error, defaultMessage: "Failed to update loan status." });
+        }
+    };
+
 
     // handle search change
     const handleSearchChange = (field: string, value: string) => {
@@ -139,16 +171,16 @@ export default function LoanRequestTable() {
     /* TABLE */
     // generate columns
     const columns = useMemo(() => {
-        // Define handleOpenEditDialog inside useMemo
         const handleApprove = (loan: Loan) => {
-            // TODO: Call API to update loan status to 1 -> WAIT FOR BACKEND
+            handleUpdateLoanStatus(loan, 1);
         }
         const handleReject = (loan: Loan) => {
-            // TODO: Call API to update loan status to 0 -> WAIT FOR BACKEND
+            handleUpdateLoanStatus(loan, -1);
         }
         // Return generated columns
         return generateLoanColumns(handleApprove, handleReject);
-    }, []); // Empty dependency array since handleOpenEditDialog is now inside
+    }, [loanTypes]);
+
 
     // create the table instance with pagination, sorting, and column visibility
     const table = useReactTable({
@@ -188,7 +220,12 @@ export default function LoanRequestTable() {
 
     // fetch loans effect (triggered on currentpage, pagesize or search change
     useEffect(() => {
-        fetchAllLoans();
+        const loadData = async () => {
+            const fetchedLoans = await fetchAllLoans();
+            await fetchAllLoanTypes(fetchedLoans);
+        };
+        
+        loadData();
     }, [currentPage, pageSize, fetchFlag]); // Add dependencies
 
     // display error
@@ -197,7 +234,7 @@ export default function LoanRequestTable() {
     return (
         <div className="p-6 space-y-4">
             <div className="w-full flex flex-row items-baseline">
-            {/* 🔍 Search Filters */}
+                {/* 🔍 Search Filters */}
                 <div className="flex flex-wrap gap-4 items-center">
 
                     <Input
@@ -206,13 +243,25 @@ export default function LoanRequestTable() {
                         onChange={(e) => handleSearchChange("accountNumber", e.target.value)}
                         className="w-58"
                     />
-                    <Input
+                    {/* <Input
                         placeholder="Filter by loan type"
                         value={search.loanTypeName}
                         onChange={(e) => handleSearchChange("loanTypeName", e.target.value)}
                         className="w-58"
-                    />
-                    
+                    /> */}
+                    <Select onValueChange={(value) => handleSearchChange("loanTypeName", value)} value={search.loanTypeName}>
+                        <SelectTrigger className="w-42">
+                            <SelectValue placeholder="Filter by loan type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {loanTypes.map((loanType) => (
+                                <SelectItem key={loanType.id} value={loanType.id}>
+                                    {loanType.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
                     <div className="flex items-center space-x-2">
                         <Button onClick={handleFilter} variant="primary">
                             <span className="icon-[ph--funnel]" />

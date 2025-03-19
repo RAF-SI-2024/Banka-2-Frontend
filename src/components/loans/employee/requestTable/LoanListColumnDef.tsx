@@ -32,12 +32,12 @@ export function generateLoanColumns(handleApprove: (loan: Loan) => void, handleR
                 header: "Account Number",
                 enableHiding: true,
             },
-            // {
-            //     accessorKey: "clientName",
-            //     cell: ({row}) => (row.original.account.client.firstName + " " + row.original.account.client.lastName) || "N/A",
-            //     header: "Client Name",
-            //     enableHiding: true,
-            // },
+            {
+                accessorKey: "clientName",
+                cell: ({row}) => (row.original.account.client.firstName + " " + row.original.account.client.lastName) || "N/A",
+                header: "Client Name",
+                enableHiding: true,
+            },
             {
                 accessorKey: "amount",
                 header: "Amount",

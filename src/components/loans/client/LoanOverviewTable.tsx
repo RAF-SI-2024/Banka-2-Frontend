@@ -1,6 +1,6 @@
-import {useState, useEffect, useMemo} from "react";
+import { useState, useEffect, useMemo } from "react";
 import { DataTable } from "@/components/common/datatable/DataTable.tsx";
-import { getCoreRowModel} from "@tanstack/react-table";
+import { getCoreRowModel } from "@tanstack/react-table";
 import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
 import { DataTableViewOptions } from "@/components/common/datatable/DataTableViewOptions";
 import {
@@ -12,23 +12,25 @@ import {
     getFilteredRowModel,
     useReactTable
 } from "@tanstack/react-table";
-import {generateTransactionColumns} from "@/components/bank-account/TransactionsDataTableColumnDef.tsx";
-import {Transaction, TransactionResponse} from "@/types/transaction.ts";
-import {BankAccount} from "@/types/bankAccount.ts";
-import {getAccountTransactions, getAllTransactions} from "@/api/bankAccount.ts";
+import { Loan, LoanResponse } from "@/types/loan";
+import { showErrorToast } from "@/utils/show-toast-utils";
+import { generateLoanOverviewColumns } from "./LoanOverviewListColumnDef";
+import { getLoansByClientId } from "@/api/loan";
+import { useNavigate } from "react-router-dom";
+// import { generateAllLoanColumns } from "./AllLoanListColumnDef";
 
-interface TransactionsDataTableProps {
-    account: BankAccount | null;
-    // Id transactionType = 0 show all transactions, if its 1 show exchange/transfer
-    transactionType: number;
-}
+// Postoji filter po vrsti kredita i broju računa
+export default function LoanOverviewTable() {
 
-export default function TransactionsDataTable({account, transactionType}: TransactionsDataTableProps) {
+    // navigate
+    const navigate = useNavigate();
+
     /* STATES */
-    // edit
+    // Clear/Filter button clicked
+    const [fetchFlag, setFetchFlag] = useState(false);
 
-    // current transaction list
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    // current loans list
+    const [loans, setLoans] = useState<Loan[]>([]);
 
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -39,84 +41,52 @@ export default function TransactionsDataTable({account, transactionType}: Transa
     const [error, setError] = useState<string | null>(null);
 
     // sorting state
-    const [sorting, setSorting] = useState<SortingState>([]);
+    const [sorting, setSorting] = useState<SortingState>([]); 
 
     // visibility state - make some columns invisible by default
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-        id: false,
-        dateOfBirth: false,
-        uniqueIdentificationNumber: false,
-        gender: false,
-        phoneNumber: false,
-        address: false,
-        department: false
+        id: false
     });
 
     // column filters
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-
-    // fetch users effect (triggered on currentpage, pagesize or search change
-    useEffect(() => {
-        // account is null when we open overview page, account has a value if we open account component
-        if (account === null) {
-            fetchAllTransactions();
-        } else {
-            fetchAccountTransactions();
-        }
-    }, [currentPage, pageSize]); // Add dependencies
-
-    // If the data table is used in the overview page
-    const fetchAllTransactions = async () => {
-        console.log("Fetching transactions");
+    /* FUNCTIONS */
+    // fetch all loans by client id
+    const fetchLoansByClientId = async (clientId : string) => {
         setError(null);
         try {
-            const transactionsData: TransactionResponse = await getAllTransactions(
+            const loansData: LoanResponse = await getLoansByClientId(
                 currentPage,
                 pageSize,
-                transactionType
+                clientId
             );
-            setTransactions(transactionsData.items);
-            setTotalPages(transactionsData.totalPages);
-            console.log(transactionsData)
+            setLoans(loansData.items);
+            setTotalPages(loansData.totalPages);
         } catch (err) {
             console.log(err);
-            setError("Failed to fetch transactions");
+            showErrorToast({ error, defaultMessage: "Error fetching loans by client id." });
         }
-    };
+    }
 
-    // If the data table is used in the account component
-    const fetchAccountTransactions = async () => {
-        console.log("Fetching transactions");
-        setError(null);
-        try {
-            const transactionsData: TransactionResponse = await getAccountTransactions(
-                currentPage,
-                pageSize,
-                transactionType,
-                account?.id,
-            );
-            setTransactions(transactionsData.items);
-            setTotalPages(transactionsData.totalPages);
-            console.log(transactionsData)
 
-        } catch (err) {
-            console.log(err);
-            setError("Failed to fetch transactions");
-        }
-    };
 
     /* TABLE */
     // generate columns
     const columns = useMemo(() => {
-        if(account != null)
-            return generateTransactionColumns();
-        else return []
+        const handleDetail = (loan: Loan) => {
+            console.log("Detail clicked", loan);
+            // route to loan detail page
+            navigate(`/loan/overview/${loan.id}`);
+        }
+
+        // Return generated columns
+        return generateLoanOverviewColumns(handleDetail);
     }, []); // Empty dependency array since handleOpenEditDialog is now inside
 
     // create the table instance with pagination, sorting, and column visibility
     const table = useReactTable({
-        data: transactions,
+        data: loans,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -150,20 +120,32 @@ export default function TransactionsDataTable({account, transactionType}: Transa
         pageCount: totalPages,
     });
 
+    // fetch loans effect (triggered on currentpage, pagesize or search change
+    useEffect(() => {
+        // get client id from session storage
+        const clientId = JSON.parse(sessionStorage.user).id;
+        if(clientId == null){
+            showErrorToast({defaultTitle: "Error", defaultMessage: "Client id is missing from session storage"});
+        }
+        fetchLoansByClientId(clientId);
+    }, [currentPage, pageSize, fetchFlag]); // Add dependencies
 
     // display error
     if (error) return <h1 className="text-center text-2xl font-semibold text-destructive">{error}</h1>;
 
     return (
-        <div className="m-2 space-y-4">
+        <div className="p-6 space-y-4">
             <div className="w-full flex flex-row items-baseline">
                 {/* 🔍 Search Filters */}
+                <div className="flex flex-wrap gap-4 items-center">
+
+                </div>
                 <div className="flex ml-auto">
                     <DataTableViewOptions table={table} />
                 </div>
             </div>
 
-            {/* 📋 Transactions Table */}
+            {/* 📋 Loans Table */}
 
             <DataTable
                 key={`${currentPage}-${pageSize}`} // Re-render on pagination changes
@@ -173,6 +155,7 @@ export default function TransactionsDataTable({account, transactionType}: Transa
 
             {/* Pagination Controls */}
             <DataTablePagination table={table} />
+
         </div>
     );
 }

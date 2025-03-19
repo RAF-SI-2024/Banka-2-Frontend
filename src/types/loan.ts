@@ -27,6 +27,13 @@ export interface LoanResponse{
     totalPages: number;
 }
 
+
+export interface LoanUpdateRequest{
+    status: number;
+    maturityDate: Date,
+}
+
+
 export interface LoanCreateRequest{
     typeId: string,
     accountId: string,
