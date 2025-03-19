@@ -117,19 +117,20 @@ export const getAllAccountsClient = async (clientId: string) => {
 export const getAllTransactions = async (
     pageNumber: number,
     pageSize: number,
-
+    transactionType: number,
 ): Promise<TransactionResponse> => {
     try {
         const response = await api.get(`${API_BASE}/transactions`, {
                 params: {
                     Page: pageNumber,
                     Size: pageSize,
+                    Type: transactionType
                 },
             }
         );
         return response.data;
     } catch (error) {
-        console.error("❌ Failed to get bank accounts for client:", error);
+        console.error("❌ Failed to get all transactions:", error);
         throw error;
     }
 }
@@ -137,7 +138,7 @@ export const getAllTransactions = async (
 export const getAccountTransactions = async (
     pageNumber: number,
     pageSize: number,
-
+    transactionType: number,
     // account moze biti undefined
     account: string | undefined
 ): Promise<TransactionResponse> => {
@@ -146,12 +147,23 @@ export const getAccountTransactions = async (
                 params: {
                     Page: pageNumber,
                     Size: pageSize,
+                    Type: transactionType
                 },
             }
         );
         return response.data;
     } catch (error) {
-        console.error("❌ Failed to get bank accounts for client:", error);
+        console.error("❌ Failed to get all transactions for your bank account:", error);
+        throw error;
+    }
+}
+
+export const getNewTransactions = async (): Promise<TransactionResponse> => {
+    try {
+        const response = await api.get(`${API_BASE}/transactions/new`);
+        return response.data;
+    } catch (error) {
+        console.error("❌ Failed to get recent transactions:", error);
         throw error;
     }
 }

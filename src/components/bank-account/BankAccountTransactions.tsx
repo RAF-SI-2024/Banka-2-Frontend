@@ -23,17 +23,17 @@ const BankAccountTransactionsCard = ({ account, cardTitle, className, ...props }
                         Transactions
                        </TabsTrigger>
                     <TabsTrigger value="exchange">
-                        Exchange
+                        Transfers/Exchanges
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="transactions">
                     <Card className="rounded-md font-paragraph" >
-                        <TransactionsDataTable account={account}/>
+                        <TransactionsDataTable account={account} transactionType={0}/>
                     </Card>
                 </TabsContent>
                 <TabsContent value="exchange">
                     <Card className="rounded-md font-paragraph" >
-                        <TransactionsDataTable account={account}/>
+                        <TransactionsDataTable account={account} transactionType={1}/>
                     </Card>
                 </TabsContent>
             </Tabs>

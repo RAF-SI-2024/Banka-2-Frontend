@@ -3,7 +3,7 @@ import {Currency} from "@/types/currency.ts";
 import {TransactionStatus} from "@/types/enums.ts";
 
 export interface Transaction {
-    id: string,
+    id: number,
     fromAccount: BankAccount,
     toAccount: BankAccount,
     currencyFrom: Currency,

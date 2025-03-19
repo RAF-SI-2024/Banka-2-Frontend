@@ -19,9 +19,11 @@ import {getAccountTransactions, getAllTransactions} from "@/api/bankAccount.ts";
 
 interface TransactionsDataTableProps {
     account: BankAccount | null;
+    // Id transactionType = 0 show all transactions, if its 1 show exchange/transfer
+    transactionType: number;
 }
 
-export default function TransactionsDataTable({account}: TransactionsDataTableProps) {
+export default function TransactionsDataTable({account, transactionType}: TransactionsDataTableProps) {
     /* STATES */
     // edit
 
@@ -72,6 +74,7 @@ export default function TransactionsDataTable({account}: TransactionsDataTablePr
             const transactionsData: TransactionResponse = await getAllTransactions(
                 currentPage,
                 pageSize,
+                transactionType
             );
             setTransactions(transactionsData.items);
             setTotalPages(transactionsData.totalPages);
@@ -90,7 +93,8 @@ export default function TransactionsDataTable({account}: TransactionsDataTablePr
             const transactionsData: TransactionResponse = await getAccountTransactions(
                 currentPage,
                 pageSize,
-                account?.id
+                transactionType,
+                account?.id,
             );
             setTransactions(transactionsData.items);
             setTotalPages(transactionsData.totalPages);
