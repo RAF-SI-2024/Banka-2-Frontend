@@ -116,3 +116,16 @@ export const getAllAccountsClient = async (clientId: string, page?:number, size?
         throw error;
     }
 }
+
+export const fetchAccountByNumber = async (number: string) => {
+    return api.get(`/accounts`, {
+        params: { number },
+    });
+};
+
+export const addTransactionTemplate = (payload: {
+    name: string;
+    accountNumber: string;
+}) => {
+    return api.post("/transactions/templates", payload);
+};
