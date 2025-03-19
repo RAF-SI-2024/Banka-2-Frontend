@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import ComponentShowcasePage from "@/pages/ComponentShowcase";
 import ResetPassReqPage from "@/pages/ResetPassRequest.tsx";
 import ResetPassPage from "@/pages/ResetPassword.tsx";
 import ResetPasswordNotificationPage from "@/pages/ResetPassNotification";
@@ -43,7 +42,7 @@ export const AppRoutes = () => {
                     <Route element={<ProtectedClient />}>
                         <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
                         <Route path="/card/:cardId" element={<CardDetailsPage />} />
-                        <Route path="/payments/transfers" element={<TransfersPage />}/>
+                        <Route path="/payments/transfer" element={<TransfersPage />}/>
                         <Route path="/payments/new" element={<NewPaymentPage />} />    
                         <Route path="/loan/new" element={<NewLoanRequest />} />
                         <Route path="/loan/overview" element={<LoanOverviewList />} />
@@ -68,6 +67,9 @@ export const AppRoutes = () => {
                     <Route path="/resetNotification" element={<ResetPasswordNotificationPage />} />
                 </Route>
             </Route>
+
+            {/* Catch-all route for non-existing paths */}
+            <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
     )
 }
