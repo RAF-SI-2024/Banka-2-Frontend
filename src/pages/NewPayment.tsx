@@ -35,7 +35,7 @@ export const paymentSchema = z.object({
             return Number(val);
         },
         z.number()
-            .min(1000, "Amount is too small")
+            .min(10, "Amount is too small")
             .max(500000000, "Amount is too big")
     ),
     referenceNumber: z

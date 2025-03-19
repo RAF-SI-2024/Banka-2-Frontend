@@ -1,4 +1,4 @@
-import {useForm, useWatch} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
@@ -9,24 +9,33 @@ import React, {useContext, useEffect, useState} from "react";
 import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 import {getAccountById, getAllAccounts} from "@/api/bankAccount.ts";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
-import {createTransaction, getTransactionCodes} from "@/api/transactions.ts";
+import {createTransaction} from "@/api/transactions.ts";
 import {AuthContext} from "@/context/AuthContext.tsx";
 import MoneyInput from "@/components/common/input/MoneyInput.tsx";
-import {getAllCurrencies, getCurrencyById} from "@/api/currency.ts";
+import {getCurrencyById} from "@/api/currency.ts";
+import {BankAccount} from "@/types/bankAccount.ts";
 
 const formSchema = z.object({
-    bankAccount: z.string().min(8, "Account must have at least 8 digits"),
-    recipientAccount: z.string().min(8, "Receiver account must have at least 8 digits"),
-    amount: z.coerce
-        .string()
-        .refine((val) => parseFloat(val.replace(",", ".")) > 0, {
-            message: "Amount must be greater than 0",
-        }),
-    purpose: z.coerce.string(),
+    bankAccount: z.string().min(18, "Account must have at least 18 digits"),
+    recipientAccount: z.string().min(18, "Receiver account must have at least 18 digits"),
+    amount: z.preprocess(
+        (val) => {
+            if (typeof val === "string") {
+                if (val.length === 0) return 0;
+                return parseFloat(val.replace(/\./g, "").replace(",", "."));
+            }
+            return Number(val);
+        },
+        z.number()
+            .min(10, "Amount is too small")
+            .max(500000000, "Amount is too big")
+    ),
+    purpose: z.coerce.string().min(1, "Payment purpose is required."),
 });
 
 export default function TransfersPage() {
     const form = useForm({
+        mode: "onChange",
         resolver: zodResolver(formSchema),
         defaultValues: {
             bankAccount: "",
@@ -36,7 +45,7 @@ export default function TransfersPage() {
         },
     });
 
-    const [userAccounts, setUserAccounts] = useState([]);
+    const [userAccounts, setUserAccounts] = useState<BankAccount[]>([]);
     const context = useContext(AuthContext);
     const [accountCurrency, setAccountCurrency] = useState("")
 
@@ -79,13 +88,15 @@ export default function TransfersPage() {
 
             const response = await getAccountById(senderAccountId);
             if(response.status!==200){
-                throw new Error("Invalid Sender Account");
+                showErrorToast({ error: new Error("Invalid Sender Account"), defaultMessage: "Invalid Sender Account" });
+                return;
             }
             const senderAccount = response.data
             const senderAccountCurrencyId = senderAccount.currency.id
             const response2 = await getAccountById(receiverAccountId);
             if(response2.status!=200){
-                throw new Error("Invalid Receiver Account");
+                showErrorToast({ error: new Error("Invalid Receiver Account"), defaultMessage: "Invalid Receiver Account" });
+                return;
             }
             const receiverAccount = response2.data
             const receiverAccountCurrencyId = receiverAccount.currency.id
@@ -98,7 +109,7 @@ export default function TransfersPage() {
                 fromCurrencyId: senderAccountCurrencyId,
                 toAccountNumber: receiverAccountNumber,
                 toCurrencyId: receiverAccountCurrencyId,
-                amount: Number(values.amount.replace(",",".")),
+                amount: Number(values.amount.toString().replace(",", ".")),
                 codeId: transactionCode,
                 referenceNumber: referenceNumber,
                 purpose: values.purpose,
@@ -135,7 +146,7 @@ export default function TransfersPage() {
                                             <SelectValue placeholder="Choose account" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {userAccounts.map((account) => (
+                                            {userAccounts.map((account: BankAccount) => (
                                                 <SelectItem key={account.id} value={account.id}>
                                                     {account.accountNumber}
                                                 </SelectItem>
@@ -162,8 +173,8 @@ export default function TransfersPage() {
                                         </SelectTrigger>
                                         <SelectContent>
                                             {userAccounts
-                                                .filter((account) => account.id !== form.watch("bankAccount"))
-                                                .map((account) => (
+                                                .filter((account: BankAccount) => account.id !== form.watch("bankAccount"))
+                                                .map((account: BankAccount) => (
                                                     <SelectItem key={account.id} value={account.id}>
                                                         {account.accountNumber}
                                                     </SelectItem>
