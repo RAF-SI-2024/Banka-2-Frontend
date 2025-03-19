@@ -27,6 +27,13 @@ export enum LoanStatus {
     Default
 }
 
+export enum InstallmentStatus {
+    Panding,
+    Payed,
+    Overdue,
+    Cancelled
+}
+
 
 export const getRoleNumber = (roleName: string): number => {
     switch (roleName.toLowerCase()) {
