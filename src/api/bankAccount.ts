@@ -1,6 +1,7 @@
 import api from "./axios"
 import {AccountResponse, AccountUpdateClientRequest, CreateBankAccountRequest} from "@/types/bankAccount"
 import {API_BASE} from "@/constants/endpoints.ts";
+import {Transaction, TransactionResponse} from "@/types/transaction.ts";
 
 
 export const getAccountById = async (id:string) => {
@@ -106,6 +107,49 @@ export const getAllAccountsClient = async (clientId: string) => {
     try {
         const response = await api.get(`${API_BASE}/clients/${clientId}/accounts`);
         return response;
+    } catch (error) {
+        console.error("❌ Failed to get bank accounts for client:", error);
+        throw error;
+    }
+}
+
+
+export const getAllTransactions = async (
+    pageNumber: number,
+    pageSize: number,
+
+): Promise<TransactionResponse> => {
+    try {
+        const response = await api.get(`${API_BASE}/transactions`, {
+                params: {
+                    Page: pageNumber,
+                    Size: pageSize,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("❌ Failed to get bank accounts for client:", error);
+        throw error;
+    }
+}
+
+export const getAccountTransactions = async (
+    pageNumber: number,
+    pageSize: number,
+
+    // account moze biti undefined
+    account: string | undefined
+): Promise<TransactionResponse> => {
+    try {
+        const response = await api.get(`${API_BASE}/accounts/${account}/transactions`, {
+                params: {
+                    Page: pageNumber,
+                    Size: pageSize,
+                },
+            }
+        );
+        return response.data;
     } catch (error) {
         console.error("❌ Failed to get bank accounts for client:", error);
         throw error;

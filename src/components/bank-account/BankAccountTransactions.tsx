@@ -6,15 +6,15 @@ import {BankAccount} from "@/types/bankAccount.ts";
 
 
 interface BankAccountTransactionProps extends React.ComponentProps<"div">{
-    account: BankAccount;
+    account: BankAccount | null;
+    cardTitle: string;
 }
 
-
-const BankAccountTransactionsCard = ({ account, className, ...props }:BankAccountTransactionProps) => {
+const BankAccountTransactionsCard = ({ account, cardTitle, className, ...props }:BankAccountTransactionProps) => {
     return (
         <Card className={cn("border-0 content-center", className)} {...props}>
             <CardHeader className="pb-2">
-                <CardTitle className="font-heading text-2xl">Recent transactions</CardTitle>
+                <CardTitle className="font-heading text-2xl"> {cardTitle} </CardTitle>
             </CardHeader>
             <CardContent>
             <Tabs defaultValue="transactions">

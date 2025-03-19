@@ -14,6 +14,7 @@ import {
 import BankAccountPage from "@/pages/BankAccount.tsx";
 import RoleBasedHomePage from "@/pages/RoleBasedHome.tsx";
 import CardDetailsPage from "@/pages/BankCard.tsx";
+import TransactionsOverviewPage from "@/pages/TransactionsOverview.tsx";
 
 export const AppRoutes = () => {
     return (
@@ -25,6 +26,9 @@ export const AppRoutes = () => {
 
                     <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
+
+                    <Route path="/payments/overview" element={<TransactionsOverviewPage />} />
+
                     <Route path="/card/:cardId" element={<CardDetailsPage />} />
                 </Route>
             </Route>
