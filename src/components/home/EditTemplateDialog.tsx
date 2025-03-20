@@ -16,7 +16,7 @@ const templateSchema = z.object({
     name: z.string()
         .min(1, "Name is mandatory.")
         .max(32, "Name can't have more than 32 characters.")
-        .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Name can only have letters and spaces."),
+        .regex(/^[A-Za-zčČćĆžŽšŠđĐ]+( [0-9A-Za-zčČćĆžŽšŠđĐ]+)*$/, "Name can contain letters, numbers, and spaces (but spaces must be between words)."),
     accountNumber: z.string()
         .length(18, "Account number must be exactly 18 characters long.")
         .regex(/^\d{18}$/, "Account number must contain only numbers.")
