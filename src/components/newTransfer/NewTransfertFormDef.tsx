@@ -12,8 +12,7 @@ export const newTransferFormSchema = z.object({
             return Number(val);
         },
         z.number()
-            .min(10, "Amount is too small")
-            .max(500000000, "Amount is too big")
+            .gt(0, "Amount is too small")
     ),
-    purpose: z.coerce.string().min(1, "Payment purpose is required."),
+    purpose: z.coerce.string().min(1, "Payment purpose is required.").max(1024, "Purpose must be less than 1024 characters."),
 });
