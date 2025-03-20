@@ -1,22 +1,19 @@
-interface FormatProps {
-    amount: number;
-    maximumFractionDigits?: number;
-    minimumSignificantDigits?: number;
-}
-
-
-export const formatNumber = ({amount, maximumFractionDigits=2, minimumSignificantDigits=2}: FormatProps) => {
+export const formatNumber = (amount: number,
+                             minimumFractionDigits=2,
+                             maximumFractionDigits=2) => {
     return new Intl.NumberFormat('sr-RS', {
         style: 'decimal',
+        minimumFractionDigits: minimumFractionDigits,
         maximumFractionDigits: maximumFractionDigits,
-        minimumSignificantDigits: minimumSignificantDigits,
     }).format(amount);
 }
 
-export const formatPercentage = ({amount, maximumFractionDigits=2, minimumSignificantDigits=2}: FormatProps) => {
+export const formatPercentage = (amount:number,
+                                 minimumFractionDigits=2,
+                                 maximumFractionDigits=2) => {
     return new Intl.NumberFormat('sr-RS', {
         style: 'percent',
+        minimumFractionDigits: minimumFractionDigits,
         maximumFractionDigits: maximumFractionDigits,
-        minimumSignificantDigits: minimumSignificantDigits,
     }).format(amount);
 }
