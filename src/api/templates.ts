@@ -25,7 +25,6 @@ export const getTemplates = async () => {
             params: { size: 50 }, // Dodaj parametar za veličinu strane
         });
 
-        console.log("TEMPLATE FULL RESPONSE:", response.data); // Proveri šta se tačno vraća
         return response.data;
     } catch (error) {
         console.error("Greška pri učitavanju templejta:", error);
