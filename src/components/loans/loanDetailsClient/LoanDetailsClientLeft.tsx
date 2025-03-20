@@ -2,7 +2,6 @@ import { Label } from "@/components/ui/label";
 import React from "react";
 import {formatCurrency} from "@/utils/format-currency.ts";
 import {Loan} from "@/types/loan.ts";
-import {formatPercentage} from "@/utils/format-number.ts";
 
 interface DetailsProps extends React.ComponentProps<"div"> {
     loan: Loan;
