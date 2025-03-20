@@ -42,8 +42,8 @@ Cypress.Commands.add("bankAccountCreation", ({type = "Current Account",
                                                  currency = "USD-$",
                                                  cardType = "MasterCard Gold",
                                                  businessName = "BankToo",
-                                                 registrationNumber = 22445567,
-                                                 pib = 222333445,
+                                                 registrationNumber = Math.floor(Math.random() * 100000000),
+                                                 pib = Math.floor(Math.random() * 1000000000),
                                                  activityCode = "11.20",
                                                  address = "Main st 12"}= {}) => {
 

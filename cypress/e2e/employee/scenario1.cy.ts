@@ -22,11 +22,13 @@ describe('Scenario 1 - Register client, create him a bank account, check if his 
     });
 
     it("Check if account is created", () => {
+        cy.wait(2000);
+
         cy.get('input[placeholder="Filter by first name"]').clear().type("Klijent")
         cy.get('input[placeholder="Filter by last name"]').clear().type("Klijentic")
         cy.contains("button", "Filter").click();
 
-        cy.wait(2000);
+        cy.wait(1000);
 
         cy.get('table') // Select the table
             .contains('tr', 'LLC') // Find a row containing 'LLC'
