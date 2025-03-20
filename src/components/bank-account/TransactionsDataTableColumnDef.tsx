@@ -7,7 +7,7 @@ import { TransactionStatus } from "@/types/enums.ts";
 const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     console.log(date)
-    return date.toLocaleString();
+    return date.toLocaleDateString('sr-RS') + " (" + date.toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit'}) + ")"
 };
 
 export function generateTransactionColumns(): ColumnDef<Transaction>[] {
@@ -17,7 +17,7 @@ export function generateTransactionColumns(): ColumnDef<Transaction>[] {
             header: "From Account",
             enableHiding: false,
             cell: ({ row }) => {
-                return row.original.fromAccount.accountNumber;
+                return row.original.fromAccount ? row.original.fromAccount.accountNumber : "/";
             }
         },
         {
@@ -25,7 +25,7 @@ export function generateTransactionColumns(): ColumnDef<Transaction>[] {
             header: "To Account",
             enableHiding: false,
             cell: ({ row }) => {
-                return row.original.fromAccount.accountNumber;
+                return row.original.toAccount || "/";
             }
         },
         {

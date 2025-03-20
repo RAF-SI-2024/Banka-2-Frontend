@@ -3,9 +3,9 @@ import {Currency} from "@/types/currency.ts";
 import {TransactionStatus} from "@/types/enums.ts";
 
 export interface Transaction {
-    id: number,
-    fromAccount: BankAccount,
-    toAccount: BankAccount,
+    id: string,
+    fromAccount: BankAccountSimple | null,
+    toAccount: string | null,
     currencyFrom: Currency,
     currencyTo: Currency,
     fromAmount: number,
@@ -18,7 +18,11 @@ export interface Transaction {
     status: TransactionStatus;
     createdAt: string;
     modifiedAt: string;
+}
 
+export interface BankAccountSimple {
+    id: string,
+    accountNumber: string,
 }
 
 export interface TransactionResponse {
