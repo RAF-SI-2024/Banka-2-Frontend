@@ -1,6 +1,13 @@
 import { LoanTypeResponse } from "@/types/loanType";
 import api from "./axios";
-import {InstallmentResponsePage, Loan, LoanCreateRequest, LoanResponse, LoanUpdateRequest} from "@/types/loan";
+import {
+    InstallmentResponsePage,
+    Loan,
+    LoanByIdResponse,
+    LoanCreateRequest,
+    LoanResponse,
+    LoanUpdateRequest
+} from "@/types/loan";
 
 
 export const getAllLoans = async (
@@ -74,7 +81,7 @@ export const createLoan = async(
 }
 
 
-export const getLoanById = async(loanId: string): Promise<Loan> => {
+export const getLoanById = async(loanId: string): Promise<LoanByIdResponse> => {
     try{
         const response = await api.get(`/loans/${loanId}`);
 
