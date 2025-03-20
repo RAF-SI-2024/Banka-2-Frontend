@@ -1,7 +1,7 @@
 import { BankAccount } from "./bankAccount";
 import { Currency } from "./currency";
 import { LoanType } from "./loanType";
-import {InstallmentStatus} from "@/types/enums.ts";
+import {InstallmentStatus, InterestType, LoanStatus} from "@/types/enums.ts";
 
 export interface Loan{
     id: string,
@@ -72,4 +72,22 @@ export interface InstallmentRequest{
     expectedDueDate: Date,
     actualDueDate: Date,
     status: InstallmentStatus,
+}
+
+
+export interface LoanByIdResponse{
+    id: string,
+    type: LoanType,
+    account: BankAccount,
+    amount: number,
+    period: number,
+    creationDate: Date,
+    maturityDate: Date,
+    currency: Currency,
+    status: LoanStatus,
+    interestType: InterestType,
+    createdAt: Date,
+    modifiedAt: Date,
+    nominalInstallmentRate: number,
+    remainingAmount: number,
 }

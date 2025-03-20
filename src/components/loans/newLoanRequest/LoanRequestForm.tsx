@@ -18,9 +18,10 @@ import {getAllAccountsClient} from "@/api/bankAccount.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
 import {createLoan, getAllLoanTypes} from "@/api/loan.ts";
 import {LoanType} from "@/types/loanType.ts";
-import {showErrorToast} from "@/utils/show-toast-utils.tsx";
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 import {LoanCreateRequest} from "@/types/loan.ts";
 import {InterestType} from "@/types/enums.ts";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -39,6 +40,7 @@ export function LoanRequestForm() {
 
     const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
     const [loanTypes, setLoanTypes] = useState<LoanType[]>([]);
+    const navigate = useNavigate();
 
     async function onSubmit(values: z.infer<typeof loanFormSchema>) {
         // Find the bank account with the matching accountId
@@ -59,6 +61,8 @@ export function LoanRequestForm() {
 
             try {
                 const data = await createLoan(payload);
+
+                navigate("/loan/overview");
                 console.log(data);
 
             } catch (error) {
