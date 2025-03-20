@@ -27,7 +27,7 @@ export default function LoanDetailsClientRight ({
                     Nominal interest rate:
                 </Label>
                 <p className="text-xl font-medium">
-                    {formatPercentage({amount: loan.nominalInstallmentRate/100})}
+                    {formatPercentage(loan.nominalInstallmentRate/100, 2, 4)}
                 </p>
             </div>
 
@@ -37,7 +37,7 @@ export default function LoanDetailsClientRight ({
                 </Label>
                 <div className="flex items-center gap-1 group">
                     <p className="text-xl font-medium">
-                        {formatPercentage({amount: lastInstallment ? lastInstallment.interestRate/100: loan.nominalInstallmentRate})}
+                        {formatPercentage(lastInstallment ? lastInstallment.interestRate/100: loan.nominalInstallmentRate, 2, 4)}
                     </p>
                 </div>
             </div>
