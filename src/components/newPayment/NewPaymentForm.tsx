@@ -37,9 +37,10 @@ import {CreateTransactionRequest} from "@/types/transaction.ts";
 import {createTransaction} from "@/api/transactions.ts";
 import {Button} from "@/components/ui/button.tsx";
 import AddRecipientTemplate from "@/components/newPayment/AddRecipientTemplate.tsx";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 export default function NewPaymentForm() {
+    const location = useLocation();
     const form = useForm<z.infer<typeof paymentSchema>>({
         resolver: zodResolver(paymentSchema),
         defaultValues: {
@@ -64,6 +65,7 @@ export default function NewPaymentForm() {
 
 
 
+
     // FETCH DATA
     useEffect(() => {
         const fetchData = async () => {
@@ -78,6 +80,18 @@ export default function NewPaymentForm() {
                 setPaymentCodes(codes);
                 setTemplates(templatesResponse.items);
                 setBankAccounts(bankAccountsResponse.data.items);
+                let defaultBankAccount = null;
+                if (location.state && location.state.accountId) {
+                    defaultBankAccount = bankAccountsResponse.data.items.find(
+                        (f: BankAccount) => f.id === location.state.accountId
+                    );
+
+                    if (defaultBankAccount) {
+                        setSelectedBankAccount(defaultBankAccount);
+                        form.setValue("accountId", defaultBankAccount.id, { shouldValidate: true });
+                    }
+                }
+
 
             } catch (err) {
                 showErrorToast({error: err, defaultMessage: "Failed to fetch data."})
@@ -87,6 +101,7 @@ export default function NewPaymentForm() {
         fetchData();
 
     }, []);
+
 
 
     async function onSubmit (values: z.infer<typeof paymentSchema>) {
@@ -140,6 +155,8 @@ export default function NewPaymentForm() {
         if(isValid)
             setStep("otp");
     }
+
+
 
 
     return (
