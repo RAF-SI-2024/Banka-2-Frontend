@@ -17,8 +17,14 @@ export function generateLoanOverviewColumns(handleDetail: (loan: Loan) => void):
     return(
         [
             {
+                accessorKey: "id",
+                header: "Loan number",
+                enableHiding: true,
+
+            },
+            {
                 accessorKey: "creationDate",
-                header: "Creation Date",
+                header: "Creation date",
                 cell: ({row}) => new Date(row.original.creationDate).toLocaleDateString("sr-RS"),
                 enableHiding: true
             },
@@ -38,24 +44,28 @@ export function generateLoanOverviewColumns(handleDetail: (loan: Loan) => void):
                 accessorKey: "status",
                 header: "Status",
                 cell: ({ row }) => {
-                    let variant: "success" | "default" | "destructive" | "secondary" | "outline" | null | undefined;
+                    let variant: "success" | "destructive" | "warning" | "outline" | null | undefined;
                     let text;
 
                     switch (row.original.status) {
+                        case LoanStatus.Pending:
+                            variant = "warning";
+                            text = "Pending";
+                            break;
                         case LoanStatus.Active:
                             variant = "success";
                             text = "Active";
-                            break;
-                        case LoanStatus.Pending:
-                            variant = "default";
-                            text = "Pending";
                             break;
                         case LoanStatus.Rejected:
                             variant = "destructive";
                             text = "Rejected";
                             break;
+                        case LoanStatus.Closed:
+                            variant = "outline";
+                            text = "Closed";
+                            break;
                         default:
-                            variant = "default";
+                            variant = "outline";
                             text = "Unknown";
                             break;
                     }

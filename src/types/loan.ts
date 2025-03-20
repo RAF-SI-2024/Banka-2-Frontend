@@ -12,10 +12,12 @@ export interface Loan{
     creationDate: Date,
     maturityDate: Date,
     currency: Currency,
-    status: number,
-    interestType: number,
+    status: LoanStatus,
+    interestType: InterestType,
     createdAt: Date,
     modifiedAt: Date,
+    nominalInstallmentRate: number,
+    remainingAmount: number,
 }
 
 
@@ -29,7 +31,7 @@ export interface LoanResponse{
 
 
 export interface LoanUpdateRequest{
-    status: number;
+    status: LoanStatus;
     maturityDate: Date,
 }
 
@@ -40,10 +42,11 @@ export interface LoanCreateRequest{
     amount: number,
     period: number,
     currencyId: string,
-    interestType: number
+    interestType: InterestType
 }
 
 export interface Installment {
+    id: string,
     loan: Loan,
     interestRate: number,
     expectedDueDate: Date,
@@ -51,6 +54,7 @@ export interface Installment {
     status: InstallmentStatus,
     createdAt: Date,
     modifiedAt: Date,
+    amount: number,
 }
 
 export interface InstallmentResponsePage{
@@ -72,22 +76,4 @@ export interface InstallmentRequest{
     expectedDueDate: Date,
     actualDueDate: Date,
     status: InstallmentStatus,
-}
-
-
-export interface LoanByIdResponse{
-    id: string,
-    type: LoanType,
-    account: BankAccount,
-    amount: number,
-    period: number,
-    creationDate: Date,
-    maturityDate: Date,
-    currency: Currency,
-    status: LoanStatus,
-    interestType: InterestType,
-    createdAt: Date,
-    modifiedAt: Date,
-    nominalInstallmentRate: number,
-    remainingAmount: number,
 }

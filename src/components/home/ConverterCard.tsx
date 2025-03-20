@@ -70,6 +70,7 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
             if(from.code == "RSD" || to.code == "RSD"){
                 if(from.code=="RSD"){
                     const data = await getExchangeRate("RSD", to.code);
+                    console.log(to);
                     rateX = data.rate;
                     setRate(rateX);
                 }
@@ -139,7 +140,7 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
         const newRate = await updateExchangeRate(currency1, selectedCurrency);
         console.log(newRate);
         // Recalculate amount1 based on new rate
-        setAmount1(amount2 * newRate);
+        setAmount1(amount2 / newRate);
     }
 
 

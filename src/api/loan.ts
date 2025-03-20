@@ -3,7 +3,6 @@ import api from "./axios";
 import {
     InstallmentResponsePage,
     Loan,
-    LoanByIdResponse,
     LoanCreateRequest,
     LoanResponse,
     LoanUpdateRequest
@@ -81,7 +80,7 @@ export const createLoan = async(
 }
 
 
-export const getLoanById = async(loanId: string): Promise<LoanByIdResponse> => {
+export const getLoanById = async(loanId: string): Promise<Loan> => {
     try{
         const response = await api.get(`/loans/${loanId}`);
 

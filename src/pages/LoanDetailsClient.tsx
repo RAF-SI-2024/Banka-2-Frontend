@@ -2,19 +2,18 @@ import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 import {getLoanById} from "@/api/loan.ts";
-import {LoanByIdResponse} from "@/types/loan.ts";
+import {Loan} from "@/types/loan.ts";
 import {Toaster} from "@/components/ui/sonner.tsx";
-import LoanDetailsClientBankAccountCard from "@/components/loans/loanDetailsClient/LoanDetailsClientLeft.tsx";
 import LoanDetailsClientLoanCard from "@/components/loans/loanDetailsClient/LoanDetailsClientLoan.tsx";
 import InstallmentListCard from "@/components/loans/loanDetailsClient/InstallmentList.tsx";
 
 export default function LoanDetailsClientPage(){
     const { loanId } = useParams<{ loanId: string }>()
     const [error, setError] = useState<string | null>(null);
-    const [loan, setLoan] = useState<LoanByIdResponse>();
+    const [loan, setLoan] = useState<Loan>();
     const navigate = useNavigate();
 
-    const hanleAccountInfoClick = () => {
+    const handleAccountInfoClick = () => {
         if (loan)
             navigate(`/bank-account/${loan.account.id}`)
     }
@@ -63,8 +62,7 @@ export default function LoanDetailsClientPage(){
             <Toaster richColors />
             <h1 className="font-display font-bold text-5xl">{loan.type.name || "An unnamed loan"} overview</h1>
             <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-                <LoanDetailsClientLoanCard loan={loan} handleAccountInfoClick={hanleAccountInfoClick} className="col-span-2"/>
-                {/*<LoanDetailsClientBankAccountCard account={loan.account} handleAccountInfoClick={hanleAccountInfoClick}/>*/}
+                <LoanDetailsClientLoanCard loan={loan} handleAccountInfoClick={handleAccountInfoClick} className="col-span-2"/>
                 <InstallmentListCard loanId={loan.id} className="col-span-2"/>
             </div>
 

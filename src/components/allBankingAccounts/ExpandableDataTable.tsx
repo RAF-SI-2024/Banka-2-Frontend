@@ -92,7 +92,7 @@ export const ExpandableDataTable: React.FC<ExpandableDataTableProps> = ({
                                                         <div>{card.name}</div>
                                                         <div>{formatCurrency(card.limit, cardsByAccount[row.original.id].currency.code)}</div>
                                                         <div>
-                                                            <Badge variant={card.status ? "default" : "destructive"}>
+                                                            <Badge variant={card.status ? "success" : "destructive"}>
                                                                 {card.status ? "Active" : "Blocked"}
                                                             </Badge>
                                                         </div>

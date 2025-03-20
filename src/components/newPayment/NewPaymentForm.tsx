@@ -107,7 +107,7 @@ export default function NewPaymentForm() {
     async function onSubmit (values: z.infer<typeof paymentSchema>) {
         try {
             const toAcc = values.recipientAccount.trim().substring(7,16);
-            const matchingCode = paymentCodes.find((c) => c.code === values.paymentCode || "289");
+            const matchingCode = paymentCodes.find((c) => c.code === values.paymentCode || c.code === "289");
             const toCurrencyId = await fetchRecipientCurrencyCode(toAcc);
             console.log(matchingCode);
             console.log(toCurrencyId);
