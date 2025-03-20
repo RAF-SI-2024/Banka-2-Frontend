@@ -1,10 +1,12 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Transaction } from "@/types/transaction.ts"
-import {formatCurrency} from "@/utils/format-currency.ts";
+import { formatCurrency } from "@/utils/format-currency.ts";
+import { TransactionStatus } from "@/types/enums.ts";
 
 
 const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
+    console.log(date)
     return date.toLocaleString();
 };
 
@@ -38,7 +40,7 @@ export function generateTransactionColumns(): ColumnDef<Transaction>[] {
             accessorKey: "purpose",
             header: "Purpose",
         },
-        {
+        /*{
             accessorKey: "fromAmount",
             header: "From Amount",
             enableHiding: true,
@@ -61,10 +63,24 @@ export function generateTransactionColumns(): ColumnDef<Transaction>[] {
                     </span>
                 );
             }
+        },*/
+        {
+            header: "Amount",
+            enableHiding: true,
+            cell: ({ row }) => {
+                const amountDifference = row.original.fromAmount - row.original.toAmount;
+                const currencyCode = row.original.currencyFrom.code;
+                return (
+                    <span className={amountDifference < 0 ? "text-destructive" : "text-success"}>
+                        {formatCurrency(amountDifference, currencyCode)}
+                    </span>
+                );
+            }
         },
         {
             accessorKey: "status",
             header: "Status",
+            cell: ({ row }) => TransactionStatus[row.original.status],
         },
     ];
 }
