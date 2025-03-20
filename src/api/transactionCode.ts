@@ -1,5 +1,4 @@
 import api from "@/api/axios";
-import {AccountCurrency} from "@/components/newPayment/PayerAccountSelect.tsx";
 
 export interface RawPaymentCode {
     id: string;

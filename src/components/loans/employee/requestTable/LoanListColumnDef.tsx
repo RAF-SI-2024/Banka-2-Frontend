@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import {User} from "@/types/user.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 import UserDropdownMenu from "@/components/usertable/UserDropdownMenu.tsx";
-import {getGenderString, getInterestRate, getRoleString} from "@/types/enums.ts";
+import {getGenderString, getInterestRate, getRoleString, LoanStatus} from "@/types/enums.ts";
 import { Loan } from "@/types/loan";
 import LoanDropdownMenu from "./LoanDropdownMenu";
 
@@ -69,28 +69,28 @@ export function generateLoanColumns(handleApprove: (loan: Loan) => void, handleR
                 accessorKey: "status",
                 header: "Status",
                 cell: ({ row }) => {
-                    let variant: "success" | "default" | "destructive" | "secondary" | "outline" | null | undefined;
+                    let variant: "success" | "destructive" | "warning" | "outline" | null | undefined;
                     let text;
-    
+
                     switch (row.original.status) {
-                        case 1:
+                        case LoanStatus.Active:
                             variant = "success";
-                            text = "Approved";
+                            text = "Active";
                             break;
-                        case 0:
-                            variant = "default";
+                        case LoanStatus.Pending:
+                            variant = "warning";
                             text = "Pending";
                             break;
-                        case -1:
+                        case LoanStatus.Rejected:
                             variant = "destructive";
                             text = "Rejected";
                             break;
                         default:
-                            variant = "default";
+                            variant = "outline";
                             text = "Unknown";
                             break;
                     }
-    
+
                     return <Badge variant={variant}>{text}</Badge>;
                 },
                 enableHiding: true,

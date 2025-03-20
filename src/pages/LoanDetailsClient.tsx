@@ -2,16 +2,15 @@ import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 import {getLoanById} from "@/api/loan.ts";
-import {LoanByIdResponse} from "@/types/loan.ts";
+import {Loan} from "@/types/loan.ts";
 import {Toaster} from "@/components/ui/sonner.tsx";
-import LoanDetailsClientBankAccountCard from "@/components/loans/loanDetailsClient/LoanDetailsClientLeft.tsx";
 import LoanDetailsClientLoanCard from "@/components/loans/loanDetailsClient/LoanDetailsClientLoan.tsx";
 import InstallmentListCard from "@/components/loans/loanDetailsClient/InstallmentList.tsx";
 
 export default function LoanDetailsClientPage(){
     const { loanId } = useParams<{ loanId: string }>()
     const [error, setError] = useState<string | null>(null);
-    const [loan, setLoan] = useState<LoanByIdResponse>();
+    const [loan, setLoan] = useState<Loan>();
     const navigate = useNavigate();
 
     const hanleAccountInfoClick = () => {

@@ -38,7 +38,7 @@ export function generateLoanOverviewColumns(handleDetail: (loan: Loan) => void):
                 accessorKey: "status",
                 header: "Status",
                 cell: ({ row }) => {
-                    let variant: "success" | "default" | "destructive" | "secondary" | "outline" | null | undefined;
+                    let variant: "success" | "destructive" | "warning" | "outline" | null | undefined;
                     let text;
 
                     switch (row.original.status) {
@@ -47,7 +47,7 @@ export function generateLoanOverviewColumns(handleDetail: (loan: Loan) => void):
                             text = "Active";
                             break;
                         case LoanStatus.Pending:
-                            variant = "default";
+                            variant = "warning";
                             text = "Pending";
                             break;
                         case LoanStatus.Rejected:
@@ -55,7 +55,7 @@ export function generateLoanOverviewColumns(handleDetail: (loan: Loan) => void):
                             text = "Rejected";
                             break;
                         default:
-                            variant = "default";
+                            variant = "outline";
                             text = "Unknown";
                             break;
                     }

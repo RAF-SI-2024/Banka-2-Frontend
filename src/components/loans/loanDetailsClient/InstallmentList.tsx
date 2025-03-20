@@ -1,13 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { BankAccount } from "@/types/bankAccount";
-import React, {useEffect, useState} from "react";
-import {formatCurrency} from "@/utils/format-currency.ts";
-import {Button} from "@/components/ui/button.tsx";
-import {showErrorToast} from "@/utils/show-toast-utils.tsx";
-import {getAccountById} from "@/api/bankAccount.ts";
-import {Loan} from "@/types/loan.ts";
+import React from "react";
 import InstallmentTable from "@/components/loans/loanDetailsClient/InstallmentTable.tsx";
 
 interface DetailsProps extends React.ComponentProps<"div"> {

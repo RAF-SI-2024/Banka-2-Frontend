@@ -1,11 +1,10 @@
 import { Label } from "@/components/ui/label";
-import { BankAccount } from "@/types/bankAccount";
 import React from "react";
 import {formatCurrency} from "@/utils/format-currency.ts";
-import {LoanByIdResponse} from "@/types/loan.ts";
+import {Loan} from "@/types/loan.ts";
 
 interface DetailsProps extends React.ComponentProps<"div"> {
-    loan: LoanByIdResponse;
+    loan: Loan;
 }
 
 

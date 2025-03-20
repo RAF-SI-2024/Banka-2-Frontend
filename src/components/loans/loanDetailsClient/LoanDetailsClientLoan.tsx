@@ -7,12 +7,12 @@ import {formatCurrency} from "@/utils/format-currency.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 import {getAccountById} from "@/api/bankAccount.ts";
-import {LoanByIdResponse} from "@/types/loan.ts";
+import {Loan} from "@/types/loan.ts";
 import LoanDetailsClientLeft from "@/components/loans/loanDetailsClient/LoanDetailsClientLeft.tsx";
 import LoanDetailsClientRight from "@/components/loans/loanDetailsClient/LoanDetailsClientRight.tsx";
 
 interface DetailsProps extends React.ComponentProps<"div"> {
-    loan: LoanByIdResponse;
+    loan: Loan;
     handleAccountInfoClick: (account: BankAccount) => void;
 }
 
