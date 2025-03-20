@@ -8,8 +8,8 @@ import {createTransactionTemplate} from "@/api/templates.ts";
 
 interface Props {
     homeNavigate: () => void;
-    recipientAccount: string;
-    existingRecipients: string[];
+    recipientAccount?: string;
+    existingRecipients?: string[];
 }
 
 export default function AddRecipientTemplate({
@@ -22,8 +22,10 @@ export default function AddRecipientTemplate({
     const [templateName, setTemplateName] = useState("");
 
     useEffect(() => {
-        const exists = existingRecipients.includes(recipientAccount);
-        setRecipientExists(exists);
+        if(recipientAccount && existingRecipients){
+            const exists = existingRecipients.includes(recipientAccount);
+            setRecipientExists(exists);
+        }
     }, [recipientAccount, existingRecipients]);
 
     const handleAdd = async () => {
@@ -34,6 +36,9 @@ export default function AddRecipientTemplate({
 
         try {
             setIsAdding(true);
+            if(!recipientAccount)
+                throw new Error("Recipient account not found");
+
             await createTransactionTemplate(templateName.trim(), recipientAccount);
 
             console.log("Recipient added successfully");
@@ -55,7 +60,7 @@ export default function AddRecipientTemplate({
                 Your payment has been verified and processed.
             </p>
 
-            {!recipientExists && (
+            {recipientAccount && !recipientExists && (
                 <div className="space-y-4">
                     <Input
                         placeholder="Enter template name"

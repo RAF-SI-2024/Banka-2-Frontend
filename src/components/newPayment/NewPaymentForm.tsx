@@ -142,7 +142,7 @@ export default function NewPaymentForm() {
     }
 
 
-    return (<>
+    return (
         <Card className={cn("bg-transparent shadow-none border-0 lg:w-2/3 md:w-full sm:w-full")}>
             <CardContent className="mt-8 font-paragraph">
 
@@ -163,6 +163,10 @@ export default function NewPaymentForm() {
                                                         setSelectedBankAccount(account);
 
                                                         field.onChange(value);
+                                                        if (account && account?.availableBalance < amount)
+                                                            setAmountError("Amount exceeds available balance.");
+                                                        else
+                                                            setAmountError(null);
                                                     }}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select a bank account" />
@@ -310,7 +314,12 @@ export default function NewPaymentForm() {
                             </DialogContent>
                         </Dialog>
 
-                        <Dialog open={step === "success"} onOpenChange={(open) => {  !open; setStep("form"); navigate("/home"); }}>
+                        <Dialog open={step === "success"}
+                                onOpenChange={(open) => {
+                                    !open; setStep("form");
+                                    if(selectedBankAccount)
+                                        navigate(`/bank-account/${selectedBankAccount.id}`);
+                        }}>
                             <DialogContent className="min-w-fit">
                                 <DialogHeader>
                                     <DialogTitle></DialogTitle>
@@ -332,7 +341,6 @@ export default function NewPaymentForm() {
                     </form>
                 </Form>
             </CardContent>
-        </Card>
-    </>);
+        </Card>);
 
 }
