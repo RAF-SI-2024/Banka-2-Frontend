@@ -7,8 +7,6 @@ import {Transaction, TransactionResponse} from "@/types/transaction.ts";
 import {getNewTransactions} from "@/api/bankAccount.ts";
 import {formatCurrency} from "@/utils/format-currency.ts";
 
-
-
 const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"div">) => {
 
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -30,9 +28,10 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
             {
                 id: 1,
                 toAccount: { accountNumber: '123456789' },
-                
                 createdAt: '2024-03-05T10:30:00.000Z',
+                fromAmount: 2000,
                 toAmount: 1500.75,
+                currencyFrom: { code: 'USD' },
                 currencyTo: { code: 'USD' },
                 status: 'Completed',
 
@@ -41,7 +40,9 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                 id: 2,
                 toAccount: { accountNumber: '987654321' },
                 createdAt: '2024-03-06T12:00:00.000Z',
+                fromAmount: 500.5,
                 toAmount: 250.5,
+                currencyFrom: { code: 'EUR' },
                 currencyTo: { code: 'EUR' },
                 status: 'Pending',
 
@@ -50,7 +51,9 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                 id: 3,
                 toAccount: { accountNumber: '456789123' },
                 createdAt: '2024-03-07T14:45:00.000Z',
+                fromAmount: 530.5,
                 toAmount: 1000,
+                currencyFrom: { code: 'GBP' },
                 currencyTo: { code: 'GBP' },
                 status: 'Failed',
 
@@ -59,7 +62,9 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                 id: 4,
                 toAccount: { accountNumber: '789123456' },
                 createdAt: '2024-03-08T09:30:00.000Z',
+                fromAmount: 1500,
                 toAmount: 350,
+                currencyFrom: { code: 'EUR' },
                 currencyTo: { code: 'EUR' },
                 status: 'Completed',
             },
@@ -67,7 +72,9 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                 id: 5,
                 toAccount: { accountNumber: '321654987' },
                 createdAt: '2024-03-09T16:00:00.000Z',
+                fromAmount: 1000,
                 toAmount: 1500,
+                currencyFrom: { code: 'USD' },
                 currencyTo: { code: 'USD' },
                 status: 'Pending',
             },
@@ -114,9 +121,9 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                                 <TableCell className="px-6 py-5">
                                     {format(new Date(item.createdAt), "dd MM, yyyy")}
                                 </TableCell>
-
-                                <TableCell className={`font-semibold px-6 py-5`}>
-                                    {formatCurrency(item.toAmount, item.currencyTo.code)}
+                                <TableCell className={`font-semibold px-6 py-5 ${item.fromAmount < item.toAmount ? "text-green-500" : "text-red-500"}`}>
+                                    {item.fromAmount < item.toAmount ? "+" : ""}
+                                    {formatCurrency(Number(item.toAmount) - Number(item.fromAmount), item.currencyTo.code)}
                                 </TableCell>
                                 <TableCell className="px-6 py-5">
                                     {item.status}
