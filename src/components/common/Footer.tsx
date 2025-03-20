@@ -84,8 +84,8 @@ export default function Footer({className, ...props} :
         <footer className={cn("bg-footer p-8 mt-auto", className)} {...props}>
             <nav aria-label="Page navigation" className="grid gap-y-6 gap-x-2 items-center justify-between w-full grid-cols-1">
                 <div className="flex w-full justify-between items-center">
-                <h1 className="font-display text-xl">BankToo</h1>
-                    <ThemeSwitch></ThemeSwitch>
+                    <h1 className="font-display text-xl">BankToo</h1>
+                    <ThemeSwitch className=""></ThemeSwitch>
                 </div>
 
                 {generateFooterContent()}

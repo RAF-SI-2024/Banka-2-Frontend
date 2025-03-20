@@ -5,21 +5,22 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button.tsx";
-import { loanFormSchema } from "@/components/loanRequest/LoanRequestFormDef.tsx";
+import { loanFormSchema } from "@/components/loans/newLoanRequest/LoanRequestFormDef.tsx";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {cn} from "@/lib/utils.ts";
-import {Card, CardContent } from "../ui/card";
-import LoanRequestLoanDetails from "@/components/loanRequest/LoanRequestLoanDetails.tsx";
-import LoanRequestPersonalInfo from "@/components/loanRequest/LoanRequestPersonalInfo.tsx";
+import {Card, CardContent } from "../../ui/card.tsx";
+import LoanRequestLoanDetails from "@/components/loans/newLoanRequest/LoanRequestLoanDetails.tsx";
+import LoanRequestPersonalInfo from "@/components/loans/newLoanRequest/LoanRequestPersonalInfo.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
-import LoanRequestFinancialInformation from "@/components/loanRequest/LoanRequestFinancialInformation.tsx";
+import LoanRequestFinancialInformation from "@/components/loans/newLoanRequest/LoanRequestFinancialInformation.tsx";
 import {getAllAccountsClient} from "@/api/bankAccount.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
 import {createLoan, getAllLoanTypes} from "@/api/loan.ts";
 import {LoanType} from "@/types/loanType.ts";
 import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 import {LoanCreateRequest} from "@/types/loan.ts";
+import {InterestType} from "@/types/enums.ts";
 
 
 
@@ -30,7 +31,7 @@ export function LoanRequestForm() {
         defaultValues: {
             amount: 100000,
             monthlySalary: 0,
-            interestRateType: "0",
+            interestRateType: InterestType.Fixed.toString(),
             employmentPeriod: "0 months",
             phoneNumber: JSON.parse(sessionStorage.user).phoneNumber
         },

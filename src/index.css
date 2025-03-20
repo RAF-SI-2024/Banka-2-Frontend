@@ -53,7 +53,11 @@
 
     --sidebar-accent: hsl(248, 100%, 3%);
 
+    --accent: hsl(248, 100%, 3%);
+
     --sidebar-accent-foreground: hsl(0, 0%, 96%);
+
+    --accent-foreground: hsl(0, 0%, 96%);
 
     --sidebar-border: hsl(236, 7%, 48%);
 
@@ -118,6 +122,9 @@
 
     --success: hsl(121, 90%, 81%);
     --success-foreground: hsl(233, 36%, 9%);
+
+    --accent: hsl(248, 100%, 97%);
+    --accent-foreground: hsl(0, 0%, 4%);
 }
 
 @theme inline {
@@ -196,6 +203,9 @@
 
     --color-success: var(--success);
     --color-success-foreground: var(--success-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
 
 }
 

@@ -40,6 +40,6 @@ export interface CreateTransactionRequest {
     toCurrencyId: string;
     amount: number;
     codeId: string;
-    referenceNumber: string;
+    referenceNumber?: string;
     purpose: string;
 }

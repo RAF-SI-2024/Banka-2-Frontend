@@ -600,16 +600,17 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                                 <div className="flex flex-col gap-2">
                                     <FormLabel>Automatically create a credit card?</FormLabel>
                                     <RadioGroup
+                                        data-cy="card-radio-group"
                                         value={creditCard}
                                         onValueChange={(value) => setCreditCard(value)}
                                         className="flex items-center gap-4 mt-2"
                                     >
                                         <Label className="flex items-center gap-2">
-                                            <RadioGroupItem value="yes" />
+                                            <RadioGroupItem value="yes" data-cy="card-radio-yes"/>
                                             <span>Yes</span>
                                         </Label>
                                         <Label className="flex items-center gap-2">
-                                            <RadioGroupItem value="no" />
+                                            <RadioGroupItem value="no" data-cy="card-radio-no"/>
                                             <span>No</span>
                                         </Label>
                                     </RadioGroup>
@@ -633,7 +634,7 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                                                         }}
                                                         value={field.value || selectedCardId || (cardTypes.length > 0 ? cardTypes[0].id : '')}
                                                         >
-                                                        <SelectTrigger>
+                                                        <SelectTrigger data-cy={`card-type-select`}>
                                                             <SelectValue placeholder="Select Card Type" />
                                                         </SelectTrigger>
                                                         <SelectContent>

@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import BankAccountBalanceCard from "@/components/bank-account/BankAccountBalance.tsx";
 import BankAccountDetailsCard from "@/components/bank-account/BankAccountDetails.tsx";
 import BankAccountTransactions from "@/components/bank-account/BankAccountTransactions.tsx";
@@ -21,6 +21,7 @@ export default function BankAccountPage() {
     const [account, setAccount] = useState<BankAccount>();
     const [cards, setCards] = useState<CardDTO[]>([]);
     const [showDetails, setShowDetails] = React.useState(false)
+    const navigate = useNavigate();
 
     const getAccountInfo = async () => {
         setError(null);
@@ -127,6 +128,7 @@ export default function BankAccountPage() {
                             >
                                 <BankAccountBalanceCard
                                     account={account}
+                                    onSendClick={() => navigate('/payments/new', {state:{accountId: account.id}})}
                                     onDetailsClick={() => setShowDetails(true)}
                                 />
                             </motion.div>
