@@ -70,12 +70,12 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
             if(from.code == "RSD" || to.code == "RSD"){
                 if(from.code=="RSD"){
                     const data = await getExchangeRate("RSD", to.code);
-                    rateX = data.inverseRate;
+                    rateX = data.rate;
                     setRate(rateX);
                 }
                 else {
                     const data = await getExchangeRate("RSD", from.code);
-                    rateX = data.rate;
+                    rateX = data.inverseRate;
                     setRate(rateX);
                 }
             }

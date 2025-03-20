@@ -9,10 +9,10 @@ interface BalanceCardProps extends React.ComponentProps<"div">{
     income?: string,
     expensses?: string,
     onSendClick?: () => void,
-    onRecieveClick?: () => void,
+    onTransferClick?: () => void,
 }
 
-const BalanceCard = ({ balance="0 RSD", income="0 RSD", expensses="0 RSD", onSendClick, onRecieveClick, className, ...props }: BalanceCardProps) => {
+const BalanceCard = ({ balance="0 RSD", income="0 RSD", expensses="0 RSD", onSendClick, onTransferClick, className, ...props }: BalanceCardProps) => {
     return (
         <Card
             className={cn(
@@ -52,7 +52,7 @@ const BalanceCard = ({ balance="0 RSD", income="0 RSD", expensses="0 RSD", onSen
 
                     <div className="flex items-center justify-center lg:justify-start gap-4">
                         <Button variant="primary" size="lg" onClick={onSendClick}>Send</Button>
-                        <Button variant="negative" size="lg" onClick={onRecieveClick}>Receive</Button>
+                        <Button variant="negative" size="lg" onClick={onTransferClick}>Transfer</Button>
                     </div>
                 </div>
             </div>

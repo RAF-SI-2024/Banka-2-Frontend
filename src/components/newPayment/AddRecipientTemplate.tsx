@@ -3,13 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {addTransactionTemplate} from "@/api/bankAccount.ts";
+import {showErrorToast} from "@/utils/show-toast-utils.tsx";
+import {createTransactionTemplate} from "@/api/templates.ts";
 
 interface Props {
+    homeNavigate: () => void;
     recipientAccount: string;
     existingRecipients: string[];
 }
 
 export default function AddRecipientTemplate({
+                                                 homeNavigate,
                                                  recipientAccount,
                                                  existingRecipients
                                              }: Props) {
@@ -30,22 +34,22 @@ export default function AddRecipientTemplate({
 
         try {
             setIsAdding(true);
-            await addTransactionTemplate({
-                name: templateName.trim(),
-                accountNumber: recipientAccount
-            });
+            await createTransactionTemplate(templateName.trim(), recipientAccount);
 
             console.log("Recipient added successfully");
+
+            homeNavigate();
+
             setRecipientExists(true);
         } catch (error) {
-            console.error("Add recipient failed:", error);
+            showErrorToast({error, defaultMessage:"Adding recipient failed."})
         } finally {
             setIsAdding(false);
         }
     };
 
     return (
-        <Card className="text-center p-8 space-y-4">
+        <Card className="text-center p-8 space-y-4 bg-transparent border-none">
             <h2 className="text-2xl font-semibold">Payment Successful!</h2>
             <p className="text-muted-foreground">
                 Your payment has been verified and processed.
