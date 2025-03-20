@@ -37,9 +37,10 @@ import {CreateTransactionRequest} from "@/types/transaction.ts";
 import {createTransaction} from "@/api/transactions.ts";
 import {Button} from "@/components/ui/button.tsx";
 import AddRecipientTemplate from "@/components/newPayment/AddRecipientTemplate.tsx";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 export default function NewPaymentForm() {
+    const location = useLocation();
     const form = useForm<z.infer<typeof paymentSchema>>({
         resolver: zodResolver(paymentSchema),
         defaultValues: {
@@ -64,6 +65,7 @@ export default function NewPaymentForm() {
 
 
 
+
     // FETCH DATA
     useEffect(() => {
         const fetchData = async () => {
@@ -78,6 +80,18 @@ export default function NewPaymentForm() {
                 setPaymentCodes(codes);
                 setTemplates(templatesResponse.items);
                 setBankAccounts(bankAccountsResponse.data.items);
+                let defaultBankAccount = null;
+                if (location.state && location.state.accountId) {
+                    defaultBankAccount = bankAccountsResponse.data.items.find(
+                        (f: BankAccount) => f.id === location.state.accountId
+                    );
+
+                    if (defaultBankAccount) {
+                        setSelectedBankAccount(defaultBankAccount);
+                        form.setValue("accountId", defaultBankAccount.id, { shouldValidate: true });
+                    }
+                }
+
 
             } catch (err) {
                 showErrorToast({error: err, defaultMessage: "Failed to fetch data."})
@@ -89,10 +103,11 @@ export default function NewPaymentForm() {
     }, []);
 
 
+
     async function onSubmit (values: z.infer<typeof paymentSchema>) {
         try {
             const toAcc = values.recipientAccount.trim().substring(7,16);
-            const matchingCode = paymentCodes.find((c) => c.code === values.paymentCode || "289");
+            const matchingCode = paymentCodes.find((c) => c.code === values.paymentCode || c.code === "289");
             const toCurrencyId = await fetchRecipientCurrencyCode(toAcc);
             console.log(matchingCode);
             console.log(toCurrencyId);
@@ -142,8 +157,10 @@ export default function NewPaymentForm() {
     }
 
 
-    return (<>
-        <Card className={cn("bg-transparent shadow-none border-0 lg:w-2/3 md:w-full sm:w-full")}>
+
+
+    return (
+        <Card className={cn("bg-transparent shadow-none border-0 lg:w-2/3 md:w-full sm:w-full w-full")}>
             <CardContent className="mt-8 font-paragraph">
 
                 <Form {...form}>
@@ -163,6 +180,10 @@ export default function NewPaymentForm() {
                                                         setSelectedBankAccount(account);
 
                                                         field.onChange(value);
+                                                        if (account && account?.availableBalance < amount)
+                                                            setAmountError("Amount exceeds available balance.");
+                                                        else
+                                                            setAmountError(null);
                                                     }}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select a bank account" />
@@ -183,8 +204,8 @@ export default function NewPaymentForm() {
                                     </FormItem>
                                 )}
                             />
-                            <div className="md:pt-6 md:mb-auto md:relative md:w-fit sm:w-full sm:flex sm:justify-center">
-                                <span className=" md:icon-[ph--arrow-right] sm:icon-[ph--arrow-down] md:size-8 sm:size-8"></span>
+                            <div className="md:pt-6 md:mb-auto md:w-fit sm:w-full sm:flex sm:justify-center justify-center w-full flex">
+                                <span className=" md:icon-[ph--arrow-right] sm:icon-[ph--arrow-down] icon-[ph--arrow-down] md:size-8 sm:size-8 size-8"></span>
                             </div>
 
                             <RecipientInput templates={templates} />
@@ -310,7 +331,12 @@ export default function NewPaymentForm() {
                             </DialogContent>
                         </Dialog>
 
-                        <Dialog open={step === "success"} onOpenChange={(open) => {  !open; setStep("form"); navigate("/home"); }}>
+                        <Dialog open={step === "success"}
+                                onOpenChange={(open) => {
+                                    !open; setStep("form");
+                                    if(selectedBankAccount)
+                                        navigate(`/bank-account/${selectedBankAccount.id}`);
+                        }}>
                             <DialogContent className="min-w-fit">
                                 <DialogHeader>
                                     <DialogTitle></DialogTitle>
@@ -332,7 +358,6 @@ export default function NewPaymentForm() {
                     </form>
                 </Form>
             </CardContent>
-        </Card>
-    </>);
+        </Card>);
 
 }

@@ -40,6 +40,7 @@ export function generateTransactionColumns(): ColumnDef<Transaction>[] {
             accessorKey: "purpose",
             header: "Purpose",
         },
+        // Mislim da ce ova polja trebati da se prikazu detaljima transakcije kada se pritisne na nju
         /*{
             accessorKey: "fromAmount",
             header: "From Amount",

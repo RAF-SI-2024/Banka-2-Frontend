@@ -69,6 +69,9 @@
     --destructive: hsl(351, 100%, 65%);
     --destructive-foreground: hsl(233, 100%, 97%);
 
+    --warning: hsl(28, 100%, 50%);
+    --warning-foreground: hsl(233, 36%, 9%);
+
     --success: hsl(121, 90%, 19%);
     --success-foreground: hsl(233, 100%, 97%);
 
@@ -119,6 +122,9 @@
 
     --destructive: hsl(351, 100%, 35%);
     --destructive-foreground: hsl(233, 100%, 97%);
+
+    --warning: hsl(28, 100%, 50%);
+    --warning-foreground: hsl(233, 36%, 9%);
 
     --success: hsl(121, 90%, 81%);
     --success-foreground: hsl(233, 36%, 9%);
@@ -197,6 +203,9 @@
 
     --color-sidebar-destructive: var(--sidebar-destructive);
     --color-sidebar-destructive-foreground: var(--sidebar-destructive-foreground);
+
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
 
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);

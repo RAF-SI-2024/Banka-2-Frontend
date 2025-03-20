@@ -19,7 +19,7 @@ export function generateInstallmentColumns(): ColumnDef<Installment>[] {
             header: "Amount",
             enableHiding: false,
             cell: ({row} )=> {
-                return formatCurrency(row.original.loan.amount / row.original.loan.period, row.original.loan.currency.code);
+                return formatCurrency(row.original.amount, "RSD");
             }
         },
         {
@@ -47,8 +47,8 @@ export function generateInstallmentColumns(): ColumnDef<Installment>[] {
             cell: ({ row }) => {
                 const status = row.original.status as InstallmentStatus;
 
-                const statusMap: Record<InstallmentStatus, { label: string; variant: "outline" | "success" | "secondary" | "destructive" }> = {
-                    [InstallmentStatus.Pending]: { label: "Pending", variant: "secondary" },
+                const statusMap: Record<InstallmentStatus, { label: string; variant: "outline" | "success" | "warning" | "destructive" }> = {
+                    [InstallmentStatus.Pending]: { label: "Pending", variant: "warning" },
                     [InstallmentStatus.Paid]: { label: "Paid", variant: "success" },
                     [InstallmentStatus.Overdue]: { label: "Overdue", variant: "destructive" },
                     [InstallmentStatus.Cancelled]: { label: "Cancelled", variant: "outline" }

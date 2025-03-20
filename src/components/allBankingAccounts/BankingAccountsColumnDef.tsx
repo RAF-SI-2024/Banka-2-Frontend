@@ -28,7 +28,7 @@ export function generateAccountColumns(
       accessorKey: "activated",
       header: "Status",
       cell: ({row}) => (
-          <Badge variant={row.original.status ? "default" : "destructive"}>
+          <Badge variant={row.original.status ? "success" : "destructive"}>
             {row.original.status ? "Active" : "Blocked"}
           </Badge>
       ),

@@ -2,8 +2,9 @@ import { ColumnDef } from "@tanstack/react-table"
 import {User} from "@/types/user.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 import UserDropdownMenu from "@/components/usertable/UserDropdownMenu.tsx";
-import {getGenderString, getInterestRate, getRoleString} from "@/types/enums.ts";
+import {getGenderString, getInterestRate, getRoleString, LoanStatus} from "@/types/enums.ts";
 import { Loan } from "@/types/loan";
+import {formatCurrency} from "@/utils/format-currency.ts";
 
 // // This type is used to define the shape of our data.
 // // You can use a Zod schema here if you want.
@@ -14,9 +15,15 @@ export function generateAllLoanColumns():ColumnDef<Loan>[] {
     return(
         [
             {
-                accessorKey: "type",
-                cell: ({row}) => row.original.type.name || "N/A",
-                header: "Type of loan",
+                accessorKey: "id",
+                header: "Loan number",
+                enableHiding: true,
+
+            },
+            {
+                accessorKey: "client",
+                cell: ({row}) => row.original.account.client.firstName + " " + row.original.account.client.lastName,
+                header: "Client",
                 enableHiding: true,
             },
             {
@@ -26,24 +33,38 @@ export function generateAllLoanColumns():ColumnDef<Loan>[] {
                 enableHiding: true,
             },
             {
+                accessorKey: "type",
+                cell: ({row}) => row.original.type.name || "N/A",
+                header: "Type of loan",
+                enableHiding: true,
+            },
+            {
                 accessorKey: "amount",
                 header: "Amount",
+                cell: ({row}) => formatCurrency(row.original.amount, row.original.currency.code),
+                enableHiding: true,
+            },
+            {
+                accessorKey: "remainingAmount",
+                header: "Amount to be paid",
+                cell: ({row}) => formatCurrency(row.original.remainingAmount, row.original.currency.code),
                 enableHiding: true,
             },
             {
                 accessorKey: "period",
-                header: "Period",
+                header: "Number of installments",
                 enableHiding: true,
             },
             {
                 accessorKey: "creationDate",
                 header: "Creation Date",
+                cell: ({row}) => new Date(row.original.creationDate).toLocaleDateString("sr-RS"),
                 enableHiding: true,
             },
             {
-                accessorKey: "currency",
-                cell: ({row}) => row.original.currency.code || "N/A",
-                header: "Currency",
+                accessorKey: "maturityDate",
+                header: "Maturity Date",
+                cell: ({row}) => new Date(row.original.maturityDate).toLocaleDateString("sr-RS"),
                 enableHiding: true,
             },
             {
@@ -56,33 +77,36 @@ export function generateAllLoanColumns():ColumnDef<Loan>[] {
                 accessorKey: "status",
                 header: "Status",
                 cell: ({ row }) => {
-                    let variant: "success" | "default" | "destructive" | "secondary" | "outline" | null | undefined;
+                    let variant: "success" | "destructive" | "warning" | "outline" | null | undefined;
                     let text;
-    
+
                     switch (row.original.status) {
-                        case 1:
-                            variant = "success";
-                            text = "Approved";
-                            break;
-                        case 0:
-                            variant = "default";
+                        case LoanStatus.Pending:
+                            variant = "warning";
                             text = "Pending";
                             break;
-                        case -1:
+                        case LoanStatus.Active:
+                            variant = "success";
+                            text = "Active";
+                            break;
+                        case LoanStatus.Rejected:
                             variant = "destructive";
                             text = "Rejected";
                             break;
+                        case LoanStatus.Closed:
+                            variant = "outline";
+                            text = "Closed";
+                            break;
                         default:
-                            variant = "default";
+                            variant = "outline";
                             text = "Unknown";
                             break;
                     }
-    
+
                     return <Badge variant={variant}>{text}</Badge>;
                 },
                 enableHiding: true,
             },
 
-            // TODO: PREOSTALO DUGOVANJE KREDITA -> BACKEND
         ]);
 }

@@ -33,7 +33,7 @@ export function RecipientInput({ templates }: RecipientInputProps) {
 
                         <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
-                                <Button variant="outline" role="combobox" data-cy="recipient-dropdown" aria-expanded={open} className="justify-between hover:bg-foreground/80">
+                                <Button variant="outline" role="combobox" data-cy="recipient-dropdown" aria-expanded={open} className="justify-between hover:bg-foreground/80 text-muted-foreground border-border">
                                     {field.value || "Enter account number..."}
                                     <ChevronsUpDown className="opacity-50" />
                                 </Button>
