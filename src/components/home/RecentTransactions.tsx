@@ -1,96 +1,56 @@
-import {Card, CardHeader, CardTitle} from "@/components/ui/card.tsx";
+import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {cn} from "@/lib/utils.ts";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
-import {format} from "date-fns";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Transaction, TransactionResponse} from "@/types/transaction.ts";
-import {getNewTransactions} from "@/api/bankAccount.ts";
+import {
+    getAllAccountClientWithFilters,
+    getAllAccounts,
+    getAllAccountsClient,
+    getNewTransactions
+} from "@/api/bankAccount.ts";
 import {formatCurrency} from "@/utils/format-currency.ts";
 
 const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"div">) => {
 
     const [transactions, setTransactions] = useState<Transaction[]>([]);
-
+    const [currenciesForAccount, setCurrenciesForAccount] = useState<string[]>([]);
+    //TODO: Treba uraditi proveru kada je fromAccount nas acc onda smo poslali pare, ako je toAccount nas account onda smo dobili pare
+    // TODO: Takodje ako su na oba from i to Account nas acc onda smo prebacili pare iz jednog racuna na drugi
     const fetchRecentTransactions = async () => {
-        console.log("Fetching recent transactions")
         try {
             const transactionsData: TransactionResponse = await getNewTransactions();
-            if (transactionsData.items.length === 0)
             setTransactions(transactionsData.items);
-            console.log(transactionsData)
+            return transactionsData.items;
         } catch (err) {
             console.log(err);
+            return null;
         }
     };
 
-    function generateMockData() {
-        const mockData = [
-            {
-                id: 1,
-                toAccount: { accountNumber: '123456789' },
-                createdAt: '2024-03-05T10:30:00.000Z',
-                fromAmount: 2000,
-                toAmount: 1500.75,
-                currencyFrom: { code: 'USD' },
-                currencyTo: { code: 'USD' },
-                status: 'Completed',
-
-            },
-            {
-                id: 2,
-                toAccount: { accountNumber: '987654321' },
-                createdAt: '2024-03-06T12:00:00.000Z',
-                fromAmount: 500.5,
-                toAmount: 250.5,
-                currencyFrom: { code: 'EUR' },
-                currencyTo: { code: 'EUR' },
-                status: 'Pending',
-
-            },
-            {
-                id: 3,
-                toAccount: { accountNumber: '456789123' },
-                createdAt: '2024-03-07T14:45:00.000Z',
-                fromAmount: 530.5,
-                toAmount: 1000,
-                currencyFrom: { code: 'GBP' },
-                currencyTo: { code: 'GBP' },
-                status: 'Failed',
-
-            },
-            {
-                id: 4,
-                toAccount: { accountNumber: '789123456' },
-                createdAt: '2024-03-08T09:30:00.000Z',
-                fromAmount: 1500,
-                toAmount: 350,
-                currencyFrom: { code: 'EUR' },
-                currencyTo: { code: 'EUR' },
-                status: 'Completed',
-            },
-            {
-                id: 5,
-                toAccount: { accountNumber: '321654987' },
-                createdAt: '2024-03-09T16:00:00.000Z',
-                fromAmount: 1000,
-                toAmount: 1500,
-                currencyFrom: { code: 'USD' },
-                currencyTo: { code: 'USD' },
-                status: 'Pending',
-            },
-            // Dodajte još objekata po potrebi
-        ];
-
-        // @ts-expect-error Missing few datatypes, not important for mock data
-        setTransactions(mockData)
+    const fetchCurrencies = async (response: string[]) => {
+        const clientId: string = JSON.parse(sessionStorage.user).id;
+        try{
+            for(let i = 0; i < response.length; i++){
+                const account = await getAllAccountClientWithFilters(
+                    clientId,
+                    1,  // page
+                    1,  // size
+                    { accountNumber: response.items[i].fromAccount.accountNumber }  // filters
+                );
+                setCurrenciesForAccount(prev => [...prev, account.items[0].currency.code]);
+            }
+        }catch(err){
+            console.log(err);
+        }
     }
 
     useEffect(() => {
-        fetchRecentTransactions()
-
-        // Mock data until api works
-        if (transactions.length === 0)
-            generateMockData()
+        const loadData = async () => {
+            const response = await fetchRecentTransactions();
+            await fetchCurrencies(response);
+        }
+        loadData();
     }, []);
 
     return (
@@ -99,6 +59,9 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                 <CardTitle className="font-heading text-2xl">Recent transactions</CardTitle>
             </CardHeader>
             <Card className="m-4 rounded-md font-paragraph" >
+                {(!transactions || transactions.length === 0) ? (
+                    <CardDescription>No recent transactions. Try making your first transaction today with BankToo!</CardDescription>
+                ) : (
                 <Table>
                     <TableHeader className="border-b-3">
                         <TableRow className="text-sm font-medium text-secondary-foreground">
@@ -110,20 +73,20 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                     </TableHeader>
 
                     <TableBody>
-                        {transactions.map((item) => (
+                        {transactions.map((item, index) => (
                             <TableRow
                                 key={item.id}
                                 className="text-sm font-medium border-border text-secondary-foreground"
                             >
                                 <TableCell className="px-6 py-5 ">
-                                        {item.toAccount.accountNumber}
+                                        {item.fromAccount.accountNumber.toString()}
                                 </TableCell>
                                 <TableCell className="px-6 py-5">
-                                    {format(new Date(item.createdAt), "dd MM, yyyy")}
+                                    {(new Date(item.createdAt).toLocaleDateString('sr-RS'))}
                                 </TableCell>
-                                <TableCell className={`font-semibold px-6 py-5 ${item.fromAmount < item.toAmount ? "text-green-500" : "text-red-500"}`}>
+                                <TableCell className={`font-semibold px-6 py-5 ${item.fromAmount < item.toAmount ? "text-success" : "text-destructive"}`}>
                                     {item.fromAmount < item.toAmount ? "+" : ""}
-                                    {formatCurrency(Number(item.toAmount) - Number(item.fromAmount), item.currencyTo.code)}
+                                    {formatCurrency(Number(item.toAmount) - Number(item.fromAmount), index < currenciesForAccount.length ? currenciesForAccount[index] : "RSD")}
                                 </TableCell>
                                 <TableCell className="px-6 py-5">
                                     {item.status}
@@ -132,6 +95,7 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                         ))}
                     </TableBody>
                 </Table>
+                )}
             </Card>
         </Card>
     )

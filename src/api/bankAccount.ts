@@ -24,8 +24,6 @@ export const getAllAccounts = async (
     filters: { accountNumber?: string; firstName?: string; lastName?: string;}
 ): Promise<AccountResponse> => {
     try {
-        console.log("Page number", pageNumber);
-        console.log("Page size", pageSize);
         const response = await api.get("/accounts", {
             params: {
                 number: filters.accountNumber || undefined,
@@ -118,6 +116,29 @@ export const getAllAccountsClient = async (clientId: string, page?:number, size?
     }
 }
 
+export const getAllAccountClientWithFilters = async (
+    clientId: string,
+    page?:number,
+    size?:number,
+    filters: { accountNumber?: string; firstName?: string; lastName?: string;}
+) => {
+    try {
+        const response = await api.get(`${API_BASE}/clients/${clientId}/accounts`, {
+            params: {
+                number: filters.accountNumber || undefined,
+                clientFirstName: filters.firstName || undefined,
+                clientLastName: filters.lastName || undefined,
+                page,      // Prosleđujemo broj stranice
+                size,  // Prosleđujemo veličinu stranice
+            }
+        });
+        return response;
+    } catch (error) {
+        console.error("❌ Failed to get bank accounts for client with filters:", error);
+        throw error;
+    }
+
+}
 
 export const getAllTransactions = async (
     pageNumber: number,
@@ -148,7 +169,7 @@ export const getAccountTransactions = async (
     account: string | undefined
 ): Promise<TransactionResponse> => {
     try {
-        const response = await api.get(`${API_BASE}/accounts/${account}/transactions`, {
+        const response = await api.get(`${API_BASE}/accounts/${account}/transcations`, { //FIXME: typo - treba transactions
                 params: {
                     Page: pageNumber,
                     Size: pageSize,
@@ -165,7 +186,12 @@ export const getAccountTransactions = async (
 
 export const getNewTransactions = async (): Promise<TransactionResponse> => {
     try {
-        const response = await api.get(`${API_BASE}/transactions/new`);
+        const response = await api.get(`${API_BASE}/transactions`,{
+            params: {
+                Page: 1,
+                Size: 5
+            }
+        });
         return response.data;
     } catch (error) {
         console.error("❌ Failed to get recent transactions:", error);
