@@ -12,6 +12,7 @@ import {
 import {formatCurrency} from "@/utils/format-currency.ts";
 import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 import {TransactionStatus} from "@/types/enums.ts";
+import {Badge} from "@/components/ui/badge.tsx";
 
 
 enum TransactionType {
@@ -21,8 +22,8 @@ enum TransactionType {
     Exchange = "Exchange"
 }
 interface TransactionTableRow {
-    fromAccountNumber: string,
-    toAccountNumber: string,
+    fromAccountNumber: string | null,
+    toAccountNumber: string | null,
     amount: number,
     currencyCode: string,
     date: Date
@@ -58,7 +59,7 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
             console.log("TRANSAKCIJE", transactionsData.items);
             let tableRows: Array<TransactionTableRow> = [];
 
-            for(let item of transactionsData.items as Transaction) {
+            for(let item of transactionsData.items as Transaction[]) {
                 /*
                 - Deposit (uplata novca na racun) <=> fromAccount -> null & toAccount -> yourAccount (mora biti tvoj, ako nije onda je nesto lose)
                 - Withdraw (skidanje novca sa racuna)  <=> fromAccount -> yourAccount (isto mora biti tvoj) & toAccount -> null
@@ -77,31 +78,33 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                 console.log("TRANS")
                 // DEPOSIT
                 console.log("client accounts", clientAccountNumbers)
-                if(fromAccount == null && clientAccountNumbers.includes(toAccount.accountNumber)){
+                if(fromAccount == null && toAccount != null && clientAccountNumbers.includes(toAccount)){
                     console.log("Deposit usao")
                     currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount}).then(acc => acc.data.items.currency.code)
                     console.log("DEPOSIT", tableRows)
                     tableRows.push({
-                        fromAccount: null,
-                        toAccount: toAccount,
+                        fromAccountNumber: null,
+                        toAccountNumber: toAccount,
                         amount: item.toAmount,
                         currencyCode: currencyCode,
-                        date: item.createdAt,
+                        date: new Date(item.createdAt),
                         type: TransactionType.Deposit,
                         status: item.status
                     })
                 }
+                else if(fromAccount==null)
+                    continue;
                 // WITHDRAW
-                else if(clientAccountNumbers.includes(fromAccount.accountNumber) && toAccount === null){
+                else if(clientAccountNumbers.includes(fromAccount.accountNumber.toString()) && toAccount === null){
                     console.log("Withdraw usao")
-                    currencyCode = await getAccountById(item.fromAccount.id).then(acc => acc.data.currency.code)
+                    currencyCode = await getAccountById(fromAccount.id).then(acc => acc.data.currency.code)
                     console.log("WITHDRAW", tableRows)
                     tableRows.push({
-                        fromAccount: fromAccount.accountNumber,
-                        toAccount: null,
+                        fromAccountNumber: fromAccount.accountNumber,
+                        toAccountNumber: null,
                         amount: -item.fromAmount,
                         currencyCode: currencyCode,
-                        date: item.createdAt,
+                        date: new Date(item.createdAt),
                         type: TransactionType.Withdraw,
                         status: item.status
                     })
@@ -110,46 +113,46 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                     continue;
                 }
                 // PAYMENT TO SOMEONE'S ACCOUNT
-                else if(clientAccountNumbers.includes(fromAccount.accountNumber) && !clientAccountNumbers.includes(toAccount.accountNumber)){
+                else if(clientAccountNumbers.includes(fromAccount.accountNumber.toString()) && !clientAccountNumbers.includes(toAccount)){
                     console.log("Payment usao")
-                    currencyCode = await getAccountById(item.fromAccount.id).then(acc => acc.data.currency.code)
+                    currencyCode = await getAccountById(fromAccount.id).then(acc => acc.data.currency.code)
                     console.log("PAYMENT", tableRows)
                     tableRows.push({
-                        fromAccount: fromAccount.accountNumber,
-                        toAccount: toAccount,
+                        fromAccountNumber: fromAccount.accountNumber,
+                        toAccountNumber: toAccount,
                         amount: -item.fromAmount,
                         currencyCode: currencyCode,
-                        date: item.createdAt,
+                        date: new Date(item.createdAt),
                         type: TransactionType.Transaction,
                         status: item.status
                     })
                 }
                 // PAYMENT FROM SOMEONE
-                else if(!(clientAccountNumbers.includes(fromAccount.accountNumber)) && clientAccountNumbers.includes(toAccount.accountNumber)){
+                else if(!(clientAccountNumbers.includes(fromAccount.accountNumber.toString())) && clientAccountNumbers.includes(toAccount)){
                     console.log("Payment usao 2")
                     currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount}).then(acc => acc.data.items.currency.code)
                     console.log("FROM SM", tableRows)
                     tableRows.push({
-                        fromAccount: fromAccount.accountNumber,
-                        toAccount: toAccount,
+                        fromAccountNumber: fromAccount.accountNumber,
+                        toAccountNumber: toAccount,
                         amount: item.toAmount,
                         currencyCode: currencyCode,
-                        date: item.createdAt,
+                        date: new Date(item.createdAt),
                         type: TransactionType.Transaction,
                         status: item.status
                     })
                 }
                 // EXCHANGE
-                else if(clientAccountNumbers.includes(fromAccount.accountNumber) && fromAccount.accountNumber == toAccount.accountNumber){
+                else if(clientAccountNumbers.includes(fromAccount.accountNumber.toString()) && fromAccount.accountNumber == toAccount){
                     console.log("Ex usao")
                     currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount}).then(acc => acc.data.items.currency.code)
                     console.log("EX", tableRows)
                     tableRows.push({
-                        fromAccount: fromAccount.accountNumber,
-                        toAccount: toAccount,
+                        fromAccountNumber: fromAccount.accountNumber,
+                        toAccountNumber: toAccount,
                         amount: item.fromAmount,
                         currencyCode: currencyCode,
-                        date: item.createdAt,
+                        date: new Date(item.createdAt),
                         type: TransactionType.Exchange,
                         status: item.status
                     })
@@ -157,11 +160,9 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
 
             }
             setTableData([...tableRows]);
-            return transactionsData.items;
         } catch (error) {
             console.log(error);
             showErrorToast({error, defaultMessage: "Error fetching transactions"});
-            return null;
         }
     };
 
@@ -170,17 +171,45 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
             try {
                 const accounts = await fetchClientAccounts();
 
-                const response = await fetchRecentTransactions(accounts);
+                await fetchRecentTransactions(accounts);
 
-                if (response && response.length > 0) {
-                    await fetchCurrencies(response);
-                }
             } catch (error) {
                 console.error("Error in sequential loading:", error);
             }
         }
         loadData();
     }, []);
+
+    const getStatusLabel = (status: TransactionStatus) => {
+        let variant: "success" | "destructive" | "warning" | "outline" | null | undefined;
+        let text;
+        switch (status) {
+            case TransactionStatus.Invalid:
+                variant = "destructive";
+                text = "Invalid";
+                break;
+            case TransactionStatus.Pending:
+                variant = "warning";
+                text = "Pending";
+                break;
+            case TransactionStatus.Canceled:
+                variant = "outline";
+                text = "Canceled";
+                break;
+            case TransactionStatus.Completed:
+                variant = "success";
+                text = "Completed";
+                break;
+            case TransactionStatus.Failed:
+                variant = "destructive";
+                text = "Failed";
+                break;
+            default:
+                return "Unknown";
+        }
+
+        return <Badge variant={variant}>{text}</Badge>;
+    };
 
     return (
         <Card className={cn("border-0 content-center", className)} {...props}>
@@ -194,31 +223,39 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                 <Table>
                     <TableHeader className="border-b-3">
                         <TableRow className="text-sm font-medium text-secondary-foreground">
-                            <TableHead className="py-3 px-6">Recipient</TableHead>
-                            <TableHead className="py-3 px-6">Date</TableHead>
-                            <TableHead className="py-3 px-6">Amount</TableHead>
-                            <TableHead className="py-3 px-6">Status</TableHead>
+                            <TableHead className="py-3 px-2">From account</TableHead>
+                            <TableHead className="py-3 px-2">To account</TableHead>
+                            <TableHead className="py-3 px-2">Date & Time</TableHead>
+                            <TableHead className="py-3 px-2">Amount</TableHead>
+                            <TableHead className="py-3 px-2">Type</TableHead>
+                            <TableHead className="py-3 px-2">Status</TableHead>
                         </TableRow>
                     </TableHeader>
 
                     <TableBody>
-                        {tableData.map((item) => (
+                        {tableData.map((item, index) => (
                             <TableRow
-                                key={item.id}
-                                className="text-sm font-medium border-border text-secondary-foreground"
+                                key={index}
+                                className="text-sm font-medium border-border text-secondary-foreground text-center"
                             >
-                                <TableCell className="px-6 py-5 ">
-                                        {item.fromAccount}
+                                <TableCell className="px-2  py-5 ">
+                                        {item.fromAccountNumber || "/"}
                                 </TableCell>
-                                <TableCell className="px-6 py-5">
-                                    {(new Date(item.date).toLocaleDateString('sr-RS'))}
+                                <TableCell className="px-2  py-5 ">
+                                    {item.toAccountNumber || "/"}
                                 </TableCell>
-                                <TableCell className={`font-semibold px-6 py-5 ${item.amount > 0 ? (item.type != TransactionType.Exchange ? "text-success" : ""): "text-destructive"}`}>
+                                <TableCell className="px-2  py-5">
+                                    {new Date(item.date).toLocaleDateString('sr-RS')}({new Date(item.date).toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' })})
+                                </TableCell>
+                                <TableCell className={`font-semibold px-2 py-5 ${item.amount > 0 ? (item.type != TransactionType.Exchange ? "text-success" : ""): "text-destructive"}`}>
                                     {item.amount > 0 && item.type != TransactionType.Exchange ? "+" : ""}
                                     {formatCurrency(item.amount, item.currencyCode)}
                                 </TableCell>
-                                <TableCell className="px-6 py-5">
-                                    {item.status}
+                                <TableCell className="px-2  py-5">
+                                    {item.type}
+                                </TableCell>
+                                <TableCell className="px-2  py-5">
+                                    {getStatusLabel(item.status)}
                                 </TableCell>
                             </TableRow>
                         ))}
