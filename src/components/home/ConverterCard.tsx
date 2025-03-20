@@ -136,7 +136,7 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
         if (!selectedCurrency) return;
 
         setCurrency2(selectedCurrency);
-        const newRate = await updateExchangeRate(currency1, selectedCurrency);
+        const newRate = await updateExchangeRate(selectedCurrency, currency1);
         console.log(newRate);
         // Recalculate amount1 based on new rate
         setAmount1(amount2 * newRate);
