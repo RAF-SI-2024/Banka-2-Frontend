@@ -2,6 +2,7 @@ import {useState, useEffect, useMemo} from "react";
 import { DataTable } from "@/components/common/datatable/DataTable.tsx";
 import { getCoreRowModel } from "@tanstack/react-table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DatePickerWithRange } from "@/components/ui/date-range-picker"
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
@@ -20,6 +21,7 @@ import {Transaction, TransactionResponse} from "@/types/transaction.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
 import { getAccountTransactions, getAllTransactions } from "@/api/bankAccount.ts";
 import { TransactionStatus } from "@/types/enums.ts";
+import { DateRange } from "react-day-picker";
 
 interface TransactionsDataTableProps {
     account: BankAccount | null;
@@ -58,6 +60,8 @@ export default function TransactionsDataTable({account, transactionType}: Transa
     // filtering
     const [fetchFlag, setFetchFlag] = useState(false); // Filter A
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+
 
     // visibility state - make some columns invisible by default
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -70,8 +74,7 @@ export default function TransactionsDataTable({account, transactionType}: Transa
         department: false
     });
 
-    function generateMockTransactions() {
-        //row.original.currencyFrom
+    function generateMockTransactions() { // Dodato zbog testiranja
         const mockData = [
             {
                 id: 1,
@@ -88,7 +91,6 @@ export default function TransactionsDataTable({account, transactionType}: Transa
                     name: "USD",
                     code: "USD",
                     symbol: "USD",
-                    //countries: Country[];
                     description: "Valuta",
                     status: true,
                     createdAt: '2024-03-05T10:30:00.000Z',
@@ -121,7 +123,6 @@ export default function TransactionsDataTable({account, transactionType}: Transa
                     name: "USD",
                     code: "USD",
                     symbol: "USD",
-                    //countries: Country[];
                     description: "Valuta",
                     status: true,
                     createdAt: '2024-03-05T10:30:00.000Z',
@@ -132,7 +133,6 @@ export default function TransactionsDataTable({account, transactionType}: Transa
                     name: "USD",
                     code: "USD",
                     symbol: "USD",
-                    //countries: Country[];
                     description: "Valuta",
                     status: true,
                     createdAt: '2024-03-05T10:30:00.000Z',
@@ -154,7 +154,6 @@ export default function TransactionsDataTable({account, transactionType}: Transa
                     name: "USD",
                     code: "USD",
                     symbol: "USD",
-                    //countries: Country[];
                     description: "Valuta",
                     status: true,
                     createdAt: '2024-03-05T10:30:00.000Z',
@@ -165,7 +164,6 @@ export default function TransactionsDataTable({account, transactionType}: Transa
                     name: "USD",
                     code: "USD",
                     symbol: "USD",
-                    //countries: Country[];
                     description: "Valuta",
                     status: true,
                     createdAt: '2024-03-05T10:30:00.000Z',
@@ -183,14 +181,14 @@ export default function TransactionsDataTable({account, transactionType}: Transa
         // account is null when we open overview page, account has a value if we open account component
         if (account === null) {
             fetchAllTransactions();
-            if (transactions.length === 0)
+            if (transactions.length === 0) // Dodato zbog testiranja
                 generateMockTransactions()
         } else {
             fetchAccountTransactions();
-            if (transactions.length === 0)
+            if (transactions.length === 0) // Dodato zbog testiranja
                 generateMockTransactions()
         }
-    }, [currentPage, pageSize, fetchFlag]); // Add dependencies
+    }, [currentPage, pageSize, fetchFlag, dateRange]); // Add dependencies
 
     // If the data table is used in the overview page
     const fetchAllTransactions = async () => {
@@ -208,7 +206,7 @@ export default function TransactionsDataTable({account, transactionType}: Transa
         }
         catch (err) {
             console.log(err);
-            //setError("Failed to fetch transactions");
+            //setError("Failed to fetch transactions"); // Zakomentarisano zbog testiranja
         }
     };
 
@@ -229,7 +227,7 @@ export default function TransactionsDataTable({account, transactionType}: Transa
 
         } catch (err) {
             console.log(err);
-           // setError("Failed to fetch transactions");
+            // setError("Failed to fetch transactions"); // Zakomentarisano zbog testiranja
         }
     };
 
@@ -252,6 +250,7 @@ export default function TransactionsDataTable({account, transactionType}: Transa
             toAmount: "",
             status: "",
         });
+        setDateRange(undefined);
         setFetchFlag(!fetchFlag);
     };
 
@@ -286,18 +285,29 @@ export default function TransactionsDataTable({account, transactionType}: Transa
             const toAmountNum = Number(appliedSearch.toAmount);
             const transactionAmount = transaction.fromAmount - transaction.toAmount;
 
-            if (appliedSearch.fromAmount && transactionAmount < fromAmountNum) {
+            if (appliedSearch.fromAmount && transactionAmount <= fromAmountNum) {
                 return false;
             }
-            if (appliedSearch.toAmount && transactionAmount > toAmountNum) {
+            if (appliedSearch.toAmount && transactionAmount >= toAmountNum) {
                 return false;
             }
             if (appliedSearch.status && transaction.status !== mapStatus(Number(appliedSearch.status) as TransactionStatus)) {
                 return false;
             }
+            if (dateRange?.from && new Date(transaction.createdAt) < dateRange.from) {
+                return false;
+            }
+            if (dateRange?.to) {
+                const endOfDay = new Date(dateRange.to);
+                endOfDay.setHours(23, 59, 59, 999);
+
+                if (new Date(transaction.createdAt) > endOfDay) {
+                    return false;
+                }
+            }
             return true;
         });
-    }, [transactions, appliedSearch]);
+    }, [transactions, appliedSearch, dateRange]);
 
     // create the table instance with pagination, sorting, and column visibility
     const table = useReactTable({
@@ -342,7 +352,7 @@ export default function TransactionsDataTable({account, transactionType}: Transa
         <div className="m-2 space-y-4">
             <div className="w-full flex flex-row items-baseline">
                 {/* 🔍 Search Filters */}
-                <div className="flex flex-wrap gap-4 items-center">
+                <div className="w-full flex gap-4 items-center">
                     <div className="flex flex-row gap-4">
                         {/* Uklanja strelice sa input[type=number] polja */}
                         <style>{`
@@ -371,22 +381,24 @@ export default function TransactionsDataTable({account, transactionType}: Transa
                             onChange={(e) => handleSearchChange("toAmount", e.target.value ? Number(e.target.value) : "")}
                             className="w-42"
                         />
+
+                        <Select onValueChange={(value) => handleSearchChange("status", value)} value={search.status}>
+                            <SelectTrigger className="w-42">
+                                <SelectValue placeholder="Filter by status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="0">Invalid</SelectItem>
+                                <SelectItem value="1">Pending</SelectItem>
+                                <SelectItem value="2">Canceled</SelectItem>
+                                <SelectItem value="3">Completed</SelectItem>
+                                <SelectItem value="4">Failed</SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                        <DatePickerWithRange date={dateRange} setDate={setDateRange} />
                     </div>
 
-                    <Select onValueChange={(value) => handleSearchChange("status", value)} value={search.status}>
-                        <SelectTrigger className="w-42">
-                            <SelectValue placeholder="Filter by status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="0">Invalid</SelectItem>
-                            <SelectItem value="1">Pending</SelectItem>
-                            <SelectItem value="2">Canceled</SelectItem>
-                            <SelectItem value="3">Completed</SelectItem>
-                            <SelectItem value="4">Failed</SelectItem>
-                        </SelectContent>
-                    </Select>
-
-                    <div className="flex items-center space-x-2">
+                    <div className="w-full flex items-center space-x-2 justify-end mr-2">
                         <Button onClick={handleFilter} variant="primary">
                             <span className="icon-[ph--funnel]" />
                             Filter
