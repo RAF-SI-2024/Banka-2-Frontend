@@ -1,6 +1,6 @@
 import api from "@/api/axios.ts";
 import {API_BASE} from "@/constants/endpoints.ts";
-import {CardCreateRequest, CardDTO} from "@/types/card.ts";
+import {CardCreateRequest} from "@/types/card.ts";
 
 export const getCardById = async (id:string) => {
     try {
@@ -14,7 +14,7 @@ export const getCardById = async (id:string) => {
 
 export const changeCardStatusClient = async (id: string, status: boolean) => {
     try {
-        const response = await api.put(`${API_BASE}/cards/${id}/client`, {
+        const response = await api.put(`${API_BASE}/cards/${id}/client/status`, {
             status: status
         });
         return response;
