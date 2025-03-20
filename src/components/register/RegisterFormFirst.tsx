@@ -64,6 +64,7 @@ export default function RegisterFormFirst({ form, nextStep, className, ...props 
                                         <PopoverTrigger asChild>
                                             <FormControl>
                                                 <Button
+                                                    data-cy="date-of-birth-date"
                                                     variant="outline"
                                                     className={cn(
                                                         "w-full justify-start text-left font-normal hover:bg-transparent hover:text-muted-foreground",

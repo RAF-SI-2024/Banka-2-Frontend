@@ -135,6 +135,15 @@ const BankAccountDetailsCard = ({
                     )}
                 </div>
 
+                <div className="flex flex-row items-baseline gap-2">
+                    <Label htmlFor="label" className="text-xl font-light text-muted-foreground">
+                        Number:
+                    </Label>
+                    <p className="text-xl font-medium">
+                        {account.accountNumber}
+                    </p>
+                </div>
+
 
                 <div className="flex flex-row items-baseline gap-2">
                     <Label htmlFor="label" className="text-xl font-light text-muted-foreground">

@@ -12,6 +12,28 @@ export enum Gender {
     Female = 2,
 }
 
+export enum InterestType {
+    Fixed,
+    Variable,
+    Mixed
+}
+
+export enum LoanStatus {
+    Pending,
+    Active,
+    Rejected,
+    Closed,
+    DefaultWarning,
+    Default
+}
+
+export enum InstallmentStatus {
+    Pending,
+    Paid,
+    Overdue,
+    Cancelled
+}
+
 
 export const getRoleNumber = (roleName: string): number => {
     switch (roleName.toLowerCase()) {

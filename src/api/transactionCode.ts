@@ -14,16 +14,16 @@ export const fetchPaymentCodes = async (): Promise<RawPaymentCode[]> => {
     return response.data.items || [];
 };
 
-export const fetchRecipientCurrencyId = async (
+export const fetchRecipientCurrencyCode = async (
     accountNumber: string
 ): Promise<string | null> => {
     const response = await api.get("/accounts", {
         params: { Number: accountNumber },
     });
 
-    const account = response.data.items?.[0];
+    console.log(response);
 
-    return account?.accountCurrencies?.find((c: AccountCurrency) => c.currency?.id)?.currency?.id ??
-        account?.currency?.id ??
-        null;
+    return response.data.items?.[0].currency.id;
+
+
 };

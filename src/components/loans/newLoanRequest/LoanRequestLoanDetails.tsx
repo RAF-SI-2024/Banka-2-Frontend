@@ -3,6 +3,7 @@ import {Card, CardContent, CardDescription, CardHeader} from "@/components/ui/ca
 import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {LoanType} from "@/types/loanType.ts";
+import {InterestType} from "@/types/enums.ts";
 
 
 interface LoanRequestLoanDetailsProps{
@@ -105,11 +106,11 @@ export default function LoanRequestLoanDetails({loanTypes}: LoanRequestLoanDetai
                                             <SelectValue/>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="0">
-                                                Fixed
+                                            <SelectItem value={InterestType.Fixed.toString()}>
+                                                {InterestType[InterestType.Fixed]}
                                             </SelectItem>
-                                            <SelectItem value="1">
-                                                Variable
+                                            <SelectItem value={InterestType.Variable.toString()}>
+                                                {InterestType[InterestType.Variable]}
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>

@@ -1,80 +1,86 @@
 import React from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogFooter,
-    DialogDescription
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { z } from "zod";
+import {Card, CardContent} from "@/components/ui/card.tsx";
+import {cn} from "@/lib/utils.ts";
+import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Form} from "@/components/ui/form.tsx";
 
-const templateSchema = z.object({
-    name: z.string()
-        .min(1, "Name is mandatory.")
-        .max(32, "Name can't have more than 32 characters.")
-        .regex(/^[A-Za-zčČćĆžŽšŠđĐ ]+$/, "Name can only have letters and spaces."),
-    accountNumber: z.string()
-        .length(18, "Account number must be exactly 18 characters long.")
-        .regex(/^\d{18}$/, "Account number must contain only numbers.")
-});
 
 interface AddTemplateDialogProps {
+    form: any;
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onAddTemplate: (name: string, accountNumber: string) => void;
 }
 
-const AddTemplateDialog = ({ open, onOpenChange, onAddTemplate }: AddTemplateDialogProps) => {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset
-    } = useForm({
-        resolver: zodResolver(templateSchema),
-        defaultValues: {
-            name: "",
-            accountNumber: ""
-        }
-    });
+const AddTemplateDialog = ({ form, open, onOpenChange, onAddTemplate }: AddTemplateDialogProps) => {
 
     const onSubmit = (data: { name: string; accountNumber: string }) => {
         onAddTemplate(data.name, data.accountNumber);
-        reset(); // Resetuje formu nakon uspešnog dodavanja
-        onOpenChange(false); // Zatvori modal
+        form.reset();
+        onOpenChange(false);
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Add new template</DialogTitle>
-                    <DialogDescription>
-                        Here you can add a new template.
-                    </DialogDescription>
+                    <DialogTitle></DialogTitle>
                 </DialogHeader>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    <div>
-                        <Input placeholder="Name" {...register("name")} />
-                        {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
-                    </div>
+                <Card className={cn("flex flex-col gap-6 bg-transparent border-0")}>
+                    <CardContent className="mt-4 font-paragraph">
+                        <h2 className="text-2xl font-heading font-semibold text-center mt-4 mb-8">Add a new template</h2>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-8">
+                                <FormField
+                                    key="name"
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full">
+                                            <FormLabel>Name</FormLabel>
+                                            <FormControl>
+                                               <Input placeholder="Template" {...field}></Input>
+                                            </FormControl>
+                                            <FormDescription>What do you want to name this template?</FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    key="accountNumber"
+                                    name="accountNumber"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full">
+                                            <FormLabel>Account number</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Template's account number" {...field}></Input>
+                                            </FormControl>
+                                            <FormDescription>Which account does this template apply to?</FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                    <div>
-                        <Input placeholder="Account number" {...register("accountNumber")} />
-                        {errors.accountNumber && <p className="text-destructive text-sm">{errors.accountNumber.message}</p>}
-                    </div>
+                                <DialogFooter>
+                                    <Button type="button" variant="outline" onClick={() => {
+                                        form.reset();
+                                        onOpenChange(false)
+                                    }}>Cancel</Button>
+                                    <Button type="submit" variant="gradient">Submit</Button>
+                                </DialogFooter>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
 
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-                        <Button type="submit" variant="success">Submit</Button>
-                    </DialogFooter>
-                </form>
             </DialogContent>
         </Dialog>
     );
