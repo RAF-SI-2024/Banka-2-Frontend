@@ -79,7 +79,7 @@ export default function TransactionsDataTable({account, transactionType}: Transa
             {
                 id: 1,
                 fromAccount: { accountNumber: '111111111' },
-                toAccount: { accountNumber: '222222222' },
+                toAccount: '222222222',
                 date: '2024-03-05T10:30:00.000Z',
                 createdAt: '2024-03-05T10:30:00.000Z',
                 purpose: 'Payment for services',
@@ -111,7 +111,7 @@ export default function TransactionsDataTable({account, transactionType}: Transa
             {
                 id: 2,
                 fromAccount: { accountNumber: '333333333' },
-                toAccount: { accountNumber: '444444444' },
+                toAccount: '444444444',
                 date: '2024-03-06T12:00:00.000Z',
                 createdAt: '2024-03-05T10:30:00.000Z',
                 purpose: 'Loan repayment',
@@ -142,7 +142,7 @@ export default function TransactionsDataTable({account, transactionType}: Transa
             {
                 id: 3,
                 fromAccount: { accountNumber: '555555555' },
-                toAccount: { accountNumber: '666666666' },
+                toAccount: '666666666' ,
                 date: '2024-03-07T14:45:00.000Z',
                 createdAt: '2024-03-05T10:30:00.000Z',
                 purpose: 'Salary payment',
@@ -202,7 +202,6 @@ export default function TransactionsDataTable({account, transactionType}: Transa
             );
             setTransactions(transactionsData.items);
             setTotalPages(transactionsData.totalPages);
-            console.log(transactionsData)
         }
         catch (err) {
             console.log(err);
