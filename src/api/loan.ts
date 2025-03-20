@@ -112,7 +112,6 @@ export const getLoansByClientId = async (
     try {
         const response = await api.get(`/loans/clients/${clientId}`, {
             params: {
-                clientId: clientId,
                 page,
                 size,
             },
