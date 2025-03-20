@@ -108,7 +108,7 @@ export default function NewTransferForm() {
 
 
     return (
-        <Card className={cn("bg-transparent shadow-none border-0 lg:w-2/3 md:w-full sm:w-full")}>
+        <Card className={cn("bg-transparent shadow-none border-0 lg:w-2/3 md:w-full sm:w-full w-full")}>
             <CardContent className="mt-8 font-paragraph">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-8">
@@ -152,8 +152,8 @@ export default function NewTransferForm() {
                                 )}
                             />
 
-                            <div className="md:pt-6 md:mb-auto md:relative md:w-fit sm:w-full sm:flex sm:justify-center">
-                                <span className=" md:icon-[ph--arrow-right] sm:icon-[ph--arrow-down] md:size-8 sm:size-8"></span>
+                            <div className="md:pt-6 md:mb-auto md:w-fit sm:w-full sm:flex sm:justify-center justify-center w-full flex">
+                                <span className=" md:icon-[ph--arrow-right] sm:icon-[ph--arrow-down] icon-[ph--arrow-down] md:size-8 sm:size-8 size-8"></span>
                             </div>
 
                             <FormField
