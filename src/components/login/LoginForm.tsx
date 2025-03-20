@@ -94,7 +94,7 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
                                         <div className="flex items-center">
                                             <FormLabel>{field.label}</FormLabel>
                                             {field.name === "password" && (
-                                                <Button type="button" variant="link" size="tight" className="ml-auto" onClick={() => navigate("/password-reset")}>
+                                                <Button type="button" variant="link" size="tight" className="ml-auto" tabIndex={4} onClick={() => navigate("/password-reset")}>
                                                     Forgot your password?
                                                 </Button>
                                             )}
@@ -106,9 +106,10 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
                                                     placeholderVisible={field.placeholderVisible}
                                                     id={field.name}
                                                     {...fieldProps}
+                                                    tabIndex={2}
                                                 />
                                             ) : (
-                                                <Input id={field.name} type={field.type} placeholder={field.placeholder} {...fieldProps} />
+                                                <Input id={field.name} type={field.type} placeholder={field.placeholder} {...fieldProps} tabIndex={1}/>
                                             )}
                                         </FormControl>
                                         <FormMessage />
@@ -117,7 +118,7 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
                             />
                         ))}
 
-                        <Button type="submit" variant="gradient" className="w-full">
+                        <Button type="submit" variant="gradient" tabIndex={3} className="w-full">
                             Log in
                         </Button>
                     </form>
