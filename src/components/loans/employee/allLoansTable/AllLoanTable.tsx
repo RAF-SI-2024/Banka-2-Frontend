@@ -23,6 +23,7 @@ import { Loan, LoanResponse } from "@/types/loan";
 import { LoanType, LoanTypeResponse } from "@/types/loanType";
 import { showErrorToast } from "@/utils/show-toast-utils";
 import { generateAllLoanColumns } from "./AllLoanListColumnDef";
+import {LoanStatus} from "@/types/enums.ts";
 
 // Postoji filter po vrsti kredita i broju računa
 export default function AllLoanTable() {
@@ -30,7 +31,7 @@ export default function AllLoanTable() {
     const [search, setSearch] = useState({
         loanTypeName: "",
         accountNumber: "",
-        loanStatus: "",
+        loanStatus: LoanStatus.Active.toString(),
     });
 
     // search active - to display clear button
@@ -58,10 +59,12 @@ export default function AllLoanTable() {
 
     // visibility state - make some columns invisible by default
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+        id: false,
         creationDate: false,
+        maturityDate: false,
         currency: false,
         interestType: false,
-        // period: false,
+        period: false,
     });
 
     // column filters
@@ -76,7 +79,6 @@ export default function AllLoanTable() {
             for (let i = 0; i < loanTypes.length; i++) {
                 if (loanTypes[i].name === search.loanTypeName) {
                     searchParams.loanTypeName = loanTypes[i].id;
-                    console.log("Loan type id: " + searchParams.loanTypeName);
                     break;
                 }
             }
@@ -217,9 +219,10 @@ export default function AllLoanTable() {
                             <SelectValue placeholder="Filter by status" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="1">Approved</SelectItem>
-                            <SelectItem value="0">Pending</SelectItem>
-                            <SelectItem value="-1">Rejected</SelectItem>
+                            <SelectItem value={LoanStatus.Pending.toString()}> Pending </SelectItem>
+                            <SelectItem value={LoanStatus.Active.toString()}> Active </SelectItem>
+                            <SelectItem value={LoanStatus.Rejected.toString()}> Rejected </SelectItem>
+                            <SelectItem value={LoanStatus.Closed.toString()}> Closed </SelectItem>
                         </SelectContent>
                     </Select>
 

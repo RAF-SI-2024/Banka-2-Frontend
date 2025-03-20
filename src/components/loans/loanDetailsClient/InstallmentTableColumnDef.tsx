@@ -19,7 +19,7 @@ export function generateInstallmentColumns(): ColumnDef<Installment>[] {
             header: "Amount",
             enableHiding: false,
             cell: ({row} )=> {
-                return formatCurrency(row.original.loan.amount / row.original.loan.period, row.original.loan.currency.code);
+                return formatCurrency(row.original.amount, "RSD");
             }
         },
         {

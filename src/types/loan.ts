@@ -31,7 +31,7 @@ export interface LoanResponse{
 
 
 export interface LoanUpdateRequest{
-    status: number;
+    status: LoanStatus;
     maturityDate: Date,
 }
 
@@ -46,6 +46,7 @@ export interface LoanCreateRequest{
 }
 
 export interface Installment {
+    id: string,
     loan: Loan,
     interestRate: number,
     expectedDueDate: Date,
@@ -53,6 +54,7 @@ export interface Installment {
     status: InstallmentStatus,
     createdAt: Date,
     modifiedAt: Date,
+    amount: number,
 }
 
 export interface InstallmentResponsePage{

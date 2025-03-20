@@ -134,7 +134,7 @@ export default function LoanOverviewTable() {
     if (error) return <h1 className="text-center text-2xl font-semibold text-destructive">{error}</h1>;
 
     return (
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-4 lg:w-4/5 mx-auto">
             <div className="w-full flex flex-row items-baseline">
                 {/* 🔍 Search Filters */}
                 <div className="flex flex-wrap gap-4 items-center">

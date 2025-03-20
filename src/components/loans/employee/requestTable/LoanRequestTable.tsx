@@ -1,29 +1,26 @@
-import { useState, useEffect, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, UserResponse } from "@/types/user.ts";
-import { getAllUsers } from "@/api/user.ts";
-import { EditUserDialog } from "../../../admin/EditUserDialog";
-import { DataTable } from "@/components/common/datatable/DataTable.tsx";
-import { getCoreRowModel } from "@tanstack/react-table";
-import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
-import { DataTableViewOptions } from "@/components/common/datatable/DataTableViewOptions";
+import {useEffect, useMemo, useState} from "react";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {DataTable} from "@/components/common/datatable/DataTable.tsx";
 import {
-    getPaginationRowModel,
-    SortingState,
-    getSortedRowModel,
-    VisibilityState,
     ColumnFiltersState,
+    getCoreRowModel,
     getFilteredRowModel,
-    useReactTable
+    getPaginationRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable,
+    VisibilityState
 } from "@tanstack/react-table";
-import { generateUserColumns } from "@/components/usertable/UserListColumnDef.tsx";
-import { getAllLoans, getAllLoanTypes, updateLoanStatus } from "@/api/loan";
-import { Loan, LoanResponse, LoanUpdateRequest } from "@/types/loan";
-import { generateLoanColumns } from "./LoanListColumnDef";
-import { LoanType, LoanTypeResponse } from "@/types/loanType";
-import { showErrorToast } from "@/utils/show-toast-utils";
+import {DataTablePagination} from "@/components/common/datatable/DataTablePagination";
+import {DataTableViewOptions} from "@/components/common/datatable/DataTableViewOptions";
+import {getAllLoans, getAllLoanTypes, updateLoanStatus} from "@/api/loan";
+import {Loan, LoanResponse} from "@/types/loan";
+import {generateLoanColumns} from "./LoanListColumnDef";
+import {LoanType, LoanTypeResponse} from "@/types/loanType";
+import {showErrorToast} from "@/utils/show-toast-utils";
+import {LoanStatus} from "@/types/enums.ts";
 
 // Postoji filter po vrsti kredita i broju računa
 export default function LoanRequestTable() {
@@ -39,9 +36,6 @@ export default function LoanRequestTable() {
 
     // Clear/Filter button clicked
     const [fetchFlag, setFetchFlag] = useState(false);
-
-    // status state
-    const [status, setStatus] = useState<number>(0);
 
     // current loans list
     const [loans, setLoans] = useState<Loan[]>([]);
@@ -64,6 +58,7 @@ export default function LoanRequestTable() {
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
         id: false,
         creationDate: false,
+        maturityDate: false,
         currency: false,
         interestType: false,
         period: false,
@@ -131,7 +126,7 @@ export default function LoanRequestTable() {
         }
     }
 
-    const handleUpdateLoanStatus = async (loan: Loan, status: number) => {
+    const handleUpdateLoanStatus = async (loan: Loan, status: LoanStatus) => {
         const loanUpdateRequest = {
             status: status,
             maturityDate: loan.maturityDate,
@@ -172,10 +167,10 @@ export default function LoanRequestTable() {
     // generate columns
     const columns = useMemo(() => {
         const handleApprove = (loan: Loan) => {
-            handleUpdateLoanStatus(loan, 1);
+            handleUpdateLoanStatus(loan, LoanStatus.Active);
         }
         const handleReject = (loan: Loan) => {
-            handleUpdateLoanStatus(loan, -1);
+            handleUpdateLoanStatus(loan, LoanStatus.Rejected);
         }
         // Return generated columns
         return generateLoanColumns(handleApprove, handleReject);

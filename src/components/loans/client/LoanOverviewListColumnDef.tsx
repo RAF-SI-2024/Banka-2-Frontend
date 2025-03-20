@@ -17,8 +17,14 @@ export function generateLoanOverviewColumns(handleDetail: (loan: Loan) => void):
     return(
         [
             {
+                accessorKey: "id",
+                header: "Loan number",
+                enableHiding: true,
+
+            },
+            {
                 accessorKey: "creationDate",
-                header: "Creation Date",
+                header: "Creation date",
                 cell: ({row}) => new Date(row.original.creationDate).toLocaleDateString("sr-RS"),
                 enableHiding: true
             },
@@ -42,17 +48,21 @@ export function generateLoanOverviewColumns(handleDetail: (loan: Loan) => void):
                     let text;
 
                     switch (row.original.status) {
-                        case LoanStatus.Active:
-                            variant = "success";
-                            text = "Active";
-                            break;
                         case LoanStatus.Pending:
                             variant = "warning";
                             text = "Pending";
                             break;
+                        case LoanStatus.Active:
+                            variant = "success";
+                            text = "Active";
+                            break;
                         case LoanStatus.Rejected:
                             variant = "destructive";
                             text = "Rejected";
+                            break;
+                        case LoanStatus.Closed:
+                            variant = "outline";
+                            text = "Closed";
                             break;
                         default:
                             variant = "outline";
