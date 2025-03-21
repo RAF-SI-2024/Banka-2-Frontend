@@ -5,7 +5,7 @@ import {TransactionStatus, TransactionType} from "@/types/enums.ts";
 export interface Transaction {
     id: string,
     fromAccount: BankAccountSimple | null,
-    toAccount: string | null,
+    toAccount: BankAccountSimple | null,
     currencyFrom: Currency,
     currencyTo: Currency,
     fromAmount: number,

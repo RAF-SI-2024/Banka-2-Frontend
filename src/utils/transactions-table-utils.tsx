@@ -89,12 +89,14 @@ export const fetchTransactionTableRows = async (
             transactionsData = await getAccountTransactions(bankAccountId, pageNumber, pageSize, fromDate, toDate, status);
         }
 
+        console.log("TRANSACTIONS DATA", transactionsData);
+
         if (setTotalPages)
             setTotalPages(transactionsData.totalPages);
 
 
         let tableRows: Array<TransactionTableRow> = [];
-
+        console.log("KLIJENT ACC", clientAccountNumbers);
         for(let item of transactionsData.items as Transaction[]) {
             /*
             - Deposit (uplata novca na racun) <=> fromAccount -> null & toAccount -> yourAccount (mora biti tvoj, ako nije onda je nesto lose)
@@ -108,13 +110,23 @@ export const fetchTransactionTableRows = async (
             const fromAccount = item.fromAccount;
             const toAccount = item.toAccount;
 
+            console.log("Checking Transaction:", {
+                fromAccount: fromAccount?.accountNumber,
+                toAccount: toAccount?.accountNumber,
+                clientAccounts: clientAccountNumbers
+            });
+
+
             let currencyCode = "RSD";
             // DEPOSIT
-            if(fromAccount == null && toAccount != null && clientAccountNumbers.includes(toAccount)){
-                currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount}).then(acc => acc.data.items.currency.code)
+            if(fromAccount == null && toAccount != null && clientAccountNumbers.includes(toAccount.accountNumber)){
+                console.log("DEPOSIT");
+                console.log("FROM ACCOUNT", fromAccount);
+                console.log("TO ACCOUNT", toAccount);
+                currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount.accountNumber}).then(acc => acc.data.items.currency.code)
                 tableRows.push({
                     fromAccountNumber: null,
-                    toAccountNumber: toAccount,
+                    toAccountNumber: toAccount.accountNumber,
                     amount: item.toAmount,
                     currencyCode: currencyCode,
                     date: new Date(item.createdAt),
@@ -126,7 +138,10 @@ export const fetchTransactionTableRows = async (
             else if(fromAccount==null)
                 continue;
             // WITHDRAW
-            else if(clientAccountNumbers.includes(fromAccount.accountNumber.toString()) && toAccount === null){
+            else if(clientAccountNumbers.includes(fromAccount.accountNumber) && toAccount === null){
+                console.log("WITHDRAW");
+                console.log("FROM ACCOUNT", fromAccount);
+                console.log("TO ACCOUNT", toAccount);
                 currencyCode = await getAccountById(fromAccount.id).then(acc => acc.data.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
@@ -143,11 +158,14 @@ export const fetchTransactionTableRows = async (
                 continue;
             }
             // PAYMENT TO SOMEONE'S ACCOUNT
-            else if(clientAccountNumbers.includes(fromAccount.accountNumber.toString()) && !clientAccountNumbers.includes(toAccount)){
+            else if(clientAccountNumbers.includes(fromAccount.accountNumber) && !clientAccountNumbers.includes(toAccount.accountNumber)){
+                console.log("Payments TO someone's account");
+                console.log("FROM ACCOUNT", fromAccount);
+                console.log("TO ACCOUNT", toAccount);
                 currencyCode = await getAccountById(fromAccount.id).then(acc => acc.data.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
-                    toAccountNumber: toAccount,
+                    toAccountNumber: toAccount.accountNumber,
                     amount: -item.fromAmount,
                     currencyCode: currencyCode,
                     date: new Date(item.createdAt),
@@ -157,11 +175,14 @@ export const fetchTransactionTableRows = async (
                 })
             }
             // PAYMENT FROM SOMEONE
-            else if(!(clientAccountNumbers.includes(fromAccount.accountNumber.toString())) && clientAccountNumbers.includes(toAccount)){
-                currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount}).then(acc => acc.data.items.currency.code)
+            else if(!(clientAccountNumbers.includes(fromAccount.accountNumber)) && clientAccountNumbers.includes(toAccount.accountNumber)){
+                console.log("Payments FROM someone's account");
+                console.log("FROM ACCOUNT", fromAccount);
+                console.log("TO ACCOUNT", toAccount);
+                currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount.accountNumber}).then(acc => acc.data.items.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
-                    toAccountNumber: toAccount,
+                    toAccountNumber: toAccount.accountNumber,
                     amount: item.toAmount,
                     currencyCode: currencyCode,
                     date: new Date(item.createdAt),
@@ -171,11 +192,14 @@ export const fetchTransactionTableRows = async (
                 })
             }
             // EXCHANGE
-            else if(clientAccountNumbers.includes(fromAccount.accountNumber.toString()) && fromAccount.accountNumber == toAccount){
-                currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount}).then(acc => acc.data.items.currency.code)
+            else if(clientAccountNumbers.includes(fromAccount.accountNumber) && fromAccount.accountNumber == toAccount.accountNumber){
+                console.log("EXCHANGE");
+                console.log("FROM ACCOUNT", fromAccount);
+                console.log("TO ACCOUNT", toAccount);
+                currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount.accountNumber}).then(acc => acc.data.items.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
-                    toAccountNumber: toAccount,
+                    toAccountNumber: toAccount.accountNumber,
                     amount: item.fromAmount,
                     currencyCode: currencyCode,
                     date: new Date(item.createdAt),
@@ -186,7 +210,7 @@ export const fetchTransactionTableRows = async (
             }
 
         }
-        console.log(tableRows);
+        console.log("Table rows", tableRows);
         setTableData([...tableRows]);
     } catch (error) {
         if(setError)
