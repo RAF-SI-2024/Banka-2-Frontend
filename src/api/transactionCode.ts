@@ -18,7 +18,7 @@ export const fetchRecipientCurrencyCode = async (
 ): Promise<string | null> => {
     console.log("CURRENCY", accountNumber);
     const response = await api.get("/accounts", {
-        params: { Number: accountNumber.substring(7,16) },
+        params: { Number: accountNumber.substring(7,16) }, // FIXME: Ovde treba da stoji samo accountNumber
     });
 
     console.log(response);
