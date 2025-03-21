@@ -104,7 +104,7 @@ export default function BankCardPage() {
                                         onDetailsClick={() => navigate(`/bank-account/${bankAccount.id}`)}
                                         account={bankAccount} />
 
-                <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={bankAccount} cardTitle="RAA"/>
+                <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={bankAccount} cardTitle="Card transactions"/>
             </div>
         </main>
     )

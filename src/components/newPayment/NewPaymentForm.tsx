@@ -106,7 +106,7 @@ export default function NewPaymentForm() {
 
     async function onSubmit (values: z.infer<typeof paymentSchema>) {
         try {
-            const toAcc = values.recipientAccount.trim().substring(7,16);
+            const toAcc = values.recipientAccount.trim().substring(7,16); //FIXME: OVDE SE SALJE SVE A NE SAMO 9 CIFARA
             const matchingCode = paymentCodes.find((c) => c.code === values.paymentCode || c.code === "289");
             const toCurrencyId = await fetchRecipientCurrencyCode(toAcc);
             console.log(matchingCode);
