@@ -16,8 +16,9 @@ export const fetchPaymentCodes = async (): Promise<RawPaymentCode[]> => {
 export const fetchRecipientCurrencyCode = async (
     accountNumber: string
 ): Promise<string | null> => {
+    console.log("CURRENCY", accountNumber);
     const response = await api.get("/accounts", {
-        params: { Number: accountNumber },
+        params: { Number: accountNumber.substring(7,16) },
     });
 
     console.log(response);
