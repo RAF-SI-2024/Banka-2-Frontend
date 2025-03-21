@@ -1,6 +1,8 @@
 import api from "@/api/axios.ts";
 import {TransactionCodeResponse} from "@/types/transfers.ts";
-import {CreateTransactionRequest} from "@/types/transaction.ts";
+import {CreateTransactionRequest, TransactionResponse} from "@/types/transaction.ts";
+import {API_BASE} from "@/constants/endpoints.ts";
+import {TransactionStatus} from "@/types/enums.ts";
 
 export const getTransactionCodes = async (
     pageNumber: number,
@@ -29,3 +31,76 @@ export const createTransaction = async (transactionData: CreateTransactionReques
         throw error;
     }
 };
+
+
+
+
+export const getAllTransactions = async (
+    pageNumber?: number,
+    pageSize?: number,
+    fromDate?: Date,
+    toDate?: Date,
+    status?: TransactionStatus,
+    transactionType?: number,
+): Promise<TransactionResponse> => {
+    try {
+        const response = await api.get(`${API_BASE}/transactions`, {
+                params: {
+                    Page: pageNumber,
+                    Size: pageSize,
+                    Type: transactionType,
+                    FromDate: fromDate?.toDateString(),
+                    ToDate: toDate?.toDateString(),
+                    status: status,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("❌ Failed to get all transactions:", error);
+        throw error;
+    }
+}
+
+export const getAccountTransactions = async (
+    accountId: string,
+    pageNumber?: number,
+    pageSize?: number,
+    fromDate?: Date,
+    toDate?: Date,
+    status?: TransactionStatus,
+    transactionType?: number,
+): Promise<TransactionResponse> => {
+    try {
+        const response = await api.get(`${API_BASE}/accounts/${accountId}/transactions`, {
+                params: {
+                    Page: pageNumber,
+                    Size: pageSize,
+                    Type: transactionType,
+                    FromDate: fromDate,
+                    ToDate: toDate,
+                    Status: status,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("❌ Failed to get all transactions for your bank account:", error);
+        throw error;
+    }
+}
+
+export const getNewTransactions = async (): Promise<TransactionResponse> => {
+    try {
+        const response = await api.get(`${API_BASE}/transactions`,{
+            params: {
+                Page: 1,
+                Size: 5
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("❌ Failed to get recent transactions:", error);
+        throw error;
+    }
+}

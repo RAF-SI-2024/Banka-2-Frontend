@@ -82,6 +82,13 @@ export enum TransactionStatus
     Failed = 4
 }
 
+export enum TransactionType {
+    Withdraw = "Withdraw",
+    Deposit = "Deposit",
+    Transaction = "Transaction",
+    Exchange = "Exchange"
+}
+
 export const getInterestRate = (type: number) => {
     switch (type) {
         case 0: 
