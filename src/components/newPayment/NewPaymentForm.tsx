@@ -106,13 +106,13 @@ export default function NewPaymentForm() {
 
     async function onSubmit (values: z.infer<typeof paymentSchema>) {
         try {
-            const toAcc = values.recipientAccount.trim().substring(7,16); //FIXME: OVDE SE SALJE SVE A NE SAMO 9 CIFARA
+            const toAcc = values.recipientAccount//FIXME: OVDE SE SALJE SVE A NE SAMO 9 CIFARA
             const matchingCode = paymentCodes.find((c) => c.code === values.paymentCode || c.code === "289");
             const toCurrencyId = await fetchRecipientCurrencyCode(toAcc);
             console.log(matchingCode);
             console.log(toCurrencyId);
             if (!(selectedBankAccount && toCurrencyId && matchingCode)){
-                throw new Error("Error fetching data.");
+                throw new Error("Errorrrr");
             }
 
 
@@ -127,7 +127,7 @@ export default function NewPaymentForm() {
                 purpose: values.purpose
             }
 
-            console.log(payload);
+            console.log("SLANJE TRANSKACIJE", payload);
 
             const response = await createTransaction(payload);
 
