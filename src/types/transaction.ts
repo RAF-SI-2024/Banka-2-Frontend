@@ -1,6 +1,6 @@
 import {BankAccount} from "@/types/bankAccount.ts";
 import {Currency} from "@/types/currency.ts";
-import {TransactionStatus} from "@/types/enums.ts";
+import {TransactionStatus, TransactionType} from "@/types/enums.ts";
 
 export interface Transaction {
     id: string,
@@ -46,4 +46,15 @@ export interface CreateTransactionRequest {
     codeId: string;
     referenceNumber?: string;
     purpose: string;
+}
+
+export interface TransactionTableRow {
+    fromAccountNumber: string | null,
+    toAccountNumber: string | null,
+    amount: number,
+    currencyCode: string,
+    date: Date
+    type: TransactionType,
+    status: TransactionStatus,
+    purpose?: string,
 }

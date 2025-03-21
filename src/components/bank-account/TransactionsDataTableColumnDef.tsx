@@ -1,23 +1,22 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { Transaction } from "@/types/transaction.ts"
+import {Transaction, TransactionTableRow} from "@/types/transaction.ts"
 import { formatCurrency } from "@/utils/format-currency.ts";
-import { TransactionStatus } from "@/types/enums.ts";
+import {TransactionStatus, TransactionType} from "@/types/enums.ts";
+import {getTransactionStatusBadge} from "@/utils/transactions-table-utils.tsx";
 
 
-const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    console.log(date)
+const formatDate = (date: Date): string => {
     return date.toLocaleDateString('sr-RS') + " (" + date.toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit'}) + ")"
 };
 
-export function generateTransactionColumns(): ColumnDef<Transaction>[] {
+export function generateTransactionColumns(): ColumnDef<TransactionTableRow>[] {
     return [
         {
             accessorKey: "fromAccount",
             header: "From Account",
             enableHiding: false,
             cell: ({ row }) => {
-                return row.original.fromAccount ? row.original.fromAccount.accountNumber : "/";
+                return row.original.fromAccountNumber || "/";
             }
         },
         {
@@ -25,63 +24,40 @@ export function generateTransactionColumns(): ColumnDef<Transaction>[] {
             header: "To Account",
             enableHiding: false,
             cell: ({ row }) => {
-                return row.original.toAccount || "/";
+                return row.original.toAccountNumber || "/";
             }
         },
         {
-            accessorKey: "createdAt",
-            header: "Date",
+            accessorKey: "date",
+            header: "Date & time",
             enableHiding: true,
             cell: ({ row }) => {
-                return formatDate(row.original.createdAt);
+                return formatDate(row.original.date);
             }
         },
         {
             accessorKey: "purpose",
             header: "Purpose",
-        },
-        // Mislim da ce ova polja trebati da se prikazu detaljima transakcije kada se pritisne na nju
-        /*{
-            accessorKey: "fromAmount",
-            header: "From Amount",
             enableHiding: true,
-            cell: ({ row }) => {
-                return (
-                    <span className={row.original.fromAmount < 0 ? "text-destructive" : "text-success"}>
-                    {formatCurrency(row.original.fromAmount, row.original.currencyFrom.code)}
-                    </span>
-                );
-            }
         },
-        {
-            accessorKey: "toAmount",
-            header: "To Amount",
-            enableHiding: true,
-            cell: ({ row }) => {
-                return (
-                    <span className={row.original.fromAmount < 0 ? "text-destructive" : "text-success"}>
-                    {formatCurrency(row.original.toAmount, row.original.currencyTo.code)}
-                    </span>
-                );
-            }
-        },*/
         {
             header: "Amount",
             enableHiding: true,
             cell: ({ row }) => {
-                const amountDifference = row.original.fromAmount - row.original.toAmount;
-                const currencyCode = row.original.currencyFrom.code;
-                return (
-                    <span className={amountDifference < 0 ? "text-destructive" : "text-success"}>
-                        {formatCurrency(amountDifference, currencyCode)}
-                    </span>
-                );
+                return (<div className={`font-semibold px-2 py-5 ${row.original.amount > 0 ? (row.original.type != TransactionType.Exchange ? "text-success" : ""): "text-destructive"}`}>
+                    {row.original.amount > 0 && row.original.type != TransactionType.Exchange ? "+" : ""}
+                    {formatCurrency(row.original.amount, row.original.currencyCode)}</div>)
             }
+        },
+        {
+            accessorKey: "type",
+            header: "Type",
+            enableHiding: true
         },
         {
             accessorKey: "status",
             header: "Status",
-            cell: ({ row }) => TransactionStatus[row.original.status],
+            cell: ({ row }) => getTransactionStatusBadge(row.original.status),
         },
     ];
 }

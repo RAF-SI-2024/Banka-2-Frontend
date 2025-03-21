@@ -131,6 +131,7 @@ export default function BankAccountPage() {
                                     onSendClick={() => navigate('/payments/new', {state:{accountId: account.id}})}
                                     onDetailsClick={() => setShowDetails(true)}
                                 />
+
                             </motion.div>
                         )}
                     </AnimatePresence>

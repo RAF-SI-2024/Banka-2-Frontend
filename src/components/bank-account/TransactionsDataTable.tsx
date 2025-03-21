@@ -17,34 +17,32 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import {generateTransactionColumns} from "@/components/bank-account/TransactionsDataTableColumnDef.tsx";
-import {Transaction, TransactionResponse} from "@/types/transaction.ts";
+import {Transaction, TransactionResponse, TransactionTableRow} from "@/types/transaction.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
-import { getAccountTransactions, getAllTransactions } from "@/api/bankAccount.ts";
 import { TransactionStatus } from "@/types/enums.ts";
 import { DateRange } from "react-day-picker";
+import {fetchTransactionTableRows} from "@/utils/transactions-table-utils.tsx";
 
 interface TransactionsDataTableProps {
-    account: BankAccount | null;
-    // Id transactionType = 0 show all transactions, if its 1 show exchange/transfer
-    transactionType: number;
+    account?: BankAccount;
 }
 
-export default function TransactionsDataTable({account, transactionType}: TransactionsDataTableProps) {
+export default function TransactionsDataTable({account}: TransactionsDataTableProps) {
     /* STATES */
     // edit
 
     const [search, setSearch] = useState({
-        fromAmount: "",
-        toAmount: "",
+        fromDate: undefined as Date | undefined,
+        toDate: undefined as Date | undefined,
         status: "",
     });
 
-    const [appliedSearch, setAppliedSearch] = useState(search);
+    const clientId: string = JSON.parse(sessionStorage.user).id;
 
-    const isSearchActive = Object.values(search).some(value => value !== "");
+    const isSearchActive = Object.values(search).some(value => value && value !== "");
 
     // current transaction list
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [transactions, setTransactions] = useState<TransactionTableRow[]>([]);
 
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -65,252 +63,62 @@ export default function TransactionsDataTable({account, transactionType}: Transa
 
     // visibility state - make some columns invisible by default
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-        id: false,
-        dateOfBirth: false,
-        uniqueIdentificationNumber: false,
-        gender: false,
-        phoneNumber: false,
-        address: false,
-        department: false
+        purpose: false
     });
 
-    function generateMockTransactions() { // Dodato zbog testiranja
-        const mockData = [
-            {
-                id: 1,
-                fromAccount: { accountNumber: '111111111' },
-                toAccount: '222222222',
-                date: '2024-03-05T10:30:00.000Z',
-                createdAt: '2024-03-05T10:30:00.000Z',
-                purpose: 'Payment for services',
-                fromAmount: 100.50,
-                toAmount: 90.50,
-                status: TransactionStatus.Completed,
-                currencyFrom: {
-                    id: "123",
-                    name: "USD",
-                    code: "USD",
-                    symbol: "USD",
-                    description: "Valuta",
-                    status: true,
-                    createdAt: '2024-03-05T10:30:00.000Z',
-                    modifiedAt: '2024-03-05T10:30:00.000Z'
-                },
-                currencyTo: {
-                    id: "123",
-                    name: "USD",
-                    code: "USD",
-                    symbol: "USD",
-                    //countries: Country[];
-                    description: "Valuta",
-                    status: true,
-                    createdAt: '2024-03-05T10:30:00.000Z',
-                    modifiedAt: '2024-03-05T10:30:00.000Z'
-                },
-            },
-            {
-                id: 2,
-                fromAccount: { accountNumber: '333333333' },
-                toAccount: '444444444',
-                date: '2024-03-06T12:00:00.000Z',
-                createdAt: '2024-03-05T10:30:00.000Z',
-                purpose: 'Loan repayment',
-                fromAmount: 250,
-                toAmount: 300,
-                status: TransactionStatus.Pending,
-                currencyFrom: {
-                    id: "123",
-                    name: "USD",
-                    code: "USD",
-                    symbol: "USD",
-                    description: "Valuta",
-                    status: true,
-                    createdAt: '2024-03-05T10:30:00.000Z',
-                    modifiedAt: '2024-03-05T10:30:00.000Z'
-                },
-                currencyTo: {
-                    id: "123",
-                    name: "USD",
-                    code: "USD",
-                    symbol: "USD",
-                    description: "Valuta",
-                    status: true,
-                    createdAt: '2024-03-05T10:30:00.000Z',
-                    modifiedAt: '2024-03-05T10:30:00.000Z'
-                },
-            },
-            {
-                id: 3,
-                fromAccount: { accountNumber: '555555555' },
-                toAccount: '666666666' ,
-                date: '2024-03-07T14:45:00.000Z',
-                createdAt: '2024-03-05T10:30:00.000Z',
-                purpose: 'Salary payment',
-                fromAmount: 1500,
-                toAmount: 1000,
-                status: TransactionStatus.Completed,
-                currencyFrom: {
-                    id: "123",
-                    name: "USD",
-                    code: "USD",
-                    symbol: "USD",
-                    description: "Valuta",
-                    status: true,
-                    createdAt: '2024-03-05T10:30:00.000Z',
-                    modifiedAt: '2024-03-05T10:30:00.000Z'
-                },
-                currencyTo: {
-                    id: "123",
-                    name: "USD",
-                    code: "USD",
-                    symbol: "USD",
-                    description: "Valuta",
-                    status: true,
-                    createdAt: '2024-03-05T10:30:00.000Z',
-                    modifiedAt: '2024-03-05T10:30:00.000Z'
-                },
-            }
-        ];
-
-        // @ts-expect-error Missing few datatypes, not important for mock data
-        setTransactions(mockData)
-    }
 
     // fetch users effect (triggered on currentpage, pagesize or search change
     useEffect(() => {
-        // account is null when we open overview page, account has a value if we open account component
-        if (account === null) {
-            fetchAllTransactions();
-            if (transactions.length === 0) // Dodato zbog testiranja
-                generateMockTransactions()
-        } else {
-            fetchAccountTransactions();
-            if (transactions.length === 0) // Dodato zbog testiranja
-                generateMockTransactions()
+        async function fetchData(){
+            setError(null);
+            await fetchTransactionTableRows({
+                clientId: clientId,
+                mode: account ? "all": "bankAccount",
+                pageNumber: currentPage,
+                pageSize: pageSize,
+                fromDate: search.fromDate,
+                toDate: search.toDate,
+                status: Number(search.status),
+                bankAccountId: account ? account.id: undefined,
+                setTableData: setTransactions,
+                setTotalPages: setTotalPages,
+                setError: setError});
         }
+
+        fetchData();
+
     }, [currentPage, pageSize, fetchFlag, dateRange]); // Add dependencies
 
-    // If the data table is used in the overview page
-    const fetchAllTransactions = async () => {
-        console.log("Fetching transactions");
-        setError(null);
-        try {
-            const transactionsData: TransactionResponse = await getAllTransactions(
-                currentPage,
-                pageSize,
-                transactionType
-            );
-            setTransactions(transactionsData.items);
-            setTotalPages(transactionsData.totalPages);
-        }
-        catch (err) {
-            console.log(err);
-            //setError("Failed to fetch transactions"); // Zakomentarisano zbog testiranja
-        }
-    };
 
-    // If the data table is used in the account component
-    const fetchAccountTransactions = async () => {
-        console.log("Fetching transactions");
-        setError(null);
-        try {
-            const transactionsData: TransactionResponse = await getAccountTransactions(
-                currentPage,
-                pageSize,
-                transactionType,
-                account?.id,
-            );
-            setTransactions(transactionsData.items);
-            setTotalPages(transactionsData.totalPages);
-            console.log(transactionsData)
-
-        } catch (err) {
-            console.log(err);
-            // setError("Failed to fetch transactions"); // Zakomentarisano zbog testiranja
-        }
-    };
 
     const handleSearchChange = (field: string, value: string | number) => {
         setSearch(prevSearch => ({ ...prevSearch, [field]: value }));
     };
 
-    const handleFilter = () => { 
-        setAppliedSearch(search);
+    const handleFilter = () => {
+        setFetchFlag(!fetchFlag);
     };
 
     const handleClear = async () => { 
         setSearch({
-            fromAmount: "",
-            toAmount: "",
+            fromDate: undefined,
+            toDate: undefined,
             status: "",
         });
-        setAppliedSearch({
-            fromAmount: "",
-            toAmount: "",
-            status: "",
-        });
-        setDateRange(undefined);
         setFetchFlag(!fetchFlag);
     };
 
     /* TABLE */
     // generate columns
     const columns = useMemo(() => {
-        if(account != null)
-            return generateTransactionColumns();
-        else return []
+        return generateTransactionColumns();
     }, []); // Empty dependency array since handleOpenEditDialog is now inside
 
-    const mapStatus = (statusCode: TransactionStatus): TransactionStatus | null => {
-        switch (statusCode) {
-            case TransactionStatus.Invalid:
-                return TransactionStatus.Invalid;
-            case TransactionStatus.Pending:
-                return TransactionStatus.Pending;
-            case TransactionStatus.Canceled:
-                return TransactionStatus.Canceled;
-            case TransactionStatus.Completed:
-                return TransactionStatus.Completed;
-            case TransactionStatus.Failed:
-                return TransactionStatus.Failed;
-            default:
-                return null;
-        }
-    };
 
-    const filteredTransactions = useMemo(() => {
-        return transactions.filter((transaction) => {
-            const fromAmountNum = Number(appliedSearch.fromAmount);
-            const toAmountNum = Number(appliedSearch.toAmount);
-            const transactionAmount = transaction.fromAmount - transaction.toAmount;
-
-            if (appliedSearch.fromAmount && transactionAmount <= fromAmountNum) {
-                return false;
-            }
-            if (appliedSearch.toAmount && transactionAmount >= toAmountNum) {
-                return false;
-            }
-            if (appliedSearch.status && transaction.status !== mapStatus(Number(appliedSearch.status) as TransactionStatus)) {
-                return false;
-            }
-            if (dateRange?.from && new Date(transaction.createdAt) < dateRange.from) {
-                return false;
-            }
-            if (dateRange?.to) {
-                const endOfDay = new Date(dateRange.to);
-                endOfDay.setHours(23, 59, 59, 999);
-
-                if (new Date(transaction.createdAt) > endOfDay) {
-                    return false;
-                }
-            }
-            return true;
-        });
-    }, [transactions, appliedSearch, dateRange]);
 
     // create the table instance with pagination, sorting, and column visibility
     const table = useReactTable({
-        data: filteredTransactions,
+        data: transactions,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -354,47 +162,61 @@ export default function TransactionsDataTable({account, transactionType}: Transa
                 <div className="w-full flex gap-4 items-center">
                     <div className="flex flex-row gap-4">
                         {/* Uklanja strelice sa input[type=number] polja */}
-                        <style>{`
-                            input[type=number]::-webkit-inner-spin-button, 
-                            input[type=number]::-webkit-outer-spin-button {  
-                                -webkit-appearance: none;
-                                margin: 0;
-                            }
+                        {/*<style>{`*/}
+                        {/*    input[type=number]::-webkit-inner-spin-button, */}
+                        {/*    input[type=number]::-webkit-outer-spin-button {  */}
+                        {/*        -webkit-appearance: none;*/}
+                        {/*        margin: 0;*/}
+                        {/*    }*/}
 
-                            input[type=number] {
-                                -moz-appearance: textfield;
-                            }
-                        `}</style>
+                        {/*    input[type=number] {*/}
+                        {/*        -moz-appearance: textfield;*/}
+                        {/*    }*/}
+                        {/*`}</style>*/}
 
-                        <Input
-                            type="number"
-                            placeholder="From amount"
-                            value={search.fromAmount}
-                            onChange={(e) => handleSearchChange("fromAmount", e.target.value ? Number(e.target.value) : "")}
-                            className="w-42"
-                        />
-                        <Input
-                            type="number"
-                            placeholder="To amount"
-                            value={search.toAmount}
-                            onChange={(e) => handleSearchChange("toAmount", e.target.value ? Number(e.target.value) : "")}
-                            className="w-42"
-                        />
+                        {/*<Input*/}
+                        {/*    type="number"*/}
+                        {/*    placeholder="From amount"*/}
+                        {/*    value={search.fromAmount}*/}
+                        {/*    onChange={(e) => handleSearchChange("fromAmount", e.target.value ? Number(e.target.value) : "")}*/}
+                        {/*    className="w-42"*/}
+                        {/*/>*/}
+                        {/*<Input*/}
+                        {/*    type="number"*/}
+                        {/*    placeholder="To amount"*/}
+                        {/*    value={search.toAmount}*/}
+                        {/*    onChange={(e) => handleSearchChange("toAmount", e.target.value ? Number(e.target.value) : "")}*/}
+                        {/*    className="w-42"*/}
+                        {/*/>*/}
 
                         <Select onValueChange={(value) => handleSearchChange("status", value)} value={search.status}>
                             <SelectTrigger className="w-42">
                                 <SelectValue placeholder="Filter by status" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="0">Invalid</SelectItem>
-                                <SelectItem value="1">Pending</SelectItem>
-                                <SelectItem value="2">Canceled</SelectItem>
-                                <SelectItem value="3">Completed</SelectItem>
-                                <SelectItem value="4">Failed</SelectItem>
+                                <SelectItem value={TransactionStatus.Invalid.toString()}>Invalid</SelectItem>
+                                <SelectItem value={TransactionStatus.Pending.toString()}>Pending</SelectItem>
+                                <SelectItem value={TransactionStatus.Canceled.toString()}>Canceled</SelectItem>
+                                <SelectItem value={TransactionStatus.Completed.toString()}>Completed</SelectItem>
+                                <SelectItem value={TransactionStatus.Failed.toString()}>Failed</SelectItem>
                             </SelectContent>
                         </Select>
 
-                        <DatePickerWithRange date={dateRange} setDate={setDateRange} />
+                        <DatePickerWithRange
+                            date={{ from: search.fromDate, to: search.toDate }}
+                            setDate={(range) => {
+                                if(range) {
+                                    const rangeDate: DateRange = range as DateRange;
+                                    setSearch(prev => ({
+                                        ...prev,
+                                        fromDate: rangeDate?.from,
+                                        toDate: rangeDate?.to,
+                                    }));
+                                }
+
+                            }}
+                        />
+
                     </div>
 
                     <div className="w-full flex items-center space-x-2 justify-end mr-2">

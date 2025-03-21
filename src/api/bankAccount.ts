@@ -118,86 +118,28 @@ export const getAllAccountsClient = async (clientId: string, page?:number, size?
 
 export const getAllAccountClientWithFilters = async (
     clientId: string,
-    page?:number,
-    size?:number,
-    filters: { accountNumber?: string; firstName?: string; lastName?: string;}
+    page?: number,
+    size?: number,
+    filters?: { accountNumber?: string; firstName?: string; lastName?: string }
 ) => {
     try {
         const response = await api.get(`${API_BASE}/clients/${clientId}/accounts`, {
             params: {
-                number: filters.accountNumber || undefined,
-                clientFirstName: filters.firstName || undefined,
-                clientLastName: filters.lastName || undefined,
-                page,      // Prosleđujemo broj stranice
-                size,  // Prosleđujemo veličinu stranice
-            }
+                number: filters?.accountNumber,
+                clientFirstName: filters?.firstName,
+                clientLastName: filters?.lastName,
+                page,
+                size,
+            },
         });
-        return response;
+        return response.data;  // Return only the necessary data
     } catch (error) {
         console.error("❌ Failed to get bank accounts for client with filters:", error);
-        throw error;
+        throw error; // Re-throw to handle it in the calling function
     }
+};
 
-}
 
-export const getAllTransactions = async (
-    pageNumber: number,
-    pageSize: number,
-    transactionType: number,
-): Promise<TransactionResponse> => {
-    try {
-        const response = await api.get(`${API_BASE}/transactions`, {
-                params: {
-                    Page: pageNumber,
-                    Size: pageSize,
-                    Type: transactionType
-                },
-            }
-        );
-        return response.data;
-    } catch (error) {
-        console.error("❌ Failed to get all transactions:", error);
-        throw error;
-    }
-}
-
-export const getAccountTransactions = async (
-    pageNumber: number,
-    pageSize: number,
-    transactionType: number,
-    // account moze biti undefined
-    account: string | undefined
-): Promise<TransactionResponse> => {
-    try {
-        const response = await api.get(`${API_BASE}/accounts/${account}/transcations`, { //FIXME: typo - treba transactions
-                params: {
-                    Page: pageNumber,
-                    Size: pageSize,
-                    Type: transactionType
-                },
-            }
-        );
-        return response.data;
-    } catch (error) {
-        console.error("❌ Failed to get all transactions for your bank account:", error);
-        throw error;
-    }
-}
-
-export const getNewTransactions = async (): Promise<TransactionResponse> => {
-    try {
-        const response = await api.get(`${API_BASE}/transactions`,{
-            params: {
-                Page: 1,
-                Size: 5
-            }
-        });
-        return response.data;
-    } catch (error) {
-        console.error("❌ Failed to get recent transactions:", error);
-        throw error;
-    }
-}
 export const fetchAccountByNumber = async (number: string) => {
     return api.get(`/accounts`, {
         params: { number },
