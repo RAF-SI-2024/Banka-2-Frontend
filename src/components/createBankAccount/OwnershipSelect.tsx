@@ -11,7 +11,7 @@ const OwnershipSelect = ({ ownership, handleOwnershipChange }: OwnershipSelectPr
     return (
         <div className="w-full">
             <Select value={ownership} onValueChange={handleOwnershipChange}>
-                <SelectTrigger className="w-full p-3 bg-[var(--card)] text-white border border-[var(--border)] rounded-lg">
+                <SelectTrigger data-cy="ownership-select" className="w-full p-3 bg-[var(--card)] text-foreground border border-[var(--border)] rounded-lg">
                     <SelectValue placeholder="Choose ownership" />
                 </SelectTrigger>
                 <SelectContent>

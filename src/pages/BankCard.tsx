@@ -100,10 +100,11 @@ export default function BankCardPage() {
                 </AnimatePresence>
 
                 <BankAccountBalanceCard cardPageVersion={true}
+                                        onSendClick={() => navigate('/payments/new', {state:{accountId: card?.account.id}})}
                                         onDetailsClick={() => navigate(`/bank-account/${bankAccount.id}`)}
                                         account={bankAccount} />
 
-                <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={bankAccount} />
+                <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={bankAccount} cardTitle="Card transactions"/>
             </div>
         </main>
     )

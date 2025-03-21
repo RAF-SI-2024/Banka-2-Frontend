@@ -19,8 +19,7 @@ export  function useBankAccountsData() {
                     throw new Error("User ID not found");
                 }
 
-                const response = await getAllAccountsClient(id);
-                console.log(response);
+                const response = await getAllAccountsClient(id, 1, 100);
 
                 if (response.status != 200){
                     throw new Error("Bank accounts not found");

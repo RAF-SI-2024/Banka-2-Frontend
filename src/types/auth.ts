@@ -1,5 +1,12 @@
 import {Gender, Role} from "@/types/enums.ts";
 
+export let globalLogout: (() => void) | null = null;
+
+export const setGlobalLogout = (logoutFn: () => void) => {
+    globalLogout = logoutFn;
+};
+
+
 export interface LoginRequest {
   email: string
   password: string

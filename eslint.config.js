@@ -23,6 +23,19 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+        // TypeScript specific rules
+        '@typescript-eslint/no-unused-vars': ['error', {
+            varsIgnorePattern: '^_',
+            argsIgnorePattern: '^_',
+            caughtErrorsIgnorePattern: '^_', // meaning - ignore unused caught errors
+        }],
+        '@typescript-eslint/no-explicit-any': 'warn',
+        '@typescript-eslint/no-unnecessary-type-constraint': 'error',
+        '@typescript-eslint/ban-types': 'error',
     },
+      ignores: [
+          // shadcn components
+          'src/components/ui/',
+      ],
   },
 )

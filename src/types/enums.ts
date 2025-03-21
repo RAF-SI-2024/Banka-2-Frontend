@@ -12,6 +12,28 @@ export enum Gender {
     Female = 2,
 }
 
+export enum InterestType {
+    Fixed,
+    Variable,
+    Mixed
+}
+
+export enum LoanStatus {
+    Pending,
+    Active,
+    Rejected,
+    Closed,
+    DefaultWarning,
+    Default
+}
+
+export enum InstallmentStatus {
+    Pending,
+    Paid,
+    Overdue,
+    Cancelled
+}
+
 
 export const getRoleNumber = (roleName: string): number => {
     switch (roleName.toLowerCase()) {
@@ -51,3 +73,30 @@ export const getGenderString = (gender: Gender) => {
     }
 };
 
+export enum TransactionStatus
+{
+    Invalid = 0,
+    Pending = 1,
+    Canceled = 2,
+    Completed = 3,
+    Failed = 4
+}
+
+export enum TransactionType {
+    Withdraw = "Withdraw",
+    Deposit = "Deposit",
+    Transaction = "Transaction",
+    Exchange = "Exchange"
+}
+
+export const getInterestRate = (type: number) => {
+    switch (type) {
+        case 0: 
+            return "Fixed";
+        case 1:
+            return "Variable";
+        default:
+            return "Unknown";
+    
+    }
+}

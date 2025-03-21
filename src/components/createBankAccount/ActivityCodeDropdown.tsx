@@ -17,7 +17,7 @@ export default function ActivityCodeDropdown({ value, onChange }: ActivityCodeDr
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button variant="outline" role="combobox" aria-expanded={open} className="w-[446px] justify-between hover:bg-foreground/80">
+                <Button variant="outline" role="combobox" data-cy="activity-code-dropdown" aria-expanded={open} className="w-[446px] justify-between hover:bg-foreground/80">
                     {value || "Enter activity code..."}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>

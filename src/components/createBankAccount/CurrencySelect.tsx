@@ -74,11 +74,11 @@ const CurrencySelect = ({ value, onChange, currencies }: CurrencySelectProps) =>
 
     return (
         <div className="flex flex-col space-y-1 w-full">
-            <Select value={defaultCurrency} onValueChange={(selectedValue) => {
+            <Select value={defaultCurrency}  onValueChange={(selectedValue) => {
                 setDefaultCurrency(selectedValue);
                 onChange(selectedValue);
             }}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger data-cy="currency-select" className="w-full">
                     <SelectValue>{defaultCurrency || "Izaberi valutu"}</SelectValue>
                 </SelectTrigger>
                 <SelectContent side="bottom">

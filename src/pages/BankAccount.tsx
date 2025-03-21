@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import BankAccountBalanceCard from "@/components/bank-account/BankAccountBalance.tsx";
 import BankAccountDetailsCard from "@/components/bank-account/BankAccountDetails.tsx";
 import BankAccountTransactions from "@/components/bank-account/BankAccountTransactions.tsx";
@@ -21,6 +21,7 @@ export default function BankAccountPage() {
     const [account, setAccount] = useState<BankAccount>();
     const [cards, setCards] = useState<CardDTO[]>([]);
     const [showDetails, setShowDetails] = React.useState(false)
+    const navigate = useNavigate();
 
     const getAccountInfo = async () => {
         setError(null);
@@ -111,8 +112,8 @@ export default function BankAccountPage() {
                                     onAccountNameChange={async (newValue) =>{
                                         return  editAccount({
                                             name: newValue,
-                                            monthlyLimit: 2000, //TODO: change to account.monthlyLimit - now causes error because it's 0
-                                            dailyLimit: 2000,  //TODO: change to account.dailyLimit - now causes error because it's 0
+                                            monthlyLimit: account.monthlyLimit, //TODO: change to account.monthlyLimit - now causes error because it's 0
+                                            dailyLimit: account.dailyLimit,  //TODO: change to account.dailyLimit - now causes error because it's 0
                                         } as AccountUpdateClientRequest)
                                     }}
                                 />
@@ -127,14 +128,16 @@ export default function BankAccountPage() {
                             >
                                 <BankAccountBalanceCard
                                     account={account}
+                                    onSendClick={() => navigate('/payments/new', {state:{accountId: account.id}})}
                                     onDetailsClick={() => setShowDetails(true)}
                                 />
+
                             </motion.div>
                         )}
                     </AnimatePresence>
 
                 <BankAccountCardsCard account={account} cards={cards} />
-                <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={account}/>
+                <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={account} cardTitle="Recent transactions"/>
             </div>
         </main>
     )

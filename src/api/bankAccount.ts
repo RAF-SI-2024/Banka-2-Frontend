@@ -1,6 +1,7 @@
 import api from "./axios"
 import {AccountResponse, AccountUpdateClientRequest, CreateBankAccountRequest} from "@/types/bankAccount"
 import {API_BASE} from "@/constants/endpoints.ts";
+import {Transaction, TransactionResponse} from "@/types/transaction.ts";
 
 
 export const getAccountById = async (id:string) => {
@@ -23,8 +24,6 @@ export const getAllAccounts = async (
     filters: { accountNumber?: string; firstName?: string; lastName?: string;}
 ): Promise<AccountResponse> => {
     try {
-        console.log("Page number", pageNumber);
-        console.log("Page size", pageSize);
         const response = await api.get("/accounts", {
             params: {
                 number: filters.accountNumber || undefined,
@@ -102,12 +101,54 @@ export const activateOrDeactivateBankAccount = async (accountId: string, status:
     }
 }
 
-export const getAllAccountsClient = async (clientId: string) => {
+export const getAllAccountsClient = async (clientId: string, page?:number, size?:number) => {
     try {
-        const response = await api.get(`${API_BASE}/clients/${clientId}/accounts`);
+        const response = await api.get(`${API_BASE}/clients/${clientId}/accounts`, {
+            params: {
+                page,      // Prosleđujemo broj stranice
+                size,  // Prosleđujemo veličinu stranice
+            }
+        });
         return response;
     } catch (error) {
         console.error("❌ Failed to get bank accounts for client:", error);
         throw error;
     }
 }
+
+export const getAllAccountClientWithFilters = async (
+    clientId: string,
+    page?: number,
+    size?: number,
+    filters?: { accountNumber?: string; firstName?: string; lastName?: string }
+) => {
+    try {
+        const response = await api.get(`${API_BASE}/clients/${clientId}/accounts`, {
+            params: {
+                number: filters?.accountNumber,
+                clientFirstName: filters?.firstName,
+                clientLastName: filters?.lastName,
+                page,
+                size,
+            },
+        });
+        return response.data;  // Return only the necessary data
+    } catch (error) {
+        console.error("❌ Failed to get bank accounts for client with filters:", error);
+        throw error; // Re-throw to handle it in the calling function
+    }
+};
+
+
+export const fetchAccountByNumber = async (number: string) => {
+    return api.get(`/accounts`, {
+        params: { number },
+    });
+};
+
+export const addTransactionTemplate = (payload: {
+    name: string;
+    accountNumber: string;
+}) => {
+    return api.post("/transactions/templates", payload);
+};
