@@ -1,12 +1,12 @@
-import { AppSidebar } from "@/components/common/sidebar/AppSidebar.tsx"
+import { AppSidebar } from "@/components/__common__/sidebar/AppSidebar.tsx"
 
 import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar.tsx"
-import Footer from "@/components/common/Footer.tsx";
-import HeaderWithThemeSwitch from "@/components/common/header/HeaderWithThemeSwitch.tsx";
+import Footer from "@/components/__common__/Footer.tsx";
+import HeaderWithThemeSwitch from "@/components/__common__/header/HeaderWithThemeSwitch.tsx";
 import {Outlet} from "react-router-dom";
 
 export default function AppLayout() {

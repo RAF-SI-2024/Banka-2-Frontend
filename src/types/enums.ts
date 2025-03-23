@@ -34,20 +34,6 @@ export enum InstallmentStatus {
     Cancelled
 }
 
-
-export const getRoleNumber = (roleName: string): number => {
-    switch (roleName.toLowerCase()) {
-        case "admin":
-            return Role.Admin;
-        case "employee":
-            return Role.Employee;
-        case "client":
-            return Role.Client;
-        default:
-            return Role.Invalid;
-    }
-};
-
 export const getRoleString = (role: Role): string => {
     switch (role) {
         case Role.Admin:

@@ -3,10 +3,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { cn } from "@/lib/utils.ts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import MoneyInput from "@/components/common/input/MoneyInput.tsx";
+import MoneyInput from "@/components/__common__/input/MoneyInput.tsx";
 import { getExchangeRate, getAllCurrencies } from "@/api/currency.ts";
 import { Currency } from "@/types/currency.ts";
-import {showErrorToast} from "@/utils/show-toast-utils.tsx";
+import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 import {useNavigate} from "react-router-dom";
 
 const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => {

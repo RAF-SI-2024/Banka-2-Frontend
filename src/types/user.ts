@@ -1,6 +1,5 @@
 import {Gender, Role} from "@/types/enums.ts";
 
-// Client Model
 export interface Client {
     firstName: string;
     lastName: string;
@@ -12,7 +11,6 @@ export interface Client {
     address: string;
 }
 
-// Employee Model
 export interface Employee {
     firstName: string;
     lastName: string;
@@ -80,16 +78,6 @@ export interface AccountSimple {
     id: string;
     accountNumber: string;
 }
-
-export interface UserTableProps {
-    search: {
-        email: string;
-        firstName: string;
-        lastName: string;
-        role: string;
-    };
-}
-
 
 export interface EditUserRequest {
     firstname: string
