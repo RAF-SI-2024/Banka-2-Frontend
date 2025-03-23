@@ -8,6 +8,12 @@ export function EmployeeNavMainData() {
             isCollapsed: true,
         },
         {
+            title: "Client list",
+            url: "/client-list",
+            icon: <span className="icon-[ph--user-list]"/>,
+            isCollapsed: true,
+        },
+        {
             title: "Loans",
             url: "#",
             icon: <span className="icon-[ph--bank]"/>,
