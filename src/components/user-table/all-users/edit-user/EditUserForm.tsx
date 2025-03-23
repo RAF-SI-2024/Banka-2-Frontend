@@ -7,10 +7,9 @@ import * as z from "zod";
 import { cn } from "@/lib/utils.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Form } from "@/components/ui/form.tsx";
-import { UpdateClientRequest, UpdateEmployeeRequest, User } from "@/types/user.ts";
+import { UpdateClientRequest, UpdateEmployeeRequest, User, Role } from "@/types/user.ts";
 import { createFormSchema, getFormFields } from "@/components/__utils__/form-fields.tsx";
 import { FormFieldRenderer } from "@/components/user-table/all-users/edit-user/FormFieldRendered.tsx";
-import {Role} from "@/types/enums.ts";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 
 interface EditFormProps extends React.ComponentProps<"div"> {

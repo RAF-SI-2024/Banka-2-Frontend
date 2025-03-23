@@ -1,4 +1,4 @@
-import {  Role } from "@/types/enums.ts";
+import {  Role } from "@/types/user.ts";
 import UserListPage from "@/pages/user-list/UserList.tsx";
 import LoginPage from "@/pages/auth/Login.tsx";
 import BankAccountListPage from "@/pages/bank-accounts-employee/BankAccountList.tsx";

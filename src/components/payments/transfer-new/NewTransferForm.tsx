@@ -2,12 +2,12 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {newTransferFormSchema} from "@/components/payments/transfer-new/NewTransfertFormDef.tsx";
 import {useEffect, useState} from "react";
-import {getAccountById, getAllAccountsClient} from "@/api/bankAccount.ts";
+import {getAccountById, getAllAccountsClient} from "@/api/bank-account.ts";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
-import {BankAccount} from "@/types/bankAccount.ts";
+import {BankAccount} from "@/types/bank-account.ts";
 import {z} from "zod";
 import {CreateTransactionRequest} from "@/types/transaction.ts";
-import {createTransaction} from "@/api/transactions.ts";
+import {createTransaction} from "@/api/transaction.ts";
 import {cn} from "@/lib/utils.ts";
 import {Card, CardContent} from "@/components/ui/card.tsx";
 import {

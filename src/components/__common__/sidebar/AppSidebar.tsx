@@ -15,7 +15,7 @@ import {ClientNavMainData} from "@/components/__common__/sidebar/nav/main/Client
 import {NavUserData} from "@/components/__common__/sidebar/nav/user/NavUserData.tsx";
 import {EmployeeNavMainData} from "@/components/__common__/sidebar/nav/main/EmployeeNavMainData.tsx";
 import {AdminNavMainData} from "@/components/__common__/sidebar/nav/main/AdminNavMainData.tsx";
-import {Role} from "@/types/enums.ts";
+import {Role} from "@/types/user.ts";
 
 function generateNavMainData(){
     if(sessionStorage.getItem("user") && JSON.parse(sessionStorage.user).role) {

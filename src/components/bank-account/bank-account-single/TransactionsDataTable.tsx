@@ -18,8 +18,8 @@ import {
 } from "@tanstack/react-table";
 import {generateTransactionColumns} from "@/components/bank-account/bank-account-single/TransactionsDataTableColumnDef.tsx";
 import {Transaction, TransactionResponse, TransactionTableRow} from "@/types/transaction.ts";
-import {BankAccount} from "@/types/bankAccount.ts";
-import { TransactionStatus } from "@/types/enums.ts";
+import {BankAccount} from "@/types/bank-account.ts";
+import { TransactionStatus } from "@/types/transaction.ts";
 import { DateRange } from "react-day-picker";
 import {fetchTransactionTableRows} from "@/lib/transactions-table-utils.tsx";
 

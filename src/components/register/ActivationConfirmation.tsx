@@ -5,7 +5,7 @@ import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
 import {registerClient, registerEmployee} from "@/api/auth.ts";
 import { Button } from "@/components/ui/button";
 import {CardFooter} from "@/components/ui/card.tsx";
-import {Role} from "@/types/enums.ts";
+import {Role} from "@/types/user.ts";
 
 interface ActivationConfirmationProps extends React.ComponentProps<"div"> {
     onContinue?: () => void;

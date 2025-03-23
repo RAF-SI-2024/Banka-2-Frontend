@@ -1,6 +1,6 @@
 import {Client, Employee} from "@/types/user.ts";
 import {Currency} from "@/types/currency.ts";
-import {BankAccountType} from "@/types/bankAccountType.ts";
+import {BankAccountType} from "@/types/bank-account-type.ts";
 
 export interface BankAccount {
     id: string;

@@ -1,13 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table"
-import {User} from "@/types/user.ts";
+import {User, getGenderString, getRoleString} from "@/types/user.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 import UserDropdownMenu from "@/components/user-table/all-users/UserDropdownMenu.tsx";
-import {getGenderString, getRoleString} from "@/types/enums.ts";
-
-// // This type is used to define the shape of our data.
-// // You can use a Zod schema here if you want.
-
-
 
 export function generateUserColumns(handleOpenEditDialog: (user: User) => void):ColumnDef<User>[] {
     return(

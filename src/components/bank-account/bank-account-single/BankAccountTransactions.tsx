@@ -1,7 +1,7 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {cn} from "@/lib/utils.ts";
 import TransactionsDataTable from "@/components/bank-account/bank-account-single/TransactionsDataTable.tsx";
-import {BankAccount} from "@/types/bankAccount.ts";
+import {BankAccount} from "@/types/bank-account.ts";
 
 
 interface BankAccountTransactionProps extends React.ComponentProps<"div">{

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils.ts";
 import { Card } from "@/components/ui/card.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import {BankAccount} from "@/types/bankAccount.ts";
+import {BankAccount} from "@/types/bank-account.ts";
 import React from "react";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import Wallet from "@/assets/Wallet.tsx";

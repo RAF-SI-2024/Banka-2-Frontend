@@ -12,9 +12,9 @@ import {
 import { Button } from "@/components/ui/button.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import {Input} from "@/components/ui/input.tsx";
-import {getCardTypes} from "@/api/card.ts";
-import {BankAccount} from "@/types/bankAccount.ts";
+import {BankAccount} from "@/types/bank-account.ts";
 import MoneyInput from "@/components/__common__/input/MoneyInput.tsx";
+import {getAllCardTypes} from "@/api/card-type.ts";
 
 interface CreateCardProps {
     account: BankAccount,
@@ -30,12 +30,9 @@ export default function CreateCardForm({account, form, nextStep }: CreateCardPro
         // Fetch account types from API
         async function fetchTypes() {
             try {
-                const response =  await getCardTypes(); // Replace with actual API URL
-                if (response.status !== 200){
-                    throw new Error(response.statusText);
-                }
-                const data = response.data.items;
-                setTypes(data);
+                const data =  await getAllCardTypes(); // Replace with actual API URL
+
+                setTypes(data.items);
             } catch (error) {
                 console.error("Failed to fetch account types", error);
             }

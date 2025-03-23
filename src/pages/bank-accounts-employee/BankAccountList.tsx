@@ -3,7 +3,7 @@ import BankingAccountsTable from "@/components/bank-account/bank-account-table/B
 import {useState} from "react";
 import CreateBankAccountDialog from "@/components/bank-account/bank-account-create/CreateBankAccountDialog.tsx";
 import RegisterDialog from "@/components/register/RegisterDialog.tsx";
-import {Role} from "@/types/enums.ts";
+import {Role} from "@/types/user.ts";
 import {Toaster} from "@/components/ui/sonner.tsx";
 
 export default function BankAccountListPage() {

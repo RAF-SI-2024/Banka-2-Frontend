@@ -2,7 +2,7 @@ import {useState} from "react";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 import * as React from "react";
 import CreateCardForm from "@/components/card/card-create/CreateCardForm.tsx";
-import {BankAccount} from "@/types/bankAccount.ts";
+import {BankAccount} from "@/types/bank-account.ts";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";

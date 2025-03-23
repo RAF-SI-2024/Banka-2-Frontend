@@ -6,8 +6,8 @@ import BankAccountTransactions from "@/components/bank-account/bank-account-sing
 import CardDisplay from "@/components/card/card-single/BankCardDisplay.tsx";
 import {CardDTO} from "@/types/card.ts";
 import { getCardById } from "@/api/card.ts"
-import {getAccountById} from "@/api/bankAccount.ts";
-import {BankAccount} from "@/types/bankAccount.ts";
+import {getAccountById} from "@/api/bank-account.ts";
+import {BankAccount} from "@/types/bank-account.ts";
 import BankAccountBalanceCard from "@/components/bank-account/bank-account-single/BankAccountBalance.tsx";
 import {Toaster} from "@/components/ui/sonner.tsx";
 

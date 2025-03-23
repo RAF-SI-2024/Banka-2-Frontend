@@ -1,6 +1,6 @@
 import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
 import {format} from "date-fns";
-import {Role} from "@/types/enums.ts";
+import {Role} from "@/types/user.ts";
 import {registerClient, registerEmployee} from "@/api/auth.ts";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 

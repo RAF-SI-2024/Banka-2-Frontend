@@ -36,15 +36,6 @@ export const changeCardStatusEmployee = async (id: string, status: boolean) => {
     }
 }
 
-export const getCardTypes = async () => {
-    try {
-        const response = await api.get("/cards/types");
-        return response;
-    } catch (error) {
-        console.error("❌ Error fetching card types:", error);
-        throw error;
-    }
-}
 
 export const createCard = async (data: CardCreateRequest) => {
     try {
