@@ -1,8 +1,8 @@
 import api from "@/api/axios.ts";
-import {TransactionCodeResponse} from "@/types/transfers.ts";
+import {TransactionCodeResponse} from "@/types/transaction.ts";
 import {CreateTransactionRequest, TransactionResponse} from "@/types/transaction.ts";
 import {API_BASE} from "@/constants/endpoints.ts";
-import {TransactionStatus} from "@/types/enums.ts";
+import {TransactionStatus} from "@/types/transaction.ts";
 
 export const getTransactionCodes = async (
     pageNumber: number,

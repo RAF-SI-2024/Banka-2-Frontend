@@ -10,7 +10,7 @@ import {
     FormMessage
 } from "@/components/ui/form.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import {BankAccount} from "@/types/bankAccount.ts";
+import {BankAccount} from "@/types/bank-account.ts";
 import MoneyInput from "@/components/__common__/input/MoneyInput.tsx";
 
 interface AdjustLimitsFormProps {

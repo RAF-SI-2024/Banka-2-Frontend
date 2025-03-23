@@ -14,13 +14,13 @@ import LoanRequestLoanDetails from "@/components/loans/new-loan-request/LoanRequ
 import LoanRequestPersonalInfo from "@/components/loans/new-loan-request/LoanRequestPersonalInfo.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
 import LoanRequestFinancialInformation from "@/components/loans/new-loan-request/LoanRequestFinancialInformation.tsx";
-import {getAllAccountsClient} from "@/api/bankAccount.ts";
-import {BankAccount} from "@/types/bankAccount.ts";
+import {getAllAccountsClient} from "@/api/bank-account.ts";
+import {BankAccount} from "@/types/bank-account.ts";
 import {createLoan, getAllLoanTypes} from "@/api/loan.ts";
-import {LoanType} from "@/types/loanType.ts";
-import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
+import {LoanType} from "@/types/loan-type.ts";
+import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 import {LoanCreateRequest} from "@/types/loan.ts";
-import {InterestType} from "@/types/enums.ts";
+import {InterestType} from "@/types/loan.ts";
 import {useNavigate} from "react-router-dom";
 
 

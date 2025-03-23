@@ -2,9 +2,6 @@ import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, UserResponse } from "@/types/user.ts";
-import { getAllUsers } from "@/api/user.ts";
-import { EditUserDialog } from "@/components/user-table/all-users/edit-user/EditUserDialog";
 import { DataTable } from "@/components/__common__/datatable/DataTable.tsx";
 import { getCoreRowModel } from "@tanstack/react-table";
 import { DataTablePagination } from "@/components/__common__/datatable/DataTablePagination";
@@ -20,10 +17,10 @@ import {
 } from "@tanstack/react-table";
 import { getAllLoans, getAllLoanTypes } from "@/api/loan";
 import { Loan, LoanResponse } from "@/types/loan";
-import { LoanType, LoanTypeResponse } from "@/types/loanType";
+import { LoanType, LoanTypeResponse } from "@/types/loan-type.ts";
 import { showErrorToast } from "@/lib/show-toast-utils.tsx";
 import { generateAllLoanColumns } from "./AllLoanListColumnDef";
-import {LoanStatus} from "@/types/enums.ts";
+import {LoanStatus} from "@/types/loan.ts";
 
 // Postoji filter po vrsti kredita i broju računa
 export default function AllLoanTable() {

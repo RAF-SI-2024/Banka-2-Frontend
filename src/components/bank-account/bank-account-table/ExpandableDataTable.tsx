@@ -2,7 +2,7 @@ import React from "react";
 import { Table } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge.tsx";
-import { BankAccount } from "@/types/bankAccount.ts";
+import { BankAccount } from "@/types/bank-account.ts";
 import { formatCurrency } from "@/lib/format-currency.ts";
 import CreditCardDropdownMenu from "@/components/bank-account/bank-account-table/CreditCardDropdownMenu.tsx";
 

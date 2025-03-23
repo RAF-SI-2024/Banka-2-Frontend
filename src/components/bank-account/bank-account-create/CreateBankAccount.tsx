@@ -26,15 +26,16 @@ import {
     FormControl,
     FormMessage,
 } from "@/components/ui/form.tsx";
-import {CardType} from "@/types/cardType.ts";
-import {getAllCardTypes} from "@/api/account.ts";
-import {createAccount} from "@/api/account.ts";
-import {fetchAccountTypes} from "@/api/account.ts";
-import {createCompany} from "@/api/account.ts";
-import {createCard} from "@/api/account.ts";
-import {CreateBankAccountRequest} from "@/types/bankAccount.ts";
-import { BankAccountType } from "@/types/bankAccountType.ts";
+import {CardType} from "@/types/card-type.ts";
+import {createCard} from "@/api/card.ts";
+import {CreateBankAccountRequest} from "@/types/bank-account.ts";
+import { BankAccountType } from "@/types/bank-account-type.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
+import {getAllCardTypes} from "@/api/card-type.ts";
+import {fetchAccountTypes} from "@/api/bank-account-type.ts";
+import {createCompany} from "@/api/company.ts";
+import {createAccount} from "@/api/bank-account.ts";
+import {CardCreateRequest} from "@/types/card.ts";
 
 const businessInfoSchema = z.object({
     businessName: z.string()
@@ -261,11 +262,11 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
 
             const response = await createCompany(mappedData);
 
-            if (creditCard === "yes") {
-                const cardData = {
+            if (creditCard === "yes" && selectedCardId != null) {
+                const cardData: CardCreateRequest = {
                     cardTypeId: selectedCardId,
                     accountId: accResponse1.data.id,
-                    name: selectedCardName,
+                    name: selectedCardName || "Card",
                     limit: 5000,
                     status: true
                 };
@@ -298,11 +299,11 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
 
                 try {
                     const response = await createAccount(data);
-                    if (creditCard === "yes") {
-                        const cardData = {
+                    if (creditCard === "yes" && selectedCardId != null) {
+                        const cardData: CardCreateRequest = {
                             cardTypeId: selectedCardId,
                             accountId: response.data.id,
-                            name: selectedCardName,
+                            name: selectedCardName || "Card",
                             limit: 5000,
                             status: true
                         };
@@ -334,11 +335,11 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
 
                     const response = await createAccount(data);
 
-                    if (creditCard === "yes") {
-                        const cardData = {
+                    if (creditCard === "yes" && selectedCardId != null) {
+                        const cardData: CardCreateRequest = {
                             cardTypeId: selectedCardId,
                             accountId: response.data.id,
-                            name: selectedCardName,
+                            name: selectedCardName || "Card",
                             limit: 5000,
                             status: true
                         };
@@ -364,11 +365,11 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                     const response = await createAccount(data);
                     console.log("Business Foreign Currency Account created successfully:", response);
 
-                    if (creditCard === "yes") {
-                        const cardData = {
+                    if (creditCard === "yes" && selectedCardId != null) {
+                        const cardData: CardCreateRequest = {
                             cardTypeId: selectedCardId,
                             accountId: response.data.id,
-                            name: selectedCardName,
+                            name: selectedCardName || "Card",
                             limit: 5000,
                             status: true
                         };

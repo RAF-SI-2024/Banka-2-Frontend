@@ -11,7 +11,7 @@ import {
     getFilteredRowModel,
     useReactTable
 } from "@tanstack/react-table";
-import {Installment, InstallmentResponsePage} from "@/types/loan.ts";
+import {Installment, InstallmentResponsePage} from "@/types/installment.ts";
 import {getLoanInstallments} from "@/api/loan.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 import {generateInstallmentColumns} from "@/components/loans/loan-details/InstallmentTableColumnDef.tsx";

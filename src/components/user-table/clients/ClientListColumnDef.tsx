@@ -1,6 +1,6 @@
 import {User} from "@/types/user.ts";
 import {ColumnDef} from "@tanstack/react-table";
-import {getGenderString} from "@/types/enums.ts";
+import {getGenderString} from "@/types/user.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 import UserDropdownMenu from "@/components/user-table/all-users/UserDropdownMenu.tsx";
 

@@ -1,4 +1,4 @@
-import {Gender, Role} from "@/types/enums.ts";
+import {Gender, Role} from "@/types/user.ts";
 
 export let globalLogout: (() => void) | null = null;
 

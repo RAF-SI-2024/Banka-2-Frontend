@@ -1,7 +1,6 @@
-import { BankAccount } from "./bankAccount";
+import { BankAccount } from "./bank-account.ts";
 import { Currency } from "./currency";
-import { LoanType } from "./loanType";
-import {InstallmentStatus, InterestType, LoanStatus} from "@/types/enums.ts";
+import { LoanType } from "./loan-type.ts";
 
 export interface Loan{
     id: string,
@@ -45,35 +44,35 @@ export interface LoanCreateRequest{
     interestType: InterestType
 }
 
-export interface Installment {
-    id: string,
-    loan: Loan,
-    interestRate: number,
-    expectedDueDate: Date,
-    actualDueDate: Date,
-    status: InstallmentStatus,
-    createdAt: Date,
-    modifiedAt: Date,
-    amount: number,
+
+
+
+// ENUMS
+
+export enum LoanStatus {
+    Pending,
+    Active,
+    Rejected,
+    Closed,
+    DefaultWarning,
+    Default
 }
 
-export interface InstallmentResponsePage{
-    items: Installment[];
-    pageNumber: number;
-    pageSize: number;
-    totalElements: number;
-    totalPages: number;
+
+export enum InterestType {
+    Fixed,
+    Variable,
+    Mixed
 }
 
-export interface InstallmentUpdateRequest{
-    actualDueDate: Date,
-    status: InstallmentStatus,
-}
+export const getInterestType = (type: number) => {
+    switch (type) {
+        case 0:
+            return "Fixed";
+        case 1:
+            return "Variable";
+        default:
+            return "Unknown";
 
-export interface InstallmentRequest{
-    loanId: string,
-    interestRate: number,
-    expectedDueDate: Date,
-    actualDueDate: Date,
-    status: InstallmentStatus,
+    }
 }

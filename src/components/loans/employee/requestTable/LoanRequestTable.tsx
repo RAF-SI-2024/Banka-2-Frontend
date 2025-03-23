@@ -16,11 +16,10 @@ import {
 import {DataTablePagination} from "@/components/__common__/datatable/DataTablePagination";
 import {DataTableViewOptions} from "@/components/__common__/datatable/DataTableViewOptions";
 import {getAllLoans, getAllLoanTypes, updateLoanStatus} from "@/api/loan";
-import {Loan, LoanResponse} from "@/types/loan";
+import {Loan, LoanResponse, LoanStatus} from "@/types/loan";
 import {generateLoanColumns} from "./LoanListColumnDef";
-import {LoanType, LoanTypeResponse} from "@/types/loanType";
+import {LoanType, LoanTypeResponse} from "@/types/loan-type.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
-import {LoanStatus} from "@/types/enums.ts";
 
 // Postoji filter po vrsti kredita i broju računa
 export default function LoanRequestTable() {

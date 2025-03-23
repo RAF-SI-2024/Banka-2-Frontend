@@ -1,7 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
-import {Transaction, TransactionTableRow} from "@/types/transaction.ts"
+import {TransactionTableRow, TransactionType} from "@/types/transaction.ts"
 import { formatCurrency } from "@/lib/format-currency.ts";
-import {TransactionStatus, TransactionType} from "@/types/enums.ts";
 import {getTransactionStatusBadge} from "@/lib/transactions-table-utils.tsx";
 
 

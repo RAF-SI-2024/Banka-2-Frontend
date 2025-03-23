@@ -7,7 +7,7 @@ import { z } from "zod"
 import ActivationConfirmation from "@/components/register/ActivationConfirmation.tsx"
 import RegisterFormSecondClient from "@/components/register/client/RegisterFormSecondClient.tsx"
 import { RegisterRequestClient } from "@/types/auth.ts"
-import {Role} from "@/types/enums.ts";
+import {Role} from "@/types/user.ts";
 import RegisterFormSecondEmployee from "@/components/register/employee/RegisterFormSecondEmployee.tsx";
 
 interface RegisterPageProps {

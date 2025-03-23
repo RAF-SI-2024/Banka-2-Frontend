@@ -2,12 +2,12 @@ import React, { useState,useEffect } from "react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {createTransactionTemplate, deleteTemplate, updateTemplate} from "@/api/templates";
+import {createTransactionTemplate, deleteTemplate, updateTemplate} from "@/api/template.ts";
 import AddTemplateDialog from "./AddTemplateDialog";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import EditTemplateDialog from "./EditTemplateDialog"; // Importuj EditTemplateDialog
-import { getTemplates } from "@/api/templates.ts";
-import {Template} from "@/types/templates.ts";
+import { getTemplates } from "@/api/template.ts";
+import {Template} from "@/types/template.ts";
 import TemplateDropdownMenu from "@/components/home/TemplateDropDownMenu.tsx";
 import {cn} from "@/lib/utils.ts";
 import {useForm} from "react-hook-form";

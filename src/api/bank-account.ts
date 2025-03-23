@@ -1,7 +1,6 @@
 import api from "./axios"
-import {AccountResponse, AccountUpdateClientRequest, CreateBankAccountRequest} from "@/types/bankAccount"
+import {AccountResponse, AccountUpdateClientRequest, CreateBankAccountRequest} from "@/types/bank-account.ts"
 import {API_BASE} from "@/constants/endpoints.ts";
-import {Transaction, TransactionResponse} from "@/types/transaction.ts";
 
 
 export const getAccountById = async (id:string) => {
@@ -58,26 +57,6 @@ export const editAccountClient = async (id: string, data: AccountUpdateClientReq
     }
 };
 
-
-export const createBankAccount = async (data : CreateBankAccountRequest, currency : string) => {
-
-    try {
-        const currencyResponse = await api.get("/currencies", {
-            params: {
-                code: currency
-            }   
-        });
-
-        data.currencyId = currencyResponse.data.items[0]?.id;
-        
-        const response = await api.post("/accounts", data);
-        return response;
-    } catch (error) {
-        console.error("❌ Failed to create bank account:", error);
-        throw error;
-    }
-
-}
 
 
 export const getAllCreditCardsForBankAccount = async (accountId: string) => {
@@ -140,15 +119,15 @@ export const getAllAccountClientWithFilters = async (
 };
 
 
-export const fetchAccountByNumber = async (number: string) => {
-    return api.get(`/accounts`, {
-        params: { number },
-    });
-};
-
-export const addTransactionTemplate = (payload: {
-    name: string;
-    accountNumber: string;
-}) => {
-    return api.post("/transactions/templates", payload);
+export const createAccount = async (data: CreateBankAccountRequest) => {
+    try {
+        const response = await api.post("/accounts", data);
+        return {
+            success: true,
+            data: response.data,
+        };
+    } catch (error) {
+        console.error("❌ Failed to create account:", error);
+        throw error;
+    }
 };

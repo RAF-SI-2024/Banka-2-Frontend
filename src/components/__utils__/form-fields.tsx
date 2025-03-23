@@ -1,5 +1,5 @@
 import * as z from "zod";
-import {Role} from "@/types/enums.ts";
+import {Role} from "@/types/user.ts";
 
 // Dynamic schema generation based on role
 export const createFormSchema = (role: Role) => {

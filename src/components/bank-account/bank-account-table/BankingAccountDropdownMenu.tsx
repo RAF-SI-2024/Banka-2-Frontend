@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu.tsx"
-import {activateOrDeactivateBankAccount} from "@/api/bankAccount.ts"
+import {activateOrDeactivateBankAccount} from "@/api/bank-account.ts"
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 
 interface BankingAccountDropdownMenuProps {

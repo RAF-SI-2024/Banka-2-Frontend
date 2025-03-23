@@ -1,5 +1,4 @@
 import * as z from "zod";
-import {InterestType} from "@/types/enums.ts";
 
 export const loanFormSchema = z.object({
     loanType: z.string(),

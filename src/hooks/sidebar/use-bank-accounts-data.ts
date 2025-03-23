@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {getAllAccountsClient} from "@/api/bankAccount.ts";
-import {BankAccount} from "@/types/bankAccount.ts"
+import {getAllAccountsClient} from "@/api/bank-account.ts";
+import {BankAccount} from "@/types/bank-account.ts"
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 
 

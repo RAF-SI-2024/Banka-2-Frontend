@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { AccountResponse, BankAccount } from "@/types/bankAccount.ts";
-import { getAllAccounts, getAllCreditCardsForBankAccount } from "@/api/bankAccount.ts";
+import { AccountResponse, BankAccount } from "@/types/bank-account.ts";
+import { getAllAccounts, getAllCreditCardsForBankAccount } from "@/api/bank-account.ts";
 import {
     getCoreRowModel,
     getPaginationRowModel,

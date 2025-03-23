@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils.ts";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {BankAccount} from "@/types/bankAccount.ts";
+import {BankAccount} from "@/types/bank-account.ts";
 import React, {useState} from "react";
 import {CardSwipe} from "@/components/ui/card-swipe.tsx";
 import {CreditCard} from "@/components/ui/credit-card.tsx";

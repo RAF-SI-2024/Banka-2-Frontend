@@ -1,7 +1,8 @@
 import { Label } from "@/components/ui/label";
 import React from "react";
 import {formatCurrency} from "@/lib/format-currency.ts";
-import {Installment, Loan} from "@/types/loan.ts";
+import {Loan} from "@/types/loan.ts";
+import {Installment} from "@/types/installment.ts";
 import {formatPercentage} from "@/lib/format-number.ts";
 
 interface DetailsProps extends React.ComponentProps<"div"> {

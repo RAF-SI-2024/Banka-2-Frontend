@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { Card } from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input.tsx";
-import {addTransactionTemplate} from "@/api/bankAccount.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
-import {createTransactionTemplate} from "@/api/templates.ts";
+import {createTransactionTemplate} from "@/api/template.ts";
 
 interface Props {
     homeNavigate: () => void;
