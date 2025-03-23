@@ -29,6 +29,16 @@ export const ProtectedEmployee = () => {
 }
 
 
+export const ProtectedAdmin = () => {
+    const user = sessionStorage.getItem("user");
+    if (user == null)
+        return <Navigate to="/login" replace/>
+
+    const role = JSON.parse(user).role;
+    return role === Role.Admin ? <Outlet/> : <Navigate to="/home" replace/>
+}
+
+
 export const ProtectedClient = () => {
     const user = sessionStorage.getItem("user");
     if (user == null)

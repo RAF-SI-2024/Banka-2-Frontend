@@ -10,7 +10,7 @@ import {
     AllProtectedRoutes,
     ProtectedLoggedUser,
     ProtectedEmployee,
-    ProtectedClient,
+    ProtectedClient, ProtectedAdmin,
 } from "@/router/utils/ProtectedRoutes.tsx";
 import BankAccountPage from "@/pages/bank-accounts-client/BankAccount.tsx";
 import RoleBasedHomePage from "@/pages/home/RoleBasedHome.tsx";
@@ -25,6 +25,7 @@ import LoanDetailsClientPage from "@/pages/loans-client/LoanDetailsClient.tsx";
 import LoanOverviewList from "@/pages/loans-client/LoanOverviewList.tsx";
 import NewPaymentPage from "@/pages/payments/NewPayment.tsx";
 import ExchangeRateListPage from "@/pages/payments/ExchangeRateList.tsx";
+import BankAccountListPage from "@/pages/bank-accounts-employee/BankAccountList.tsx";
 
 export const AppRoutes = () => {
     return (
@@ -50,6 +51,13 @@ export const AppRoutes = () => {
                         <Route path="/loan/overview" element={<LoanOverviewList />} />
                         <Route path="loan/overview/:loanId" element={<LoanDetailsClientPage />} />
                         <Route path="payments/exchange-rate" element={<ExchangeRateListPage />} />
+                    </Route>
+
+                    <Route element={<ProtectedAdmin />}>
+                        <Route path="loan/request" element={ <LoanRequestList />} />
+                        <Route path="bank-account-list" element={<BankAccountListPage />} />
+                        <Route path="loan/all" element={<AllLoanList />} />
+
                     </Route>
 
                     {/*protected employee routes*/}
