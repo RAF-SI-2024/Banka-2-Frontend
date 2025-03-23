@@ -13,7 +13,7 @@ import {cn} from "@/lib/utils.ts";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
+import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 
 const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) => {
     const [templates, setTemplates] = useState<Template[]>([]);

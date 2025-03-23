@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {getAllCardsForClient} from "@/api/card.ts";
-import {showErrorToast} from "@/utils/show-toast-utils.tsx";
+import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 import {CardDTO} from "@/types/card.ts";
 
 export function useCreditCardsData() {

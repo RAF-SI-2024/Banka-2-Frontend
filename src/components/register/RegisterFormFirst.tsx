@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/popover"
 import {CalendarIcon} from "lucide-react";
 import { format } from "date-fns"
-import Stepper from "@/components/common/Stepper.tsx";
+import Stepper from "@/components/__common__/Stepper.tsx";
 
 // @ts-expect-error can accept any time
 export default function RegisterFormFirst({ form, nextStep, className, ...props }) {

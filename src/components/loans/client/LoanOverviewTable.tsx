@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-import { DataTable } from "@/components/common/datatable/DataTable.tsx";
+import { DataTable } from "@/components/__common__/datatable/DataTable.tsx";
 import { getCoreRowModel } from "@tanstack/react-table";
-import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
-import { DataTableViewOptions } from "@/components/common/datatable/DataTableViewOptions";
+import { DataTablePagination } from "@/components/__common__/datatable/DataTablePagination";
+import { DataTableViewOptions } from "@/components/__common__/datatable/DataTableViewOptions";
 import {
     getPaginationRowModel,
     SortingState,
@@ -13,7 +13,7 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import { Loan, LoanResponse } from "@/types/loan";
-import { showErrorToast } from "@/utils/show-toast-utils";
+import { showErrorToast } from "@/lib/show-toast-utils.tsx";
 import { generateLoanOverviewColumns } from "./LoanOverviewListColumnDef";
 import { getLoansByClientId } from "@/api/loan";
 import { useNavigate } from "react-router-dom";

@@ -1,8 +1,8 @@
 import {Button} from "@/components/ui/button.tsx";
-import Footer from "@/components/common/Footer.tsx";
-import { Particles } from "@/components/common/Particles.tsx";
+import Footer from "@/components/__common__/Footer.tsx";
+import { Particles } from "@/components/__common__/Particles.tsx";
 import * as React from "react";
-import HeaderWithLogo from "@/components/common/header/HeaderWithLogo.tsx";
+import HeaderWithLogo from "@/components/__common__/header/HeaderWithLogo.tsx";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import {Toaster} from "@/components/ui/sonner.tsx";
 

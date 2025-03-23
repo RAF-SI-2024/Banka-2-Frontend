@@ -1,12 +1,12 @@
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "@/context/AuthContext"; // Auth Context for managing authentication
-import { ThemeProvider } from "@/components/utils/theme-provider.tsx";
+import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/components/__utils__/theme-provider.tsx";
 import {AppRoutes} from "./router/routes";
 
 function App() {
     return (
-        <AuthProvider> {/* Wraps authentication context */}
-            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme"> {/* Wraps theme provider */}
+        <AuthProvider>
+            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
                     <BrowserRouter>
                         <AppRoutes />
                     </BrowserRouter>
