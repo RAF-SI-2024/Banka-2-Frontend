@@ -1,6 +1,10 @@
 import {useState, useEffect, useMemo} from "react";
 import { DataTable } from "@/components/common/datatable/DataTable.tsx";
-import { getCoreRowModel} from "@tanstack/react-table";
+import { getCoreRowModel } from "@tanstack/react-table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DatePickerWithRange } from "@/components/ui/date-range-picker"
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
 import { DataTableViewOptions } from "@/components/common/datatable/DataTableViewOptions";
 import {
@@ -13,19 +17,32 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import {generateTransactionColumns} from "@/components/bank-account/TransactionsDataTableColumnDef.tsx";
-import {Transaction} from "@/types/transaction.ts";
+import {Transaction, TransactionResponse, TransactionTableRow} from "@/types/transaction.ts";
 import {BankAccount} from "@/types/bankAccount.ts";
+import { TransactionStatus } from "@/types/enums.ts";
+import { DateRange } from "react-day-picker";
+import {fetchTransactionTableRows} from "@/utils/transactions-table-utils.tsx";
 
 interface TransactionsDataTableProps {
-    account: BankAccount
+    account?: BankAccount;
 }
 
 export default function TransactionsDataTable({account}: TransactionsDataTableProps) {
     /* STATES */
     // edit
 
+    const [search, setSearch] = useState({
+        fromDate: undefined as Date | undefined,
+        toDate: undefined as Date | undefined,
+        status: "",
+    });
+
+    const clientId: string = JSON.parse(sessionStorage.user).id;
+
+    const isSearchActive = Object.values(search).some(value => value && value !== "");
+
     // current transaction list
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [transactions, setTransactions] = useState<TransactionTableRow[]>([]);
 
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -38,90 +55,66 @@ export default function TransactionsDataTable({account}: TransactionsDataTablePr
     // sorting state
     const [sorting, setSorting] = useState<SortingState>([]);
 
+    // filtering
+    const [fetchFlag, setFetchFlag] = useState(false); // Filter A
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+
+
     // visibility state - make some columns invisible by default
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-        id: false,
-        dateOfBirth: false,
-        uniqueIdentificationNumber: false,
-        gender: false,
-        phoneNumber: false,
-        address: false,
-        department: false
+        purpose: false
     });
 
-    // column filters
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-    /* FUNCTIONS */
-    // fetch users function
-    const fetchTransactions = async () => {
-        console.log("Fetching transactions");
-        setError(null);
-        try {
-            // const transactionsData: TransactionsResponse = await getAllTransactions(
-            //     currentPage,
-            //     pageSize,
-            // );
-            const transactionsData = {
-                items: [
-                    {
-                        id: "1",
-                        name: "Transaction 1",
-                        amount: 1000,
-                        date: new Date(),
-                    },
-                    {
-                        id: "2",
-                        name: "Transaction 2",
-                        amount: 2000,
-                        date: new Date(),
-                    },
-                    {
-                        id: "3",
-                        name: "Transaction 1",
-                        amount: 10000.26,
-                        date: new Date(),
-                    },
-                    {
-                        id: "4",
-                        name: "Transaction 2",
-                        amount: 999.99,
-                        date: new Date(),
-                    },
-                    {
-                        id: "5",
-                        name: "Transaction 1",
-                        amount: -1000,
-                        date: new Date(),
-                    },
-                    {
-                        id: "6",
-                        name: "Transaction 2",
-                        amount: -30,
-                        date: new Date(),
-                    },
-                ],
-                totalPages: 1,
-                currentPage: 1,
-            }
-
-            setTransactions(transactionsData.items);
-            setTotalPages(transactionsData.totalPages);
-            console.log(transactionsData)
-        } catch (err) {
-            console.log(err);
-            setError("Failed to fetch transactions");
+    // fetch users effect (triggered on currentpage, pagesize or search change
+    useEffect(() => {
+        async function fetchData(){
+            setError(null);
+            await fetchTransactionTableRows({
+                clientId: clientId,
+                mode: account ? "all": "bankAccount",
+                pageNumber: currentPage,
+                pageSize: pageSize,
+                fromDate: search.fromDate,
+                toDate: search.toDate,
+                status: Number(search.status),
+                bankAccountId: account ? account.id: undefined,
+                setTableData: setTransactions,
+                setTotalPages: setTotalPages,
+                setError: setError});
         }
+
+        fetchData();
+
+    }, [currentPage, pageSize, fetchFlag, dateRange]); // Add dependencies
+
+
+
+    const handleSearchChange = (field: string, value: string | number) => {
+        setSearch(prevSearch => ({ ...prevSearch, [field]: value }));
     };
 
+    const handleFilter = () => {
+        setFetchFlag(!fetchFlag);
+    };
 
+    const handleClear = async () => { 
+        setSearch({
+            fromDate: undefined,
+            toDate: undefined,
+            status: "",
+        });
+        setFetchFlag(!fetchFlag);
+    };
 
     /* TABLE */
     // generate columns
     const columns = useMemo(() => {
-        // Return generated columns
-        return generateTransactionColumns(account.currency);
+        return generateTransactionColumns();
     }, []); // Empty dependency array since handleOpenEditDialog is now inside
+
+
 
     // create the table instance with pagination, sorting, and column visibility
     const table = useReactTable({
@@ -159,11 +152,6 @@ export default function TransactionsDataTable({account}: TransactionsDataTablePr
         pageCount: totalPages,
     });
 
-    // fetch users effect (triggered on currentpage, pagesize or search change
-    useEffect(() => {
-        fetchTransactions();
-    }, [currentPage, pageSize]); // Add dependencies
-
     // display error
     if (error) return <h1 className="text-center text-2xl font-semibold text-destructive">{error}</h1>;
 
@@ -171,6 +159,78 @@ export default function TransactionsDataTable({account}: TransactionsDataTablePr
         <div className="m-2 space-y-4">
             <div className="w-full flex flex-row items-baseline">
                 {/* 🔍 Search Filters */}
+                <div className="w-full flex gap-4 items-center">
+                    <div className="flex flex-row gap-4">
+                        {/* Uklanja strelice sa input[type=number] polja */}
+                        {/*<style>{`*/}
+                        {/*    input[type=number]::-webkit-inner-spin-button, */}
+                        {/*    input[type=number]::-webkit-outer-spin-button {  */}
+                        {/*        -webkit-appearance: none;*/}
+                        {/*        margin: 0;*/}
+                        {/*    }*/}
+
+                        {/*    input[type=number] {*/}
+                        {/*        -moz-appearance: textfield;*/}
+                        {/*    }*/}
+                        {/*`}</style>*/}
+
+                        {/*<Input*/}
+                        {/*    type="number"*/}
+                        {/*    placeholder="From amount"*/}
+                        {/*    value={search.fromAmount}*/}
+                        {/*    onChange={(e) => handleSearchChange("fromAmount", e.target.value ? Number(e.target.value) : "")}*/}
+                        {/*    className="w-42"*/}
+                        {/*/>*/}
+                        {/*<Input*/}
+                        {/*    type="number"*/}
+                        {/*    placeholder="To amount"*/}
+                        {/*    value={search.toAmount}*/}
+                        {/*    onChange={(e) => handleSearchChange("toAmount", e.target.value ? Number(e.target.value) : "")}*/}
+                        {/*    className="w-42"*/}
+                        {/*/>*/}
+
+                        <Select onValueChange={(value) => handleSearchChange("status", value)} value={search.status}>
+                            <SelectTrigger className="w-42">
+                                <SelectValue placeholder="Filter by status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value={TransactionStatus.Invalid.toString()}>Invalid</SelectItem>
+                                <SelectItem value={TransactionStatus.Pending.toString()}>Pending</SelectItem>
+                                <SelectItem value={TransactionStatus.Canceled.toString()}>Canceled</SelectItem>
+                                <SelectItem value={TransactionStatus.Completed.toString()}>Completed</SelectItem>
+                                <SelectItem value={TransactionStatus.Failed.toString()}>Failed</SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                        <DatePickerWithRange
+                            date={{ from: search.fromDate, to: search.toDate }}
+                            setDate={(range) => {
+                                if(range) {
+                                    const rangeDate: DateRange = range as DateRange;
+                                    setSearch(prev => ({
+                                        ...prev,
+                                        fromDate: rangeDate?.from,
+                                        toDate: rangeDate?.to,
+                                    }));
+                                }
+
+                            }}
+                        />
+
+                    </div>
+
+                    <div className="w-full flex items-center space-x-2 justify-end mr-2">
+                        <Button onClick={handleFilter} variant="primary">
+                            <span className="icon-[ph--funnel]" />
+                            Filter
+                        </Button>
+                        <Button onClick={handleClear} variant="secondary">
+                            <span className="icon-[ph--funnel-x]" />
+                            Clear
+                        </Button>
+                    </div>
+                </div>
+
                 <div className="flex ml-auto">
                     <DataTableViewOptions table={table} />
                 </div>

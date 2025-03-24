@@ -5,8 +5,28 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
+import {activateOrDeactivateBankAccount} from "@/api/bankAccount"
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 
-export default function BankingAccountDropdownMenu() {
+interface BankingAccountDropdownMenuProps {
+    id: string;
+    status: boolean;
+    onStatusChange: (id: string, newStatus: boolean) => void;
+}
+
+export default function BankingAccountDropdownMenu({id, status, onStatusChange}: BankingAccountDropdownMenuProps) {
+    const handleActivateOrDeactivate = async () => {
+        try {
+            const newStatus = !status;
+            const response = await activateOrDeactivateBankAccount(id, newStatus);
+            showSuccessToast({description: "Account status updated successfully."})
+            console.log("Account status updated successfully:", response);
+            onStatusChange(id, newStatus);
+        } catch (error) {
+            console.error("Failed to update account status:", error);
+            showErrorToast({error, defaultMessage: "Failed to update account status"});
+        }
+    };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -16,8 +36,10 @@ export default function BankingAccountDropdownMenu() {
         />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem>Action TODO</DropdownMenuItem>
+      <DropdownMenuContent align="start">
+          <DropdownMenuItem onClick={handleActivateOrDeactivate}>
+              {status ? "Block account" : "Unblock account"}
+          </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

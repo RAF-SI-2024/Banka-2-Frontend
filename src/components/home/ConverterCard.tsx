@@ -1,136 +1,179 @@
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { cn } from "@/lib/utils.ts";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { NumberInput } from "@/components/common/input/NumberInput.tsx";
-import {useState, useEffect} from "react";
-import {Button} from "@/components/ui/button";
-
-export interface Currency {
-    name: string;
-    symbol: string;
-    isAfter: boolean;
-}
-
-const currencies: Currency[] = [
-    {
-        name: "RSD",
-        symbol: "RSD",
-        isAfter: true,
-    },
-    {
-        name: "USD",
-        symbol: "$",
-        isAfter: false,
-    },
-    {
-        name: "EUR",
-        symbol: "€",
-        isAfter: false,
-    },
-];
-
-const mockRates: Record<string, number> = {
-    'RSD-USD': 0.0091,
-    'USD-RSD': 110,
-    'RSD-EUR': 0.0085,
-    'EUR-RSD': 117.65,
-    'USD-EUR': 0.93,
-    'EUR-USD': 1.07,
-};
-
-const convertCurrency = (from: Currency, to: Currency, amount: number): number => {
-    const key = `${from.name}-${to.name}`;
-    const rate = mockRates[key] || 1;
-    return amount * rate;
-};
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import MoneyInput from "@/components/common/input/MoneyInput.tsx";
+import { getExchangeRate, getAllCurrencies } from "@/api/currency.ts";
+import { Currency } from "@/types/currency.ts";
+import {showErrorToast} from "@/utils/show-toast-utils.tsx";
+import {useNavigate} from "react-router-dom";
 
 const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => {
-    const [currency1, setCurrency1] = useState<Currency>(currencies[0]);
-    const [currency2, setCurrency2] = useState<Currency>(currencies[1]);
+    const [currencies, setCurrencies] = useState<Currency[]>([]);
+    const [currency1, setCurrency1] = useState<Currency | null>(null);
+    const [currency2, setCurrency2] = useState<Currency | null>(null);
     const [amount1, setAmount1] = useState(100);
     const [amount2, setAmount2] = useState(0);
+    const [rate, setRate] = useState(1);
+    const [initRate, setInitRate] = useState(false);
+    const navigate = useNavigate();
+
+
 
     useEffect(() => {
-        function init() {
-            handleAmount1Change(`${amount1}`);
-        }
-        init();
+        const fetchCurrencies = async () => {
+            try {
+                const data = await getAllCurrencies();
+
+                const uniqueCurrencies = data.filter(
+                    (c: Currency, index: number, self: Currency[]) =>
+                        self.findIndex((el: Currency) => el.code === c.code) === index
+                );
+
+                if (uniqueCurrencies.length >= 2) {
+                    setCurrencies(uniqueCurrencies);
+                    const defaultCurrency1 = uniqueCurrencies.find((c: Currency) => c.code === "RSD") || uniqueCurrencies[0];
+                    const defaultCurrency2 = uniqueCurrencies.find((c: Currency) => c.code === "EUR") || uniqueCurrencies[1];
+
+                    setCurrency1(defaultCurrency1);
+                    setCurrency2(defaultCurrency2);
+                }
+            } catch (error) {
+                showErrorToast({error, defaultMessage:"Error fetching currencies."})
+            }
+        };
+        fetchCurrencies();
     }, []);
 
+    useEffect(() => {
+        if (currency1 && currency2 && !initRate) {
+            updateExchangeRate(currency1, currency2);
+        }
+    }, [currency1, currency2]);
 
-    function handleAmount1Change(val:string) {
+    useEffect(() => {
+        if (rate !== 0) {
+            setAmount2(amount1 * rate);
+        }
+    }, [initRate]);
+
+    const updateExchangeRate = async (from: Currency, to: Currency): Promise<number> => {
+        if (!from || !to) return 1;
+
+        if (from.code === to.code) {
+            setRate(1);
+            return 1;
+        }
+        let rateX = 1;
+        try {
+            if(from.code == "RSD" || to.code == "RSD"){
+                if(from.code=="RSD"){
+                    const data = await getExchangeRate("RSD", to.code);
+                    rateX = data.rate;
+                    setRate(rateX);
+                }
+                else {
+                    const data = await getExchangeRate("RSD", from.code);
+                    rateX = data.inverseRate;
+                    setRate(rateX);
+                }
+            }
+            else{
+                const data1 = await getExchangeRate("RSD", to.code);
+                const data2 = await getExchangeRate("RSD", from.code);
+                rateX = data1.rate / data2.rate;
+                setRate(rateX);
+            }
+
+            if(!initRate) setInitRate(true);
+
+            return rateX;
+        } catch (error) {
+            showErrorToast({error, defaultMessage:"Error fetching exchange rate."})
+        }
+        return 1;
+    };
+
+
+    function handleAmount1Change(val: string) {
+        if (!currency1 || !currency2) return;
+
         console.log("A1");
-        const numericValue = parseFloat(val.replace(/[^0-9.]+/g, ''));
-
-        setAmount2(convertCurrency(currency1, currency2, numericValue));
+        const numericValue = parseFloat(val.replace(/\./g, "").replace(",", "."));
         setAmount1(numericValue);
+        setAmount2(numericValue * rate);
     }
 
-    function handleCurrency1Change(val: string) {
-        console.log("C1");
-        const selectedCurrency = currencies.find(c => c.name === val);
-        if (!selectedCurrency) return;
+    function handleAmount2Change(val: string) {
+        if (!currency1 || !currency2) return;
 
-        setAmount2(convertCurrency(selectedCurrency, currency2, amount1));
-        setCurrency1(selectedCurrency);
-    }
-
-    function handleAmount2Change(val:string) {
         console.log("A2");
-        const numericValue = parseFloat(val.replace(/[^0-9.]+/g, ''));
-        setAmount1(convertCurrency(currency2, currency1, numericValue));
+        const numericValue = parseFloat(val.replace(/\./g, "").replace(",", "."));
         setAmount2(numericValue);
+        setAmount1(numericValue / rate);
     }
 
-    function handleCurrency2Change(val:string) {
-        console.log("C2");
-        const selectedCurrency = currencies.find(c => c.name === val);
+    async function handleCurrency1Change(val: string) {
+        if (!currency2) return;
+
+        console.log("C1");
+        const selectedCurrency = currencies.find((c) => c.code === val);
         if (!selectedCurrency) return;
 
-        setAmount1(convertCurrency(selectedCurrency, currency1, amount2));
-        setCurrency2(selectedCurrency);
+        setCurrency1(selectedCurrency);
+        const newRate = await updateExchangeRate(selectedCurrency, currency2);
+
+        // Recalculate amount2 based on new rate
+        setAmount2(amount1 * newRate);
     }
+
+    async function handleCurrency2Change(val: string) {
+        if (!currency1) return;
+
+        console.log("C2");
+        const selectedCurrency = currencies.find((c) => c.code === val);
+        if (!selectedCurrency) return;
+
+        setCurrency2(selectedCurrency);
+        const newRate = await updateExchangeRate(currency1, selectedCurrency);
+        console.log(newRate);
+        // Recalculate amount1 based on new rate
+        setAmount1(amount2 / newRate);
+    }
+
 
     return (
         <Card className={cn("border-0 content-center", className)} {...props}>
             <CardHeader>
                 <CardTitle className="font-heading text-2xl">Currency converter</CardTitle>
             </CardHeader>
+            {currency1 && currency2 && (
             <CardContent className="p-6 flex flex-col lg:flex-row items-center justify-between font-paragraph">
                 <div>
                     <div className="w-20">
-                        <Select value={currency1.name} onValueChange={val => handleCurrency1Change(val)}>
+                        <Select value={currency1.code} onValueChange={val => handleCurrency1Change(val)}>
                             <SelectTrigger>
-                                <SelectValue >{currency1.name}</SelectValue>
+                                <SelectValue >{currency1.code}</SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {currencies.map((item) => (
                                     <SelectItem
-                                        key={item.name}
-                                        value={item.name}
+                                        key={item.code}
+                                        value={item.code}
                                     >
-                                        {item.name}
+                                        {item.code}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
                     </div>
-                    <NumberInput
+                    <MoneyInput
                         id="currency1"
-                        min={0}
                         value={amount1}
                         onChange={e => handleAmount1Change(e.target.value)}
-                        prefix={!currency1.isAfter ? currency1.symbol : ""}
-                        suffix={currency1.isAfter ? " " + currency1.symbol : ""}
-                        thousandSeparator=","
+                        currency={currency1.code}
                         decimalScale={2}
-                        buttons={false}
                     />
                 </div>
 
@@ -142,38 +185,39 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
 
                 <div className="flex flex-col">
                     <div className="w-20">
-                        <Select value={currency2.name} onValueChange={val => handleCurrency2Change(val)}>
+                        <Select value={currency2.code} onValueChange={val => handleCurrency2Change(val)}>
                             <SelectTrigger>
-                                <SelectValue>{currency2.name}</SelectValue>
+                                <SelectValue>{currency2.code}</SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {currencies.map((item) => (
                                     <SelectItem
-                                        key={item.name}
-                                        value={item.name}
+                                        key={item.code}
+                                        value={item.code}
                                     >
-                                        {item.name}
+                                        {item.code}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
                     </div>
-                    <NumberInput
+                    <MoneyInput
                         id="currency2"
-                        min={0}
                         value={amount2}
                         onChange={e => handleAmount2Change(e.target.value)}
-                        prefix={!currency2.isAfter ? currency2.symbol : ""}
-                        suffix={currency2.isAfter ? " " + currency2.symbol : ""}
-                        thousandSeparator=","
-                        decimalScale={2}
-                        buttons={false}
+                        currency={currency2.code}
                     />
                 </div>
-            </CardContent>
+            </CardContent> )}
 
-            <CardFooter className="w-full justify-center">
-                <CardDescription>Convert between currencies with real-time exchange rates.</CardDescription>
+            <CardFooter className="flex flex-col w-full justify-center">
+
+                <CardDescription>
+                    Convert between currencies with real-time exchange rates.
+                </CardDescription>
+                <Button variant="link" size="tight" className="w-fit"
+                        onClick={() => navigate("/payments/exchange-rate")}>See current exchange rates</Button>
+
             </CardFooter>
         </Card>
     );

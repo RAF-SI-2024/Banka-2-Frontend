@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "@/api/auth.ts";
@@ -15,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import InputHidable from "@/components/common/input/InputHidable.tsx";
 import { Card, CardContent } from "@/components/ui/card";
-import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
+import {showErrorToast} from "@/utils/show-toast-utils.tsx";
 
 // Form field definitions
 const data = [
@@ -49,7 +48,6 @@ const formSchema = z.object({
 export default function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
     const { login } = useAuth();
     const navigate = useNavigate();
-    const [errors, setErrors] = useState<Array<{ id: number; title:string, description: string }>>([]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -61,7 +59,6 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        setErrors([]); // Clear errors on submit
         try {
             const loginData: LoginRequest = { email: values.email, password: values.password };
             const response = await loginUser(loginData);
@@ -71,27 +68,14 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
                 console.log("✅ Login successful", response);
                 navigate("/home", { replace: true });
             } else {
-                setErrors(prev => [...prev, {
-                    id: Date.now(),
-                    title: "Failed to log in",
-                    description: "Invalid credentials"
-                }]);
+                throw new Error("Login failed.");
             }
         } catch (error) {
             console.error("❌ Login failed:", error);
-            setErrors(prev => [...prev, {
-                id: Date.now(),
-                title: "Failed to log in",
-                description: error && typeof error === "object" && "message" in error
-                    ? String(error.message)
-                    : String(error || "An error occurred"),
-            }]);
+
+            showErrorToast({error, defaultMessage: "Log in failed."})
         }
     }
-
-    const removeError = (id: number) => {
-        setErrors(prev => prev.filter(error => error.id !== id));
-    };
 
 
     return (
@@ -110,7 +94,7 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
                                         <div className="flex items-center">
                                             <FormLabel>{field.label}</FormLabel>
                                             {field.name === "password" && (
-                                                <Button type="button" variant="link" size="tight" className="ml-auto" onClick={() => navigate("/password-reset")}>
+                                                <Button type="button" variant="link" size="tight" className="ml-auto" tabIndex={4} onClick={() => navigate("/password-reset")}>
                                                     Forgot your password?
                                                 </Button>
                                             )}
@@ -122,9 +106,10 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
                                                     placeholderVisible={field.placeholderVisible}
                                                     id={field.name}
                                                     {...fieldProps}
+                                                    tabIndex={2}
                                                 />
                                             ) : (
-                                                <Input id={field.name} type={field.type} placeholder={field.placeholder} {...fieldProps} />
+                                                <Input id={field.name} type={field.type} placeholder={field.placeholder} {...fieldProps} tabIndex={1}/>
                                             )}
                                         </FormControl>
                                         <FormMessage />
@@ -133,22 +118,13 @@ export default function LoginForm({ className, ...props }: React.ComponentProps<
                             />
                         ))}
 
-                        <Button type="submit" variant="gradient" className="w-full">
+                        <Button type="submit" variant="gradient" tabIndex={3} className="w-full">
                             Log in
                         </Button>
                     </form>
                 </Form>
             </CardContent>
         </Card>
-
-        {errors.map((error) => (
-            <ErrorAlert
-                key={error.id}
-                title={error.title}
-                description={error.description}
-                onClose={() => removeError(error.id)}
-            />
-        ))}
 
         </div>
     );

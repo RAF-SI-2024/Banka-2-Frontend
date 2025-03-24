@@ -1,8 +1,7 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import { setAuthToken } from "../api/axios";
-import { jwtDecode } from "jwt-decode";
-import { Role } from "@/types/enums"; // Import the Role enum
-import { User } from "@/types/user"; // Assuming you have a User type defined
+import { User } from "@/types/user";
+import { setGlobalLogout } from "@/types/auth";
 
 interface AuthContextType {
     user: User | null;
@@ -58,9 +57,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("user");
+        // localStorage.removeItem("accountId");
+        // localStorage.removeItem("cardTypes");
+        // localStorage.removeItem("currencies");
         setAuthToken(null);
         console.log("🚪 User logged out!");
+        window.location.href = "/login"; // Force redirect to login
     };
+
+    setGlobalLogout(logout);
 
     return (
         <AuthContext.Provider value={{ user, token, login, logout }}>

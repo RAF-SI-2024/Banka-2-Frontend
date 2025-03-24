@@ -1,5 +1,5 @@
 import * as React from "react"
-import {useEffect, useState} from "react"
+import {useEffect} from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate, useSearchParams} from "react-router-dom"
 import {activateUser} from "@/api/auth.ts"
@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input"
 import InputHidable from "@/components/common/input/InputHidable.tsx"
 import { Card, CardContent } from "@/components/ui/card"
-import { ErrorAlert } from "@/components/common/ErrorAlert.tsx"
+import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
 
 // Form field definitions
 const data = [
@@ -74,9 +74,6 @@ export default function RegisterPasswordForm({
   ...props
 }: React.ComponentProps<"div">) {
 
-  const [errors, setErrors] = useState<
-    Array<{ id: number; title: string; description: string }>
-  >([])
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -99,40 +96,25 @@ export default function RegisterPasswordForm({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
 
-
-    setErrors([]) // Clear errors on submit
     try {
 
       if(!token)
         throw new Error("No token provided")
 
-      console.log("SIFRA", values)
       const response = await activateUser(values, token);
 
       console.log("RESPONSE", response)
       if(response.status === 202){
+          showSuccessToast({description:"Account created successfully", title: "Registration complete"})
           navigate("/login", {replace: true});
       }
 
     } catch (error) {
       console.error("❌ Password creation failed:", error)
-      setErrors((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          title: "Registration failed",
-          description:
-            error && typeof error === "object" && "message" in error
-              ? String(error.message)
-              : String(error || "An error occurred"),
-        },
-      ])
+      showErrorToast({error, defaultMessage: "Password creation failed."})
     }
   }
 
-  const removeError = (id: number) => {
-    setErrors((prev) => prev.filter((error) => error.id !== id))
-  }
 
   return (
     <div className="flex flex-col gap-2">
@@ -186,14 +168,6 @@ export default function RegisterPasswordForm({
         </Card>
 
 
-      {errors.map((error) => (
-        <ErrorAlert
-          key={error.id}
-          title={error.title}
-          description={error.description}
-          onClose={() => removeError(error.id)}
-        />
-      ))}
     </div>
   )
 }

@@ -1,6 +1,5 @@
 import api from "./axios";
 import { API_BASE } from "../constants/endpoints";
-import { LoginRequest } from "../types/auth";
 import {EditUserRequest, GetUserRequest, UpdateClientRequest, UpdateEmployeeRequest, User, UserResponse} from "@/types/user.ts";
 
 export const getAllUsers = async (
@@ -100,5 +99,27 @@ export const getUser = async (data: GetUserRequest) => {
     } catch (error) {
         console.error("❌ Edit failed:", error)
         throw error
+    }
+}
+
+export const getAllClients = async (
+    page: number,
+    size: number,
+    filters: { email?: string; firstName?: string; lastName?: string;}
+): Promise<UserResponse> => {
+    try{
+        const response = await api.get("/clients", {
+            params: {
+                email: filters.email || undefined,
+                firstName: filters.firstName || undefined,
+                lastName: filters.lastName || undefined,
+                page,
+                size,
+            },
+        });
+        return response.data;
+    }catch (error){
+        console.error("❌ Error fetching clients:", error);
+        throw error;
     }
 }

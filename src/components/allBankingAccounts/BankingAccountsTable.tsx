@@ -1,13 +1,10 @@
-import { useState, useEffect, useMemo } from "react"
-import { Button } from "@/components/ui/button";
+import { useState, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
-import {AccountResponse, BankAccount} from "@/types/bankAccount.ts"
-import { getAllAccounts } from "@/api/bankAccount"
-import { DataTable } from "@/components/common/datatable/DataTable.tsx"
-import { getCoreRowModel } from "@tanstack/react-table"
-import { DataTablePagination } from "@/components/common/datatable/DataTablePagination"
-import { DataTableViewOptions } from "@/components/common/datatable/DataTableViewOptions";
+import { Button } from "@/components/ui/button";
+import { AccountResponse, BankAccount } from "@/types/bankAccount.ts";
+import { getAllAccounts, getAllCreditCardsForBankAccount } from "@/api/bankAccount";
 import {
+    getCoreRowModel,
     getPaginationRowModel,
     SortingState,
     getSortedRowModel,
@@ -15,129 +12,231 @@ import {
     ColumnFiltersState,
     getFilteredRowModel,
     useReactTable,
-} from "@tanstack/react-table"
-import { generateAccountColumns } from "./BankingAccountsColumnDef"
+    createColumnHelper,
+    getExpandedRowModel,
+} from "@tanstack/react-table";
+import { DataTablePagination } from "@/components/common/datatable/DataTablePagination";
+import { DataTableViewOptions } from "@/components/common/datatable/DataTableViewOptions";
+import { generateAccountColumns } from "./BankingAccountsColumnDef";
+import {Currency} from "@/types/currency.ts";
+import {ExpandableDataTable} from "@/components/allBankingAccounts/ExpandableDataTable.tsx";
 
+// Define credit card interface
+interface CreditCard {
+    id: string;
+    number: string;
+    name: string;
+    limit: number;
+    status: boolean;
+}
 
 export default function BankingAccountsTable() {
-  const [search, setSearch] = useState({
-    accountNumber: "",
-    firstName: "",
-    lastName: "",
-});
-  // Edit missing
-
-  const isSearchActive = Object.values(search).some(value => value !== "");
-
-  const [fetchFlag, setFetchFlag] = useState(false);
-
-  const [accounts, setAccounts] = useState<BankAccount[]>([])
-
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [totalPages, setTotalPages] = useState(1)
-
-  const [error, setError] = useState<string | null>(null)
-
-  const [sorting, setSorting] = useState<SortingState>([])
-
-  // Not done because we still dont know which columns there will be
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-      
-    });
-
-   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
-  const fetchAccounts = async () => {
-    console.log("Fetching accounts")
-    setError(null)
-    try {
-      const accountsData: AccountResponse = await getAllAccounts(
-        currentPage,
-        pageSize,
-        search
-      )
-      setAccounts(accountsData.items)
-      setTotalPages(accountsData.totalPages)
-      console.log(accountsData)
-    } catch (err) {
-      console.log(err)
-      setError("Failed to fetch accounts")
-    }
-  }
-
-  const handleSearchChange = (field: string, value: string) => {
-    setSearch(prevSearch => ({ ...prevSearch, [field]: value }));
-  };
-
-  const handleFilter = () => {
-        setFetchFlag(!fetchFlag);
-    };
-
-  const handleClearSearch = async () => {
-    console.log("Clearing search...");
-    setSearch({
+    // Your existing state variables
+    const [search, setSearch] = useState({
         accountNumber: "",
         firstName: "",
         lastName: "",
     });
-    setFetchFlag(!fetchFlag);
-  };
+    const isSearchActive = Object.values(search).some(value => value !== "");
+    const [fetchFlag, setFetchFlag] = useState(false);
+    const [accounts, setAccounts] = useState<BankAccount[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [error, setError] = useState<string | null>(null);
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [expanded, setExpanded] = useState({});
 
-  const columns = useMemo(() => {
-    return generateAccountColumns()
-  }, [])
+    const [cardsByAccount, setCardsByAccount] = useState<Record<string, { cards: CreditCard[], currency: Currency }>>({});
 
-  const table = useReactTable({
-    data: accounts,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      columnVisibility,
-      columnFilters,
-      pagination: {
-        pageIndex: currentPage - 1,
-        pageSize,
-      },
-    },
-    onPaginationChange: (updater) => {
-      if (typeof updater === "function") {
-        const newPagination = updater(table.getState().pagination)
-        setCurrentPage(newPagination.pageIndex + 1)
-        setPageSize(newPagination.pageSize)
-      } else {
-        const newPagination = updater
-        setCurrentPage(newPagination.pageIndex + 1)
-        setPageSize(newPagination.pageSize)
-      }
-    },
-    manualPagination: true,
-    pageCount: totalPages,
-  })
+    const [loadingCards, setLoadingCards] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    fetchAccounts()
-  }, [currentPage, pageSize, fetchFlag])
+    // Fetch accounts function (existing)
+    const fetchAccounts = async () => {
+        setError(null);
+        try {
+            const accountsData: AccountResponse = await getAllAccounts(
+                currentPage,
+                pageSize,
+                search
+            );
+            setAccounts(accountsData.items);
+            setTotalPages(accountsData.totalPages);
+        } catch (err) {
+            setError("Failed to fetch accounts");
+        }
+    };
 
-  if (error)
+    const fetchCreditCards = async (account: BankAccount) => {
+        if (cardsByAccount[account.id] || loadingCards[account.id])
+            return;
+
+        setLoadingCards(prev => ({ ...prev, [account.id]: true }));
+        try {
+            const response = await getAllCreditCardsForBankAccount(account.id);
+            if (response) {
+                setCardsByAccount(prev => ({
+                    ...prev,
+                    [account.id]: {
+                        cards: response.data?.items || [],
+                        currency: account.currency
+                    }
+                }));
+            } else {
+                console.error("Response is undefined");
+            }
+        } catch (err) {
+            console.error("Failed to fetch credit cards:", err);
+        } finally {
+            setLoadingCards(prev => ({ ...prev, [account.id]: false }));
+        }
+    };
+
+    // Your existing handlers
+    const handleSearchChange = (field: string, value: string) => {
+        setSearch(prevSearch => ({ ...prevSearch, [field]: value }));
+    };
+
+    const handleFilter = () => {
+        setFetchFlag(!fetchFlag);
+    };
+
+    const handleClearSearch = async () => {
+        console.log("Clearing search...");
+        setSearch({
+            accountNumber: "",
+            firstName: "",
+            lastName: "",
+        });
+        setFetchFlag(!fetchFlag);
+    };
+
+    const updateAccountStatus = (id: string, newStatus: boolean) => {
+        setAccounts((prevAccounts) =>
+            prevAccounts.map((account) =>
+                account.id === id ? { ...account, status: newStatus } : account
+            )
+        );
+    };
+
+    // Handle row expansion
+    const handleRowClick = (row: any) => {
+        fetchCreditCards(row.original);
+    };
+
+    // Add expansion indicator to columns
+    const columnHelper = createColumnHelper<BankAccount>();
+    const columns = useMemo(() => {
+        const baseColumns = generateAccountColumns(updateAccountStatus);
+
+        return [
+            columnHelper.display({
+                id: 'expander',
+                header: () => null,
+                cell: ({ row }) => {
+                    return (
+                        <div className="p-0 h-4 w-4">
+                            {row.getIsExpanded() ? (
+                                <span className="icon-[ph--caret-down]"></span>
+                            ) : (
+                                <span className="icon-[ph--caret-right]"></span>
+                            )}
+                        </div>
+                    );
+                },
+            }),
+            ...baseColumns,
+        ];
+    }, [cardsByAccount, loadingCards]);
+
+    // Your table setup with expanded rows support
+    const table = useReactTable({
+        data: accounts,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getExpandedRowModel: getExpandedRowModel(),
+        onSortingChange: setSorting,
+        getSortedRowModel: getSortedRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
+        onColumnFiltersChange: setColumnFilters,
+        getFilteredRowModel: getFilteredRowModel(),
+        onExpandedChange: setExpanded,
+        state: {
+            sorting,
+            columnVisibility,
+            columnFilters,
+            expanded,
+            pagination: {
+                pageIndex: currentPage - 1,
+                pageSize,
+            },
+        },
+        onPaginationChange: (updater) => {
+            if (typeof updater === "function") {
+                const newPagination = updater(table.getState().pagination);
+                setCurrentPage(newPagination.pageIndex + 1);
+                setPageSize(newPagination.pageSize);
+            } else {
+                const newPagination = updater;
+                setCurrentPage(newPagination.pageIndex + 1);
+                setPageSize(newPagination.pageSize);
+            }
+        },
+        manualPagination: true,
+        pageCount: totalPages,
+        meta: {
+            handleRowClick, // Pass the handler to the table meta
+        },
+    });
+
+    useEffect(() => {
+        fetchAccounts();
+    }, [currentPage, pageSize, fetchFlag]);
+
+    const handleCardStatusChange = (cardId: string, newStatus: boolean) => {
+        // Find which account this card belongs to
+        let targetAccountId = null;
+
+        for (const [accountId, data] of Object.entries(cardsByAccount)) {
+            const cardExists = data.cards.some(card => card.id === cardId);
+            if (cardExists) {
+                targetAccountId = accountId;
+                break;
+            }
+        }
+
+        if (targetAccountId) {
+            // Update the card status in state
+            setCardsByAccount(prev => {
+                const accountData = prev[targetAccountId];
+                const updatedCards = accountData.cards.map(card =>
+                    card.id === cardId ? { ...card, status: newStatus } : card
+                );
+
+                return {
+                    ...prev,
+                    [targetAccountId]: {
+                        ...accountData,
+                        cards: updatedCards
+                    }
+                };
+            });
+        }
+    };
+    if (error)
+        return (
+            <h1 className="text-center text-2xl font-semibold text-destructive">
+                {error}
+            </h1>
+        );
+
     return (
-      <h1 className="text-center text-2xl font-semibold text-destructive">
-        {error}
-      </h1>
-    )
-
-  return (
-    <div className="p-6 space-y-4 w-full">
-      <div className="w-full flex flex-row items-baseline">
+        <div className="p-6 space-y-4 w-full">
+            <div className="w-full flex flex-row items-baseline">
                 <div className="flex flex-wrap gap-4 items-center">
-
                     <Input
                         placeholder="Filter by accounts"
                         value={search.accountNumber}
@@ -175,9 +274,16 @@ export default function BankingAccountsTable() {
                     <DataTableViewOptions table={table} />
                 </div>}
             </div>
-      <DataTable key={`${currentPage}-${pageSize}`} table={table} />
 
-      <DataTablePagination table={table} />
-    </div>
-  )
+            <ExpandableDataTable
+                table={table}
+                cardsByAccount={cardsByAccount}
+                loadingCards={loadingCards}
+                handleCardStatusChange={handleCardStatusChange}
+                fetchCreditCards={fetchCreditCards}
+            />
+
+            <DataTablePagination table={table} />
+        </div>
+    );
 }

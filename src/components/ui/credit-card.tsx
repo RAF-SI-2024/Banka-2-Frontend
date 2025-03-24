@@ -37,6 +37,12 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
       return `${firstFour} **** **** ${lastFour}`;
     }
 
+    const formatCardNumber = (number: string) => {
+      return number
+          .replace(/(\d{4})/g, '$1 ') // Add a space after every 4 digits
+          .trim(); // Remove trailing space
+    }
+
     const gradientVariants = React.useMemo(() => [
       'bg-gradient-to-tr from-primary via-secondary to-background',
       'bg-gradient-to-tr from-primary via-background to-secondary',
@@ -75,6 +81,7 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
 
 
     return (
+        //@ts-ignore
       <motion.div
         ref={ref}
         initial="hidden"
@@ -88,7 +95,7 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
 
         <motion.div
           className={cn(
-            "relative overflow-hidden rounded-xl p-6 px-10 shadow-xl",
+            "relative overflow-hidden rounded-xl py-6 max-w-100 px-10 shadow-xl",
               randomGradient
           )}
           initial={{ opacity: 0, y: 50 }}
@@ -97,7 +104,7 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
         >
           <div className="flex items-center justify-between">
             <motion.div
-              className="text-2xl font-bold cursor"
+              className="text-2xl font-bold cursor text-wrap text-left"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: INITIAL_DELAY, duration: CARD_ANIMATION_DURATION }}
@@ -105,22 +112,28 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
               {title? title :<Logo className="w-30"/>}
             </motion.div>
 
-            <motion.button
-              className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-full cursor-pointer",
-                "bg-card"
-              )}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.4, ...springTransition }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsVisible(!isVisible)
-              }}
-              aria-label={isVisible ? "Hide card details" : "Show card details"}
+            <motion.div
+                className={cn(
+                    "flex h-8 w-8 m-4 p-2 items-center justify-center rounded-full cursor-pointer",
+                    "bg-card"
+                )}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.4, ...springTransition }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsVisible(!isVisible);
+                }}
+                aria-label={isVisible ? "Hide card details" : "Show card details"}
+                role="button"
+                tabIndex={0} // Makes it keyboard accessible
             >
-              {isVisible ? <span className="icon-[ph--eye] h-4 w-4" /> : <span className="icon-[ph--eye-closed] h-4 w-4" />}
-            </motion.button>
+              {isVisible ? (
+                  <span className="icon-[ph--eye] h-4 w-4" />
+              ) : (
+                  <span className="icon-[ph--eye-closed] h-4 w-4" />
+              )}
+            </motion.div>
           </div>
 
           <motion.div
@@ -129,7 +142,7 @@ const CreditCard = React.forwardRef<HTMLDivElement, CreditCardProps>(
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
           >
-            {isVisible ? cardNumber : getMaskedNumber(cardNumber)}
+            {isVisible ? formatCardNumber(cardNumber) : getMaskedNumber(cardNumber)}
           </motion.div>
 
           <div className="mt-6 flex justify-between">

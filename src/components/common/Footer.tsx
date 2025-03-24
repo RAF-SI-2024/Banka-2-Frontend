@@ -38,11 +38,11 @@ function generateFooterItems(): FooterNavItem[] {
     const items = getNavDataByRole(role);
 
     // Flatten items so only subitems appear if present, otherwise include the parent
-    return items.flatMap(item =>
-        item.items
-            ? item.items // Include subitems if present
-            : [item] // Otherwise include the item itself
-    );
+    return items
+        .filter(item => !["bank accounts", "cards"].includes(item.title.toLowerCase())) // Filter out specific items
+        .flatMap(item =>
+            item.items ? item.items : [item] // Include subitems if present, otherwise include the item itself
+        );
 }
 
 export default function Footer({className, ...props} :
@@ -56,20 +56,23 @@ export default function Footer({className, ...props} :
 
         return (
             <div
-                className="text-sm font-medium font-paragraph flex h-5 flex-row space-x-4 text-footer-foreground items-center">
+                className="text-sm font-medium font-paragraph flex flex-wrap gap-x-4 gap-y-2 text-footer-foreground items-center"
+            >
                 {items.map((item, index) => (
                     <React.Fragment key={item.url}>
                         <Button
                             className="p-0 text-sm text-muted-foreground underline-offset-4 hover:underline hover:text-link-hover"
                             variant="link"
                             onClick={() => {
-                                navigate(item.url, {replace: true});
+                                navigate(item.url, { replace: true });
                             }}
                         >
                             {item.title}
                         </Button>
-                        {/* Add separator only if there is another item after this one */}
+                        <div className="h-5">
                         {index < items.length - 1 && <Separator orientation="vertical"/>}
+                        </div>
+
                     </React.Fragment>
                 ))}
             </div>
@@ -81,8 +84,8 @@ export default function Footer({className, ...props} :
         <footer className={cn("bg-footer p-8 mt-auto", className)} {...props}>
             <nav aria-label="Page navigation" className="grid gap-y-6 gap-x-2 items-center justify-between w-full grid-cols-1">
                 <div className="flex w-full justify-between items-center">
-                <h1 className="font-display text-xl">BankToo</h1>
-                    <ThemeSwitch></ThemeSwitch>
+                    <h1 className="font-display text-xl">BankToo</h1>
+                    <ThemeSwitch className=""></ThemeSwitch>
                 </div>
 
                 {generateFooterContent()}
