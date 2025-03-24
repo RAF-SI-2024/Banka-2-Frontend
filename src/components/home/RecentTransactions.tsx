@@ -1,11 +1,10 @@
-import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {cn} from "@/lib/utils.ts";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import React, {useEffect, useState} from "react";
-import { TransactionTableRow} from "@/types/transaction.ts";
-import {formatCurrency} from "@/utils/format-currency.ts";
-import { TransactionType} from "@/types/enums.ts";
-import {fetchTransactionTableRows, getTransactionStatusBadge} from "@/utils/transactions-table-utils.tsx";
+import { TransactionTableRow, TransactionType} from "@/types/transaction.ts";
+import {formatCurrency} from "@/lib/format-currency.ts";
+import {fetchTransactionTableRows, getTransactionStatusBadge} from "@/lib/transactions-table-utils.tsx";
 
 
 
@@ -31,7 +30,7 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
             <CardHeader className="pb-2">
                 <CardTitle className="font-heading text-2xl">Recent transactions</CardTitle>
             </CardHeader>
-            <Card className="m-4 rounded-md font-paragraph" >
+            <CardContent className="m-4 font-paragraph" >
                 {(!tableData || tableData.length === 0) ? (
                     <CardDescription>No recent transactions. Try making your first transaction today with BankToo!</CardDescription>
                 ) : (
@@ -77,7 +76,7 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                     </TableBody>
                 </Table>
                 )}
-            </Card>
+            </CardContent>
         </Card>
     )
 }

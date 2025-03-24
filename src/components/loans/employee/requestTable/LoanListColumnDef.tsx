@@ -1,15 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table"
-import {User} from "@/types/user.ts";
 import {Badge} from "@/components/ui/badge.tsx";
-import UserDropdownMenu from "@/components/usertable/UserDropdownMenu.tsx";
-import {getGenderString, getInterestRate, getRoleString, LoanStatus} from "@/types/enums.ts";
-import { Loan } from "@/types/loan";
+import {getInterestType, Loan, LoanStatus} from "@/types/loan";
 import LoanDropdownMenu from "./LoanDropdownMenu";
-import {formatCurrency} from "@/utils/format-currency.ts";
-
-// // This type is used to define the shape of our data.
-// // You can use a Zod schema here if you want.
-
+import {formatCurrency} from "@/lib/format-currency.ts";
 
 
 export function generateLoanColumns(handleApprove: (loan: Loan) => void, handleReject: (loan: Loan) => void):ColumnDef<Loan>[] {
@@ -70,7 +63,7 @@ export function generateLoanColumns(handleApprove: (loan: Loan) => void, handleR
             },
             {
                 accessorKey: "interestType",
-                cell : ({row}) => getInterestRate(row.original.interestType),
+                cell : ({row}) => getInterestType(row.original.interestType),
                 header: "Interest Type",
                 enableHiding: true,
             },

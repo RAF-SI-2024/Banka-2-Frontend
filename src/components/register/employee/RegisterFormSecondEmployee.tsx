@@ -4,9 +4,9 @@ import {Button} from "@/components/ui/button"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
-import { PhoneInput } from "@/components/common/input/PhoneInput.tsx"
+import { PhoneInput } from "@/components/__common__/input/PhoneInput.tsx"
 import { onSubmitEmployee} from "@/components/register/RegisterRequests.tsx";
-import Stepper from "@/components/common/Stepper.tsx";
+import Stepper from "@/components/__common__/Stepper.tsx";
 
 
 // @ts-expect-error Need to add type to the props

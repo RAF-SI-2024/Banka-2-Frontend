@@ -1,6 +1,3 @@
-import {Gender, Role} from "@/types/enums.ts";
-
-// Client Model
 export interface Client {
     firstName: string;
     lastName: string;
@@ -12,7 +9,6 @@ export interface Client {
     address: string;
 }
 
-// Employee Model
 export interface Employee {
     firstName: string;
     lastName: string;
@@ -81,16 +77,6 @@ export interface AccountSimple {
     accountNumber: string;
 }
 
-export interface UserTableProps {
-    search: {
-        email: string;
-        firstName: string;
-        lastName: string;
-        role: string;
-    };
-}
-
-
 export interface EditUserRequest {
     firstname: string
     lastname: string
@@ -110,3 +96,45 @@ export interface EditUserRequest {
 export interface GetUserRequest {
     uniqueidentificationnumber: string
 }
+
+
+
+// ENUMS
+
+export enum Role {
+    Invalid = 0,
+    Admin = 1,
+    Employee = 2,
+    Client = 3,
+}
+
+export enum Gender {
+    Invalid = 0,
+    Male = 1,
+    Female = 2,
+}
+
+export const getRoleString = (role: Role): string => {
+    switch (role) {
+        case Role.Admin:
+            return "Admin";
+        case Role.Employee:
+            return "Employee";
+        case Role.Client:
+            return "Client";
+        default:
+            return "Unknown";
+    }
+};
+
+
+export const getGenderString = (gender: Gender) => {
+    switch (gender) {
+        case Gender.Male:
+            return "Male";
+        case Gender.Female:
+            return "Female";
+        default:
+            return "Unknown";
+    }
+};

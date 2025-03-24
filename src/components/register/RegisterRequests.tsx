@@ -1,8 +1,8 @@
 import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
 import {format} from "date-fns";
-import {Role} from "@/types/enums.ts";
+import {Role} from "@/types/user.ts";
 import {registerClient, registerEmployee} from "@/api/auth.ts";
-import {showErrorToast, showSuccessToast} from "@/utils/show-toast-utils.tsx";
+import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 
 // @ts-expect-error Need to add type to the props
 export async function onSubmitEmployee({form, nextStep}) {

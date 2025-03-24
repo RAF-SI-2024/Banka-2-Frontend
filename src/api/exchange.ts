@@ -1,4 +1,4 @@
-import {LoanTypeResponse} from "@/types/loanType.ts";
+import {LoanTypeResponse} from "@/types/loan-type.ts";
 import api from "@/api/axios.ts";
 import {Exchange} from "@/types/exchange.ts";
 

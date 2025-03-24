@@ -1,13 +1,12 @@
-import { LoanTypeResponse } from "@/types/loanType";
+import { LoanTypeResponse } from "@/types/loan-type.ts";
 import api from "./axios";
 import {
-    InstallmentResponsePage,
     Loan,
     LoanCreateRequest,
     LoanResponse,
     LoanUpdateRequest
 } from "@/types/loan";
-
+import {InstallmentResponsePage} from "@/types/installment";
 
 export const getAllLoans = async (
     page: number,

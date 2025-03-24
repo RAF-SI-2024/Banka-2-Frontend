@@ -1,30 +1,33 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import ResetPassReqPage from "@/pages/ResetPassRequest.tsx";
-import ResetPassPage from "@/pages/ResetPassword.tsx";
-import ResetPasswordNotificationPage from "@/pages/ResetPassNotification";
-import TestPage from "@/pages/Activate.tsx";
+import ResetPassReqPage from "@/pages/auth/ResetPassRequest.tsx";
+import ResetPassPage from "@/pages/auth/ResetPassword.tsx";
+import ResetPasswordNotificationPage from "@/pages/auth/ResetPassNotification.tsx";
+import TestPage from "@/pages/auth/Activate.tsx";
 import AuthorizationLayout from "@/layouts/AuthorizationLayout.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
-import LoginPage from "@/pages/Login.tsx";
+import LoginPage from "@/pages/auth/Login.tsx";
 import {
   AllProtectedRoutes,
   ProtectedLoggedUser,
   ProtectedEmployee,
   ProtectedClient,
+  ProtectedAdmin,
+  ProtectedAdminOrEmployee,
 } from "@/router/utils/ProtectedRoutes.tsx";
-import BankAccountPage from "@/pages/BankAccount.tsx";
-import RoleBasedHomePage from "@/pages/RoleBasedHome.tsx";
-import CardDetailsPage from "@/pages/BankCard.tsx";
-import TransactionsOverviewPage from "@/pages/TransactionsOverview.tsx";
-import TransfersPage from "@/pages/TransferPage.tsx";
-import LoanRequestList from "@/pages/LoanRequestList";
-import NewLoanRequest from "@/pages/NewLoanRequest.tsx";
-import ClientList from "@/pages/ClientList.tsx";
-import AllLoanList from "@/pages/AllLoanList";
-import LoanDetailsClientPage from "@/pages/LoanDetailsClient.tsx";
-import LoanOverviewList from "@/pages/LoanOverviewList";
-import NewPaymentPage from "@/pages/NewPayment.tsx";
-import ExchangeRateListPage from "@/pages/ExchangeRateList.tsx";
+import BankAccountPage from "@/pages/bank-accounts-client/BankAccount.tsx";
+import RoleBasedHomePage from "@/pages/home/RoleBasedHome.tsx";
+import CardDetailsPage from "@/pages/cards/BankCard.tsx";
+import TransactionsOverviewPage from "@/pages/payments/TransactionsOverview.tsx";
+import TransfersPage from "@/pages/payments/TransferPage.tsx";
+import LoanRequestList from "@/pages/loans-employee/LoanRequestList.tsx";
+import NewLoanRequest from "@/pages/loans-client/NewLoanRequest.tsx";
+import ClientList from "@/pages/client-list/ClientList.tsx";
+import AllLoanList from "@/pages/loans-employee/AllLoanList.tsx";
+import LoanDetailsClientPage from "@/pages/loans-client/LoanDetailsClient.tsx";
+import LoanOverviewList from "@/pages/loans-client/LoanOverviewList.tsx";
+import NewPaymentPage from "@/pages/payments/NewPayment.tsx";
+import ExchangeRateListPage from "@/pages/payments/ExchangeRateList.tsx";
+import BankAccountListPage from "@/pages/bank-accounts-employee/BankAccountList.tsx";
 
 export const AppRoutes = () => {
   return (
@@ -66,11 +69,14 @@ export const AppRoutes = () => {
             />
           </Route>
 
-          {/*protected employee routes*/}
-          <Route element={<ProtectedEmployee />}>
+          <Route element={<ProtectedAdminOrEmployee />}>
             <Route path="loan/request" element={<LoanRequestList />} />
-            <Route path="client-list" element={<ClientList />} />
+            <Route path="bank-account-list" element={<BankAccountListPage />} />
             <Route path="loan/all" element={<AllLoanList />} />
+          </Route>
+
+          <Route element={<ProtectedEmployee />}>
+            <Route path="client-list" element={<ClientList />} />
           </Route>
         </Route>
       </Route>

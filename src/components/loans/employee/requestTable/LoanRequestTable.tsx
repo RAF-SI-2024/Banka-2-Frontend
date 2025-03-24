@@ -2,7 +2,7 @@ import {useEffect, useMemo, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {DataTable} from "@/components/common/datatable/DataTable.tsx";
+import {DataTable} from "@/components/__common__/datatable/DataTable.tsx";
 import {
     ColumnFiltersState,
     getCoreRowModel,
@@ -13,14 +13,13 @@ import {
     useReactTable,
     VisibilityState
 } from "@tanstack/react-table";
-import {DataTablePagination} from "@/components/common/datatable/DataTablePagination";
-import {DataTableViewOptions} from "@/components/common/datatable/DataTableViewOptions";
+import {DataTablePagination} from "@/components/__common__/datatable/DataTablePagination";
+import {DataTableViewOptions} from "@/components/__common__/datatable/DataTableViewOptions";
 import {getAllLoans, getAllLoanTypes, updateLoanStatus} from "@/api/loan";
-import {Loan, LoanResponse} from "@/types/loan";
+import {Loan, LoanResponse, LoanStatus} from "@/types/loan";
 import {generateLoanColumns} from "./LoanListColumnDef";
-import {LoanType, LoanTypeResponse} from "@/types/loanType";
-import {showErrorToast} from "@/utils/show-toast-utils";
-import {LoanStatus} from "@/types/enums.ts";
+import {LoanType, LoanTypeResponse} from "@/types/loan-type.ts";
+import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 
 // Postoji filter po vrsti kredita i broju računa
 export default function LoanRequestTable() {

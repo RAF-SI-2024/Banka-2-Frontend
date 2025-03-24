@@ -1,6 +1,5 @@
-import {BankAccount} from "@/types/bankAccount.ts";
 import {Currency} from "@/types/currency.ts";
-import {TransactionStatus, TransactionType} from "@/types/enums.ts";
+
 
 export interface Transaction {
     id: string,
@@ -10,9 +9,7 @@ export interface Transaction {
     currencyTo: Currency,
     fromAmount: number,
     toAmount: number,
-    // Napraviti code interface
-    // code: string,
-
+    code: TransactionCode,
     referenceNumber: string;
     purpose: string;
     status: TransactionStatus;
@@ -57,4 +54,31 @@ export interface TransactionTableRow {
     type: TransactionType,
     status: TransactionStatus,
     purpose?: string,
+}
+
+export interface TransactionCode {
+    id: string;
+    code: string;
+    name: string;
+}
+
+export interface TransactionCodeResponse {
+    items: TransactionCode[];
+    totalElements: number;
+}
+
+export enum TransactionType {
+    Withdraw = "Withdraw",
+    Deposit = "Deposit",
+    Transaction = "Transaction",
+    Exchange = "Exchange"
+}
+
+export enum TransactionStatus
+{
+    Invalid = 0,
+    Pending = 1,
+    Canceled = 2,
+    Completed = 3,
+    Failed = 4
 }
