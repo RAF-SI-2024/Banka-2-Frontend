@@ -28,6 +28,7 @@ import LoanOverviewList from "@/pages/loans-client/LoanOverviewList.tsx";
 import NewPaymentPage from "@/pages/payments/NewPayment.tsx";
 import ExchangeRateListPage from "@/pages/payments/ExchangeRateList.tsx";
 import BankAccountListPage from "@/pages/bank-accounts-employee/BankAccountList.tsx";
+import ActuaryListPage from "@/pages/actuary/ActuaryListPage";
 
 export const AppRoutes = () => {
   return (
@@ -73,6 +74,7 @@ export const AppRoutes = () => {
             <Route path="loan/request" element={<LoanRequestList />} />
             <Route path="bank-account-list" element={<BankAccountListPage />} />
             <Route path="loan/all" element={<AllLoanList />} />
+            <Route path="actuaries" element={<ActuaryListPage />} />
           </Route>
 
           <Route element={<ProtectedEmployee />}>
