@@ -1,129 +1,112 @@
 import { useState, useEffect, useMemo } from "react";
-import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
+import {useReactTable, getCoreRowModel, getPaginationRowModel} from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DataTable } from "@/components/__common__/datatable/DataTable";
 import { DataTablePagination } from "@/components/__common__/datatable/DataTablePagination";
-import { Badge } from "@/components/ui/badge";
 import { mockOrders } from "@/mocks/OrdersMock";
-import { formatCurrency } from "/src/lib/format-currency.ts";
-import { formatNumber } from "/src/lib/format-number.ts";
-import { Order } from "@/types/order.ts";
-import OrderDropdownMenu from "./OrderActionMenu.tsx";
-// showSuccessToast} from "@/lib/show-toast-utils.tsx";
+import {Order, Status} from "@/types/order.ts";
+import {DataTableViewOptions} from "@/components/__common__/datatable/DataTableViewOptions.tsx";
+import {generateOrderColumns} from "@/components/order-table/OrderListColumnDef.tsx";
 
-export default function OrderTable() {
-    const [search, setSearch] = useState({ status: "" });
+export default function OrderList() {
+    const [search, setSearch] = useState<{ status: Status | "" }>({ status: "" });
     const [orders, setOrders] = useState<Order[]>([]);
     const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
     useEffect(() => {
         setOrders(mockOrders);
+        setFilteredOrders(mockOrders);
     }, []);
 
     useEffect(() => {
-        let filtered = orders.filter(order =>
-            (search.status ? order.status === search.status : true)
-        );
-        setFilteredOrders(filtered);
-    }, [search, orders]);
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+        setFilteredOrders(orders.slice(start, end));
+    }, [currentPage, pageSize, orders]);
 
     const handleSearchChange = (field: keyof typeof search, value: string) => {
-        setSearch(prev => ({ ...prev, [field]: value }));
+        setSearch(prev => ({ ...prev, [field]: value as Status | "" }));
+    };
+
+    const handleFilter = () => {
+        let filtered = orders.filter(order =>
+            search.status !== "" ? order.status === Number(search.status) : true
+        );
+        setFilteredOrders(filtered.slice(0, pageSize));
+        setCurrentPage(1);
     };
 
     const handleClearSearch = () => {
         setSearch({ status: "" });
+        setFilteredOrders(orders.slice(0, pageSize));
+        setCurrentPage(1);
     };
 
-    const columns = useMemo(() => [
-        { accessorKey: "email", header: "Email" },
-        { accessorKey: "username", header: "Username" },
-        { accessorKey: "orderType", header: "Order Type" },
-        {
-            accessorKey: "quantity",
-            header: "Quantity",
-            cell: ({ row }) => formatNumber(row.original.quantity, true)
-        },
-        {
-            accessorKey: "contractSize",
-            header: "Contract Size",
-            cell: ({ row }) => formatNumber(row.original.contractSize, true)
-        },
-        {
-            accessorKey: "pricePerUnit",
-            header: "Price per Unit",
-            cell: ({ row }) => formatCurrency(row.original.pricePerUnit)
-        },
-        {
-            accessorKey: "direction",
-            header: "Direction",
-            cell: ({ row }) => (
-                <Badge variant={row.original.direction === "Buy" ? "success" : "destructive"}>
-                    {row.original.direction}
-                </Badge>
-            )
-        },
-        {
-            accessorKey: "remainingPortions",
-            header: "Remaining Portions",
-            cell: ({ row }) => formatNumber(row.original.remainingPortions, true)
-        },
-        {
-            accessorKey: "status",
-            header: "Status",
-            cell: ({ row }) => (
-                <Badge variant={
-                    row.original.status === "pending" ? "warning" :
-                        row.original.status === "approved" ? "default" :
-                            row.original.status === "declined" ? "destructive" : "success"
-                }>
-                    {row.original.status}
-                </Badge>
-            )
-        },
-        {
-            accessorKey: "actions",
-            header: "Actions",
-            cell: ({ row }) => (
-                row.original.status === "pending" ? (
-                    <OrderDropdownMenu
-                        onEdit={() => console.log("Edit order", row.original)}
-                        onDelete={() => console.log("Delete order", row.original)}
-                    />
-                ) : null
-            )
-        }
-    ], []);
+    const columns = useMemo(() => generateOrderColumns(), []);
 
-    // Kreiranje tabele sa eksplicitnim tipom Order
     const table = useReactTable<Order>({
         data: filteredOrders,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        manualPagination: true,
+        pageCount: Math.ceil(orders.length / pageSize),
+        state: {
+            pagination: {
+                pageIndex: currentPage - 1,
+                pageSize,
+            },
+        },
+        onPaginationChange: updater => {
+            if (typeof updater === "function") {
+                const newPagination = updater({ pageIndex: currentPage - 1, pageSize });
+                setCurrentPage(newPagination.pageIndex + 1);
+                setPageSize(newPagination.pageSize);
+            } else {
+                setCurrentPage(updater.pageIndex + 1);
+                setPageSize(updater.pageSize);
+            }
+        },
     });
 
     return (
         <div className="p-6 space-y-4">
-            <div className="flex flex-wrap gap-4 items-center">
-                <Select onValueChange={(value) => handleSearchChange("status", value)} value={search.status}>
-                    <SelectTrigger className="text-sm py-1 px-2 w-32">
-                        <SelectValue placeholder="Status" className="text-sm"/>
-                    </SelectTrigger>
-                    <SelectContent className="text-sm">
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="approved">Approved</SelectItem>
-                        <SelectItem value="declined">Declined</SelectItem>
-                        <SelectItem value="done">Done</SelectItem>
-                    </SelectContent>
-                </Select>
-                <Button onClick={handleClearSearch} disabled={!search.status} className="text-sm">Clear</Button>
+            <div className="w-full flex flex-row items-center">
+                <div className="flex flex-1 justify-end gap-4 items-center ml-auto">
+                    <Select onValueChange={(value) => handleSearchChange("status", value)} value={search.status.toString()}>
+                        <SelectTrigger className="w-42">
+                            <SelectValue placeholder="Filter by status" className="text-sm" />
+                        </SelectTrigger>
+                        <SelectContent className="text-sm">
+                            <SelectItem value={Status.Pending.toString()}>Pending</SelectItem>
+                            <SelectItem value={Status.Approved.toString()}>Approved</SelectItem>
+                            <SelectItem value={Status.Declined.toString()}>Declined</SelectItem>
+                            <SelectItem value={Status.Done.toString()}>Done</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    <div className="flex items-center space-x-2">
+                        <Button onClick={handleFilter} variant="primary">
+                            <span className="icon-[ph--funnel]" />
+                            Filter
+                        </Button>
+                        <Button onClick={handleClearSearch} disabled={search.status === ""} variant="secondary">
+                            <span className="icon-[ph--funnel-x]" />
+                            Clear
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="ml-4">
+                    <DataTableViewOptions table={table} />
+                </div>
             </div>
 
-            {/* ✅ PROSLEĐUJEMO ISPRAVAN `table` OBJEKAT */}
-            <DataTable<Order> table={table}/>
-            <DataTablePagination table={table}/>
+            <DataTable<Order> table={table} />
+            <DataTablePagination table={table} />
         </div>
-
     );
 }

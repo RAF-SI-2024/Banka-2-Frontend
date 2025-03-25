@@ -6,7 +6,19 @@ export interface Order {
     quantity: number;
     contractSize: number;
     pricePerUnit: number;
-    direction: "Buy" | "Sell";
+    direction: Direction;
     remainingPortions: number;
-    status: "pending" | "approved" | "declined" | "done";
+    status: Status;
+}
+
+export enum Direction {
+    Buy = 0 ,
+    Sell = 1
+}
+
+export enum Status {
+    Pending = 0,
+    Approved = 1,
+    Declined = 2,
+    Done = 3
 }
