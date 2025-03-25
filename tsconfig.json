@@ -1,12 +1,11 @@
 {
-  "files": [
-    "./cypress.config.ts"
-  ],
+  "files": ["./cypress.config.ts"],
   "references": [
-    { "path": "./tsconfig.app.json"},
-    { "path": "./tsconfig.node.json"}
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
   ],
-  "compilerOptions": { // shadcn
+  "compilerOptions": {
+    // shadcn
     "module": "ESNext",
     "moduleResolution": "node",
     "baseUrl": ".",
