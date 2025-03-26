@@ -96,6 +96,7 @@ export default function TransactionsDataTable({account}: TransactionsDataTablePr
     };
 
     const handleFilter = () => {
+        setCurrentPage(1);
         setFetchFlag(!fetchFlag);
     };
 

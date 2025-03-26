@@ -100,6 +100,7 @@ export default function BankingAccountsTable() {
     };
 
     const handleFilter = () => {
+        setCurrentPage(1);
         setFetchFlag(!fetchFlag);
     };
 
