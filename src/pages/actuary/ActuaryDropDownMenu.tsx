@@ -1,13 +1,15 @@
-import { Button } from "@/components/ui/button.tsx";
+import {Button} from "@/components/ui/button.tsx";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
-import { Actuary, ActuaryType } from "@/types/actuary.ts";
+import {Actuary, ActuaryType} from "@/types/actuary.ts";
+import {Role, User} from "@/types/user.ts";
 
 type Props = {
+  currentUserRole: Role;
   actuary: Actuary;
   onEdit: () => void;
   onResetLimit: () => void;
@@ -15,10 +17,20 @@ type Props = {
 
 export default function ActuariesDropdownMenu({
   actuary,
+  currentUserRole,
   onEdit,
   onResetLimit,
 }: Props) {
-  const isAgent = actuary.actuaryType === ActuaryType.Agent;
+
+  const user = JSON.parse(sessionStorage.getItem("user") || "{}") as User;
+  const isEmployee = user?.role === Role.Employee;
+
+  const showEdit =
+      (!isEmployee && currentUserRole !== Role.Admin)
+      || (isEmployee && actuary.actuaryType === ActuaryType.Agent);
+
+  const editLabel = isEmployee ? "Adjust limit" : "Edit actuary";
+
 
   return (
     <DropdownMenu>
@@ -30,12 +42,13 @@ export default function ActuariesDropdownMenu({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={onEdit}>Edit Actuary</DropdownMenuItem>
-        {isAgent && (
-          <DropdownMenuItem onClick={onResetLimit}>
-            Reset Used Limit
-          </DropdownMenuItem>
-        )}{" "}
+
+        {showEdit && (
+            <DropdownMenuItem onClick={onEdit}>{editLabel}</DropdownMenuItem>
+        )}
+
+        <DropdownMenuItem onClick={onResetLimit}>Reset Used Limit</DropdownMenuItem>
+
       </DropdownMenuContent>
     </DropdownMenu>
   );
