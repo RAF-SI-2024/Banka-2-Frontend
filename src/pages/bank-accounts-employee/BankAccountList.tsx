@@ -1,9 +1,9 @@
 import {Button} from "@/components/ui/button.tsx";
 import BankingAccountsTable from "@/components/bank-account/bank-account-table/BankingAccountsTable.tsx";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import CreateBankAccountDialog from "@/components/bank-account/bank-account-create/CreateBankAccountDialog.tsx";
 import RegisterDialog from "@/components/register/RegisterDialog.tsx";
-import {Role} from "@/types/user.ts";
+import { Role, User } from "@/types/user";
 import {Toaster} from "@/components/ui/sonner.tsx";
 
 export default function BankAccountListPage() {
@@ -14,6 +14,7 @@ export default function BankAccountListPage() {
     const onRegister = () => {
         setRegisterDialogOpen(true);
     }
+
     return (
         <main className="flex flex-1 flex-col gap-4 pt-0">
             <Toaster richColors />

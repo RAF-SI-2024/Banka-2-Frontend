@@ -20,8 +20,10 @@ import { Input } from "@/components/ui/input.tsx";
 import InputHidable from "@/components/__common__/input/InputHidable.tsx";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 import { showErrorToast } from "@/lib/show-toast-utils.tsx";
+import { Role } from "@/types/user";
 import { getActuaryByEmployeeId } from "@/api/actuary";
 import { log } from "console";
+import {mockActuaries} from "@/__mocks/mock-actuaries.ts";
 
 // Form field definitions
 const data = [
@@ -80,17 +82,20 @@ export default function LoginForm({
         login(response.token, response.user); // Store full user data
 
         console.log("✅ Login successful", response);
-        /*
-        // Ako je korisnik zaposlen, dohvati Actuary podatke
-        if (response.user.id) {
-          console.log("response.user.id  ", response.user.id);
-          const actuary = await getActuaryByEmployeeId(response.user.id);
-          if (actuary) {
-            sessionStorage.setItem("actuary", JSON.stringify(actuary));
-            console.log("✅ Actuary data stored in sessionStorage", actuary);
+
+        // mock vrednosti jer nema backend-a
+
+        if (response.user.role === Role.Employee) {
+          const mockActuary = mockActuaries.find(
+              (a) => a.employeeId === response.user.id
+          );
+
+          if (mockActuary) {
+            sessionStorage.setItem("actuary", JSON.stringify(mockActuary));
+            console.log("✅ Stored mock actuary", mockActuary);
           }
         }
-*/
+
         navigate("/home", { replace: true });
       } else {
         throw new Error("Login failed.");
