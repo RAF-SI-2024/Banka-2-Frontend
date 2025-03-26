@@ -22,7 +22,8 @@ function generateNavMainData(){
         if (JSON.parse(sessionStorage.user).role == Role.Admin) {
             return AdminNavMainData();
         } else if (JSON.parse(sessionStorage.user).role == Role.Employee) {
-            return EmployeeNavMainData()
+            const actuary = JSON.parse(sessionStorage.getItem("actuary") || "{}");
+            return EmployeeNavMainData(actuary)
         } else if (JSON.parse(sessionStorage.user).role == Role.Client) {
             return ClientNavMainData()
         }

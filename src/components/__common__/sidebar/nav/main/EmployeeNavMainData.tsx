@@ -1,5 +1,8 @@
-export function EmployeeNavMainData() {
-  return [
+import {Actuary, ActuaryType} from "@/types/actuary";
+
+// prima actuary da bismo znali da li je supervizor ili agent
+export function EmployeeNavMainData(actuary: Actuary) {
+  const items = [
     {
       title: "Bank Accounts",
       url: "/home",
@@ -30,11 +33,17 @@ export function EmployeeNavMainData() {
         },
       ],
     },
-    {
+  ];
+
+  if (actuary?.actuaryType === ActuaryType.Supervisor) {
+    items.push({
       title: "Actuaries",
       url: "/actuaries",
       icon: <span className="icon-[ph--users-three]" />,
       isCollapsed: true,
-    },
-  ];
+    });
+  }
+
+  return items;
+
 }
