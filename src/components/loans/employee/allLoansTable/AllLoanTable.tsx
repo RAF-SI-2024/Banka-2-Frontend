@@ -118,6 +118,7 @@ export default function AllLoanTable() {
 
     // handle filter button click
     const handleFilter = () => {
+        setCurrentPage(1);
         setFetchFlag(!fetchFlag);
     };
 
