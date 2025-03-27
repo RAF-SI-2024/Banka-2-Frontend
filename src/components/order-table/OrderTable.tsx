@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import {useReactTable, getCoreRowModel, getPaginationRowModel} from "@tanstack/react-table";
+import {useReactTable, getCoreRowModel, getPaginationRowModel, VisibilityState} from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DataTable } from "@/components/__common__/datatable/DataTable";
@@ -32,24 +32,24 @@ export default function OrderList() {
     };
 
     const handleFilter = () => {
-
-        // Prevodimo broj u odgovarajući string statusa
-        const statusMap = {
-            [Status.Pending]: "pending",
-            [Status.Approved]: "approved",
-            [Status.Declined]: "declined",
-            [Status.Done]: "done",
-        };
-
-        const selectedStatus = statusMap[Number(search.status)] || "";
-
+        const selectedStatus = search.status;
         const filtered = selectedStatus !== ""
-            ? orders.filter(order => order.status.toString().toLowerCase() === selectedStatus)
+            ? orders.filter(order => order.status === Number(search.status))
             : orders;
 
         setFilteredOrders(filtered.slice(0, pageSize));
         setCurrentPage(1);
     };
+
+    // visibility state - make some columns invisible by default
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+        orderType: false,
+        securityType: false,
+        contractSize: false,
+        pricePerUnit: false,
+        creationDate: false,
+    });
+
 
 
     const handleClearSearch = () => {
@@ -58,16 +58,26 @@ export default function OrderList() {
         setCurrentPage(1);
     };
 
-    const columns = useMemo(() => generateOrderColumns(), []);
+    const columns = useMemo(() => {
+        const handleApprove = (order: Order) => {
+            console.log("Approve", order);
+        }
+        const handleDecline = (order: Order) => {
+            console.log("Decline", order);
+        }
+        return generateOrderColumns(handleApprove, handleDecline)}
+    , [orders]);
 
-    const table = useReactTable<Order>({
+    const table = useReactTable({
         data: filteredOrders,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
         manualPagination: true,
         pageCount: Math.ceil(orders.length / pageSize),
         state: {
+            columnVisibility,
             pagination: {
                 pageIndex: currentPage - 1,
                 pageSize,
@@ -87,9 +97,9 @@ export default function OrderList() {
 
     return (
         <div className="p-6 space-y-4">
-            <div className="w-full flex flex-row items-center">
-                <div className="flex flex-1 justify-end gap-4 items-center ml-auto">
-                    <Select onValueChange={(value) => handleSearchChange("status", value)} value={search.status.toString()}>
+            <div className="w-full flex flex-row items-baseline">
+                <div className="flex flex-wrap gap-4 items-center">
+                    <Select onValueChange={(value) => handleSearchChange("status", value)} value={search.status?.toString()}>
                         <SelectTrigger className="w-42">
                             <SelectValue placeholder="Filter by status" className="text-sm" />
                         </SelectTrigger>
@@ -113,7 +123,7 @@ export default function OrderList() {
                     </div>
                 </div>
 
-                <div className="ml-4">
+                <div className="flex ml-auto">
                     <DataTableViewOptions table={table} />
                 </div>
             </div>

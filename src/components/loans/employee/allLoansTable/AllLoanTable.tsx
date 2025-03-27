@@ -213,9 +213,9 @@ export default function AllLoanTable() {
 
                     <Select onValueChange={(value) => handleSearchChange("loanStatus", value)} value={search.loanStatus}>
                         <SelectTrigger className="w-42">
-                            <SelectValue placeholder="Filter by status" />
+                            <SelectValue placeholder="Filter by status" className="text-sm"/>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="text-sm">
                             <SelectItem value={LoanStatus.Pending.toString()}> Pending </SelectItem>
                             <SelectItem value={LoanStatus.Active.toString()}> Active </SelectItem>
                             <SelectItem value={LoanStatus.Rejected.toString()}> Rejected </SelectItem>
