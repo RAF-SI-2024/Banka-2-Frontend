@@ -3,7 +3,7 @@ import {cn} from "@/lib/utils.ts";
 import {Card} from "@/components/ui/card.tsx";
 
 
-export default function SecurityDetails({className, ...props}: React.ComponentProps<"div">) {
+export default function SecurityDetailsCard({className, ...props}: React.ComponentProps<"div">) {
     return (
         <Card
             className={cn(
