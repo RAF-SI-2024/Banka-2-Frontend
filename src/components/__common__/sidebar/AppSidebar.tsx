@@ -22,7 +22,8 @@ function generateNavMainData(){
         if (JSON.parse(sessionStorage.user).role == Role.Admin) {
             return AdminNavMainData();
         } else if (JSON.parse(sessionStorage.user).role == Role.Employee) {
-            return EmployeeNavMainData()
+            const actuary = sessionStorage.getItem("actuary") ? JSON.parse(sessionStorage.actuary) : {};
+            return EmployeeNavMainData(actuary)
         } else if (JSON.parse(sessionStorage.user).role == Role.Client) {
             return ClientNavMainData()
         }
@@ -38,7 +39,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 
   return (
-    <Sidebar variant="floating" {...props}>
+    <Sidebar variant="floating" {...props} className="shadow-xl shadow-black">
       <SidebarHeader >
         <SidebarMenu>
           <SidebarMenuItem>

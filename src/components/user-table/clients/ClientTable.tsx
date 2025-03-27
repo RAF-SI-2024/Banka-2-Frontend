@@ -91,6 +91,7 @@ export default function UserTable() {
 
     // handle filter button click
     const handleFilter = () => {
+        setCurrentPage(1);
         setFetchFlag(!fetchFlag);
     };
 
