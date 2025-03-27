@@ -39,7 +39,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 
   return (
-    <Sidebar variant="floating" {...props}>
+    <Sidebar variant="floating" {...props} className="shadow-xl shadow-black">
       <SidebarHeader >
         <SidebarMenu>
           <SidebarMenuItem>
