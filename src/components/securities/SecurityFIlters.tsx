@@ -84,7 +84,7 @@ export default function SecurityFilters({variant}: SecurityFilterProps){
                     variant="negative"
                     size="tight"
                     onClick={() => setShowFilters(!showFilters)}
-                    className="py-0.5 z-[49] text-sm w-full rounded-t-none rounded-b-4xl flex flex-row items-center"
+                    className="py-0.5 pt-0 -mt-[4px] mx-1 z-[49] text-sm w-full rounded-t-none rounded-b-4xl flex flex-row items-center"
                 >
                     <span className="icon-[ph--funnel-simple]" /> Filters
                 </Button>

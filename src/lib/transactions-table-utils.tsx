@@ -107,9 +107,15 @@ export const fetchTransactionTableRows = async (
             ovo isto moze biti i za prenos sa svog jednog na svoj drugi racun
             - Menjacnica => fromAccount -> yourAccount (mora biti tvoj) & toAccount -> yourAccount (mora biti tvoj) -
             account-i moraju biti isti, jer je ovo cista menjacnica i nista vise, dok za one prethodne isto moze da se vrse uplate/isplate ali usput i da se izvrsi menjacnica*/
-            const fromAccount = item.fromAccount;
-            const toAccount = item.toAccount;
+            const fromAccount =  item.fromAccount ;
+            const toAccount = item.toAccount ;
 
+            // if(fromAccount){
+            //     fromAccount.accountNumber = "222" + fromAccount.accountNumber + "11"
+            // }
+            // if(toAccount){
+            //     toAccount.accountNumber = "333" + toAccount.accountNumber + "33"
+            // }
             console.log("Checking Transaction:", {
                 fromAccount: fromAccount?.accountNumber,
                 toAccount: toAccount?.accountNumber,
