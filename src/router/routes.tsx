@@ -61,8 +61,8 @@ export const AppRoutes = () => {
                         <Route path="loan/request" element={ <LoanRequestList />} />
                         <Route path="bank-account-list" element={<BankAccountListPage />} />
                         <Route path="loan/all" element={<AllLoanList />} />
-                        <Route path="/orders" element={<OrdersPage />} />
-                        <Route path="actuaries" element={<ActuaryListPage />} />
+                        <Route path="/order/overview" element={<OrdersPage />} />
+                        <Route path="actuary/overview" element={<ActuaryListPage />} />
                     </Route>
 
                     <Route element={<ProtectedEmployee />}>

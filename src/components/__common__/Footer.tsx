@@ -22,7 +22,8 @@ function getNavDataByRole(role: Role | null): FooterNavItem[] {
         case Role.Admin:
             return AdminNavMainData();
         case Role.Employee:
-            return EmployeeNavMainData();
+            const actuary = sessionStorage.getItem("actuary") ? JSON.parse(sessionStorage.actuary) : {};
+            return EmployeeNavMainData(actuary);
         case Role.Client:
             return ClientNavMainData();
         default:

@@ -3,7 +3,6 @@ import {cn} from "@/lib/utils.ts";
 import {Card} from "@/components/ui/card.tsx";
 import SecurityCreateOrder from "@/components/securities/SecurityCreateOrder.tsx";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
-import SecurityGraph from "@/components/securities/SecurityGraph.tsx";
 
 
 interface SecurityDetailsProps extends React.ComponentProps<"div">{
@@ -17,7 +16,7 @@ export default function SecurityDetailsCard({className, ...props}: SecurityDetai
     return (
 
 
-            <Card className={cn("border-0 w-full", className)} {...props}>
+            <Card className={cn("border-0 w-full ", className)} {...props}>
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="font-paragraph w-full">
                     <TabsList className="bg-card w-fit md:flex-col justify-baseline lg:flex-row h-full">
                         <TabsTrigger value="market" className="w-full px-2">Market</TabsTrigger>

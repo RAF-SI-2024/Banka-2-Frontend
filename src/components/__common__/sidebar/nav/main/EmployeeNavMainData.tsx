@@ -1,4 +1,5 @@
 import {Actuary, ActuaryType} from "@/types/actuary";
+import * as React from "react";
 
 // prima actuary da bismo znali da li je supervizor ili agent
 export function EmployeeNavMainData(actuary: Actuary) {
@@ -33,12 +34,18 @@ export function EmployeeNavMainData(actuary: Actuary) {
         },
       ],
     },
+    {
+      title: "Securities",
+      url: "/security/overview",
+      icon: <span className="icon-[ph--chart-line-up]"/>,
+      isCollapsed: false,
+    },
   ];
 
-  if (actuary?.actuaryType === ActuaryType.Supervisor) {
+  if (true) { // TODO - staviti samo ako je supervisor (iz jwt)
     items.push({
       title: "Actuaries",
-      url: "/actuaries",
+      url: "/actuary/overview",
       icon: <span className="icon-[ph--users-three]" />,
       isCollapsed: true,
     });
@@ -46,7 +53,7 @@ export function EmployeeNavMainData(actuary: Actuary) {
   items.push(
       {
           title: "Orders",
-          url: "/orders",
+          url: "/order/overview",
           icon: <span className="icon-[ph--hand-deposit]"/>,
           isCollapsed: true,
       }
