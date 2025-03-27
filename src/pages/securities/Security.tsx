@@ -31,7 +31,7 @@ export default function Security() {
                         <SecurityGraph className="row-start-1 row-span-3 col-span-6" />
 
                         {/* Details start at row 5 to avoid overlap */}
-                        <SecurityDetailsCard className="row-start-4 row-span-2 col-span-6" />
+                        <SecurityDetailsCard className="row-start-4 row-span-3 col-span-6" />
 
                         {/* List card stays in its column */}
                         <SecurityListCard className="col-span-2 col-start-7 row-span-6" />
