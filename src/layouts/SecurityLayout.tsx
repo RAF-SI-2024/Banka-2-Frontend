@@ -8,8 +8,19 @@ import {
 import Footer from "@/components/__common__/Footer.tsx";
 import HeaderWithThemeSwitch from "@/components/__common__/header/HeaderWithThemeSwitch.tsx";
 import {Outlet} from "react-router-dom";
+import {useEffect, useRef} from "react";
 
-export default function AppLayout() {
+export default function SecurityLayout() {
+
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+    useEffect(() => {
+        if (triggerRef.current) {
+            triggerRef.current.click();
+        }
+    }, []);
+
+
     return (
         <SidebarProvider>
             {/*add sidebar*/}
@@ -17,10 +28,10 @@ export default function AppLayout() {
             {/*part that the sidebar shrinks when open*/}
             <SidebarInset>
                 <HeaderWithThemeSwitch className="flex h-16 shrink-0 items-center gap-2">
-                    <SidebarTrigger className="-ml-1" />
+                    <SidebarTrigger className="-ml-1" ref={triggerRef} />
                 </HeaderWithThemeSwitch>
 
-                <div className="max-w-[1200px] w-full mx-auto min-h-dvh">
+                <div className="w-full mx-auto min-h-dvh">
 
                  <Outlet />
 

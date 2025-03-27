@@ -26,6 +26,8 @@ import LoanOverviewList from "@/pages/loans-client/LoanOverviewList.tsx";
 import NewPaymentPage from "@/pages/payments/NewPayment.tsx";
 import ExchangeRateListPage from "@/pages/payments/ExchangeRateList.tsx";
 import BankAccountListPage from "@/pages/bank-accounts-employee/BankAccountList.tsx";
+import Security from "@/pages/securities/Security.tsx";
+import SecurityLayout from "@/layouts/SecurityLayout.tsx";
 import OrdersPage from "@/pages/orders-list/OrdersList.tsx"
 
 export const AppRoutes = () => {
@@ -41,6 +43,10 @@ export const AppRoutes = () => {
                     <Route path="/payments/overview" element={<TransactionsOverviewPage />} />
 
                     <Route path="/card/:cardId" element={<CardDetailsPage />} />
+
+
+
+
 
                     {/*protected client routes*/}
                     <Route element={<ProtectedClient />}>
@@ -67,6 +73,13 @@ export const AppRoutes = () => {
 
                 </Route>
             </Route>
+
+            <Route element={<SecurityLayout />}>
+                <Route element={<AllProtectedRoutes />}>
+                    <Route path="security/overview" element={<Security />} />
+                </Route>
+            </Route>
+
 
             <Route element={<AuthorizationLayout />}>
                 <Route element={<ProtectedLoggedUser />}>

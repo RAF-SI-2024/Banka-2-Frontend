@@ -27,7 +27,7 @@ export function DatePickerWithRange({
                     <button
                         id="date"
                         className={cn(
-                            "cursor-pointer flex h-9 w-[300px] min-w-0 items-center justify-start rounded-md border border-input bg-transparent px-3 py-1 shadow-xs transition-[color,box-shadow] md:text-sm font-paragraph text-base text-left",
+                            "cursor-pointer flex h-9 w-full text-nowrap items-center justify-start rounded-md border border-input bg-transparent px-3 py-1 shadow-xs transition-[color,box-shadow] md:text-sm font-paragraph text-base text-left",
                             "outline-none ring-0",
                             "placeholder:text-muted-foreground/50",
                             "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
