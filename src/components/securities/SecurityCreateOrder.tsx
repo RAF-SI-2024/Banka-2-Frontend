@@ -38,7 +38,8 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
         mode: "onChange",
         defaultValues: {
             amount: 1,
-
+            allOrNone: false,
+            margin: false,
         },
     });
 
@@ -48,7 +49,7 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
         <Card className="w-full border-0">
             <CardContent className="pt-4 w-full">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-3">
                         <FormField
                             key="amount"
                             name="amount"
@@ -95,7 +96,7 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
                         />
 
 
-                        <div className="w-full flex flex-row gap-2">
+                        <div className="w-full flex flex-row gap-2 py-2">
                             <FormField
                                 key="allOrNone"
                                 name="allOrNone"
@@ -108,7 +109,7 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
                                             />
                                         </FormControl>
                                         <FormLabel className="font-normal">All or none</FormLabel>
-                                        <FormMessage />
+
                                     </FormItem>
                                 )}
                             />
@@ -124,14 +125,14 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
                                             />
                                         </FormControl>
                                         <FormLabel className="font-normal">Margin</FormLabel>
-                                        <FormMessage />
+
                                     </FormItem>
                                 )}
                             />
 
                         </div>
 
-                        <div className="w-full pt-8">
+                        <div className="w-full pt-3">
                             <Button variant={direction === "buy" ? "success": "destructive"}
                                     className="w-full" size="lg" type="submit">{direction === "buy" ? "Buy": "Sell"} </Button>
                         </div>
