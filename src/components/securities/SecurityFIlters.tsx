@@ -28,11 +28,23 @@ export default function SecurityFilters({variant}: SecurityFilterProps){
     const [bidValues, setBidValues] = useState([0, 1000000]);
     const [amountValues, setAmountValues] = useState([0, 1000000]);
 
+    const [fetchFlag, setFetchFlag] = useState(false);
+
     const [search, setSearch] = useState({
         fromDate: undefined as Date | undefined,
         toDate: undefined as Date | undefined,
         status: "",
     });
+
+    const handleClear = async () => {
+        setSearch({
+            fromDate: undefined,
+            toDate: undefined,
+            status: "",
+        });
+        setShowFilters(false);
+        setFetchFlag(!fetchFlag);
+    };
 
     return (
         <div className="relative">
@@ -72,10 +84,9 @@ export default function SecurityFilters({variant}: SecurityFilterProps){
                     variant="negative"
                     size="tight"
                     onClick={() => setShowFilters(!showFilters)}
-                    className="py-0.5 z-[49] text-sm w-full rounded-t-none rounded-b-4xl flex flex-row items-center justify-center gap-1"
+                    className="py-0.5 z-[49] text-sm w-full rounded-t-none rounded-b-4xl flex flex-row items-center"
                 >
-                    <span className="icon-[ph--funnel-simple]" />
-                    Filters
+                    <span className="icon-[ph--funnel-simple]" /> Filters
                 </Button>
             </div>
 
@@ -115,13 +126,13 @@ export default function SecurityFilters({variant}: SecurityFilterProps){
                             </div>
 
                             <RangeSection
-                                label="Ask price"
+                                label="Ask price (RSD)"
                                 values={askValues}
                                 onChange={setAskValues}
                             />
 
                             <RangeSection
-                                label="Bid price"
+                                label="Bid price (RSD)"
                                 values={bidValues}
                                 onChange={setBidValues}
                             />
@@ -131,6 +142,10 @@ export default function SecurityFilters({variant}: SecurityFilterProps){
                                 values={amountValues}
                                 onChange={setAmountValues}
                             />
+
+                            <Button variant="negative" className="text-destructive w-full flex flex-row items-baseline" onClick={handleClear}>
+                                <span className="icon-[ph--funnel-simple-x]" /> Clear filters
+                            </Button>
                         </div>
                     </motion.div>
                 )}
@@ -155,7 +170,7 @@ function RangeSection({ label, values, onChange }: {
                 max={1000000}
                 step={1}
             />
-            <div className="w-full flex flex-row justify-between lg:gap-32 sm:gap-8">
+            <div className="w-full flex flex-row justify-between lg:gap-24 md:gap-0 sm:gap-8">
                 <Input
                     type="number"
                     min={0}
