@@ -10,12 +10,11 @@ export default function SecurityDetailsCard({className, ...props}: React.Compone
 
 
     const [activeTab, setActiveTab] = useState<string>('stocks');
-    const maxHeight = activeTab === "futures" || activeTab === "options" ? 580 : 500;
 
     return (
         <Card
             className={cn(
-                "border-0  flex flex-col md:max-h-dvh",
+                "border-0  flex flex-col",
                 className
             )}
             {...props}
@@ -25,7 +24,7 @@ export default function SecurityDetailsCard({className, ...props}: React.Compone
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="font-paragraph w-full">
 
-                <CardHeader className="w-full p-1" style={{ maxHeight: `${maxHeight}px` }}>
+                <CardHeader className="w-full p-1">
                     <TabsList className="bg-card w-full md:flex-col justify-baseline lg:flex-row h-full">
                         <TabsTrigger value="stocks" className="w-full ">Stocks</TabsTrigger>
                         <TabsTrigger value="futures" className="w-full">Futures</TabsTrigger>
@@ -39,7 +38,7 @@ export default function SecurityDetailsCard({className, ...props}: React.Compone
 
 
                 </CardHeader>
-                <CardContent className="py-0 px-0 flex-1 h-full overflow-auto">
+                <CardContent className="py-0 px-4 pb-4 flex-1 h-full overflow-auto">
                     <SecurityInfiniteList variant={activeTab} />
                 </CardContent>
             </Tabs>
