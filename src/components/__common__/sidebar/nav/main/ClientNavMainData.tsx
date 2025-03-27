@@ -11,13 +11,12 @@ export function ClientNavMainData() {
             title: "Home",
             url: "/home",
             icon: <span className="icon-[ph--house]"/>,
-            isCollapsed: true,
         },
         {
             title: "Bank Accounts",
             url: "#",
             icon: <span className="icon-[ph--piggy-bank]"/>,
-            isCollapsed: true,
+            isCollapsed: false,
             items: useBankAccountsData()
         },
         {
@@ -72,6 +71,12 @@ export function ClientNavMainData() {
                     icon: <span className="icon-[ph--bank]"/>,
                 }
             ]
+        },
+        {
+            title: "Securities",
+            url: "/security/overview",
+            icon: <span className="icon-[ph--chart-line-up]"/>,
+            isCollapsed: false,
         },
     ]
 }
