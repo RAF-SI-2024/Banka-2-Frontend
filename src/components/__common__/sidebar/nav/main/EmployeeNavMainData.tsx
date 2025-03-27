@@ -31,5 +31,11 @@ export function EmployeeNavMainData() {
                 }
             ]
         },
+        {
+            title: "Orders",
+            url: "/orders",
+            icon: <span className="icon-[ph--hand-deposit]"/>,
+            isCollapsed: true,
+        }
     ];
 }
