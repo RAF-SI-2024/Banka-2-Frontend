@@ -1,7 +1,6 @@
-'use client';
 import { useState, useEffect, useMemo } from "react";
-import InfiniteScroll from '@/components/ui/infinite-scroll';
-import { Loader2 } from 'lucide-react';
+import InfiniteScroll from "react-infinite-scroll-component"
+import {Loader2} from "lucide-react";
 
 interface SecurityItem {
   id: number;
@@ -11,7 +10,7 @@ interface SecurityItem {
 
 const Security = ({ security }: { security: SecurityItem }) => {
     return (
-      <div className="w-full rounded-lg border-2 border-gray-200 p-2">
+      <div className="w-full rounded-lg border-2  p-2">
         <div className="font-bold text-background-foreground">
           {security.id} - {security.name}
         </div>
@@ -74,7 +73,7 @@ export default function SecurityInfiniteList({ variant }: { variant: string }) {
   const generateSecurities = (type: string): SecurityItem[] => {
     const baseItems = getListItems(type);
     // Expand the list to 30 items for each type to enable pagination
-    return Array.from({ length: 30 }, (_, i) => ({
+    return Array.from({ length: 100 }, (_, i) => ({
       id: i + 1,
       name: `${baseItems[i % baseItems.length].name}${Math.floor(i / baseItems.length) + 1 > 1 ? ` (${Math.floor(i / baseItems.length) + 1})` : ''}`,
       price: `$${(Math.random() * 1000).toFixed(2)}`
@@ -89,6 +88,17 @@ export default function SecurityInfiniteList({ variant }: { variant: string }) {
           { name: 'Stock1' },
           { name: 'Stock2' },
           { name: 'Stock3' },
+          { name: 'Stock1' },
+          { name: 'Stock2' },
+          { name: 'Stock3' },
+          { name: 'Stock1' },
+          { name: 'Stock2' },
+          { name: 'Stock3' },
+          { name: 'Stock1' },
+          { name: 'Stock2' },
+          { name: 'Stock3' },
+          { name: 'Stock1' },
+          { name: 'Stock2' },
         ];
       case 'futures':
         return [
@@ -114,15 +124,28 @@ export default function SecurityInfiniteList({ variant }: { variant: string }) {
   };
 
   return (
-    <div className="max-h-[620px] w-full overflow-y-auto">
-      <div className="flex w-full flex-col items-center gap-3">
-        {securities.map((security) => (
-          <Security key={security.id} security={security} />
-        ))}
-        <InfiniteScroll hasMore={hasMore} isLoading={loading} next={next} threshold={0.5}>
-          {hasMore && <Loader2 className="my-4 h-8 w-8 animate-spin" />}
+
+      <div
+          id="scrollableDiv"
+          className="max-h-full overflow-y-auto"
+      >
+        {/*Put the scroll bar always on the bottom*/}
+        <InfiniteScroll
+            dataLength={100}
+            next={next}
+            // style={{ display: 'flex', flexDirection: 'column-reverse' }} //To put endMessage and loader to the top.
+            // inverse={true} //
+            hasMore={hasMore}
+            loader={<div className="mx-auto w-full text-center">
+              <span className="icon-[ph--circle-notch] size-8 text-foreground animate-spin" />
+            </div>}
+            scrollableTarget="scrollableDiv"
+        >
+          {securities.map((security, index) => (
+              <Security  key={index} security={security} />
+          ))}
         </InfiniteScroll>
       </div>
-    </div>
+
   );
 }
