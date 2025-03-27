@@ -1,10 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import {Order, Status, Direction} from "@/types/order";
-import { formatCurrency } from "/src/lib/format-currency.ts";
-import { formatNumber } from "/src/lib/format-number.ts";
-import OrderDropdownMenu from "./OrderActionMenu.tsx";
+import {formatCurrency} from "@/lib/format-currency.ts";
+import { formatNumber } from "@/lib/format-number.ts";
+import { ColumnDef } from "@tanstack/react-table";
+import OrderDropdownMenu from "./OrderDropdownMenu";
 
-export function generateOrderColumns() {
+export function generateOrderColumns(handleApprove: (order: Order) => void, handleDecline: (order: Order) => void): ColumnDef<Order>[] {
     return [
         {
             accessorKey: "email",
@@ -29,13 +30,13 @@ export function generateOrderColumns() {
         {
             accessorKey: "quantity",
             header: "Quantity",
-            cell: ({ row }) => formatNumber(row.original.quantity, true),
+            cell: ({ row }) => formatNumber(row.original.quantity),
             enableHiding: true,
         },
         {
             accessorKey: "contractSize",
             header: "Contract Size",
-            cell: ({ row }) => formatNumber(row.original.contractSize, true),
+            cell: ({ row }) => formatNumber(row.original.contractSize),
             enableHiding: true,
         },
         {
@@ -48,44 +49,76 @@ export function generateOrderColumns() {
             accessorKey: "direction",
             header: "Direction",
             cell: ({ row }) => {
-                const directionValue = row.original.direction;
-
-                const variant = directionValue === "Buy" ? "success" : "destructive";
-                return <Badge variant={variant}>{directionValue}</Badge>;
+                let variant: "success" | "destructive" | "warning" | "outline" | null | undefined;
+                let text;
+        
+                switch (row.original.direction) {
+                    case Direction.Buy:
+                        variant = "success";
+                        text = "Buy";
+                        break;
+                    case Direction.Sell:
+                        variant = "destructive";
+                        text = "Sell";
+                        break;
+                    default:
+                        variant = "outline";
+                        text = "Unknown";
+                        break;
+                }
+        
+                return <Badge variant={variant}>{text}</Badge>;
             },
             enableHiding: true,
         },
         {
             accessorKey: "remainingPortions",
             header: "Remaining Portions",
-            cell: ({ row }) => formatNumber(row.original.remainingPortions, true),
+            cell: ({ row }) => formatNumber(row.original.remainingPortions),
             enableHiding: true,
         },
-        {
-            accessorKey: "status",
-            header: "Status",
-            cell: ({ row }) => {
-                const statusValue = String(row.original.status).toLowerCase();
+            {
+                accessorKey: "status",
+                header: "Status",
+                cell: ({ row }) => {
+                    let variant: "success" | "destructive" | "warning" | "outline" | "default" | null | undefined;
+                    let text;
 
-                let statusVariant = "default";
-                if (statusValue === "pending") statusVariant = "warning";
-                else if (statusValue === "approved") statusVariant = "default";
-                else if (statusValue === "declined") statusVariant = "destructive";
-                else if (statusValue === "done") statusVariant = "success";
+                    switch (row.original.status) {
+                        case Status.Pending:
+                            variant = "warning";
+                            text = "Pending";
+                            break;
+                        case Status.Approved:
+                            variant = "default";
+                            text = "Approved";
+                            break;
+                        case Status.Declined:
+                            variant = "destructive";
+                            text = "Declined";
+                            break;
+                        case Status.Done:
+                            variant = "success";
+                            text = "Done";
+                            break;
+                        default:
+                            variant = "outline";
+                            text = "Unknown";
+                            break;
+                    }
 
-                let statusText = statusValue.charAt(0).toUpperCase() + statusValue.slice(1,statusValue.length);
-                return <Badge variant={statusVariant}>{statusText}</Badge>;
+                    return <Badge variant={variant}>{text}</Badge>;
+                },
+                enableHiding: true,
             },
-            enableHiding: true,
-        },
         {
             id: "actions",
             header: "Actions",
             cell: ({ row }) =>
-                row.original.status === "pending" ? (
+                row.original.status === 0 ? (
                     <OrderDropdownMenu
-                        onApprove={() => console.log("Approve order", row.original)}
-                        onDecline={() => console.log("Decline order", row.original)}
+                        onApprove={() => handleApprove(row.original)}
+                        onDecline={() => handleDecline(row.original)}
                     />
                 ) : null,
             enableHiding: false,
