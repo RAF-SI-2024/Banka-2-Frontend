@@ -10,12 +10,12 @@ export default function SecurityDetailsCard({className, ...props}: React.Compone
 
 
     const [activeTab, setActiveTab] = useState<string>('stocks');
-
+    const maxHeight = activeTab === "futures" || activeTab === "options" ? 580 : 500;
 
     return (
         <Card
             className={cn(
-                "border-0 h-full flex flex-col max-h-dvh",
+                "border-0  flex flex-col md:max-h-dvh",
                 className
             )}
             {...props}
@@ -25,21 +25,21 @@ export default function SecurityDetailsCard({className, ...props}: React.Compone
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="font-paragraph w-full">
 
-                <CardHeader className="w-full p-1">
-                <TabsList className="bg-card w-full md:flex-col justify-baseline lg:flex-row h-full">
-                    <TabsTrigger value="stocks" className="w-full ">Stocks</TabsTrigger>
-                    <TabsTrigger value="futures" className="w-full">Futures</TabsTrigger>
-                    <TabsTrigger value="forex" className="w-full">Forex</TabsTrigger>
-                    <TabsTrigger value="options" className="w-full">Options</TabsTrigger>
-                </TabsList>
+                <CardHeader className="w-full p-1" style={{ maxHeight: `${maxHeight}px` }}>
+                    <TabsList className="bg-card w-full md:flex-col justify-baseline lg:flex-row h-full">
+                        <TabsTrigger value="stocks" className="w-full ">Stocks</TabsTrigger>
+                        <TabsTrigger value="futures" className="w-full">Futures</TabsTrigger>
+                        <TabsTrigger value="forex" className="w-full">Forex</TabsTrigger>
+                        <TabsTrigger value="options" className="w-full">Options</TabsTrigger>
+                    </TabsList>
 
-                <TabsContent value={activeTab} className="p-2">
-                    <SecurityFilters variant={activeTab} />
-                </TabsContent>
+                    <TabsContent value={activeTab} className="p-2">
+                        <SecurityFilters variant={activeTab} />
+                    </TabsContent>
 
 
                 </CardHeader>
-                <CardContent className="py-0 px-0 flex-1 min-h-0 overflow-auto max-h-full">
+                <CardContent className="py-0 px-0 flex-1 h-full overflow-auto">
                     <SecurityInfiniteList variant={activeTab} />
                 </CardContent>
             </Tabs>

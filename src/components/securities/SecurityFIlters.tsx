@@ -9,9 +9,10 @@ import {DateRange} from "react-day-picker";
 import {Input} from "@/components/ui/input.tsx";
 import {DualRangeSlider} from "@/components/ui/dual-range-slider.tsx";
 import {
-    DropdownMenu, DropdownMenuCheckboxItem,
-    DropdownMenuContent, DropdownMenuItem,
-    DropdownMenuLabel, DropdownMenuRadioItem,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
     DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu.tsx";
 import {DropdownMenuTrigger} from "@radix-ui/react-dropdown-menu";
@@ -27,7 +28,6 @@ export default function SecurityFilters({variant}: SecurityFilterProps){
     const [bidValues, setBidValues] = useState([0, 1000000]);
     const [amountValues, setAmountValues] = useState([0, 1000000]);
 
-
     const [search, setSearch] = useState({
         fromDate: undefined as Date | undefined,
         toDate: undefined as Date | undefined,
@@ -35,8 +35,8 @@ export default function SecurityFilters({variant}: SecurityFilterProps){
     });
 
     return (
-        <div>
-            <div className="w-full flex flex-row gap-1">
+        <div className="relative">
+            <div className="w-full flex flex-row gap-1 ">
                 <SearchFilter
                     value={searchValue}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)}
@@ -66,113 +66,111 @@ export default function SecurityFilters({variant}: SecurityFilterProps){
                 </DropdownMenu>
             </div>
 
-            <motion.div
-                className="relative overflow-hidden"
-                animate={{ height: showFilters ? (variant==="futures" || variant==="options" ? 500 : 425) : 25 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-                <AnimatePresence>
-                    {showFilters && (
-                        <motion.div
-
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="py-4 px-1 w-full bg-card h-100 flex flex-col gap-4 items-center"
-
-                        >
-                            {/* Your filter content goes here */}
-                            {variant == "futures" || variant=="options" &&
-                            <div className="w-full">
-                                <Label >Settlement date</Label>
-                                <DatePickerWithRange className="max-w-full"  date={{ from: search.fromDate, to: search.toDate }}
-                                                      setDate={(range) => {
-                                    if(range) {
-                                        const rangeDate: DateRange = range as DateRange;
-                                        setSearch(prev => ({
-                                            ...prev,
-                                            fromDate: rangeDate?.from,
-                                            toDate: rangeDate?.to,
-                                        }));
-                                    }
-
-                                }} />
-                            </div>}
-
-                            <div className="w-full">
-                                <Label >Exchange</Label>
-                                <Input placeholder="RSD to EUR"></Input>
-                            </div>
-
-                            <div className="w-full flex flex-col gap-2">
-                                <Label >Ask price</Label>
-                                <DualRangeSlider className="pt-2"
-                                                 value={askValues}
-                                                 onValueChange={setAskValues}
-                                                 min={0} max={1000000}
-                                                 step={1}/>
-
-                                <div className="w-full flex flex-row justify-between lg:gap-32 sm:gap-8">
-                                    <Input type="number" min={0} max={1000000}  value={askValues[0]}
-                                           onChange={(v1) => setAskValues([v1.target.valueAsNumber, askValues[1]])}/>
-                                    <Input type="number" min={0} max={1000000} value={askValues[1]}
-                                           onChange={(v2) => setAskValues([askValues[0], v2.target.valueAsNumber])}/>
-                                </div>
-                            </div>
-
-                            <div className="w-full flex flex-col gap-2">
-                                <Label >Bid price</Label>
-                                <DualRangeSlider className="pt-2"
-                                                 value={bidValues}
-                                                 onValueChange={setBidValues}
-                                                 min={0} max={1000000}
-                                                 step={1}/>
-
-                                <div className="w-full flex flex-row justify-between lg:gap-32 sm:gap-8">
-                                    <Input type="number" min={0} max={1000000}  value={bidValues[0]}
-                                           onChange={(v1) => setBidValues([v1.target.valueAsNumber, bidValues[1]])}/>
-                                    <Input type="number" min={0} max={1000000} value={bidValues[1]}
-                                           onChange={(v2) => setBidValues([bidValues[0], v2.target.valueAsNumber])}/>
-                                </div>
-                            </div>
-
-                            <div className="w-full flex flex-col gap-2">
-                                <Label >Amount</Label>
-                                <DualRangeSlider className="pt-2"
-
-                                                 value={amountValues}
-                                                 onValueChange={setAmountValues}
-                                                 min={0} max={1000000}
-                                                 step={1}/>
-
-                                <div className="w-full flex flex-row justify-between lg:gap-32 sm:gap-8">
-                                    <Input type="number" min={0} max={1000000}  value={amountValues[0]}
-                                           onChange={(v1) => setAmountValues([v1.target.valueAsNumber, amountValues[1]])}/>
-                                    <Input type="number" min={0} max={1000000} value={amountValues[1]}
-                                           onChange={(v) => setAmountValues([amountValues[0], v.target.valueAsNumber])}/>
-                                </div>
-                            </div>
-
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                <motion.div
-                    className="w-full flex justify-around absolute bottom-0"
-                    animate={{ y: showFilters ? -25 : 0 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            {/* Filters toggle button */}
+            <div className="w-full flex justify-around mt-1">
+                <Button
+                    variant="negative"
+                    size="tight"
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="py-0.5 z-[49] text-sm w-full rounded-t-none rounded-b-4xl flex flex-row items-center justify-center gap-1"
                 >
-                    <Button
-                        variant="negative"
-                        size="tight"
-                        onClick={() => setShowFilters(!showFilters)}
-                        className="py-0.5 z-0 text-sm w-full rounded-t-none rounded-b-4xl flex flex-row items-center justify-center gap-1"
+                    <span className="icon-[ph--funnel-simple]" />
+                    Filters
+                </Button>
+            </div>
+
+            {/* Filters overlay content */}
+            <AnimatePresence>
+                {showFilters && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="absolute top-full left-0 right-0 bg-card z-0 p-4 shadow-lg shadow-black rounded-xl"
                     >
-                        <span className="size- icon-[ph--funnel-simple]" />
-                        Filters
-                    </Button>
-                </motion.div>
-            </motion.div>
+                        {(variant === "futures" || variant === "options") && (
+                            <div className="w-full mb-4">
+                                <Label>Settlement date</Label>
+                                <DatePickerWithRange
+                                    className="max-w-full"
+                                    date={{ from: search.fromDate, to: search.toDate }}
+                                    setDate={(range) => {
+                                        if (range) {
+                                            const rangeDate = range as DateRange;
+                                            setSearch(prev => ({
+                                                ...prev,
+                                                fromDate: rangeDate?.from,
+                                                toDate: rangeDate?.to,
+                                            }));
+                                        }
+                                    }}
+                                />
+                            </div>
+                        )}
+
+                        <div className="space-y-6">
+                            <div className="w-full">
+                                <Label>Exchange</Label>
+                                <Input placeholder="RSD to EUR" />
+                            </div>
+
+                            <RangeSection
+                                label="Ask price"
+                                values={askValues}
+                                onChange={setAskValues}
+                            />
+
+                            <RangeSection
+                                label="Bid price"
+                                values={bidValues}
+                                onChange={setBidValues}
+                            />
+
+                            <RangeSection
+                                label="Amount"
+                                values={amountValues}
+                                onChange={setAmountValues}
+                            />
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
-    )
+    );
+}
+
+function RangeSection({ label, values, onChange }: {
+    label: string;
+    values: number[];
+    onChange: (values: number[]) => void;
+}) {
+    return (
+        <div className="w-full flex flex-col gap-2">
+            <Label>{label}</Label>
+            <DualRangeSlider
+                className="pt-2"
+                value={values}
+                onValueChange={onChange}
+                min={0}
+                max={1000000}
+                step={1}
+            />
+            <div className="w-full flex flex-row justify-between lg:gap-32 sm:gap-8">
+                <Input
+                    type="number"
+                    min={0}
+                    max={1000000}
+                    value={values[0]}
+                    onChange={(e) => onChange([e.target.valueAsNumber, values[1]])}
+                />
+                <Input
+                    type="number"
+                    min={0}
+                    max={1000000}
+                    value={values[1]}
+                    onChange={(e) => onChange([values[0], e.target.valueAsNumber])}
+                />
+            </div>
+        </div>
+    );
 }
