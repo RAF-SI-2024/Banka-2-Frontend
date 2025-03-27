@@ -1,30 +1,17 @@
-import { useEffect, useState } from "react";
-import { Actuary, ActuaryType } from "@/types/actuary";
-import { Role } from "@/types/user"; // Dodaj definisane role
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import React, {useEffect, useState} from "react";
+import {Actuary, ActuaryType} from "@/types/actuary";
+import {Role} from "@/types/user"; // Dodaj definisane role
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {Button} from "@/components/ui/button";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 import MoneyInput from "@/components/__common__/input/MoneyInput";
-import { showErrorToast, showSuccessToast } from "@/lib/show-toast-utils";
+import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils";
 import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
 
 const adminSchema = z.object({
-  actuaryType: z.nativeEnum(ActuaryType),
+  actuaryType: z.string(),
   limit: z.number().gt(0, "Limit must be greater than zero"),
 });
 
@@ -58,30 +45,47 @@ export default function EditActuaryForm({
   const isAdmin = currentUserRole === Role.Admin;
   const schema = isAdmin ? adminSchema : employeeSchema;
 
+  const [actuaryType, setActuaryType] = useState<ActuaryType>();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: isAdmin
-      ? { actuaryType: actuary.actuaryType, limit: actuary.limit }
-      : { limit: actuary.limit },
+    defaultValues: {
+      actuaryType:  actuary.actuaryType.toString(),
+      limit: actuary.limit,
+    }
   });
 
   useEffect(() => {
     console.log("📌 Current actuary:", actuary); // Loguje trenutni actuary
 
     form.reset({
-      actuaryType: isAdmin ? actuary.actuaryType : undefined,
+      actuaryType: actuary.actuaryType.toString(),
       limit: actuary.limit,
     });
+    setActuaryType(actuary.actuaryType);
   }, [actuary, isAdmin, form]);
 
   const { control, handleSubmit, watch } = form;
   const hasChanges =
     watch("limit") !== actuary.limit ||
-    (isAdmin && watch("actuaryType") !== actuary.actuaryType);
+    (isAdmin && watch("actuaryType") !== actuary.actuaryType.toString());
 
   const onSubmit = async (values: FormValues) => {
     try {
-      const updatedActuary = { ...actuary, ...values };
+      let payload;
+
+      if(isAdmin){
+        payload = {
+          actuaryType: Number(actuary.actuaryType),
+          limit: actuary.limit,
+        }
+      }
+      else {
+        payload = {
+          limit: actuary.limit,
+        }
+      }
+      const updatedActuary = { ...actuary, ...payload };
       console.log("🚀 Updated actuary:", updatedActuary);
       showSuccessToast({ title: "Updated successfully" });
       onClose();
@@ -98,38 +102,34 @@ export default function EditActuaryForm({
         {isAdmin && (
           <FormField
             control={control}
+            key="actuaryType"
             name="actuaryType"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Actuary Type</FormLabel>
                 <Select
-                  value={String(field.value)}
-                  onValueChange={(v) => field.onChange(Number(v))}
+                    {...field}
+                  onValueChange={value => {
+                    setActuaryType(Number(value));
+                    field.onChange(value);
+                  }
+                }
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue>
-                        {Object.keys(ActuaryType).find(
-                          (key) =>
-                            ActuaryType[key as keyof typeof ActuaryType] ===
-                            field.value
-                        )}
-                      </SelectValue>
+                      <SelectValue />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {Object.keys(ActuaryType)
-                      .filter((key) => isNaN(Number(key))) // Zadrži samo stringove
-                      .map((key) => (
-                        <SelectItem
-                          key={key}
-                          value={String(
-                            ActuaryType[key as keyof typeof ActuaryType]
-                          )}
-                        >
-                          {key}
-                        </SelectItem>
-                      ))}
+                    <SelectItem value={ActuaryType.None.toString()}>
+                      None
+                    </SelectItem>
+                    <SelectItem value={ActuaryType.Supervisor.toString()}>
+                      Supervisor
+                    </SelectItem>
+                    <SelectItem value={ActuaryType.Agent.toString()}>
+                      Agent
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -143,9 +143,10 @@ export default function EditActuaryForm({
           name="limit"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Limit</FormLabel>
+              <FormLabel className={actuaryType !== ActuaryType.Agent ? "text-muted-foreground": ""}>Limit</FormLabel>
               <FormControl>
                 <MoneyInput
+                  disabled={actuaryType !== ActuaryType.Agent}
                   currency={"RSD"}
                   onChange={(event) => {
                     const rawValue = event.target.value;
@@ -154,7 +155,7 @@ export default function EditActuaryForm({
                     );
                     field.onChange(numericValue);
                   }}
-                  defaultValue={0}
+                  defaultValue={actuary.limit}
                 />
               </FormControl>
               <FormMessage />

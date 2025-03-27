@@ -41,13 +41,13 @@ export function AdminNavMainData() {
         },
         {
             title: "Actuaries",
-            url: "/actuaries",
+            url: "/actuary/overview",
             icon: <span className="icon-[ph--users-three]" />,
             isCollapsed: true,
         },
         {
             title: "Orders",
-            url: "/orders",
+            url: "/order/overview",
             icon: <span className="icon-[ph--hand-deposit]"/>,
             isCollapsed: true,
         },

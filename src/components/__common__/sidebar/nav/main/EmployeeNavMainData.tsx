@@ -42,10 +42,10 @@ export function EmployeeNavMainData(actuary: Actuary) {
     },
   ];
 
-  if (actuary?.actuaryType === ActuaryType.Supervisor) {
+  if (true) { // TODO - staviti samo ako je supervisor (iz jwt)
     items.push({
       title: "Actuaries",
-      url: "/actuaries",
+      url: "/actuary/overview",
       icon: <span className="icon-[ph--users-three]" />,
       isCollapsed: true,
     });
@@ -53,7 +53,7 @@ export function EmployeeNavMainData(actuary: Actuary) {
   items.push(
       {
           title: "Orders",
-          url: "/orders",
+          url: "/order/overview",
           icon: <span className="icon-[ph--hand-deposit]"/>,
           isCollapsed: true,
       }
