@@ -1,4 +1,5 @@
 import {Actuary, ActuaryType} from "@/types/actuary";
+import * as React from "react";
 
 // prima actuary da bismo znali da li je supervizor ili agent
 export function EmployeeNavMainData(actuary: Actuary) {
@@ -32,6 +33,12 @@ export function EmployeeNavMainData(actuary: Actuary) {
           icon: <span className="icon-[ph--bank]" />,
         },
       ],
+    },
+    {
+      title: "Securities",
+      url: "/security/overview",
+      icon: <span className="icon-[ph--chart-line-up]"/>,
+      isCollapsed: false,
     },
   ];
 

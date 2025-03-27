@@ -1,3 +1,5 @@
+import * as React from "react";
+
 export function AdminNavMainData() {
 
     return [
@@ -30,6 +32,12 @@ export function AdminNavMainData() {
                     icon: <span className="icon-[ph--bank]"/>,
                 }
             ]
+        },
+        {
+            title: "Securities",
+            url: "/security/overview",
+            icon: <span className="icon-[ph--chart-line-up]"/>,
+            isCollapsed: false,
         },
         {
             title: "Actuaries",
