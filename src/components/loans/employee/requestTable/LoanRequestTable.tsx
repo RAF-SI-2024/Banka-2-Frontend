@@ -147,6 +147,7 @@ export default function LoanRequestTable() {
 
     // handle filter button click
     const handleFilter = () => {
+        setCurrentPage(1);
         setFetchFlag(!fetchFlag);
     };
 
