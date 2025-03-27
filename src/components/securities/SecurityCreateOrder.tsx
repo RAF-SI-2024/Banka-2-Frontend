@@ -63,37 +63,37 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
                             )}
                         />
 
-                        {(variant == "limit" || variant == "stop_limit") && (
-                            <FormField
-                                key="limitValue"
-                                name="limitValue"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Limit</FormLabel>
-                                        <FormControl>
-                                            <MoneyInput currency={"RSD"} fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        )}
 
-                        {(variant == "stop" || variant == "stop_limit") && (
-                            <FormField
-                                key="stopValue"
-                                name="stopValue"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Stop</FormLabel>
-                                        <FormControl>
-                                            <MoneyInput currency={"RSD"} fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        )}
+                        <FormField
+                            key="limitValue"
+                            name="limitValue"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className={(variant != "limit" && variant != "stop_limit")? "text-muted-foreground" : ""}>Limit</FormLabel>
+                                    <FormControl>
+                                        <MoneyInput currency={"RSD"} disabled={variant != "limit" && variant != "stop_limit"} fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+
+
+                        <FormField
+                            key="stopValue"
+                            name="stopValue"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className={(variant != "stop" && variant != "stop_limit")? "text-muted-foreground" : ""}>Stop</FormLabel>
+                                    <FormControl>
+                                        <MoneyInput currency={"RSD"} disabled={variant != "stop" && variant != "stop_limit"} fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
 
                         <div className="w-full flex flex-row gap-2">
                             <FormField

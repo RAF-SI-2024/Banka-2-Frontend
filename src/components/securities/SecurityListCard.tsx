@@ -14,7 +14,7 @@ export default function SecurityListCard({className, ...props}: React.ComponentP
     return (
         <Card
             className={cn(
-                "border-0  flex flex-col",
+                "border-0 min-h-fit max-h-full  flex flex-col",
                 className
             )}
 
@@ -39,7 +39,7 @@ export default function SecurityListCard({className, ...props}: React.ComponentP
 
 
                 </CardHeader>
-                <CardContent className="py-0 px-4 pb-4  max-h-svh  overflow-y-auto"  id="scrollableDiv">
+                <CardContent className="py-0 px-4 pb-4 max-h-[740px] overflow-y-auto"  id="scrollableDiv">
                     <SecurityInfiniteList variant={activeTab} />
                 </CardContent>
             </Tabs>
