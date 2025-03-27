@@ -49,4 +49,16 @@ export const mockActuaries: Actuary[] = [
         usedLimit: 0,
         needsApproval: false,
     },
+    {
+        id: "a5",
+        employeeId: "c6f44133-08f2-4a43-bd65-9cfb6b13fa5b",
+        email: "admin@gmail.com",
+        username: "admin",
+        firstName: "Admin",
+        lastName: "Admin",
+        actuaryType: ActuaryType.None, // ako nije ni supervizor ni agent
+        limit: 0,
+        usedLimit: 0,
+        needsApproval: false,
+    },
 ];

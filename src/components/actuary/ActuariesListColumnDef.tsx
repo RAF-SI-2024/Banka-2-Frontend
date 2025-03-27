@@ -3,10 +3,13 @@ import { Actuary, ActuaryType, getActuaryTypeLabel } from "@/types/actuary";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/format-currency.ts";
 import ActuariesDropdownMenu from "@/pages/actuary/ActuaryDropDownMenu.tsx";
+import {Role, User} from "@/types/user";
+import {getUserById} from "@/api/user.ts";
 
 export function generateActuaryColumns(
   handleOpenEditDialog: (actuary: Actuary) => void,
-  handleResetUsedLimit: (actuary: Actuary) => void
+  handleResetUsedLimit: (actuary: Actuary) => void,
+  users: User[]
 ): ColumnDef<Actuary>[] {
   return [
     {
@@ -44,8 +47,8 @@ export function generateActuaryColumns(
       accessorKey: "needsApproval",
       header: "Needs Approval",
       cell: ({ row }) => (
-        // nisam sigurna za boje proveriti!!
-        <Badge variant={row.original.needsApproval ? "success" : "destructive"}>
+        // nisam sigurna za boje proveriti boje!!
+        <Badge variant={row.original.needsApproval ? "destructive" : "success"}>
           {row.original.needsApproval ? "Yes" : "No"}
         </Badge>
       ),
@@ -53,13 +56,21 @@ export function generateActuaryColumns(
     {
       id: "actions",
       header: "Actions",
-      cell: ({ row }) => (
-        <ActuariesDropdownMenu
-          actuary={row.original}
-          onEdit={() => handleOpenEditDialog(row.original)}
-          onResetLimit={() => handleResetUsedLimit(row.original)}
-        />
-      ),
+      cell: ({ row }) => {
+
+        const actuary = row.original;
+        const userForActuary = users.find((u) => u.id === actuary.employeeId);
+        const userRole = userForActuary?.role ?? Role.Employee;
+
+        return (
+            <ActuariesDropdownMenu
+                actuary={actuary}
+                currentUserRole={userRole}
+                onEdit={() => handleOpenEditDialog(actuary)}
+                onResetLimit={() => handleResetUsedLimit(actuary)}
+            />
+        );
+      },
     },
   ];
 }
