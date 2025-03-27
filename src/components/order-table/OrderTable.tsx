@@ -32,12 +32,25 @@ export default function OrderList() {
     };
 
     const handleFilter = () => {
-        let filtered = orders.filter(order =>
-            search.status !== "" ? order.status === Number(search.status) : true
-        );
+
+        // Prevodimo broj u odgovarajući string statusa
+        const statusMap = {
+            [Status.Pending]: "pending",
+            [Status.Approved]: "approved",
+            [Status.Declined]: "declined",
+            [Status.Done]: "done",
+        };
+
+        const selectedStatus = statusMap[Number(search.status)] || "";
+
+        const filtered = selectedStatus !== ""
+            ? orders.filter(order => order.status.toString().toLowerCase() === selectedStatus)
+            : orders;
+
         setFilteredOrders(filtered.slice(0, pageSize));
         setCurrentPage(1);
     };
+
 
     const handleClearSearch = () => {
         setSearch({ status: "" });

@@ -22,6 +22,11 @@ export function generateOrderColumns() {
             enableHiding: true,
         },
         {
+            accessorKey: "securityType",
+            header: "Security Type",
+            enableHiding: true,
+        },
+        {
             accessorKey: "quantity",
             header: "Quantity",
             cell: ({ row }) => formatNumber(row.original.quantity, true),
@@ -79,8 +84,8 @@ export function generateOrderColumns() {
             cell: ({ row }) =>
                 row.original.status === "pending" ? (
                     <OrderDropdownMenu
-                        onEdit={() => console.log("Edit order", row.original)}
-                        onDelete={() => console.log("Delete order", row.original)}
+                        onApprove={() => console.log("Approve order", row.original)}
+                        onDecline={() => console.log("Decline order", row.original)}
                     />
                 ) : null,
             enableHiding: false,
