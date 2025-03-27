@@ -26,17 +26,15 @@ import { mockActuaries } from "@/__mocks/mock-actuaries";
 import { generateActuaryColumns } from "@/components/actuary/ActuariesListColumnDef.tsx";
 import { EditActuaryDialog } from "@/components/actuary/edit-actuary/EditActuaryDialog.tsx";
 import ResetLimitConfirmDialog from "./reset-used-limit/ResetLimitConfirmDialog";
-import {User} from "@/types/user.ts";
-import {getAllUsers} from "@/api/user.ts";
+import { User } from "@/types/user.ts";
+import { getAllUsers } from "@/api/user.ts";
 
 export default function ActuaryTable() {
   const [actuaries, setActuaries] = useState<Actuary[]>([]);
   const [fetchFlag, setFetchFlag] = useState(false);
   const [selectedActuary, setSelectedActuary] = useState<Actuary | null>(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
-
   const [users, setUsers] = useState<User[]>([]);
-
   const [isResetLimitDialogOpen, setResetLimitDialogOpen] = useState(false);
 
   const [search, setSearch] = useState({
@@ -45,6 +43,16 @@ export default function ActuaryTable() {
     lastName: "",
     actuaryType: "",
   });
+  const [appliedFilters, setAppliedFilters] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    actuaryType: "",
+  });
+
+  const handleApplyFilters = () => {
+    setAppliedFilters(search);
+  };
 
   const isSearchActive = Object.values(search).some((v) => v !== "");
 
@@ -54,6 +62,12 @@ export default function ActuaryTable() {
 
   const handleClearSearch = () => {
     setSearch({
+      email: "",
+      firstName: "",
+      lastName: "",
+      actuaryType: "",
+    });
+    setAppliedFilters({
       email: "",
       firstName: "",
       lastName: "",
@@ -84,7 +98,7 @@ export default function ActuaryTable() {
 
   const columns = useMemo(
     () => generateActuaryColumns(handleEdit, handleResetLimit, users),
-      [users]
+    [users]
   );
 
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -104,10 +118,10 @@ export default function ActuaryTable() {
         .includes(search.lastName.toLowerCase());
       const matchesType =
         search.actuaryType === "" ||
-        a.actuaryType === parseInt(search.actuaryType);
+        a.actuaryType === parseInt(appliedFilters.actuaryType);
       return matchesEmail && matchesFirst && matchesLast && matchesType;
     });
-  }, [actuaries, search]);
+  }, [actuaries, appliedFilters]);
 
   const table = useReactTable({
     data: filteredData,
@@ -142,7 +156,6 @@ export default function ActuaryTable() {
 
     fetchUsers();
   }, []);
-
 
   const handleConfirmResetLimit = () => {
     if (selectedActuary) {
@@ -195,14 +208,10 @@ export default function ActuaryTable() {
           </Select>
 
           <div className="flex items-center space-x-2">
-            <Button variant="primary" onClick={() => setFetchFlag(!fetchFlag)}>
+            <Button variant="primary" onClick={handleApplyFilters}>
               <span className="icon-[ph--funnel]" /> Filter
             </Button>
-            <Button
-              variant="secondary"
-              onClick={handleClearSearch}
-              disabled={!isSearchActive}
-            >
+            <Button variant="secondary" onClick={handleClearSearch}>
               <span className="icon-[ph--funnel-x]" /> Clear
             </Button>
           </div>
