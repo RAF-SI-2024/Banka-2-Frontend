@@ -6,7 +6,7 @@ import {TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import SecurityInfiniteList from "@/components/securities/SecurityInfiniteList.tsx";
 import SecurityFilters from "@/components/securities/SecurityFIlters";
 
-export default function SecurityDetailsCard({className, ...props}: React.ComponentProps<"div">) {
+export default function SecurityListCard({className, ...props}: React.ComponentProps<"div">) {
 
 
     const [activeTab, setActiveTab] = useState<string>('stocks');
@@ -17,12 +17,13 @@ export default function SecurityDetailsCard({className, ...props}: React.Compone
                 "border-0  flex flex-col",
                 className
             )}
+
             {...props}
         >
 
 
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="font-paragraph w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="font-paragraph w-full " >
 
                 <CardHeader className="w-full p-1">
                     <TabsList className="bg-card w-full md:flex-col justify-baseline lg:flex-row h-full">
@@ -38,7 +39,7 @@ export default function SecurityDetailsCard({className, ...props}: React.Compone
 
 
                 </CardHeader>
-                <CardContent className="py-0 px-4 pb-4 flex-1 h-full overflow-auto">
+                <CardContent className="py-0 px-4 pb-4  max-h-svh  overflow-y-auto"  id="scrollableDiv">
                     <SecurityInfiniteList variant={activeTab} />
                 </CardContent>
             </Tabs>

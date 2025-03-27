@@ -1,11 +1,9 @@
 import React, {useState} from "react";
 import {cn} from "@/lib/utils.ts";
-import {Card, CardContent, CardFooter, CardHeader} from "@/components/ui/card.tsx";
+import {Card} from "@/components/ui/card.tsx";
 import SecurityCreateOrder from "@/components/securities/SecurityCreateOrder.tsx";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
-import SecurityFilters from "@/components/securities/SecurityFIlters.tsx";
 import SecurityGraph from "@/components/securities/SecurityGraph.tsx";
-import {Separator} from "@/components/ui/separator.tsx";
 
 
 interface SecurityDetailsProps extends React.ComponentProps<"div">{
@@ -17,16 +15,9 @@ export default function SecurityDetailsCard({className, ...props}: SecurityDetai
 
 
     return (
-        <div
-            className={cn("flex flex-col gap-4",
-                className
-            )}
-            {...props}
-        >
 
-            <SecurityGraph />
 
-            <Card className="border-0 w-full">
+            <Card className={cn("border-0 w-full", className)} {...props}>
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="font-paragraph w-full">
                     <TabsList className="bg-card w-fit md:flex-col justify-baseline lg:flex-row h-full">
                         <TabsTrigger value="market" className="w-full px-2">Market</TabsTrigger>
@@ -41,8 +32,5 @@ export default function SecurityDetailsCard({className, ...props}: SecurityDetai
                     </TabsContent>
                 </Tabs>
             </Card>
-
-
-        </div>
     );
 }

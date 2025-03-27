@@ -5,13 +5,12 @@ import {cn} from "@/lib/utils.ts";
 interface SecurityGraphProps extends React.ComponentProps<"div">{
 
 }
-
-export default function SecurityGraph({className, ...props}:SecurityGraphProps) {
+export default function SecurityGraph({ className, ...props }: SecurityGraphProps) {
     return (
-        <Card className={cn("h-100 border-0")} {...props}>
-            <CardContent className="size-full flex items-center justify-center">
+        <Card className={cn("border-0 h-full w-full", className)} {...props}>
+            <CardContent className="h-full w-full flex items-center justify-center">
                 <h1>Graf</h1>
             </CardContent>
         </Card>
-    )
+    );
 }

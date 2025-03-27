@@ -1,6 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component"
-import {Loader2} from "lucide-react";
 
 interface SecurityItem {
   id: number;
@@ -10,7 +9,7 @@ interface SecurityItem {
 
 const Security = ({ security }: { security: SecurityItem }) => {
     return (
-      <div className="w-full rounded-lg border-2  p-2">
+      <div className="w-full rounded-lg border-2  p-2 my-2">
         <div className="font-bold text-background-foreground">
           {security.id} - {security.name}
         </div>
@@ -54,7 +53,7 @@ export default function SecurityInfiniteList({ variant }: { variant: string }) {
 
   // Mock API fetch function
   const fetchSecurities = (type: string, pageNum: number) => {
-    const limit = 3;
+    const limit = 30;
     const skip = limit * pageNum;
     
     // Generate mock data based on variant and page
@@ -88,17 +87,6 @@ export default function SecurityInfiniteList({ variant }: { variant: string }) {
           { name: 'Stock1' },
           { name: 'Stock2' },
           { name: 'Stock3' },
-          { name: 'Stock1' },
-          { name: 'Stock2' },
-          { name: 'Stock3' },
-          { name: 'Stock1' },
-          { name: 'Stock2' },
-          { name: 'Stock3' },
-          { name: 'Stock1' },
-          { name: 'Stock2' },
-          { name: 'Stock3' },
-          { name: 'Stock1' },
-          { name: 'Stock2' },
         ];
       case 'futures':
         return [
@@ -126,12 +114,11 @@ export default function SecurityInfiniteList({ variant }: { variant: string }) {
   return (
 
       <div
-          id="scrollableDiv"
-          className="max-h-full overflow-y-auto"
+          className="h-full overflow-y-auto pr-2"
       >
         {/*Put the scroll bar always on the bottom*/}
         <InfiniteScroll
-            dataLength={100}
+            dataLength={10000}
             next={next}
             // style={{ display: 'flex', flexDirection: 'column-reverse' }} //To put endMessage and loader to the top.
             // inverse={true} //
