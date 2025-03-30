@@ -8,75 +8,90 @@ export function ClientNavMainData() {
 
     return [
         {
-            title: "Home",
-            url: "/home",
-            icon: <span className="icon-[ph--house]"/>,
+            label: null,
+            content: [
+                {
+                    title: "Home",
+                    url: "/home",
+                    icon: <span className="icon-[ph--house]"/>,
+                },
+            ]
         },
         {
-            title: "Bank Accounts",
-            url: "#",
-            icon: <span className="icon-[ph--piggy-bank]"/>,
-            isCollapsed: false,
-            items: useBankAccountsData()
-        },
-        {
-            title: "Payments",
-            url: "#",
-            icon: <span className="icon-[ph--money-wavy]"/>,
-            isCollapsed: false,
-            items: [
+            label: "Banking",
+            content: [
                 {
-                    icon: <span className="icon-[ph--file-plus]"/>,
-                    title: "New payment",
-                    url: "/payments/new",
+                    title: "Bank Accounts",
+                    url: "#",
+                    icon: <span className="icon-[ph--piggy-bank]"/>,
+                    isCollapsed: false,
+                    items: useBankAccountsData()
                 },
                 {
-                    icon: <span className="icon-[ph--arrows-clockwise]"/>,
-                    title: "New transfer/exchange",
-                    url: "/payments/transfer",
-                },
-                {
-                    icon: <span className="icon-[ph--list-magnifying-glass]"/>,
-                    title: "Exchange rate list",
-                    url: "/payments/exchange-rate",
-                },
-                {
+                    title: "Payments",
+                    url: "#",
                     icon: <span className="icon-[ph--money-wavy]"/>,
-                    title: "My payments",
-                    url: "/payments/overview",
-                }
-            ]
-        },
-        {
-            title: "Cards",
-            url: "#",
-            icon: <span className="icon-[ph--credit-card]"/>,
-            isCollapsed: false,
-            items: useCreditCardsData()
-        },
-        {
-            title: "Loans",
-            url: "#",
-            icon: <span className="icon-[ph--bank]"/>,
-            isCollapsed: false,
-            items: [
-                {
-                    title: "New loan request",
-                    url: "/loan/new",
-                    icon: <span className="icon-[ph--folder-simple-plus]"/>,
+                    isCollapsed: false,
+                    items: [
+                        {
+                            icon: <span className="icon-[ph--file-plus]"/>,
+                            title: "New payment",
+                            url: "/payments/new",
+                        },
+                        {
+                            icon: <span className="icon-[ph--arrows-clockwise]"/>,
+                            title: "New transfer/exchange",
+                            url: "/payments/transfer",
+                        },
+                        {
+                            icon: <span className="icon-[ph--list-magnifying-glass]"/>,
+                            title: "Exchange rate list",
+                            url: "/payments/exchange-rate",
+                        },
+                        {
+                            icon: <span className="icon-[ph--money-wavy]"/>,
+                            title: "My payments",
+                            url: "/payments/overview",
+                        }
+                    ]
                 },
                 {
-                    title: "My loans",
-                    url: "/loan/overview",
+                    title: "Cards",
+                    url: "#",
+                    icon: <span className="icon-[ph--credit-card]"/>,
+                    isCollapsed: false,
+                    items: useCreditCardsData()
+                },
+                {
+                    title: "Loans",
+                    url: "#",
                     icon: <span className="icon-[ph--bank]"/>,
-                }
+                    isCollapsed: false,
+                    items: [
+                        {
+                            title: "New loan request",
+                            url: "/loan/new",
+                            icon: <span className="icon-[ph--folder-simple-plus]"/>,
+                        },
+                        {
+                            title: "My loans",
+                            url: "/loan/overview",
+                            icon: <span className="icon-[ph--bank]"/>,
+                        }
+                    ]
+                },
             ]
         },
         {
-            title: "Securities",
-            url: "/security/overview",
-            icon: <span className="icon-[ph--chart-line-up]"/>,
-            isCollapsed: false,
-        },
+            label: "Exchange",
+            content: [
+                {
+                    title: "Trading",
+                    url: "/trading",
+                    icon: <span className="icon-[ph--chart-line-up]"/>,
+                    isCollapsed: false,
+                },
+            ]
+        }
     ]
 }
