@@ -97,7 +97,7 @@ export default function SecurityFilters({variant}: SecurityFilterProps){
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="absolute top-full left-0 right-0 bg-card z-0 p-4 shadow-lg shadow-black rounded-xl"
+                        className="absolute top-full left-0 right-0 bg-card z-0 p-4 shadow-lg shadow-shadow rounded-xl"
                     >
                         {(variant === "futures" || variant === "options") && (
                             <div className="w-full mb-4">

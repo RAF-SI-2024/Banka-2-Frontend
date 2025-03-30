@@ -74,7 +74,7 @@ export const AppRoutes = () => {
 
             <Route element={<SecurityLayout />}>
                 <Route element={<AllProtectedRoutes />}>
-                    <Route path="security/overview" element={<Security />} />
+                    <Route path="trading" element={<Security />} />
                 </Route>
             </Route>
 

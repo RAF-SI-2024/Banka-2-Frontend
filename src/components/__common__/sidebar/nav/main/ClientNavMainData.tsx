@@ -73,8 +73,8 @@ export function ClientNavMainData() {
             ]
         },
         {
-            title: "Securities",
-            url: "/security/overview",
+            title: "Trading",
+            url: "/trading",
             icon: <span className="icon-[ph--chart-line-up]"/>,
             isCollapsed: false,
         },
