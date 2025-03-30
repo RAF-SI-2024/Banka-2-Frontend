@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar.tsx"
 import * as React from "react"
 import { useLocation } from "react-router-dom"
+import {cn} from "@/lib/utils.ts";
 
 export function NavMain({
                           items,
@@ -39,19 +40,19 @@ export function NavMain({
 
           return (
               <Collapsible key={item.title + "-" + item.url} asChild defaultOpen={item.isCollapsed}>
-                <SidebarMenuItem className={isSelected ? "bg-primary/25 rounded-lg text-foreground" : ""}>
+                <SidebarMenuItem className={cn(isSelected ? "bg-primary/25 rounded-sm text-foreground" : "", "")}>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton asChild tooltip={item.title}>
+                    <SidebarMenuButton asChild tooltip={item.title} className="hover:rounded-none">
                       {item.url !== "#" ? (
                           <a href={item.url} className="h-10 items-center">
-                            <span className="text-lg font-heading inline-flex items-center gap-2">
+                            <span className="text-base font-heading  inline-flex items-center gap-2">
                               <span className="inline-flex items-center">{item.icon}</span>
                               <span>{item.title}</span>
                             </span>
                           </a>
                       ) : (
                           <div className="h-10 items-center">
-                            <span className="text-lg font-heading inline-flex items-center gap-2">
+                            <span className="text-base font-heading inline-flex items-center gap-2">
                               <span className="inline-flex items-center">{item.icon}</span>
                               <span>{item.title}</span>
                             </span>
