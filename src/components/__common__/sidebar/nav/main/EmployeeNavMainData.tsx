@@ -75,6 +75,18 @@ export function EmployeeNavMainData(actuary: Actuary) {
       });
     }
   }
+  if (actuary.actuaryType == ActuaryType.Supervisor) {
+    const bankingSection = items.find(section => section.label === "Banking");
+    if(bankingSection){
+      bankingSection.content.push({
+        title: "Tax tracking",
+            url: "/tax/overview",
+            icon: <span className="icon-[ph--invoice]" />,
+            isCollapsed: true,
+      });
+    }
+  }
+
 
   return items;
 }
