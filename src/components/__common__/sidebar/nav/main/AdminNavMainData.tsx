@@ -47,6 +47,12 @@ export function AdminNavMainData() {
             label: "Exchange",
             content: [
                 {
+                    title: "Exchanges",
+                    url: "/exchanges",
+                    icon: <span className="icon-[ph--buildings]"/>,
+                    isCollapsed: false,
+                },
+                {
                     title: "Actuaries",
                     url: "/actuary/overview",
                     icon: <span className="icon-[ph--users-three]" />,
@@ -63,7 +69,7 @@ export function AdminNavMainData() {
                     url: "/trading",
                     icon: <span className="icon-[ph--chart-line-up]"/>,
                     isCollapsed: false,
-                },
+                }, 
             ]
         }
 
