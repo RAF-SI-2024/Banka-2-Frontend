@@ -30,6 +30,8 @@ import ActuaryListPage from "@/pages/actuary/ActuaryListPage";
 import Security from "@/pages/securities/Security.tsx";
 import SecurityLayout from "@/layouts/SecurityLayout.tsx";
 import OrdersPage from "@/pages/orders-list/OrdersList.tsx"
+import TaxTabel from "@/components/tax/TaxTabel.tsx";
+import TaxPage from "@/pages/tax/TaxPage.tsx";
 
 export const AppRoutes = () => {
     return (
@@ -63,6 +65,7 @@ export const AppRoutes = () => {
                         <Route path="loan/all" element={<AllLoanList />} />
                         <Route path="/order/overview" element={<OrdersPage />} />
                         <Route path="actuary/overview" element={<ActuaryListPage />} />
+                        <Route path="tax/overview" element={<TaxPage />} />
                     </Route>
 
                     <Route element={<ProtectedEmployee />}>

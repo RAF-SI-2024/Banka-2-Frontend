@@ -58,6 +58,14 @@ export function EmployeeNavMainData(actuary: Actuary) {
           isCollapsed: true,
       }
   )
+  if (true) { // TODO - staviti samo ako je supervisor (iz jwt)
+    items.push({
+      title: "Tax tracking",
+      url: "/tax/overview",
+      icon: <span className="icon-[ph--invoice]" />,
+      isCollapsed: true,
+    });
+  }
 
   return items;
 
