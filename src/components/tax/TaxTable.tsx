@@ -21,6 +21,8 @@ import {
 import {generateTaxColumns} from "@/components/tax/TaxListColumnDef.tsx";
 import {mockTaxes} from "@/__mocks/mock-taxes.ts";
 import {Tax} from "@/types/tax.ts";
+import CollectTaxesDialog from "@/components/tax/TaxDropdownMenu.tsx";
+import CollectConfirmationDialog from "@/components/tax/CollectConfirmationDialog.tsx";
 
 
 export default function TaxTable() {
@@ -60,14 +62,47 @@ export default function TaxTable() {
         id: false,
     });
 
+    const [taxToCollect, setTaxToCollect] = useState<Tax | null>(null);
+    const [isCollectDialogOpen, setIsCollectDialogOpen] = useState(false);
+
     // column filters
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
     /* FUNCTIONS */
     // fetch taxes function
     const fetchTaxes = async () => {
-        setTaxes(mockTaxes)
+        let filtered = mockTaxes;
+
+        // Apply email filter
+        if (search.email.trim() !== "") {
+            filtered = filtered.filter((tax) =>
+                tax.email.toLowerCase().includes(search.email.toLowerCase())
+            );
+        }
+
+        // Apply first name filter
+        if (search.firstName.trim() !== "") {
+            filtered = filtered.filter((tax) =>
+                tax.firstName.toLowerCase().includes(search.firstName.toLowerCase())
+            );
+        }
+
+        // Apply last name filter
+        if (search.lastName.trim() !== "") {
+            filtered = filtered.filter((tax) =>
+                tax.lastName.toLowerCase().includes(search.lastName.toLowerCase())
+            );
+        }
+
+        // Apply role filter
+        if (search.role !== "") {
+            filtered = filtered.filter((tax) => tax.role.toString() === search.role);
+        }
+
+        setTaxes(filtered);
+        setTotalPages(Math.ceil(filtered.length / pageSize));
     };
+
 
     // handle search change
     const handleSearchChange = (field: string, value: string) => {
@@ -102,8 +137,13 @@ export default function TaxTable() {
             setIsEditDialogOpen(true);
         };
 
+        const handleCollectClick = (tax: Tax) => {
+            setTaxToCollect(tax);
+            setIsCollectDialogOpen(true);
+        };
+
         // Return generated columns
-        return generateTaxColumns(handleOpenEditDialog);
+        return generateTaxColumns(handleOpenEditDialog, handleCollectClick);
     }, []); // Empty dependency array since handleOpenEditDialog is now inside
 
     // create the table instance with pagination, sorting, and column visibility
@@ -231,6 +271,19 @@ export default function TaxTable() {
     }}
         />
     )}
-    </div>
+            {taxToCollect && (
+                <CollectConfirmationDialog
+                    open={isCollectDialogOpen}
+                    onClose={() => setIsCollectDialogOpen(false)}
+                    onConfirm={() => {
+                        console.log("Collected from", taxToCollect.firstName, taxToCollect.lastName);
+                        setTaxToCollect(null);
+                    }}
+                    fullName={`${taxToCollect.firstName} ${taxToCollect.lastName}`}
+                />
+            )}
+
+
+        </div>
 );
 }
