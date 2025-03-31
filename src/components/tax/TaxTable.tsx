@@ -2,8 +2,6 @@ import {useState, useEffect, useMemo} from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
-import { User, UserResponse } from "@/types/user.ts";
-import { getAllUsers } from "@/api/user.ts";
 import { EditUserDialog } from "@/components/user-table/all-users/edit-user/EditUserDialog.tsx";
 import { DataTable } from "@/components/__common__/datatable/DataTable.tsx";
 import { getCoreRowModel} from "@tanstack/react-table";
@@ -21,7 +19,6 @@ import {
 import {generateTaxColumns} from "@/components/tax/TaxListColumnDef.tsx";
 import {mockTaxes} from "@/__mocks/mock-taxes.ts";
 import {Tax} from "@/types/tax.ts";
-import CollectTaxesDialog from "@/components/tax/TaxDropdownMenu.tsx";
 import CollectConfirmationDialog from "@/components/tax/CollectConfirmationDialog.tsx";
 
 
