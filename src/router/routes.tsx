@@ -30,7 +30,6 @@ import ActuaryListPage from "@/pages/actuary/ActuaryListPage";
 import Security from "@/pages/securities/Security.tsx";
 import SecurityLayout from "@/layouts/SecurityLayout.tsx";
 import OrdersPage from "@/pages/orders-list/OrdersList.tsx"
-import TaxTabel from "@/components/tax/TaxTabel.tsx";
 import TaxPage from "@/pages/tax/TaxPage.tsx";
 
 export const AppRoutes = () => {

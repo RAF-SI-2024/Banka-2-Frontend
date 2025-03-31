@@ -77,6 +77,21 @@
 
     --shadow: hsl(233, 100%, 3%, 25%);
 
+    --chart-foreground-light: hsl(233, 100%, 3%);
+    --chart-foreground-dark: hsl(233, 100%, 97%);
+
+    --chart-up-light: hsl(121, 90%, 19%);
+    --chart-up-dark: hsl(121, 90%, 81%);
+
+    --chart-down-light: hsl(351, 100%, 65%);
+    --chart-down-dark: hsl(351, 100%, 35%);
+
+    --chart-volume-light: hsl(235, 100%, 64%, 50%);
+    --chart-volume-dark: hsl(235, 100%, 64%, 50%);
+
+    --chart-grid-light: hsl(231, 17%, 84%);
+    --chart-grid-dark: hsl(231, 17%, 16%);
+
 }
 
 .dark {
@@ -135,6 +150,8 @@
     --accent-foreground: hsl(0, 0%, 4%);
 
     --shadow: hsl(233, 100%, 3%, 100%);
+
+    --chart-background:	hsl(233, 59%, 6%);
 }
 
 @theme inline {
@@ -221,6 +238,22 @@
     --color-accent-foreground: var(--accent-foreground);
 
     --color-shadow: var(--shadow);
+
+
+    --color-chart-foreground-light: var(--chart-foreground-light);
+    --color-chart-foreground-dark: var(--chart-foreground-dark);
+
+    --color-chart-up-light: var(--chart-up-light);
+    --color-chart-up-dark: var(--chart-up-dark);
+
+    --color-chart-down-light: var(--chart-down-light);
+    --color-chart-down-dark: var(--chart-down-dark);
+
+    --color-chart-volume-light: var(--chart-volume-light);
+    --color-chart-volume-dark: var(--chart-volume-dark);
+
+    --color-chart-grid-light: var(--chart-grid-light);
+    --color-chart-grid-dark: var(--chart-grid-dark);
 
 }
 
