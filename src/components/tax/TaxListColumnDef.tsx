@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { getTaxRoleString, Tax } from "@/types/tax.ts";
-import TaxDropdownMenu from "@/components/tax/TaxDropdownMenu.tsx"; // prilagodi ako je putanja druga
+import TaxDropdownMenu from "@/components/tax/TaxDropdownMenu.tsx";
+import {formatCurrency} from "@/lib/format-currency.ts"; // prilagodi ako je putanja druga
 
 export function generateTaxColumns(
     handleOpenEditDialog: (tax: Tax) => void,
@@ -37,6 +38,7 @@ export function generateTaxColumns(
             accessorKey: "debt",
             header: "Debt",
             enableHiding: true,
+            cell: ({ row }) => formatCurrency(row.original.debt, "RSD"),
         },
         {
             id: "actions",
