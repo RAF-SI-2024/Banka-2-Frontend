@@ -20,12 +20,12 @@ interface FooterNavItem {
 function getNavDataByRole(role: Role | null): FooterNavItem[] {
     switch (role) {
         case Role.Admin:
-            return AdminNavMainData();
+            return AdminNavMainData().flatMap(group => group.content);
         case Role.Employee:
             const actuary = sessionStorage.getItem("actuary") ? JSON.parse(sessionStorage.actuary) : {};
-            return EmployeeNavMainData(actuary);
+            return EmployeeNavMainData(actuary).flatMap(group => group.content);
         case Role.Client:
-            return ClientNavMainData();
+            return ClientNavMainData().flatMap(group => group.content);
         default:
             return [];
     }

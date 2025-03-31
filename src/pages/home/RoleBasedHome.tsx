@@ -3,6 +3,7 @@ import UserListPage from "@/pages/user-list/UserList.tsx";
 import LoginPage from "@/pages/auth/Login.tsx";
 import BankAccountListPage from "@/pages/bank-accounts-employee/BankAccountList.tsx";
 import HomePage from "@/pages/home/Home.tsx";
+import ClientList from "@/pages/client-list/ClientList.tsx";
 
 export const RoleBasedHomePage = () => {
 
@@ -17,7 +18,7 @@ export const RoleBasedHomePage = () => {
         case Role.Admin:
             return <UserListPage />;
         case Role.Employee:
-            return <BankAccountListPage />;
+            return <ClientList />;
         case Role.Client:
             return <HomePage />;
         default:

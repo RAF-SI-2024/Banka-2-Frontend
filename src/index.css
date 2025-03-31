@@ -75,6 +75,8 @@
     --success: hsl(121, 90%, 19%);
     --success-foreground: hsl(233, 100%, 97%);
 
+    --shadow: hsl(233, 100%, 3%, 25%);
+
 }
 
 .dark {
@@ -131,6 +133,8 @@
 
     --accent: hsl(248, 100%, 97%);
     --accent-foreground: hsl(0, 0%, 4%);
+
+    --shadow: hsl(233, 100%, 3%, 100%);
 }
 
 @theme inline {
@@ -215,6 +219,8 @@
 
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
+
+    --color-shadow: var(--shadow);
 
 }
 
