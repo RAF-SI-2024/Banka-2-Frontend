@@ -30,6 +30,7 @@ import ActuaryListPage from "@/pages/actuary/ActuaryListPage";
 import Security from "@/pages/securities/Security.tsx";
 import SecurityLayout from "@/layouts/SecurityLayout.tsx";
 import OrdersPage from "@/pages/orders-list/OrdersList.tsx"
+import MyPortfolioPage from "@/pages/my-portfolio/MyPortfolioPage.tsx";
 
 export const AppRoutes = () => {
     return (
@@ -55,6 +56,7 @@ export const AppRoutes = () => {
                         <Route path="/loan/overview" element={<LoanOverviewList />} />
                         <Route path="loan/overview/:loanId" element={<LoanDetailsClientPage />} />
                         <Route path="payments/exchange-rate" element={<ExchangeRateListPage />} />
+                        <Route path="my-portfolio" element={<MyPortfolioPage />} />
                     </Route>
 
                     <Route element={<ProtectedAdminOrEmployee />}>

@@ -150,7 +150,7 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
             </CardHeader>
             {currency1 && currency2 && (
             <CardContent className="p-6 flex flex-col lg:flex-row items-center justify-between font-paragraph">
-                <div>
+                <div className="space-y-4">
                     <div className="w-20">
                         <Select value={currency1.code} onValueChange={val => handleCurrency1Change(val)}>
                             <SelectTrigger>
@@ -183,7 +183,7 @@ const ConverterCard = ({ className, ...props }: React.ComponentProps<"div">) => 
                     </Button>
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col space-y-4">
                     <div className="w-20">
                         <Select value={currency2.code} onValueChange={val => handleCurrency2Change(val)}>
                             <SelectTrigger>
