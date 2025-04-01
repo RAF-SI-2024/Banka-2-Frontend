@@ -19,6 +19,10 @@ interface CandleData {
     volume: number;
 }
 
+interface TradingChartProps {
+    type?: 'candle' | 'volume';
+}
+
 const generateMockData = (): CandleData[] => {
     const initialPrice = 100;
     const data: CandleData[] = [];
@@ -67,68 +71,16 @@ const getChartColors = (theme: 'light' | 'dark' | 'system') => {
     };
 };
 
-export default function TradingChart() {
-    const { theme } = useTheme(); // Your theme management
+export default function TradingChart({ type = 'candle' }: TradingChartProps) {
+    const { theme } = useTheme();
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const [chartData, setChartData] = useState<CandleData[]>([]);
     const chartRef = useRef<IChartApi | null>(null);
-    const candleSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
-    const volumeSeriesRef = useRef<ISeriesApi<'Histogram'> | null>(null);
+    const seriesRef = useRef<ISeriesApi<'Candlestick' | 'Histogram'> | null>(null);
 
 
-    useEffect(() => {
-        if (!chartContainerRef.current) return;
-
-        const resizeObserver = new ResizeObserver(() => {
-            chartRef.current?.applyOptions({
-                width: chartContainerRef.current?.clientWidth,
-                height: chartContainerRef.current?.clientHeight
-            });
-        });
-
-        resizeObserver.observe(chartContainerRef.current);
-
-        return () => {
-            resizeObserver.disconnect();
-        };
-    }, []);
-
-    // Initialize chart
-    useEffect(() => {
-        if (!chartRef.current || !candleSeriesRef.current || !volumeSeriesRef.current) return;
-
-        const colors = getChartColors(theme);
-
-        // Update chart options
-        chartRef.current.applyOptions({
-            layout: { textColor: colors.text },
-            grid: {
-                vertLines: { color: colors.grid },
-                horzLines: { color: colors.grid }
-            }
-        });
-
-        // Update series colors
-        candleSeriesRef.current.applyOptions({
-            upColor: colors.up,
-            downColor: colors.down,
-            wickUpColor: colors.up,
-            wickDownColor: colors.down
-        });
-
-        volumeSeriesRef.current.applyOptions({
-            color: colors.volume
-        });
-
-        // Refresh data with new colors
-        if (chartData.length > 0) {
-            candleSeriesRef.current.setData(chartData.map(formatCandle));
-            volumeSeriesRef.current.setData(chartData.map(formatVolume));
-        }
-    }, [theme, chartData]); // Add theme as dependency
-
-    // Initialize chart once
-    useEffect(() => {
+     // Initialize chart once
+     useEffect(() => {
         if (!chartContainerRef.current || chartRef.current) return;
 
         const colors = getChartColors(theme);
@@ -139,31 +91,42 @@ export default function TradingChart() {
                 background: { color: 'transparent' },
                 textColor: colors.text,
                 fontFamily: "var(--font-paragraph)",
+                attributionLogo: false,
             },
             grid: {
                 vertLines: { color: colors.grid },
                 horzLines: { color: colors.grid },
             },
+            rightPriceScale: {
+                // Force the same width for price scales
+                borderVisible: false,
+                scaleMargins: {
+                  top: 0.1,
+                  bottom: 0.1,
+                },
+              },
+            timeScale: {
+            visible: true,
+            borderVisible: true,
+            },
             autoSize: true,
         });
 
-        candleSeriesRef.current = chart.addSeries(CandlestickSeries, {
-            upColor: colors.up,
-            downColor: colors.down,
-            borderVisible: false,
-            wickUpColor: colors.up,
-            wickDownColor: colors.down,
-        });
-
-        volumeSeriesRef.current = chart.addSeries(HistogramSeries, {
-            color: colors.volume,
-            priceFormat: { type: 'volume' },
-            priceScaleId: '',
-        });
-
-        volumeSeriesRef.current.priceScale().applyOptions({
-            scaleMargins: { top: 0.8, bottom: 0 },
-        });
+        // Create series based on type
+        if (type === 'candle') {
+            seriesRef.current = chart.addSeries(CandlestickSeries, {
+                upColor: colors.up,
+                downColor: colors.down,
+                borderVisible: false,
+                wickUpColor: colors.up,
+                wickDownColor: colors.down,
+            });
+        } else {
+            seriesRef.current = chart.addSeries(HistogramSeries, {
+                color: colors.volume,
+                priceFormat: { type: 'volume' },
+            });
+        }
 
         chartRef.current = chart;
 
@@ -173,6 +136,20 @@ export default function TradingChart() {
         };
     }, []);
 
+    // Update data when it changes
+    useEffect(() => {
+        if (!seriesRef.current || chartData.length === 0) return;
+
+        if (type === 'candle') {
+            (seriesRef.current as ISeriesApi<'Candlestick'>).setData(
+                chartData.map(formatCandle)
+            );
+        } else {
+            (seriesRef.current as ISeriesApi<'Histogram'>).setData(
+                chartData.map(formatVolume)
+            );
+        }
+    }, [chartData, type]);
 
     const formatCandle = (d: CandleData) => ({
         time: d.time as Time,
@@ -208,9 +185,9 @@ export default function TradingChart() {
         }
     };
 
+    
+
     return (
-
-            <div ref={chartContainerRef} className="size-full transition-colors" />
-
+        <div ref={chartContainerRef} className="size-full transition-colors" />
     );
 }
