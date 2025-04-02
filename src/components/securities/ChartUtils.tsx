@@ -52,7 +52,6 @@ export function getChartOptions  ({width, height, colors}: ChartOptionsProps): D
             background: { color: 'transparent' },
             textColor: colors.text,
             fontFamily: "Lexend",
-            attributionLogo: false,
             panes: {
                 separatorColor: '#f22c3d', // TODO
                 separatorHoverColor: 'rgba(255, 0, 0, 0.1)', // TODO
@@ -66,7 +65,7 @@ export function getChartOptions  ({width, height, colors}: ChartOptionsProps): D
         rightPriceScale: {
             scaleMargins: {
                 top: 0.1,
-                bottom: 0.1,
+                bottom: 0,
             },
             minimumWidth: 100,
 
@@ -121,14 +120,19 @@ export function getVolumeColors(colors: ColorProps) {
 }
 
 
-export function calculateMovingAverageSeriesData(chartData: CandleData[], maLength: number): LineData[] {
-    const maData: LineData[] = [];
+export function calculateMovingAverageSeriesData(
+    data: CandleData[],
+    period: number
+): LineData[] {
+    if (data.length < period) return [];
 
-    for (let i = maLength - 1; i < chartData.length; i++) {
-        const sum = chartData.slice(i - maLength + 1, i + 1).reduce((acc, d) => acc + d.close, 0);
-        const maValue = sum / maLength;
-        maData.push({ time: chartData[i].time as Time, value: maValue });
-    }
-
-    return maData;
+    return data.map((candle, index): LineData<Time> => {
+        const start = Math.max(0, index - period + 1);
+        const subset = data.slice(start, index + 1);
+        const sum = subset.reduce((acc, item) => acc + item.close, 0);
+        return {
+            time: candle.time as Time,
+            value: sum / subset.length
+        };
+    });
 }
