@@ -10,3 +10,14 @@ export interface PortfolioData {
     lastModified: Date,
     public: number
 }
+
+export interface PortfolioTaxData {
+    currentYear: number,
+    leftToPay: number,
+    currency: Currency
+}
+
+export interface PortfolioBalanceData {
+    profit: number,
+    currency: Currency
+}

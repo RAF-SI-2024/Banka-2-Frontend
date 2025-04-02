@@ -1,12 +1,11 @@
 import {useEffect, useMemo, useState} from "react";
-import {User, UserResponse} from "@/types/user.ts";
+
 import {
     ColumnFiltersState,
     getCoreRowModel, getFilteredRowModel,
     getPaginationRowModel, getSortedRowModel,
     SortingState,
     useReactTable,
-    VisibilityState
 } from "@tanstack/react-table";
 import {DataTableViewOptions} from "@/components/__common__/datatable/DataTableViewOptions.tsx";
 import {DataTable} from "@/components/__common__/datatable/DataTable.tsx";
@@ -14,6 +13,17 @@ import {DataTablePagination} from "@/components/__common__/datatable/DataTablePa
 import {generatePortfolioColumns} from "@/pages/my-portfolio/PortfolioTableColumns.tsx";
 import {PortfolioData} from "@/types/portfolio-data.ts";
 import {portfolioDataMock} from "@/mocks/PortfolioDataMock.tsx";
+
+import {
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog.tsx";
+import {Button} from "@/components/ui/button.tsx";
+import {DualRangeSlider} from "@/components/ui/dual-range-slider.tsx";
 
 export default function PortfolioTable() {
 
@@ -33,6 +43,36 @@ export default function PortfolioTable() {
 
     // column filters
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+    // Open slider dialog
+    const [open, setOpen] = useState(false);
+    // Selected row from which slider appears
+    const [selectedRow, setSelectedRow] = useState<PortfolioData | null>(null);
+
+    const [sliderValue, setSliderValue] = useState<number[]>([selectedRow?.public ?? 0]);
+
+    useEffect(() => {
+        setSliderValue([selectedRow?.public ?? 0]);
+    }, [selectedRow]);
+
+    const handleSliderChange = (newValue: number[]) => {
+        setSliderValue(newValue);
+        setSelectedRow((prev) => prev ? { ...prev, public: newValue[0] } : null);
+    };
+
+    const handleSave = () => {
+        if (selectedRow) {
+            setPortfolioData((prevData) => {
+                return prevData.map((item) => {
+                    if (item.ticker === selectedRow.ticker) {
+                        return { ...item, public: sliderValue[0] };
+                    }
+                    return item;
+                });
+            });
+        }
+        setOpen(false);
+    };
 
     /* FUNCTIONS */
     // fetch portfolio data function
@@ -58,7 +98,7 @@ export default function PortfolioTable() {
     const columns = useMemo(() => {
         // Return generated columns
         setPortfolioData(portfolioDataMock);
-        return generatePortfolioColumns();
+        return generatePortfolioColumns(setOpen, setSelectedRow);
     }, []); // Empty dependency array since handleOpenEditDialog is now inside
 
     // create the table instance with pagination, sorting, and column visibility
@@ -107,11 +147,30 @@ export default function PortfolioTable() {
         <div className="p-6 space-y-4">
             <div className="w-full flex flex-row items-baseline">
                 {/* 🔍 Search Filters */}
-
                 <div className="flex ml-auto">
                     <DataTableViewOptions table={table} />
                 </div>
             </div>
+
+            <Dialog open={open} onOpenChange={setOpen} >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Change amount of public assets</DialogTitle>
+                        <DialogDescription>
+                            <DualRangeSlider
+                                className="mt-8"
+                                label={(value) => value}
+                                value={sliderValue}
+                                onValueChange={handleSliderChange}
+                                min={0}
+                                max={selectedRow?.amount}
+                                step={1}
+                            />
+                        </DialogDescription>
+                    </DialogHeader>
+                    <Button onClick={handleSave}>Save</Button>
+                </DialogContent>
+            </Dialog>
 
             {/* 📋 Portfolio table */}
 
