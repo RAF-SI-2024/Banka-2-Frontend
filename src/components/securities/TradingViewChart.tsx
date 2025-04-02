@@ -91,7 +91,7 @@ export default function TradingChart({ type = 'candle' }: TradingChartProps) {
                 background: { color: 'transparent' },
                 textColor: colors.text,
                 fontFamily: "var(--font-paragraph)",
-                attributionLogo: false,
+                attributionLogo: type === "volume",
             },
             grid: {
                 vertLines: { color: colors.grid },
@@ -134,7 +134,7 @@ export default function TradingChart({ type = 'candle' }: TradingChartProps) {
             chartRef.current?.remove();
             chartRef.current = null;
         };
-    }, []);
+    }, [theme]);
 
     // Update data when it changes
     useEffect(() => {
@@ -149,7 +149,7 @@ export default function TradingChart({ type = 'candle' }: TradingChartProps) {
                 chartData.map(formatVolume)
             );
         }
-    }, [chartData, type]);
+    }, [chartData, type, theme]);
 
     const formatCandle = (d: CandleData) => ({
         time: d.time as Time,
