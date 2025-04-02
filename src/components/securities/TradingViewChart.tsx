@@ -36,7 +36,6 @@ export default function TradingViewChart({ title, className }: TradingChartProps
     const chartRef = useRef<IChartApi | null>(null);
 
     const [chartData, setChartData] = useState<CandleData[]>([]);
-    const [madData, setMaData] = useState<any>([]);
 
     const candleSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
     const volumeSeriesRef = useRef<ISeriesApi<'Histogram'> | null>(null);
@@ -115,11 +114,13 @@ export default function TradingViewChart({ title, className }: TradingChartProps
             color: colors.volume
         }))
 
-        const maData = calculateMovingAverageSeriesData(data, 20);
+
 
         candleSeriesRef.current.setData(candleData);
 
         volumeSeriesRef.current.setData(volumeData);
+
+        const maData = calculateMovingAverageSeriesData(candleSeriesRef.current.data(), 20);
 
         maSeriesRef.current.setData(maData);
 
@@ -158,7 +159,6 @@ export default function TradingViewChart({ title, className }: TradingChartProps
                     const data = datafeed.getBars(numberBarsToLoad);
                     setTimeout(() => {
                         setChartData(data);
-                        setMaData(maData);
 
                     }, 250); // add a loading delay
                 }
@@ -189,15 +189,18 @@ export default function TradingViewChart({ title, className }: TradingChartProps
                 value: update.value.volume,
             });
 
-            if (candleSeriesRef.current && lastCandleTime !== update.value.time) {
+            if (candleSeriesRef.current && maSeriesRef.current && lastCandleTime !== update.value.time) {
                 // New candle detected → recalculate MA
-                setChartData((prevState) => [...prevState, update.value]);
+                if(lastCandleTime > 0) {
+                    const maData = calculateMovingAverageSeriesData(candleSeriesRef.current.data(), 20);
+                    maSeriesRef.current.setData(maData);
+                }
                 lastCandleTime = update.value.time;
             }
 
 
 
-        }, 300);
+        }, 250);
 
         return () => {
             // Clean up all chart instances
@@ -233,14 +236,13 @@ export default function TradingViewChart({ title, className }: TradingChartProps
             color: colors.volume
         }))
 
-        const maData = calculateMovingAverageSeriesData(chartData, 20);
-
         candleSeriesRef.current.setData(candleData);
 
         volumeSeriesRef.current.setData(volumeData);
 
+        const maData = calculateMovingAverageSeriesData(candleSeriesRef.current.data(), 20);
+
         maSeriesRef.current.setData(maData);
-        setMaData(maData);
 
     }, [chartData]);
 

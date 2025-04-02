@@ -92,6 +92,9 @@
     --chart-grid-light: hsl(235, 100%, 64%, 15%);
     --chart-grid-dark: hsl(235, 100%, 64%, 15%);
 
+    --chart-legend-light: hsl(233, 100%, 65%);
+    --chart-legend-dark: hsl(233, 100%, 65%);
+
 }
 
 .dark {
@@ -150,8 +153,6 @@
     --accent-foreground: hsl(0, 0%, 4%);
 
     --shadow: hsl(233, 100%, 3%, 100%);
-
-    --chart-background:	hsl(233, 59%, 6%);
 }
 
 @theme inline {
@@ -254,6 +255,9 @@
 
     --color-chart-grid-light: var(--chart-grid-light);
     --color-chart-grid-dark: var(--chart-grid-dark);
+
+    --color-chart-legend-light: var(--chart-legend-light);
+    --color-chart-legend-dark: var(--chart-legend-dark);
 
 }
 

@@ -1,4 +1,13 @@
-import {ChartOptions, DeepPartial, LineData, LineStyle, LineWidth, Time, TimeChartOptions} from "lightweight-charts";
+import {
+    CandlestickData,
+    ChartOptions,
+    DeepPartial,
+    LineData,
+    LineStyle,
+    LineWidth,
+    Time,
+    TimeChartOptions, WhitespaceData
+} from "lightweight-charts";
 
 export interface ColorProps{
     text: string;
@@ -121,15 +130,18 @@ export function getVolumeColors(colors: ColorProps) {
 
 
 export function calculateMovingAverageSeriesData(
-    data: CandleData[],
+    data: readonly (CandlestickData | WhitespaceData)[],
     period: number
 ): LineData[] {
     if (data.length < period) return [];
 
-    return data.map((candle, index): LineData<Time> => {
+    return data.map((candle, index): LineData => {
         const start = Math.max(0, index - period + 1);
         const subset = data.slice(start, index + 1);
-        const sum = subset.reduce((acc, item) => acc + item.close, 0);
+
+        // Ensure only valid CandlestickData (ignore WhitespaceData)
+        const sum = subset.reduce((acc, item) => acc + ("close" in item ? item.close : 0), 0);
+
         return {
             time: candle.time as Time,
             value: sum / subset.length
