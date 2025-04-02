@@ -28,7 +28,7 @@ export default function Security() {
 
                     <div className="grid md:grid-rows-2 auto-rows-min gap-4 grid-cols-8 h-full w-full max-w-dvw max-h-fit">
                         {/* Graph starts at row 1 and spans 3 rows */}
-                        <SecurityGraph className="md:row-start-1 row-span-1 row-start-2 md:col-span-6 col-span-8" />
+                        <SecurityGraph title="SC1" className="md:row-start-1 row-span-1 row-start-2 md:col-span-6 col-span-8" />
 
                         {/* Details start at row 4 to avoid overlap */}
                         <SecurityDetailsCard className="md:row-start-2 row-span-1 row-start-3 md:col-span-6 col-span-8" />

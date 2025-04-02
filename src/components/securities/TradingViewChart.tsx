@@ -1,28 +1,28 @@
 import { useState, useEffect, useRef } from 'react';
 import {
     CandlestickSeries,
-    createChart,
+    createChart, createImageWatermark, createTextWatermark,
     HistogramSeries,
     IChartApi,
-    ISeriesApi,
+    ISeriesApi, LineData, LineSeries,
     Time,
     UTCTimestamp
 } from 'lightweight-charts';
-import { useTheme } from "@/components/__utils__/theme-provider.tsx"
+import { useTheme } from "@/components/__utils__/theme-provider.tsx";
+import {cn} from "@/lib/utils.ts";
+import {
+    calculateMovingAverageSeriesData, CandleData,
+    getCandlestickColors,
+    getChartColors,
+    getChartOptions,
+    getMAColors, getVolumeColors
+} from "@/components/securities/ChartUtils.tsx";
+import {formatCurrency} from "@/lib/format-currency.ts";
 
-interface CandleData {
-    time: number;
-    open: number;
-    high: number;
-    low: number;
-    close: number;
-    volume: number;
-}
 
 interface TradingChartProps {
-    type?: 'candle' | 'volume';
-    onTimeRangeChanged?: (range: { from: number; to: number }) => void;
-    setTimeScaleRef?: (timeScale: any) => void;
+    title: string;
+    className?: string;
 }
 
 const generateMockData = (): CandleData[] => {
@@ -54,189 +54,180 @@ const generateMockData = (): CandleData[] => {
     return data;
 };
 
-const getChartColors = (theme: 'light' | 'dark' | 'system') => {
-    const root = document.documentElement;
-    const isDark = theme === 'system'
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-        : theme === 'dark';
 
-    return {
-        text: isDark
-            ? getComputedStyle(root).getPropertyValue('--chart-foreground-dark')
-            : getComputedStyle(root).getPropertyValue('--chart-foreground-light'),
-        grid: isDark
-            ? getComputedStyle(root).getPropertyValue('--chart-grid-dark')
-            : getComputedStyle(root).getPropertyValue('--chart-grid-light'),
-        up: getComputedStyle(root).getPropertyValue(isDark ? '--chart-up-dark' : '--chart-up-light'),
-        down: getComputedStyle(root).getPropertyValue(isDark ? '--chart-down-dark' : '--chart-down-light'),
-        volume: getComputedStyle(root).getPropertyValue(isDark ? '--chart-volume-light' : '--chart-volume-dark'),
-    };
-};
-
-export default function TradingChart({
-    type = 'candle',
-    onTimeRangeChanged,
-    setTimeScaleRef
-}: TradingChartProps) {
+export default function SynchronizedTradingChart({ title, className }: TradingChartProps) {
     const { theme } = useTheme();
     const chartContainerRef = useRef<HTMLDivElement>(null);
-    const [chartData, setChartData] = useState<CandleData[]>([]);
     const chartRef = useRef<IChartApi | null>(null);
-    const seriesRef = useRef<ISeriesApi<'Candlestick' | 'Histogram'> | null>(null);
 
-    // Initialize chart once
+    const [chartData, setChartData] = useState<CandleData[]>([]);
+    const [madData, setMaData] = useState<any>([]);
+
+    const candleSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
+    const volumeSeriesRef = useRef<ISeriesApi<'Histogram'> | null>(null);
+    const maSeriesRef = useRef<ISeriesApi<"Line"> | null>(null);
+
+    const [legendPrice, setLegendPrice] = useState<string>();
+    const [legendTime, setLegendTime] = useState<string>();
+    const [legendName, setLegendName] = useState<string>();
+
+
+
+    // First time init
     useEffect(() => {
         if (!chartContainerRef.current || chartRef.current) return;
 
         const colors = getChartColors(theme);
-        const chart = createChart(chartContainerRef.current, {
+        const options = getChartOptions({
             width: chartContainerRef.current.clientWidth,
             height: chartContainerRef.current.clientHeight,
-            layout: {
-                background: { color: 'transparent' },
-                textColor: colors.text,
-                fontFamily: "var(--font-paragraph)",
-                attributionLogo: type === "volume",
-            },
-            grid: {
-                vertLines: { color: colors.grid },
-                horzLines: { color: colors.grid },
-            },
-            rightPriceScale: {
-                // Force the same width for price scales
-                borderVisible: false,
-                scaleMargins: {
-                    top: 0.1,
-                    bottom: 0.1,
-                },
-            },
-            timeScale: {
-                visible: true,
-                borderVisible: true,
-            },
-            autoSize: true,
+            colors: colors
         });
 
-        // Create series based on type
-        if (type === 'candle') {
-            seriesRef.current = chart.addSeries(CandlestickSeries, {
-                upColor: colors.up,
-                downColor: colors.down,
-                borderVisible: false,
-                wickUpColor: colors.up,
-                wickDownColor: colors.down,
-            });
-        } else {
-            seriesRef.current = chart.addSeries(HistogramSeries, {
-                color: colors.volume,
-                priceFormat: { type: 'volume' },
-            });
-        }
+        // Create candle chart
+        const chart = createChart(chartContainerRef.current, options);
 
-        // This is the key part - correctly share the timeScale
-        if (setTimeScaleRef) {
-            const timeScale = chart.timeScale();
-            // Wrap the timeScale in an object that exposes only the methods we need
-            setTimeScaleRef({
-                setVisibleLogicalRange: (range: { from: number; to: number }) => {
-                    timeScale.setVisibleLogicalRange({
-                        from: range.from,
-                        to: range.to
-                    });
-                },
-                // Add other methods you might need
-            });
-        }
 
-        // Set up sync listener if needed
-        if (onTimeRangeChanged) {
-            chart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
-                if (range) {
-                    onTimeRangeChanged({
-                        from: range.from,
-                        to: range.to
-                    });
-                }
-            });
-        }
+        // Create series
+        candleSeriesRef.current = chart.addSeries(CandlestickSeries, {
+            ...getCandlestickColors(colors),
+            priceFormat: {type: 'price', precision: 5}
+        });
+
+        maSeriesRef.current = chart.addSeries(LineSeries, {
+            ...getMAColors(colors),
+            lineWidth: 2,
+        })
+
+        volumeSeriesRef.current = chart.addSeries(HistogramSeries, {
+            ...getVolumeColors(colors),
+            priceFormat: { type: 'volume' },
+        }, 1);
+
+        // fetch initial data
+        const mockData = generateMockData();
+        setChartData(mockData);
+        const maData = calculateMovingAverageSeriesData(mockData, 10)
+        setMaData(maData);
+
+        const volumePane = chart.panes()[1];
+        volumePane.setHeight(80);
+
+
+        // chart.timeScale().fitContent(); // TODO
 
         chartRef.current = chart;
 
+        // LEGEND
+        // @ts-ignore
+        const updateLegend = param => {
+            const validCrosshairPoint = !(
+                param === undefined || param.time === undefined || param.point.x < 0 || param.point.y < 0
+            );
+            //const bar = validCrosshairPoint ? param.seriesData.get(candleSeriesRef.current) : getLastBar(candleSeriesRef.current);
+            // time is in the same format that you supplied to the setData method,
+            // which in this case is YYYY-MM-DD
+            const rawTime = validCrosshairPoint
+                ? param.seriesData.get(candleSeriesRef.current).time
+                : mockData[mockData.length - 1].time;
+
+            // Convert `rawTime` to a JavaScript Date object
+            const time = new Date(rawTime * 1000).toLocaleString("sr-RS");
+
+            const price = validCrosshairPoint ? (param.seriesData.get(candleSeriesRef.current).value ?
+                param.seriesData.get(candleSeriesRef.current).value: param.seriesData.get(candleSeriesRef.current).close)
+                : mockData[mockData.length-1].close;
+            const formattedPrice = formatCurrency(price, "RSD");
+
+            setLegendName(title);
+            setLegendPrice(formattedPrice);
+            setLegendTime(time);
+        };
+
+        chart.subscribeCrosshairMove(updateLegend);
+
+        updateLegend(undefined);
+
+        createTextWatermark(chart.panes()[0], {
+            horzAlign: 'center',
+            vertAlign: 'center',
+            lines: [
+                {
+                    fontFamily: "Poppins",
+                    text: 'BankToo',
+                    color: colors.grid,
+                    fontSize: 36,
+                },
+            ],
+        });
+
         return () => {
+            // Clean up all chart instances
             chartRef.current?.remove();
             chartRef.current = null;
         };
-    }, [theme]);
+    }, []);
 
-    // Method to update time scale
-    const updateTimeRange = useRef((range: { from: number; to: number }) => {
-        if (chartRef.current) {
-            chartRef.current.timeScale().setVisibleRange({
-                from: range.from as Time,
-                to: range.to as Time
-            });
-        }
-    });
 
-    // Expose the updateTimeRange method
-    useEffect(() => {
-        return () => {
-            // Cleanup
-        };
-    }, [updateTimeRange]);
+
 
     // Update data when it changes
     useEffect(() => {
-        if (!seriesRef.current || chartData.length === 0) return;
+        if (!candleSeriesRef.current || !volumeSeriesRef.current
+            || !chartRef.current || chartData.length === 0
+            || !maSeriesRef.current) return;
 
-        if (type === 'candle') {
-            (seriesRef.current as ISeriesApi<'Candlestick'>).setData(
-                chartData.map(formatCandle)
-            );
-        } else {
-            (seriesRef.current as ISeriesApi<'Histogram'>).setData(
-                chartData.map(formatVolume)
-            );
+        const colors = getChartColors(theme);
+
+        // Update chart options
+        chartRef.current.applyOptions(getChartOptions({colors: colors}));
+
+
+        // Update series colors
+        candleSeriesRef.current.applyOptions(getCandlestickColors(colors));
+        volumeSeriesRef.current.applyOptions(getVolumeColors(colors));
+        maSeriesRef.current.applyOptions(getMAColors(colors));
+
+        // update data
+        const candleData = chartData.map(d => ({
+            time: d.time as Time,
+            open: d.open,
+            high: d.high,
+            low: d.low,
+            close: d.close
+        }))
+
+        const volumeData = chartData.map(d => ({
+            time: d.time as Time,
+            value: d.volume,
+            color: colors.volume
+        }))
+
+        const maData = calculateMovingAverageSeriesData(chartData, 10);
+
+        candleSeriesRef.current.setData(candleData);
+
+        volumeSeriesRef.current.setData(volumeData);
+
+        maSeriesRef.current.setData(maData);
+
+        if (maSeriesRef.current) {
+            maSeriesRef.current.setData(madData);
         }
-    }, [chartData, type, theme]);
 
-    const formatCandle = (d: CandleData) => ({
-        time: d.time as Time,
-        open: d.open,
-        high: d.high,
-        low: d.low,
-        close: d.close
-    });
-
-    const formatVolume = (d: CandleData) => ({
-        time: d.time as Time,
-        value: d.volume,
-        color: getChartColors(theme).volume
-    });
+    }, [theme, chartData, madData]);
 
 
-    // Fetch initial data
-    useEffect(() => {
-        // TODO: Replace with API call
-        const mockData = generateMockData();
-        setChartData(mockData);
-    }, []);
-
-    const handleRefresh = async () => {
-        try {
-            // TODO: Replace with actual API call
-            // const response = await fetch('your-api-endpoint');
-            // const data = await response.json();
-            const mockData = generateMockData();
-            setChartData(mockData);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
 
 
 
     return (
-        <div ref={chartContainerRef} className="size-full transition-colors" />
+        <div ref={chartContainerRef} className={cn("relative size-full transition-colors", className)} >
+            <div className="absolute left-3 top-2 z-10 font-paragraph text-muted-foreground">
+                <div className="font-semibold text-xl">{legendName}</div>
+                <div className="text-base">{legendPrice}</div>
+                <div className="text-sm font-light">{legendTime}</div>
+            </div>
+        </div>
     );
 }

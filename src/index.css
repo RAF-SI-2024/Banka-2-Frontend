@@ -77,8 +77,8 @@
 
     --shadow: hsl(233, 100%, 3%, 25%);
 
-    --chart-foreground-light: hsl(233, 100%, 3%);
-    --chart-foreground-dark: hsl(233, 100%, 97%);
+    --chart-foreground-light: hsl(236, 7%, 48%);
+    --chart-foreground-dark: hsl(236, 7%, 52%);
 
     --chart-up-light: hsl(121, 90%, 19%);
     --chart-up-dark: hsl(121, 90%, 81%);
@@ -89,8 +89,8 @@
     --chart-volume-light: hsl(235, 100%, 64%, 50%);
     --chart-volume-dark: hsl(235, 100%, 64%, 50%);
 
-    --chart-grid-light: hsl(231, 17%, 84%);
-    --chart-grid-dark: hsl(231, 17%, 16%);
+    --chart-grid-light: hsl(235, 100%, 64%, 15%);
+    --chart-grid-dark: hsl(235, 100%, 64%, 15%);
 
 }
 
