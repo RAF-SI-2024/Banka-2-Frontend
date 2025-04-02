@@ -21,6 +21,8 @@ interface CandleData {
 
 interface TradingChartProps {
     type?: 'candle' | 'volume';
+    onTimeRangeChanged?: (range: { from: number; to: number }) => void;
+    setTimeScaleRef?: (timeScale: any) => void;
 }
 
 const generateMockData = (): CandleData[] => {
@@ -71,16 +73,19 @@ const getChartColors = (theme: 'light' | 'dark' | 'system') => {
     };
 };
 
-export default function TradingChart({ type = 'candle' }: TradingChartProps) {
+export default function TradingChart({
+    type = 'candle',
+    onTimeRangeChanged,
+    setTimeScaleRef
+}: TradingChartProps) {
     const { theme } = useTheme();
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const [chartData, setChartData] = useState<CandleData[]>([]);
     const chartRef = useRef<IChartApi | null>(null);
     const seriesRef = useRef<ISeriesApi<'Candlestick' | 'Histogram'> | null>(null);
 
-
-     // Initialize chart once
-     useEffect(() => {
+    // Initialize chart once
+    useEffect(() => {
         if (!chartContainerRef.current || chartRef.current) return;
 
         const colors = getChartColors(theme);
@@ -101,13 +106,13 @@ export default function TradingChart({ type = 'candle' }: TradingChartProps) {
                 // Force the same width for price scales
                 borderVisible: false,
                 scaleMargins: {
-                  top: 0.1,
-                  bottom: 0.1,
+                    top: 0.1,
+                    bottom: 0.1,
                 },
-              },
+            },
             timeScale: {
-            visible: true,
-            borderVisible: true,
+                visible: true,
+                borderVisible: true,
             },
             autoSize: true,
         });
@@ -128,6 +133,33 @@ export default function TradingChart({ type = 'candle' }: TradingChartProps) {
             });
         }
 
+        // This is the key part - correctly share the timeScale
+        if (setTimeScaleRef) {
+            const timeScale = chart.timeScale();
+            // Wrap the timeScale in an object that exposes only the methods we need
+            setTimeScaleRef({
+                setVisibleLogicalRange: (range: { from: number; to: number }) => {
+                    timeScale.setVisibleLogicalRange({
+                        from: range.from,
+                        to: range.to
+                    });
+                },
+                // Add other methods you might need
+            });
+        }
+
+        // Set up sync listener if needed
+        if (onTimeRangeChanged) {
+            chart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
+                if (range) {
+                    onTimeRangeChanged({
+                        from: range.from,
+                        to: range.to
+                    });
+                }
+            });
+        }
+
         chartRef.current = chart;
 
         return () => {
@@ -135,6 +167,23 @@ export default function TradingChart({ type = 'candle' }: TradingChartProps) {
             chartRef.current = null;
         };
     }, [theme]);
+
+    // Method to update time scale
+    const updateTimeRange = useRef((range: { from: number; to: number }) => {
+        if (chartRef.current) {
+            chartRef.current.timeScale().setVisibleRange({
+                from: range.from as Time,
+                to: range.to as Time
+            });
+        }
+    });
+
+    // Expose the updateTimeRange method
+    useEffect(() => {
+        return () => {
+            // Cleanup
+        };
+    }, [updateTimeRange]);
 
     // Update data when it changes
     useEffect(() => {
@@ -185,7 +234,7 @@ export default function TradingChart({ type = 'candle' }: TradingChartProps) {
         }
     };
 
-    
+
 
     return (
         <div ref={chartContainerRef} className="size-full transition-colors" />
