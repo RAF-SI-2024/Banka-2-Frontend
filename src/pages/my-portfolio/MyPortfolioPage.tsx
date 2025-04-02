@@ -1,10 +1,11 @@
 import React, {useState} from "react";
 
-import TaxCard from "@/pages/my-portfolio/TaxCard.tsx";
-import TotalProfitCard from "@/pages/my-portfolio/TotalProfitCard.tsx";
-import PortfolioTable from "@/pages/my-portfolio/PortfolioTable.tsx";
+import TaxCard from "@/components/portfolio/TaxCard.tsx";
+import TotalProfitCard from "@/components/portfolio/TotalProfitCard.tsx";
+import PortfolioTable from "@/components/portfolio/PortfolioTable.tsx";
 import {PortfolioBalanceData, PortfolioTaxData} from "@/types/portfolio-data.ts";
 import {mockPortfolioBalanceData, mockPortfolioTaxData} from "@/mocks/PortfolioDataMock.tsx";
+import PortfolioTableCard from "@/components/portfolio/PortfolioTableCard.tsx";
 
 export default function MyPortfolioPage() {
 
@@ -21,7 +22,8 @@ export default function MyPortfolioPage() {
                     <TaxCard amount={portfolioTaxData}></TaxCard>
 
                 </div>
-                <PortfolioTable></PortfolioTable>
+
+                <PortfolioTableCard></PortfolioTableCard>
 
             </main>
         </>

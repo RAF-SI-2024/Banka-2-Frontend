@@ -10,7 +10,7 @@ import {
 import {DataTableViewOptions} from "@/components/__common__/datatable/DataTableViewOptions.tsx";
 import {DataTable} from "@/components/__common__/datatable/DataTable.tsx";
 import {DataTablePagination} from "@/components/__common__/datatable/DataTablePagination.tsx";
-import {generatePortfolioColumns} from "@/pages/my-portfolio/PortfolioTableColumns.tsx";
+import {generatePortfolioColumns} from "@/components/portfolio/PortfolioTableColumns.tsx";
 import {PortfolioData} from "@/types/portfolio-data.ts";
 import {portfolioDataMock} from "@/mocks/PortfolioDataMock.tsx";
 
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {DualRangeSlider} from "@/components/ui/dual-range-slider.tsx";
+import {Input} from "@/components/ui/input.tsx";
 
 export default function PortfolioTable() {
 
@@ -57,7 +58,7 @@ export default function PortfolioTable() {
 
     const handleSliderChange = (newValue: number[]) => {
         setSliderValue(newValue);
-        setSelectedRow((prev) => prev ? { ...prev, public: newValue[0] } : null);
+        setSelectedRow((prev) => prev ? { ...prev, public: newValue[0] > prev.amount ? prev.amount : (newValue[0] < 0 ? 0 : newValue[0]) } : null);
     };
 
     const handleSave = () => {
@@ -152,7 +153,7 @@ export default function PortfolioTable() {
                 </div>
             </div>
 
-            <Dialog open={open} onOpenChange={setOpen} >
+            <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Change amount of public assets</DialogTitle>
@@ -166,9 +167,16 @@ export default function PortfolioTable() {
                                 max={selectedRow?.amount}
                                 step={1}
                             />
+                            <Input
+                                className="mt-4"
+                                type="number"
+                                value={sliderValue[0]}
+
+                                onChange={(e) => handleSliderChange([Number(e.target.value)])}
+                            />
                         </DialogDescription>
                     </DialogHeader>
-                    <Button onClick={handleSave}>Save</Button>
+                    <Button variant="gradient" onClick={handleSave}>Save</Button>
                 </DialogContent>
             </Dialog>
 

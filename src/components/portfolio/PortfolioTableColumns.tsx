@@ -59,7 +59,7 @@ export function generatePortfolioColumns(setOpen: (open: boolean) => void, setSe
             id: "change",
             header: "Change public",
             cell: ({ row }) => (
-                <Button onClick={() => {
+                <Button variant="gradient" onClick={() => {
                     setSelectedRow(row.original);
                     setOpen(true);
                 }}>
@@ -72,6 +72,7 @@ export function generatePortfolioColumns(setOpen: (open: boolean) => void, setSe
             header: "Sell asset",
             cell: ({ row }) => (
                 <Button
+                    variant="gradient"
                     onClick={() => handleSell(row.original)}
                 >
                     Sell
