@@ -92,8 +92,25 @@
     --chart-grid-light: hsl(235, 100%, 64%, 15%);
     --chart-grid-dark: hsl(235, 100%, 64%, 15%);
 
-    --chart-legend-light: hsl(233, 100%, 65%);
-    --chart-legend-dark: hsl(233, 100%, 65%);
+    --chart-crosshair-light: hsl(233, 36%, 91%);
+    --chart-crosshair-dark: hsl(233, 36%, 9%);
+
+    --chart-crosshair-line-light: hsl(233, 100%, 65%);
+    --chart-crosshair-line-dark: hsl(233, 100%, 65%);
+
+    --chart-watermark-light: hsl(233, 100%, 65%, 20%);
+    --chart-watermark-dark: hsl(233, 100%, 65%, 20%);
+
+    --chart-separator-light: hsl(231, 17%, 84%);
+    --chart-separator-dark: hsl(231, 17%, 16%);
+
+    --chart-separator-hover-light: hsl(231, 17%, 84%);
+    --chart-separator-hover-dark: hsl(231, 17%, 16%);
+
+    --chart-ma-light: hsl(263, 100%, 66%, 50%);
+    --chart-ma-dark: hsl(263, 100%, 66%, 50%);
+
+    --chart-legend: hsl(233, 100%, 65%);
 
 }
 
@@ -153,6 +170,8 @@
     --accent-foreground: hsl(0, 0%, 4%);
 
     --shadow: hsl(233, 100%, 3%, 100%);
+
+    --chart-legend: hsl(233, 100%, 65%);
 }
 
 @theme inline {
@@ -250,14 +269,7 @@
     --color-chart-down-light: var(--chart-down-light);
     --color-chart-down-dark: var(--chart-down-dark);
 
-    --color-chart-volume-light: var(--chart-volume-light);
-    --color-chart-volume-dark: var(--chart-volume-dark);
-
-    --color-chart-grid-light: var(--chart-grid-light);
-    --color-chart-grid-dark: var(--chart-grid-dark);
-
-    --color-chart-legend-light: var(--chart-legend-light);
-    --color-chart-legend-dark: var(--chart-legend-dark);
+    --color-chart-legend: var(--chart-legend);
 
 }
 

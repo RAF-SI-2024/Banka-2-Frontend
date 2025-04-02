@@ -1,13 +1,14 @@
 import {
     CandlestickData,
-    ChartOptions,
+    ChartOptions, createTextWatermark,
     DeepPartial,
     LineData,
     LineStyle,
-    LineWidth,
+    LineWidth, TextWatermarkOptions,
     Time,
     TimeChartOptions, WhitespaceData
 } from "lightweight-charts";
+import {formatCurrency} from "@/lib/format-currency.ts";
 
 export interface ColorProps{
     text: string;
@@ -15,6 +16,12 @@ export interface ColorProps{
     up: string;
     down: string;
     volume: string;
+    ma: string,
+    crosshair: string;
+    croshair_line:string;
+    separator: string;
+    separator_hover:string;
+    watermark: string;
 }
 
 interface ChartOptionsProps{
@@ -32,7 +39,7 @@ export interface CandleData {
     volume: number;
 }
 
-export const getChartColors = (theme: 'light' | 'dark' | 'system') => {
+export const getChartColors = (theme: 'light' | 'dark' | 'system'): ColorProps => {
     const root = document.documentElement;
     const isDark = theme === 'system'
         ? window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -47,9 +54,16 @@ export const getChartColors = (theme: 'light' | 'dark' | 'system') => {
             : getComputedStyle(root).getPropertyValue('--chart-grid-light'),
         up: getComputedStyle(root).getPropertyValue(isDark ? '--chart-up-dark' : '--chart-up-light'),
         down: getComputedStyle(root).getPropertyValue(isDark ? '--chart-down-dark' : '--chart-down-light'),
-        volume: getComputedStyle(root).getPropertyValue(isDark ? '--chart-volume-light' : '--chart-volume-dark'),
+        volume: getComputedStyle(root).getPropertyValue(isDark ? '--chart-volume-dark' : '--chart-volume-light'),
+        crosshair: getComputedStyle(root).getPropertyValue(isDark ? '--chart-crosshair-dark' : '--chart-crosshair-light'),
+        croshair_line: getComputedStyle(root).getPropertyValue(isDark ? '--chart-crosshair-line-dark' : '--chart-crosshair-line-light'),
+        watermark: getComputedStyle(root).getPropertyValue(isDark ? '--chart-watermark-dark' : '--chart-watermark-light'),
+        separator: getComputedStyle(root).getPropertyValue(isDark ? '--chart-separator-dark' : '--chart-separator-light'),
+        separator_hover: getComputedStyle(root).getPropertyValue(isDark ? '--chart-separator-hover-dark' : '--chart-separator-hover-light'),
+        ma: getComputedStyle(root).getPropertyValue(isDark ? '--chart-ma-dark' : '--chart-ma-light'),
     };
 };
+
 
 
 export function getChartOptions  ({width, height, colors}: ChartOptionsProps): DeepPartial<TimeChartOptions>  {
@@ -62,8 +76,8 @@ export function getChartOptions  ({width, height, colors}: ChartOptionsProps): D
             textColor: colors.text,
             fontFamily: "Lexend",
             panes: {
-                separatorColor: '#f22c3d', // TODO
-                separatorHoverColor: 'rgba(255, 0, 0, 0.1)', // TODO
+                separatorColor: colors.separator,
+                separatorHoverColor: colors.separator_hover,
                 enableResize: true,
             }
         },
@@ -78,28 +92,29 @@ export function getChartOptions  ({width, height, colors}: ChartOptionsProps): D
             },
             minimumWidth: 100,
 
+
         },
         timeScale: {
-            visible: false,
+            visible: true,
             borderVisible: false,
-            allowBoldLabels: false
+            allowBoldLabels: false,
         },
         localization:{
-            locale:"sr-RS"
+            // locale: "sr-RS", ruzno je na cirilici zato je zakomentarisano
         },
         autoSize: true,
         crosshair:{
             vertLine: {
-                width: 8 as DeepPartial<LineWidth>,
-                color: '#C3BCDB44', // TODO
-                style: LineStyle.Solid,
-                // labelBackgroundColor: colors., // TODO
+                color: colors.croshair_line,
+                style: LineStyle.Dashed,
+                labelBackgroundColor: colors.crosshair,
             },
 
             // Horizontal crosshair line (showing Price in Label)
             horzLine: {
-                color: '#9B7DFF', // TODO
-                labelBackgroundColor: '#9B7DFF', // TODO
+                color: colors.croshair_line,
+                style: LineStyle.Solid,
+                labelBackgroundColor: colors.crosshair,
             },
 
         },
@@ -118,7 +133,7 @@ export function getCandlestickColors(colors: ColorProps) {
 
 export function getMAColors(colors: ColorProps) {
     return({
-        color: colors.volume,
+        color: colors.ma,
     })
 }
 
@@ -128,6 +143,20 @@ export function getVolumeColors(colors: ColorProps) {
     })
 }
 
+export function getWatermarkOptions(colors: ColorProps): DeepPartial<TextWatermarkOptions> {
+    return({
+        horzAlign: 'center',
+        vertAlign: 'center',
+        lines: [
+            {
+                fontFamily: "Poppins",
+                text: 'BankToo',
+                color: colors.watermark,
+                fontSize: 36,
+            },
+        ],
+    })
+}
 
 export function calculateMovingAverageSeriesData(
     data: readonly (CandlestickData | WhitespaceData)[],

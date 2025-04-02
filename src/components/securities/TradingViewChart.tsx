@@ -15,7 +15,7 @@ import {
     getCandlestickColors,
     getChartColors,
     getChartOptions,
-    getMAColors, getVolumeColors
+    getMAColors, getVolumeColors, getWatermarkOptions
 } from "@/components/securities/ChartUtils.tsx";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {
@@ -66,11 +66,12 @@ export default function TradingViewChart({ title, className }: TradingChartProps
         // Create series
         candleSeriesRef.current = chart.addSeries(CandlestickSeries, {
             ...getCandlestickColors(colors),
-            priceFormat: {type: 'price', precision: 5}
+            priceFormat: {type: 'price', precision: 5},
         }, 0);
 
         maSeriesRef.current = chart.addSeries(LineSeries, {
             ...getMAColors(colors),
+
             lineWidth: 2,
         }, 0)
 
@@ -85,18 +86,7 @@ export default function TradingViewChart({ title, className }: TradingChartProps
 
         chartRef.current = chart;
 
-        createTextWatermark(chart.panes()[0], {
-            horzAlign: 'center',
-            vertAlign: 'center',
-            lines: [
-                {
-                    fontFamily: "Poppins",
-                    text: 'BankToo',
-                    color: colors.text,
-                    fontSize: 36,
-                },
-            ],
-        });
+        createTextWatermark(chart.panes()[0], getWatermarkOptions(colors));
 
         const data = datafeed.getBars(200);
         // update data
@@ -179,7 +169,7 @@ export default function TradingViewChart({ title, className }: TradingChartProps
 
 
 
-            setLegendPrice(update.value.close);
+            setLegendPrice(formatCurrency(update.value.close, "RSD"));
             setLegendTime(new Date(update.value.time * 1000).toLocaleString("sr-RS"));
 
             // Update candlestick and volume series
@@ -201,6 +191,8 @@ export default function TradingViewChart({ title, className }: TradingChartProps
 
 
         }, 250);
+
+
 
         return () => {
             // Clean up all chart instances
@@ -271,7 +263,7 @@ export default function TradingViewChart({ title, className }: TradingChartProps
 
     return (
         <div ref={chartContainerRef} className={cn("relative size-full transition-colors", className)} >
-            <div className="absolute left-3 top-2 z-10 font-paragraph text-muted-foreground">
+            <div className="absolute left-3 top-2 z-10 font-paragraph text-chart-legend">
                 <div className="font-semibold text-xl">{legendName}</div>
                 <div className="text-base">{legendPrice}</div>
                 <div className="text-sm font-light">{legendTime}</div>
