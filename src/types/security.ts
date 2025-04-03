@@ -7,22 +7,37 @@ export interface Security {
 }
 
 export enum SecurityType {
-    Stocks,
-    Futures,
+    Stock,
+    Future,
     Forex,
-    Options,
+    Option,
     Unknown
 }
 
 export function getSecurityTypeName(type: SecurityType): string {
     switch(type){
-        case SecurityType.Stocks:
-            return 'stocks';
-        case SecurityType.Futures:
-            return 'futures';
+        case SecurityType.Stock:
+            return 'Stock';
+        case SecurityType.Future:
+            return 'Future';
         case SecurityType.Forex:
             return 'Forex';
-        case SecurityType.Options:
+        case SecurityType.Option:
+            return 'Option';
+        default:
+            return 'Unknown';
+    }
+}
+
+export function getSecurityTypePlural(type: SecurityType): string {
+    switch(type){
+        case SecurityType.Stock:
+            return 'Stocks';
+        case SecurityType.Future:
+            return 'Futures';
+        case SecurityType.Forex:
+            return 'Forex';
+        case SecurityType.Option:
             return 'Options';
         default:
             return 'Unknown';

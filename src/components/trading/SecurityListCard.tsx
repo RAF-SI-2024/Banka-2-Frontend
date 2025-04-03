@@ -5,13 +5,13 @@ import {Tabs} from "@/components/ui/tabs.tsx";
 import {TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import SecurityInfiniteList from "@/components/trading/SecurityInfiniteList.tsx";
 import SecurityFilters from "@/components/trading/SecurityFIlters";
-import {SecurityType} from "@/types/security.ts";
+import {getSecurityTypePlural, SecurityType} from "@/types/security.ts";
 
 
 export default function SecurityListCard({className, ...props}: React.ComponentProps<"div">) {
 
 
-    const [activeTab, setActiveTab] = useState<SecurityType>(SecurityType.Stocks);
+    const [activeTab, setActiveTab] = useState<SecurityType>(SecurityType.Stock);
     const [fetchFlag, setFetchFlag] = useState(false);
 
     return (
@@ -30,10 +30,10 @@ export default function SecurityListCard({className, ...props}: React.ComponentP
 
                 <CardHeader className="w-full p-1">
                     <TabsList className="bg-card justify-center w-full flex flex-wrap  h-full lg:flex-row sm:flex-col">
-                        <TabsTrigger value={SecurityType.Stocks.toString()} className="w-full md:w-auto">Stocks</TabsTrigger>
-                        <TabsTrigger value={SecurityType.Futures.toString()} className="w-full md:w-auto">Futures</TabsTrigger>
-                        <TabsTrigger value={SecurityType.Forex.toString()} className="w-full md:w-auto">Forex</TabsTrigger>
-                        <TabsTrigger value={SecurityType.Options.toString()} className="w-full md:w-auto">Options</TabsTrigger>
+                        <TabsTrigger value={SecurityType.Stock.toString()} className="w-full md:w-auto">{getSecurityTypePlural(SecurityType.Stock)}</TabsTrigger>
+                        <TabsTrigger value={SecurityType.Future.toString()} className="w-full md:w-auto">{getSecurityTypePlural(SecurityType.Future)}</TabsTrigger>
+                        <TabsTrigger value={SecurityType.Forex.toString()} className="w-full md:w-auto">{getSecurityTypePlural(SecurityType.Forex)}</TabsTrigger>
+                        <TabsTrigger value={SecurityType.Option.toString()} className="w-full md:w-auto">{getSecurityTypePlural(SecurityType.Option)}</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value={activeTab.toString()} className="p-2">

@@ -138,16 +138,30 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
                 <Button
                     variant="negative"
                     size="tight"
-                    onClick={() => setShowFilters(!showFilters)}
+                    onClick={() => {!showFilters && setShowFilters(true)}}
                     className="py-0.5 pt-0 -mt-[4px] mx-1 z-0 text-sm w-full rounded-t-none rounded-b-4xl flex flex-row items-center"
                 >
                     <span className="icon-[ph--funnel-simple]" /> Filters
                 </Button>
             </div>
 
+            <AnimatePresence>
+                {showFilters && (
+                    <motion.div
+                        className="fixed inset-0 bg-black/30 z-[99]"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        onClick={() => setShowFilters(false)}
+                    />
+                )}
+            </AnimatePresence>
+
             {/* Filters overlay content */}
             <AnimatePresence>
                 {showFilters && (
+
                     <motion.div
                         initial={{ opacity: 0, y: 0, x:20}}
                         animate={{ opacity: 1, y: 0, x:0 }}
@@ -155,7 +169,7 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
                         className="md:w-100 w-full absolute top-full right-0 bg-card z-[100] p-4 shadow-xl shadow-shadow rounded-xl"
                         ref={filterRef}
                     >
-                        {(type === SecurityType.Futures || type === SecurityType.Options) && (
+                        {(type === SecurityType.Future || type === SecurityType.Option) && (
                             <div className="w-full mb-4">
                                 <Label>Settlement date</Label>
                                 <DatePickerWithRange
