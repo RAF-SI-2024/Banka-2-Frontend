@@ -29,6 +29,7 @@ import BankAccountListPage from "@/pages/bank-accounts-employee/BankAccountList.
 import ActuaryListPage from "@/pages/actuary/ActuaryListPage";
 import Security from "@/pages/securities/Security.tsx";
 import SecurityLayout from "@/layouts/SecurityLayout.tsx";
+import MyPortfolioPage from "@/pages/my-portfolio/MyPortfolioPage.tsx";
 import OrdersPage from "@/pages/orders-list/OrdersList.tsx";
 import TaxPage from "@/pages/tax/TaxPage.tsx";
 import Exchanges from "@/pages/exchanges/Exchanges";
@@ -57,6 +58,7 @@ export const AppRoutes = () => {
                         <Route path="/loan/overview" element={<LoanOverviewList />} />
                         <Route path="loan/overview/:loanId" element={<LoanDetailsClientPage />} />
                         <Route path="payments/exchange-rate" element={<ExchangeRateListPage />} />
+                        <Route path="my-portfolio" element={<MyPortfolioPage />} />
                     </Route>
 
                     <Route element={<ProtectedAdminOrEmployee />}>
