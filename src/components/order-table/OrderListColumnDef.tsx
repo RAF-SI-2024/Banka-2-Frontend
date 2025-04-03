@@ -24,7 +24,7 @@ export function generateOrderColumns(handleApprove: (order: Order) => void, hand
         },
         {
             accessorKey: "securityType",
-            header: "Security Type",
+            header: "Trading Type",
             enableHiding: true,
         },
         {

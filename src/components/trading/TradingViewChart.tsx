@@ -16,12 +16,12 @@ import {
     getChartColors,
     getChartOptions,
     getMAColors, getVolumeColors, getWatermarkOptions
-} from "@/components/securities/ChartUtils.tsx";
+} from "@/components/trading/ChartUtils.tsx";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {
     Datafeed,
     generateRealtimeData, getNextRealtimeUpdate,
-} from "@/mocks/GraphMock.tsx";
+} from "@/mocks/trading/GraphMock.tsx";
 
 
 interface TradingChartProps {
@@ -252,12 +252,6 @@ export default function TradingViewChart({ title, className }: TradingChartProps
         volumeSeriesRef.current.applyOptions(getVolumeColors(colors));
         maSeriesRef.current.applyOptions(getMAColors(colors));
     }, [theme]);
-
-
-
-
-
-
 
 
 

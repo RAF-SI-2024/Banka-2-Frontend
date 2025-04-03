@@ -1,4 +1,4 @@
-import {CandleData} from "@/components/securities/ChartUtils.tsx";
+import {CandleData} from "@/components/trading/ChartUtils.tsx";
 import {Time} from "lightweight-charts";
 
 let randomFactor = 25 + Math.random() * 25;
