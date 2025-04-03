@@ -91,6 +91,12 @@ export function ClientNavMainData() {
                     icon: <span className="icon-[ph--chart-line-up]"/>,
                     isCollapsed: false,
                 },
+                {
+                    title: "My Portfolio",
+                    url: "/my-portfolio",
+                    icon: <span className="icon-[ph--chalkboard-teacher]"/>,
+                    isCollapsed: false,
+                },
             ]
         }
     ]

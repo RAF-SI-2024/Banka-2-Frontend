@@ -29,8 +29,10 @@ import BankAccountListPage from "@/pages/bank-accounts-employee/BankAccountList.
 import ActuaryListPage from "@/pages/actuary/ActuaryListPage";
 import Trading from "@/pages/trading/Trading.tsx";
 import SecurityLayout from "@/layouts/SecurityLayout.tsx";
-import OrdersPage from "@/pages/orders-list/OrdersList.tsx"
+import MyPortfolioPage from "@/pages/my-portfolio/MyPortfolioPage.tsx";
+import OrdersPage from "@/pages/orders-list/OrdersList.tsx";
 import TaxPage from "@/pages/tax/TaxPage.tsx";
+import Exchanges from "@/pages/exchanges/Exchanges";
 
 export const AppRoutes = () => {
     return (
@@ -50,21 +52,26 @@ export const AppRoutes = () => {
                     <Route element={<ProtectedClient />}>
                         <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
                         <Route path="/card/:cardId" element={<CardDetailsPage />} />
-                        <Route path="/payments/transfer" element={<TransfersPage />}/>
-                        <Route path="/payments/new" element={<NewPaymentPage />} />    
+                        <Route path="/payments/transfer" element={<TransfersPage />} />
+                        <Route path="/payments/new" element={<NewPaymentPage />} />
                         <Route path="/loan/new" element={<NewLoanRequest />} />
                         <Route path="/loan/overview" element={<LoanOverviewList />} />
                         <Route path="loan/overview/:loanId" element={<LoanDetailsClientPage />} />
                         <Route path="payments/exchange-rate" element={<ExchangeRateListPage />} />
+                        <Route path="my-portfolio" element={<MyPortfolioPage />} />
                     </Route>
 
                     <Route element={<ProtectedAdminOrEmployee />}>
-                        <Route path="loan/request" element={ <LoanRequestList />} />
+                        <Route path="loan/request" element={<LoanRequestList />} />
                         <Route path="bank-account-list" element={<BankAccountListPage />} />
                         <Route path="loan/all" element={<AllLoanList />} />
                         <Route path="/order/overview" element={<OrdersPage />} />
                         <Route path="actuary/overview" element={<ActuaryListPage />} />
                         <Route path="tax/overview" element={<TaxPage />} />
+                    </Route>
+
+                    <Route element={<ProtectedAdmin />}>
+                        <Route path="/exchanges" element={<Exchanges/>} />
                     </Route>
 
                     <Route element={<ProtectedEmployee />}>
