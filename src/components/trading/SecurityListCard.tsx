@@ -29,11 +29,11 @@ export default function SecurityListCard({className, ...props}: React.ComponentP
             <Tabs value={activeTab.toString()} onValueChange={(value) => setActiveTab(Number(value))} className="font-paragraph w-full " >
 
                 <CardHeader className="w-full p-1">
-                    <TabsList className="bg-card w-full md:flex-col justify-baseline lg:flex-row h-full">
-                        <TabsTrigger value={SecurityType.Stocks.toString()} className="w-full ">Stocks</TabsTrigger>
-                        <TabsTrigger value={SecurityType.Futures.toString()} className="w-full">Futures</TabsTrigger>
-                        <TabsTrigger value={SecurityType.Forex.toString()} className="w-full">Forex</TabsTrigger>
-                        <TabsTrigger value={SecurityType.Options.toString()} className="w-full">Options</TabsTrigger>
+                    <TabsList className="bg-card justify-center w-full flex flex-wrap  h-full lg:flex-row sm:flex-col">
+                        <TabsTrigger value={SecurityType.Stocks.toString()} className="w-full md:w-auto">Stocks</TabsTrigger>
+                        <TabsTrigger value={SecurityType.Futures.toString()} className="w-full md:w-auto">Futures</TabsTrigger>
+                        <TabsTrigger value={SecurityType.Forex.toString()} className="w-full md:w-auto">Forex</TabsTrigger>
+                        <TabsTrigger value={SecurityType.Options.toString()} className="w-full md:w-auto">Options</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value={activeTab.toString()} className="p-2">
@@ -42,7 +42,7 @@ export default function SecurityListCard({className, ...props}: React.ComponentP
 
 
                 </CardHeader>
-                <CardContent className="py-0 px-4 pb-4 max-h-[600px] min-h-[600px] overflow-y-auto"  id="scrollableDiv">
+                <CardContent className="py-0 px-4 pb-4 max-h-[680px] min-h-[680px] overflow-y-auto"  id="scrollableDiv">
                     <SecurityInfiniteList fetchFlag={fetchFlag} scrollableId={"scrollableDiv"} type={Number(activeTab)} />
                 </CardContent>
             </Tabs>

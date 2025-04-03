@@ -18,14 +18,14 @@ export default function SecurityDetailsCard({className, ...props}: SecurityDetai
 
             <Card className={cn("border-0 w-full h-full flex flex-col", className)} {...props}>
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="font-paragraph w-full h-full flex flex-col">
-                    <TabsList className="bg-card w-fit sm:flex-col justify-baseline md:flex-row items-baseline ">
+                    <TabsList className="bg-card w-fit  justify-baseline md:flex-row items-baseline ">
                         <TabsTrigger value="market" className="w-full px-2">Market</TabsTrigger>
                         <TabsTrigger value="limit" className="w-full px-2">Limit</TabsTrigger>
                         <TabsTrigger value="stop" className="w-full px-2">Stop</TabsTrigger>
                         <TabsTrigger value="stop_limit" className="w-full px-2">Stop Limit</TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value={activeTab} className="p-2 flex items-center  w-full h-full">
+                    <TabsContent value={activeTab} className="p-2 flex items-center min-h-[360px]  w-full h-full">
                         <SecurityCreateOrder direction="buy" variant={activeTab} />
                         <SecurityCreateOrder direction="sell" variant={activeTab} />
                     </TabsContent>

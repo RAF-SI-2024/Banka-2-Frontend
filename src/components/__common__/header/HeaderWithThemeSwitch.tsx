@@ -9,7 +9,7 @@ export default function HeaderWithThemeSwitch({
                                        }: React.ComponentProps<"header">){
     return(
         <header
-            className={cn("flex h-16 shrink-0 items-center gap-2", className)} {...props}>
+            className={cn("flex h-16 shrink-0 items-center gap-2 z-100", className)} {...props}>
             <div className="flex items-center gap-2 px-4 justify-between w-full">
 
                     {children}

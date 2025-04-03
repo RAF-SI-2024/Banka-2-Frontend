@@ -28,7 +28,7 @@ export default function SecurityLayout() {
             {/*part that the sidebar shrinks when open*/}
             <SidebarInset>
                 <HeaderWithThemeSwitch className="flex h-16 shrink-0 items-center gap-2">
-                    <SidebarTrigger className="-ml-1" ref={triggerRef} />
+                    <SidebarTrigger className="-ml-1 z-100" ref={triggerRef} />
                 </HeaderWithThemeSwitch>
 
                 <div className="w-full mx-auto min-h-dvh">

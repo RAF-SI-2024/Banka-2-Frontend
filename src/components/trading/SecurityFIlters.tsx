@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Button} from "@/components/ui/button.tsx";
 import SearchFilter from "@/components/__common__/SearchFilter.tsx";
 import {AnimatePresence, motion} from "framer-motion";
@@ -28,7 +28,23 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
     const [askValues, setAskValues] = useState([0, 1000000]);
     const [bidValues, setBidValues] = useState([0, 1000000]);
     const [amountValues, setAmountValues] = useState([0, 1000000]);
-    const [sorting, setSorting] = useState<string>("")
+    const [sorting, setSorting] = useState<string>("");
+
+    const filterRef = useRef<HTMLDivElement>(null);  // To track the filter dialog
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+                setShowFilters(false);  // Close dialog when click happens outside
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside); // Cleanup listener
+        };
+    }, []);
 
 
     const [filters, setFilters] = useState({
@@ -86,12 +102,12 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
                 <Button size="icon" variant="outline" onClick={handleSearch}>
                     <span className="icon-[ph--magnifying-glass]" />
                 </Button>
-                <DropdownMenu>
-                    <DropdownMenuTrigger  onClick={() => setShowFilters(false)} asChild>
+                <DropdownMenu onOpenChange={() => setShowFilters(false)}>
+                    <DropdownMenuTrigger asChild>
                         <Button
                             variant="outline"
                             size="icon"
-                            className="z-50 ml-auto  size-9 lg:flex"
+                            className="z-0 ml-auto  size-9 lg:flex"
 
                         >
                             <span className="icon-[ph--sort-ascending]" />
@@ -123,7 +139,7 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
                     variant="negative"
                     size="tight"
                     onClick={() => setShowFilters(!showFilters)}
-                    className="py-0.5 pt-0 -mt-[4px] mx-1 z-[49] text-sm w-full rounded-t-none rounded-b-4xl flex flex-row items-center"
+                    className="py-0.5 pt-0 -mt-[4px] mx-1 z-0 text-sm w-full rounded-t-none rounded-b-4xl flex flex-row items-center"
                 >
                     <span className="icon-[ph--funnel-simple]" /> Filters
                 </Button>
@@ -133,10 +149,11 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
             <AnimatePresence>
                 {showFilters && (
                     <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="w-100 absolute top-full right-0 bg-card z-[100] p-4 shadow-xl shadow-shadow rounded-xl"
+                        initial={{ opacity: 0, y: 0, x:20}}
+                        animate={{ opacity: 1, y: 0, x:0 }}
+                        exit={{ opacity: 0, y: -30, x: 20 }}
+                        className="md:w-100 w-full absolute top-full right-0 bg-card z-[100] p-4 shadow-xl shadow-shadow rounded-xl"
+                        ref={filterRef}
                     >
                         {(type === SecurityType.Futures || type === SecurityType.Options) && (
                             <div className="w-full mb-4">
@@ -160,8 +177,8 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
 
                         <div className="space-y-6">
                             <div className="w-full">
-                                <Label>Exchange</Label>
-                                <Input placeholder="RSD to EUR" />
+                                <Label>Exchange acronym</Label>
+                                <Input placeholder="NASDAQ" />
                             </div>
 
                             <RangeSection
