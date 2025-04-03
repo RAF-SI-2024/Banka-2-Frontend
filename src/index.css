@@ -75,6 +75,43 @@
     --success: hsl(121, 90%, 19%);
     --success-foreground: hsl(233, 100%, 97%);
 
+    --shadow: hsl(233, 100%, 3%, 25%);
+
+    --chart-foreground-light: hsl(236, 7%, 48%);
+    --chart-foreground-dark: hsl(236, 7%, 52%);
+
+    --chart-up-light: hsl(121, 90%, 19%);
+    --chart-up-dark: hsl(121, 90%, 81%);
+
+    --chart-down-light: hsl(351, 100%, 65%);
+    --chart-down-dark: hsl(351, 100%, 35%);
+
+    --chart-volume-light: hsl(235, 100%, 64%, 50%);
+    --chart-volume-dark: hsl(235, 100%, 64%, 50%);
+
+    --chart-grid-light: hsl(235, 100%, 64%, 15%);
+    --chart-grid-dark: hsl(235, 100%, 64%, 15%);
+
+    --chart-crosshair-light: hsl(233, 36%, 91%);
+    --chart-crosshair-dark: hsl(233, 36%, 9%);
+
+    --chart-crosshair-line-light: hsl(233, 100%, 65%);
+    --chart-crosshair-line-dark: hsl(233, 100%, 65%);
+
+    --chart-watermark-light: hsl(233, 100%, 65%, 20%);
+    --chart-watermark-dark: hsl(233, 100%, 65%, 20%);
+
+    --chart-separator-light: hsl(231, 17%, 84%);
+    --chart-separator-dark: hsl(231, 17%, 16%);
+
+    --chart-separator-hover-light: hsl(231, 17%, 84%);
+    --chart-separator-hover-dark: hsl(231, 17%, 16%);
+
+    --chart-ma-light: hsl(263, 100%, 66%, 50%);
+    --chart-ma-dark: hsl(263, 100%, 66%, 50%);
+
+    --chart-legend: hsl(233, 100%, 65%);
+
 }
 
 .dark {
@@ -131,6 +168,10 @@
 
     --accent: hsl(248, 100%, 97%);
     --accent-foreground: hsl(0, 0%, 4%);
+
+    --shadow: hsl(233, 100%, 3%, 100%);
+
+    --chart-legend: hsl(233, 100%, 65%);
 }
 
 @theme inline {
@@ -215,6 +256,20 @@
 
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
+
+    --color-shadow: var(--shadow);
+
+
+    --color-chart-foreground-light: var(--chart-foreground-light);
+    --color-chart-foreground-dark: var(--chart-foreground-dark);
+
+    --color-chart-up-light: var(--chart-up-light);
+    --color-chart-up-dark: var(--chart-up-dark);
+
+    --color-chart-down-light: var(--chart-down-light);
+    --color-chart-down-dark: var(--chart-down-dark);
+
+    --color-chart-legend: var(--chart-legend);
 
 }
 

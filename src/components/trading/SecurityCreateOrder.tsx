@@ -10,7 +10,7 @@ import {
     FormLabel,
     FormMessage
 } from "@/components/ui/form.tsx";
-import {orderToFormSchema} from "@/components/securities/CreateOrderFormDef.tsx";
+import {orderToFormSchema} from "@/components/trading/CreateOrderFormDef.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import * as React from "react";
 import SecurityInput from "@/components/__common__/input/SecurityInput.tsx";
@@ -46,10 +46,10 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
 
 
     return(
-        <Card className="w-full border-0">
+        <Card className="w-full border-0 shadow-none">
             <CardContent className="pt-4 w-full">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-3">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-2">
                         <FormField
                             key="amount"
                             name="amount"
@@ -65,43 +65,47 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
                         />
 
 
-                        <FormField
-                            key="limitValue"
-                            name="limitValue"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className={(variant != "limit" && variant != "stop_limit")? "text-muted-foreground" : ""}>Limit</FormLabel>
-                                    <FormControl>
-                                        <MoneyInput currency={"RSD"} disabled={variant != "limit" && variant != "stop_limit"} fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        {(variant === "limit" || variant === "stop_limit") &&
+                            <FormField
+                                key="limitValue"
+                                name="limitValue"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Limit</FormLabel>
+                                        <FormControl>
+                                            <MoneyInput currency={"RSD"}  fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        }
 
 
 
-                        <FormField
-                            key="stopValue"
-                            name="stopValue"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className={(variant != "stop" && variant != "stop_limit")? "text-muted-foreground" : ""}>Stop</FormLabel>
-                                    <FormControl>
-                                        <MoneyInput currency={"RSD"} disabled={variant != "stop" && variant != "stop_limit"} fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        {(variant === "stop" || variant === "stop_limit") &&
+                            <FormField
+                                key="stopValue"
+                                name="stopValue"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Stop</FormLabel>
+                                        <FormControl>
+                                            <MoneyInput currency={"RSD"} fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        }
 
 
-                        <div className="w-full flex flex-row gap-2 py-2">
+                        <div className="w-full flex md:flex-row sm:flex-col gap-2 py-2">
                             <FormField
                                 key="allOrNone"
                                 name="allOrNone"
                                 render={({ field: fieldProps }) => (
-                                    <FormItem className="flex flex-row items-end space-r-3  pl-0 w-full">
+                                    <FormItem className="flex md:flex-row sm:flex-col items-end space-r-3  pl-0 w-full">
                                         <FormControl>
                                             <Checkbox
                                                 checked={fieldProps.value}
