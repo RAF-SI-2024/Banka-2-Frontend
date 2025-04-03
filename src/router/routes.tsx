@@ -27,7 +27,7 @@ import NewPaymentPage from "@/pages/payments/NewPayment.tsx";
 import ExchangeRateListPage from "@/pages/payments/ExchangeRateList.tsx";
 import BankAccountListPage from "@/pages/bank-accounts-employee/BankAccountList.tsx";
 import ActuaryListPage from "@/pages/actuary/ActuaryListPage";
-import Security from "@/pages/securities/Security.tsx";
+import Trading from "@/pages/trading/Trading.tsx";
 import SecurityLayout from "@/layouts/SecurityLayout.tsx";
 import MyPortfolioPage from "@/pages/my-portfolio/MyPortfolioPage.tsx";
 import OrdersPage from "@/pages/orders-list/OrdersList.tsx";
@@ -83,7 +83,8 @@ export const AppRoutes = () => {
 
             <Route element={<SecurityLayout />}>
                 <Route element={<AllProtectedRoutes />}>
-                    <Route path="trading" element={<Security />} />
+                    <Route path="trading" element={<Trading />} />
+                    <Route path="/trading/:securityId" element={<Trading />} />
                 </Route>
             </Route>
 
