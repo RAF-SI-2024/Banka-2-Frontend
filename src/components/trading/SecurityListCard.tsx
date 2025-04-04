@@ -42,7 +42,7 @@ export default function SecurityListCard({className, ...props}: React.ComponentP
 
 
                 </CardHeader>
-                <CardContent className="py-0 px-4 pb-4 max-h-[680px] min-h-[680px] overflow-y-auto"  id="scrollableDiv">
+                <CardContent className="py-0 px-4 pb-4 max-h-[680px] min-h-[680px] overflow-y-scroll"  id="scrollableDiv">
                     <SecurityInfiniteList fetchFlag={fetchFlag} scrollableId={"scrollableDiv"} type={Number(activeTab)} />
                 </CardContent>
             </Tabs>
