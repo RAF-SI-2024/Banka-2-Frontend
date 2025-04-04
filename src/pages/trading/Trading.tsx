@@ -78,7 +78,7 @@ export default function Trading() {
                         {security.name ? security.name : "Security"} Overview
                     </h1>
 
-                    <div className="grid lg:grid-rows-2 auto-rows-min gap-4 lg:grid-cols-10 h-full lg:max-w-dvw min-h-fit lg:max-h-fit max-w-full">
+                    <div className="grid lg:grid-rows-2 auto-rows-fr gap-4 lg:grid-cols-10 h-full lg:max-w-dvw min-h-fit lg:max-h-fit max-w-full">
                         {/* Graph starts at row 1 and spans 3 rows */}
                         <div className="lg:row-start-1 lg:col-span-6 lg:col-start-3 lg:row-span-1 row-span-1 row-start-1 md:col-span-full" >
                             <SecurityGraph title={security.name} /> {/* TODO: swap with security short name or smth */}
