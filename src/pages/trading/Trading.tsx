@@ -11,6 +11,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {generateSecurities} from "@/mocks/trading/SecurityListMock.tsx";
 import {Security, SecurityType} from "@/types/security.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
+import Loader from "@/components/__common__/Loader.tsx";
 
 
 export default function Trading() {
@@ -55,8 +56,8 @@ export default function Trading() {
 
     if (isLoading) {
         return (
-            <div className="w-dvw, h-dvh items-center flex justify-center">
-                <span className="m-auto icon-[ph--circle-notch] size-16 text-foreground animate-spin" />
+            <div className="fixed inset-0 z-0 flex items-center justify-center bg-black/20 backdrop-blur-sm transition-all duration-1000 ease-in-out">
+                <Loader />
             </div>
         )
     }
