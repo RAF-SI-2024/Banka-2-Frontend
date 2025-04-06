@@ -1,0 +1,52 @@
+# Node modules
+node_modules
+.pnpm-store
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build output
+dist
+dist-ssr
+build
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Version control
+.git
+.gitignore
+.github
+OWNERS
+.gitkeep
+
+# Editor directories and files
+.vscode
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Test files
+coverage
+cypress/videos/
+cypress/screenshots/
+
+# Cache folders
+.eslintcache
+.stylelintcache
+.temp
+.tmp
+.cache
+
