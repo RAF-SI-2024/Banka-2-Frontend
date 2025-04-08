@@ -2,7 +2,6 @@ import {Toaster} from "@/components/ui/sonner.tsx";
 import React, {Suspense, useState} from "react";
 import SecurityListCard from "@/components/trading/SecurityListCard.tsx";
 import SecurityDetailsCard from "@/components/trading/SecurityDetails.tsx";
-import SecurityGraph from "@/components/trading/SecurityGraph.tsx";
 import SecurityTradingTable from "@/components/trading/SecurityTradingTable.tsx";
 import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerTitle} from "@/components/ui/drawer";
 import {Button} from "@/components/ui/button.tsx";
@@ -15,6 +14,7 @@ import Loader from "@/components/__common__/Loader.tsx";
 import {useQuery} from "react-query";
 import {ErrorBoundary} from "react-error-boundary";
 import ErrorFallback from "@/components/__common__/error/ErrorFallback.tsx";
+import TradingViewChart from "@/components/trading/TradingViewChart.tsx";
 
 
 export default function Trading() {
@@ -79,9 +79,7 @@ function TradingInfo(){
 
             <div className="grid lg:grid-rows-2 auto-rows-fr gap-4 lg:grid-cols-10 h-full lg:max-w-dvw min-h-fit lg:max-h-fit max-w-full">
                 {/* Graph starts at row 1 and spans 3 rows */}
-                <div className="lg:row-start-1 lg:col-span-6 lg:col-start-3 lg:row-span-1 row-span-1 row-start-1 md:col-span-full" >
-                    <SecurityGraph title={data.name} /> {/* TODO: swap with security short name or smth */}
-                </div>
+                <TradingViewChart title={data.name} className="lg:row-start-1 lg:col-span-6 lg:col-start-3 lg:row-span-1 row-span-1 row-start-1 md:col-span-full"/> {/* TODO: swap with security short name or smth */}
 
                 {/* Details start at row 4 to avoid overlap */}
                 <SecurityDetailsCard className="lg:row-start-2  lg:col-span-6 row-start-2 row-span-1 col-span-full" />
