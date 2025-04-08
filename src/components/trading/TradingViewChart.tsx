@@ -22,6 +22,7 @@ import {
     Datafeed,
     generateRealtimeData, getNextRealtimeUpdate,
 } from "@/mocks/trading/GraphMock.tsx";
+import { Button } from '../ui/button';
 
 
 interface TradingChartProps {
@@ -191,6 +192,19 @@ export default function TradingViewChart({ title, className }: TradingChartProps
 
 
         }, 250);
+
+        // function formatDate(date: Date): string {
+        //     return date.toISOString().slice(0, 10);
+        // }
+        //
+        // const today = new Date();
+        // const oneYearAgo = new Date();
+        // oneYearAgo.setFullYear(today.getFullYear() - 1);
+        //
+        // chart.timeScale().setVisibleRange({
+        //     from: formatDate(oneYearAgo),
+        //     to: formatDate(today),
+        // });
 
 
 
