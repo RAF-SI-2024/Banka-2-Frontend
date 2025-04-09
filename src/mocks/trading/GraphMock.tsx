@@ -86,7 +86,7 @@ export class Datafeed {
     private _data: Data[];
 
     constructor() {
-        this._earliestDate = new Date(Date.UTC(2018, 0, 1, 12, 0, 0, 0));
+        this._earliestDate = new Date();
         this._data = [];
     }
 
