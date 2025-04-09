@@ -5,13 +5,13 @@ import { ExchangeTableDataResponse} from "@/types/exchange.ts";
 export const getAllExchanges = async (
     page: number,
     size: number,
-    filters: { search?: string; country?: string;}
+    filters?: { search?: string; country?: string;}
 ): Promise<ExchangeTableDataResponse> => {
     try {
         const response = await api.get("/exchanges", {
             params: {
-                search: filters.search || undefined,
-                country: filters.country || undefined,
+                search: filters?.search || undefined,
+                country: filters?.country || undefined,
                 page,
                 size,
             },

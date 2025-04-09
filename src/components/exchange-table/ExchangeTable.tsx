@@ -16,13 +16,10 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import { generateExchangesColumns } from "./ExchangesListColumnsDef";
-import { ExchangeTableData, ExchangeTableDataResponse } from "@/types/exchange";
+import { ExchangeTableData } from "@/types/exchange";
 import { mokDataExchanges, mokCountries } from "../../mocks/mokdatasExchange";
-import { getAllExchangeCountries, getAllExchanges } from "@/api/exchange";
-import WorkingHoursConfirmationDialog from "../__common__/ConfirmationDialog";
 import ConfirmationDialog from "../__common__/ConfirmationDialog";
 import { disable, disableDescription, enable, enableDescription } from "./ConfirmationText";
-import { h } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
 
 
 export default function ExchangeTable() {
