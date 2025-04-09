@@ -3,7 +3,7 @@ import { setAuthToken } from "../api/axios";
 import { User } from "@/types/user";
 import { setGlobalLogout } from "@/types/auth";
 
-interface AuthContextType {
+export interface AuthContextType {
     user: User | null;
     token: string | null;
     login: (token: string, user: User) => void;

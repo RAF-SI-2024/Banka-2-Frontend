@@ -7,7 +7,10 @@
     "fileServerFolder": "."
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode development",
+    "prod": "vite --mode production",
+    "build-prod": "tsc -b && vite build --mode production",
+    "build-dev": "tsc -b && vite build --mode development",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -38,6 +41,7 @@
     "cmdk": "^1.0.4",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
+    "env-cmd": "^10.1.0",
     "framer-motion": "^12.4.10",
     "input-otp": "^1.4.2",
     "jwt-decode": "^4.0.0",

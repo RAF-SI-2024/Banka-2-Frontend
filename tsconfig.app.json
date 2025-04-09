@@ -7,6 +7,9 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
+    "composite": true,
+    "emitDeclarationOnly": true,
+
     //SHADCN UI
     "baseUrl": ".",
     "paths": {
@@ -17,7 +20,7 @@
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": true,
+    "noEmit": false,
     "jsx": "react-jsx",
 
     /* Linting */
