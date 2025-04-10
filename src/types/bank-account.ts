@@ -6,7 +6,7 @@ export interface BankAccount {
     id: string;
     name: string,
     client: Client;
-    accountNumber: number;
+    accountNumber: number | string;
     balance: number;
     availableBalance: number;
     employee: Employee;

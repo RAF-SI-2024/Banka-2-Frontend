@@ -23,6 +23,6 @@ export const paymentSchema = z.object({
 
     paymentCode: z.string().optional(),
     purpose: z.string().min(1, "Payment purpose is required.").max(1024, "Purpose must be less than 1024 characters."),
-    accountId: z.string().min(1, "Payer account is required."),
+    accountNumber: z.string().min(1, "Payer account is required."),
     otp: z.string().length(6, "OTP is required."),
 });
