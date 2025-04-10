@@ -92,6 +92,10 @@ export default function NewPaymentForm() {
                     }
                 }
 
+                if(location.state.templateAccount){
+                    form.setValue("recipientAccount", location.state.templateAccount)
+                }
+
 
             } catch (err) {
                 showErrorToast({error: err, defaultMessage: "Failed to fetch data."})

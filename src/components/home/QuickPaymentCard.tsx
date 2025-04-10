@@ -14,6 +14,7 @@ import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
+import {useNavigate} from "react-router-dom";
 
 const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) => {
     const [templates, setTemplates] = useState<Template[]>([]);
@@ -22,6 +23,8 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
     const [templateToDelete, setTemplateToDelete] = useState<string | null>(null);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false); // State za edit dijalog
     const [templateToEdit, setTemplateToEdit] = useState<Template | null>(null); // Šablon koji se edituje
+
+    const navigate = useNavigate();
 
 
     const templateSchema = z.object({
@@ -143,7 +146,7 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
                             <TableRow key={template.id} className="bg-background font-medium border-border text-foreground">
                                 <TableCell className="p-0 rounded-2xl">
                                     <span className="size-full font-paragraph text-base py-4 font-semibold rounded-none flex justify-between items-center px-4 bg-negative text-foreground cursor-pointer">
-                                        {template.name}
+                                        <span className="w-full" onClick={() => navigate("/payments/new", {state: {templateAccount: template.accountNumber}})}> {template.name} </span>
                                         <TemplateDropdownMenu
                                             onEdit={() => handleEdit(template.id)}
                                             onDelete={() => handleDelete(template.id)}
