@@ -11,13 +11,13 @@ interface BalanceCardProps extends React.ComponentProps<"div">{
     cardPageVersion?: boolean,
     account: BankAccount,
     income?: number,
-    expensses?: number,
+    expenses?: number,
     onSendClick?: () => void,
     onDetailsClick?: () => void,
 }
 
 
-const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expensses=0, onSendClick, onDetailsClick, className, ...props }: BalanceCardProps) => {
+const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expenses=0, onSendClick, onDetailsClick, className, ...props }: BalanceCardProps) => {
     return (
         <Card
             className={cn(
@@ -54,7 +54,7 @@ const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expe
                                 <span className="icon-[ph--arrow-down-fill] w-4 h-4 text-destructive" />
                             </Button>
                             <div className="ml-3">
-                                <p className="font-semibold">{formatCurrency(expensses, account.currency.code)}</p>
+                                <p className="font-semibold">{formatCurrency(expenses, account.currency.code)}</p>
                                 <p className="text-sm text-secondary-foreground">Expenses</p>
                             </div>
                         </div>
