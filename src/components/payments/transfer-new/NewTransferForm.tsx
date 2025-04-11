@@ -85,7 +85,7 @@ export default function NewTransferForm() {
             }
 
             const transactionData = {
-                fromAccountId: values.fromAccountId,
+                fromAccountNumber: values.fromAccountNumber,
                 fromCurrencyId: fromBankAccount.currency.id,
                 toAccountNumber: values.toAccountNumber,
                 toCurrencyId: toBankAccount.currency.id,
@@ -114,8 +114,8 @@ export default function NewTransferForm() {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-8">
                         <div className="flex flex-col gap-8 md:flex-row md:gap-4 items-baseline">
                             <FormField
-                                key="fromAccountId"
-                                name="fromAccountId"
+                                key="fromAccountNumber"
+                                name="fromAccountNumber"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
                                         <FormLabel>Transfer from</FormLabel>
@@ -125,7 +125,7 @@ export default function NewTransferForm() {
                                                         const account = bankAccounts.find(acc => acc.id === value) || null;
                                                         setFromBankAccount(account);
 
-                                                        field.onChange(value);
+                                                        field.onChange(account?.accountNumber);
                                                         if (account && account?.availableBalance < amount)
                                                             setAmountError("Amount exceeds available balance.");
                                                         else

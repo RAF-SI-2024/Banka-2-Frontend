@@ -46,7 +46,7 @@ export default function NewPaymentForm() {
         defaultValues: {
             paymentCode: "289",
             recipientAccount: "",
-            accountId: "",
+            accountNumber: "",
             purpose: "",
             referenceNumber: "",
             amount: 0,
@@ -88,7 +88,7 @@ export default function NewPaymentForm() {
 
                     if (defaultBankAccount) {
                         setSelectedBankAccount(defaultBankAccount);
-                        form.setValue("accountId", defaultBankAccount.id, { shouldValidate: true });
+                        form.setValue("accountNumber", defaultBankAccount.accountNumber, { shouldValidate: true });
                     }
                 }
 
@@ -117,7 +117,7 @@ export default function NewPaymentForm() {
 
 
             const payload: CreateTransactionRequest = {
-                fromAccountId: values.accountId,
+                fromAccountNumber: values.accountNumber,
                 fromCurrencyId: selectedBankAccount.currency.id,
                 toAccountNumber: values.recipientAccount,
                 toCurrencyId: toCurrencyId,
@@ -148,7 +148,7 @@ export default function NewPaymentForm() {
             "amount",
             "referenceNumber",
             "purpose",
-            "accountId",
+            "accountNumber",
             "paymentCode"
         ])
 
@@ -168,8 +168,8 @@ export default function NewPaymentForm() {
 
                         <div className="flex flex-col gap-8 md:flex-row md:gap-4 items-baseline">
                             <FormField
-                                key="accountId"
-                                name="accountId"
+                                key="accountNumber"
+                                name="accountNumber"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
                                         <FormLabel>Your bank account</FormLabel>
@@ -179,7 +179,7 @@ export default function NewPaymentForm() {
                                                         const account = bankAccounts.find(acc => acc.id === value) || null;
                                                         setSelectedBankAccount(account);
 
-                                                        field.onChange(value);
+                                                        field.onChange(account?.accountNumber);
                                                         if (account && account?.availableBalance < amount)
                                                             setAmountError("Amount exceeds available balance.");
                                                         else
