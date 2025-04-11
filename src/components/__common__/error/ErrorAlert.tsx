@@ -3,8 +3,8 @@ import {
     Alert,
     AlertDescription,
     AlertTitle,
-} from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/alert.tsx";
+import { Button } from "@/components/ui/button.tsx";
 
 interface ErrorAlertProps {
     title?: string;

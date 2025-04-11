@@ -13,16 +13,16 @@ export default function TaxCard({amount }: {amount: PortfolioTaxData}) {
                     "border-0 p-6 w-full flex flex-col lg:flex-row lg:items-center justify-between shadow-lg"
                 )}
             >
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-2 h-full justify-center">
 
-                    <h6 className="text-4xl font-bold">
+                    <h6 className="text-4xl font-heading font-medium ">
                         {formatCurrency(amount.currentYear, amount.currency.code)}
                     </h6>
-                    <p className="text-sm opacity-80">Paid Tax (Year)</p>
-                    <h6 className="text-4xl font-bold">
+                    <p className="text-sm font-paragraph text-muted-foreground">Paid Tax (Year)</p>
+                    <h6 className="text-4xl font-heading font-medium ">
                         {formatCurrency(amount.leftToPay, amount.currency.code)}
                     </h6>
-                    <p className="text-sm opacity-80">Amount of tax left to be paid</p>
+                    <p className="text-sm font-paragraph text-muted-foreground">Total amount to be paid</p>
                 </div>
             </Card>
         </>

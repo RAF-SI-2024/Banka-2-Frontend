@@ -35,7 +35,7 @@ export interface TransactionResponse {
 }
 
 export interface CreateTransactionRequest {
-    fromAccountId: string;
+    fromAccountNumber: string;
     fromCurrencyId: string;
     toAccountNumber: string;
     toCurrencyId: string;
@@ -79,6 +79,7 @@ export enum TransactionStatus
     Invalid = 0,
     Pending = 1,
     Canceled = 2,
-    Completed = 3,
-    Failed = 4
+    Affirm = 3,
+    Completed = 4,
+    Failed = 5
 }

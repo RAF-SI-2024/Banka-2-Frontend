@@ -7,17 +7,17 @@ import React from "react";
 
 
 
-export default function PortfolioTableCard() {
+export default function PortfolioTableCard({className} : React.ComponentProps<"div">) {
 
     return (
-        <Card className={cn("border-0 content-center")}>
+        <Card className={cn("border-0 content-center", className)}>
             <CardHeader className="pb-2">
                 <CardTitle className="font-heading text-2xl"> My assets </CardTitle>
             </CardHeader>
             <CardContent>
-                <Card className="rounded-md font-paragraph" >
+
                     <PortfolioTable></PortfolioTable>
-                </Card>
+
             </CardContent>
         </Card>
     )

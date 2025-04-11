@@ -17,6 +17,8 @@ export default function SecurityInfiniteList({ type, scrollableId, fetchFlag, it
     const [hasMore, setHasMore] = useState(true);
     const [securities, setSecurities] = useState<Security[]>([]);
 
+    const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
     // Reset when dependencies change
     useEffect(() => {
         setPage(0);
@@ -46,14 +48,16 @@ export default function SecurityInfiniteList({ type, scrollableId, fetchFlag, it
 
     return (
         <InfiniteScroll
+            className="overflow-y-hidden"
             dataLength={securities.length}
             next={next}
             hasMore={hasMore}
             loader={
-                <div className="mx-auto w-full text-center">
+                <div className="mx-auto w-full text-center size-16 mt-4">
                     <span className="icon-[ph--circle-notch] size-8 text-foreground animate-spin" />
                 </div>
             }
+
             endMessage={
                 <p className="text-center font-paragraph text-sm text-muted-foreground pt-2">
                     Yay! You have seen it all
