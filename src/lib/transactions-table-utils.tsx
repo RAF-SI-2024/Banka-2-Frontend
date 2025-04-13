@@ -95,7 +95,6 @@ export const fetchTransactionTableRows = async (
             transactionsData = await getAccountTransactions(bankAccountId, pageNumber, pageSize, fromDate, toDate, status);
         }
 
-        console.log("TRANSACTIONS DATA", transactionsData);
 
         if (setTotalPages)
             setTotalPages(transactionsData.totalPages);
@@ -116,31 +115,14 @@ export const fetchTransactionTableRows = async (
             const fromAccount =  item.fromAccount ;
             const toAccount = item.toAccount ;
 
-            // if(fromAccount){
-            //     fromAccount.accountNumber = "222" + fromAccount.accountNumber + "11"
-            // }
-            // if(toAccount){
-            //     toAccount.accountNumber = "333" + toAccount.accountNumber + "33"
-            // }
-            console.log("Checking Transaction:", {
-                fromAccount: fromAccount?.accountNumber,
-                toAccount: toAccount?.accountNumber,
-                clientAccounts: clientAccountNumbers
-            });
-
-
             let currencyCode = "RSD";
             // DEPOSIT
             if(fromAccount == null && toAccount != null && clientAccountNumbers.includes(toAccount.accountNumber)){
-                console.log("DEPOSIT");
-                console.log("FROM ACCOUNT", fromAccount);
-                console.log("TO ACCOUNT", toAccount);
-                currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount.accountNumber}).then(acc => acc.data.items.currency.code)
                 tableRows.push({
                     fromAccountNumber: null,
                     toAccountNumber: toAccount.accountNumber,
                     amount: item.toAmount,
-                    currencyCode: currencyCode,
+                    currencyCode: item.fromCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Deposit,
                     status: item.status,
@@ -151,15 +133,11 @@ export const fetchTransactionTableRows = async (
                 continue;
             // WITHDRAW
             else if(clientAccountNumbers.includes(fromAccount.accountNumber) && toAccount === null){
-                console.log("WITHDRAW");
-                console.log("FROM ACCOUNT", fromAccount);
-                console.log("TO ACCOUNT", toAccount);
-                currencyCode = await getAccountById(fromAccount.id).then(acc => acc.data.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
                     toAccountNumber: null,
                     amount: -item.fromAmount,
-                    currencyCode: currencyCode,
+                    currencyCode: item.fromCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Withdraw,
                     status: item.status,
@@ -171,15 +149,11 @@ export const fetchTransactionTableRows = async (
             }
             // PAYMENT TO SOMEONE'S ACCOUNT
             else if(clientAccountNumbers.includes(fromAccount.accountNumber) && !clientAccountNumbers.includes(toAccount.accountNumber)){
-                console.log("Payments TO someone's account");
-                console.log("FROM ACCOUNT", fromAccount);
-                console.log("TO ACCOUNT", toAccount);
-                currencyCode = await getAccountById(fromAccount.id).then(acc => acc.data.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
                     toAccountNumber: toAccount.accountNumber,
                     amount: -item.fromAmount,
-                    currencyCode: currencyCode,
+                    currencyCode: item.fromCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Transaction,
                     status: item.status,
@@ -188,15 +162,11 @@ export const fetchTransactionTableRows = async (
             }
             // PAYMENT FROM SOMEONE
             else if(!(clientAccountNumbers.includes(fromAccount.accountNumber)) && clientAccountNumbers.includes(toAccount.accountNumber)){
-                console.log("Payments FROM someone's account");
-                console.log("FROM ACCOUNT", fromAccount);
-                console.log("TO ACCOUNT", toAccount);
-                currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount.accountNumber}).then(acc => acc.data.items.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
                     toAccountNumber: toAccount.accountNumber,
                     amount: item.toAmount,
-                    currencyCode: currencyCode,
+                    currencyCode: item.fromCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Transaction,
                     status: item.status,
@@ -205,24 +175,34 @@ export const fetchTransactionTableRows = async (
             }
             // EXCHANGE
             else if(clientAccountNumbers.includes(fromAccount.accountNumber) && fromAccount.accountNumber == toAccount.accountNumber){
-                console.log("EXCHANGE");
-                console.log("FROM ACCOUNT", fromAccount);
-                console.log("TO ACCOUNT", toAccount);
-                currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount.accountNumber}).then(acc => acc.data.items.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
                     toAccountNumber: toAccount.accountNumber,
                     amount: item.fromAmount,
-                    currencyCode: currencyCode,
+                    currencyCode: item.fromCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Exchange,
                     status: item.status,
                     purpose: item.purpose
                 })
             }
+            // TRANSFER
+            // FIXME: Ovde moze jedan account da ima vise currency i onda kad se radi provera za currency code,
+            //  vraca samo prvi currency a moguce je da je uradjena transakcija sa drugim currency
+            else if(clientAccountNumbers.includes(toAccount.accountNumber) && clientAccountNumbers.includes(fromAccount.accountNumber)){
+                tableRows.push({
+                    fromAccountNumber: fromAccount.accountNumber,
+                    toAccountNumber: toAccount.accountNumber,
+                    amount: item.fromAccount?.id === bankAccountId ? -item.fromAmount : item.toAmount,
+                    currencyCode: item.fromAccount?.id === bankAccountId ? item.fromCurrency.code : item.toCurrency.code,
+                    date: new Date(item.createdAt),
+                    type: TransactionType.Transfer,
+                    status: item.status,
+                    purpose: item.purpose
+                })
+            }
 
         }
-        console.log("Table rows", tableRows);
         setTableData([...tableRows]);
     } catch (error) {
         if(setError)
