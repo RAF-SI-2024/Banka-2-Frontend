@@ -40,9 +40,10 @@ export function generateTransactionColumns(): ColumnDef<TransactionTableRow>[] {
             header: "Amount",
             enableHiding: true,
             cell: ({ row }) => {
-                return (<div className={`font-semibold px-2 py-5 ${row.original.amount > 0 ? (row.original.type != TransactionType.Exchange ? "text-success" : ""): "text-destructive"}`}>
-                    {row.original.amount > 0 && row.original.type != TransactionType.Exchange ? "+" : ""}
-                    {formatCurrency(row.original.amount, row.original.currencyCode)}</div>)
+                return (<div className={`font-semibold px-2 py-5 ${row.original.sign === "+" ? "text-success" : (row.original.sign === "-" ? "text-destructive" : "text-foreground")}`}>
+                    {row.original.sign}
+                    {formatCurrency(row.original.amount, row.original.currencyCode)}
+                </div>)
             }
         },
         {

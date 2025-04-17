@@ -61,8 +61,8 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                                 <TableCell className="px-2  py-5">
                                     {new Date(item.date).toLocaleDateString('sr-RS')} ({new Date(item.date).toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' })})
                                 </TableCell>
-                                <TableCell className={`font-semibold px-2 py-5 ${item.amount > 0 ? (item.type != TransactionType.Exchange ? "text-success" : ""): "text-destructive"}`}>
-                                    {item.amount > 0 && item.type != TransactionType.Exchange ? "+" : ""}
+                                <TableCell className={`font-semibold px-2 py-5 ${item.sign === "+" ? "text-success" : (item.sign === "-" ? "text-destructive" : "text-foreground")}`}>
+                                    {item.sign}
                                     {formatCurrency(item.amount, item.currencyCode)}
                                 </TableCell>
                                 <TableCell className="px-2  py-5">

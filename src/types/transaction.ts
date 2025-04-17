@@ -54,6 +54,7 @@ export interface TransactionTableRow {
     type: TransactionType,
     status: TransactionStatus,
     purpose?: string,
+    sign: string,
 }
 
 export interface TransactionCode {
