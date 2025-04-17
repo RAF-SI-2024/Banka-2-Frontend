@@ -94,7 +94,7 @@ export const getLoanById = async(loanId: string): Promise<Loan> => {
 export const getLoanInstallments = async(loanId: string, page: number, size: number)
     : Promise<InstallmentResponsePage> => {
     try {
-        const response = await api.get("/installments", {
+        const response = await api.get(`/loans/${loanId}/installments`, {
             params: {
                 loanId: loanId,
                 page: page,
@@ -115,7 +115,7 @@ export const getLoansByClientId = async (
     clientId: string
 ): Promise<LoanResponse> => {
     try {
-        const response = await api.get(`/loans/clients/${clientId}`, {
+        const response = await api.get(`/clients/${clientId}/loans`, {
             params: {
                 page,
                 size,

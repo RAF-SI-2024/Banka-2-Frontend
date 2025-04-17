@@ -112,7 +112,8 @@ export const fetchTransactionTableRows = async (
             - Neko uplacuje tebi na racun => fromAccount -> someonesAccount (mora biti neki drugi) & toAccount (mora biti tvoj) -
             ovo isto moze biti i za prenos sa svog jednog na svoj drugi racun
             - Menjacnica => fromAccount -> yourAccount (mora biti tvoj) & toAccount -> yourAccount (mora biti tvoj) -
-            account-i moraju biti isti, jer je ovo cista menjacnica i nista vise, dok za one prethodne isto moze da se vrse uplate/isplate ali usput i da se izvrsi menjacnica*/
+            account-i moraju biti isti, jer je ovo cista menjacnica i nista vise, dok za one prethodne isto moze da se vrse uplate/isplate ali usput i da se izvrsi menjacnica
+            */
             const fromAccount =  item.fromAccount ;
             const toAccount = item.toAccount ;
 
@@ -132,9 +133,9 @@ export const fetchTransactionTableRows = async (
             let currencyCode = "RSD";
             // DEPOSIT
             if(fromAccount == null && toAccount != null && clientAccountNumbers.includes(toAccount.accountNumber)){
-                console.log("DEPOSIT");
-                console.log("FROM ACCOUNT", fromAccount);
-                console.log("TO ACCOUNT", toAccount);
+                // console.log("DEPOSIT");
+                // console.log("FROM ACCOUNT", fromAccount);
+                // console.log("TO ACCOUNT", toAccount);
                 currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount.accountNumber}).then(acc => acc.data.items.currency.code)
                 tableRows.push({
                     fromAccountNumber: null,
@@ -151,9 +152,9 @@ export const fetchTransactionTableRows = async (
                 continue;
             // WITHDRAW
             else if(clientAccountNumbers.includes(fromAccount.accountNumber) && toAccount === null){
-                console.log("WITHDRAW");
-                console.log("FROM ACCOUNT", fromAccount);
-                console.log("TO ACCOUNT", toAccount);
+                // console.log("WITHDRAW");
+                // console.log("FROM ACCOUNT", fromAccount);
+                // console.log("TO ACCOUNT", toAccount);
                 currencyCode = await getAccountById(fromAccount.id).then(acc => acc.data.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
@@ -171,9 +172,9 @@ export const fetchTransactionTableRows = async (
             }
             // PAYMENT TO SOMEONE'S ACCOUNT
             else if(clientAccountNumbers.includes(fromAccount.accountNumber) && !clientAccountNumbers.includes(toAccount.accountNumber)){
-                console.log("Payments TO someone's account");
-                console.log("FROM ACCOUNT", fromAccount);
-                console.log("TO ACCOUNT", toAccount);
+                // console.log("Payments TO someone's account");
+                // console.log("FROM ACCOUNT", fromAccount);
+                // console.log("TO ACCOUNT", toAccount);
                 currencyCode = await getAccountById(fromAccount.id).then(acc => acc.data.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
@@ -188,9 +189,9 @@ export const fetchTransactionTableRows = async (
             }
             // PAYMENT FROM SOMEONE
             else if(!(clientAccountNumbers.includes(fromAccount.accountNumber)) && clientAccountNumbers.includes(toAccount.accountNumber)){
-                console.log("Payments FROM someone's account");
-                console.log("FROM ACCOUNT", fromAccount);
-                console.log("TO ACCOUNT", toAccount);
+                // console.log("Payments FROM someone's account");
+                // console.log("FROM ACCOUNT", fromAccount);
+                // console.log("TO ACCOUNT", toAccount);
                 currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount.accountNumber}).then(acc => acc.data.items.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
@@ -205,9 +206,9 @@ export const fetchTransactionTableRows = async (
             }
             // EXCHANGE
             else if(clientAccountNumbers.includes(fromAccount.accountNumber) && fromAccount.accountNumber == toAccount.accountNumber){
-                console.log("EXCHANGE");
-                console.log("FROM ACCOUNT", fromAccount);
-                console.log("TO ACCOUNT", toAccount);
+                // console.log("EXCHANGE");
+                // console.log("FROM ACCOUNT", fromAccount);
+                // console.log("TO ACCOUNT", toAccount);
                 currencyCode = await getAllAccountClientWithFilters(clientId, 1, 1 , {accountNumber: toAccount.accountNumber}).then(acc => acc.data.items.currency.code)
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,

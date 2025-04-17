@@ -12,9 +12,9 @@ export const getCardById = async (id:string) => {
     }
 }
 
-export const changeCardStatusClient = async (id: string, status: boolean) => {
+export const changeCardStatusClient = async (cardId: string, status: boolean) => {
     try {
-        const response = await api.put(`${API_BASE}/cards/${id}/client/status`, {
+        const response = await api.put(`${API_BASE}/cards/${cardId}/status`, {
             status: status
         });
         return response;
@@ -26,7 +26,7 @@ export const changeCardStatusClient = async (id: string, status: boolean) => {
 
 export const changeCardStatusEmployee = async (id: string, status: boolean) => {
     try {
-        const response = await api.put(`${API_BASE}/cards/${id}/employee`, {
+        const response = await api.put(`${API_BASE}/cards/${id}/status`, {
             status: status
         });
         return response;
@@ -50,10 +50,20 @@ export const createCard = async (data: CardCreateRequest) => {
 
 export const getAllCardsForClient = async (clientId: string) => {
     try {
-        const response = await api.get(`${API_BASE}/clients/${clientId}/cards`);
+        const response = await api.get(`${API_BASE}/cards`);
         return response;
     } catch (error) {
         console.error("❌ Failed to get cards for client:", error);
+        throw error;
+    }
+}
+
+export const editCardLimit = async (cardId: string) => {
+    try {
+        const response = await api.put(`/cards/${cardId}/limit`);
+        return response;
+    } catch (error) {
+        console.error("❌ Failed to edit limit for the client:", error);
         throw error;
     }
 }
