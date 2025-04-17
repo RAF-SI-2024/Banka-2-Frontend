@@ -97,11 +97,9 @@ export default function BankAccountPage() {
             <Toaster richColors />
             <h1 className="font-display font-bold text-5xl">{account.name || "An unnamed account"} overview</h1>
             <div className="grid auto-rows-min gap-0 md:grid-cols-2">
-
                 <AnimatePresence mode="wait">
                     {showDetails ? (
                         <motion.div
-
                             key="details"
                             layout
                             initial={{ opacity: 0, x: 100 }}
@@ -136,12 +134,12 @@ export default function BankAccountPage() {
                                 onDetailsClick={() => setShowDetails(true)}
                             />
 
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                <BankAccountCardsCard account={account} cards={cards} className="md:ml-2"/>
-                <BankAccountTransactions className="md:col-span-2 mt-4 sm:col-span-1" account={account} cardTitle="Recent transactions"/>
+                <BankAccountCardsCard account={account} cards={cards} />
+                <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={account} cardTitle="Recent transactions"/>
             </div>
         </main>
     )

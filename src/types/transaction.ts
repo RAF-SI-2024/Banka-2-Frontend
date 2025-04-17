@@ -5,8 +5,8 @@ export interface Transaction {
     id: string,
     fromAccount: BankAccountSimple | null,
     toAccount: BankAccountSimple | null,
-    currencyFrom: Currency,
-    currencyTo: Currency,
+    fromCurrency: Currency,
+    toCurrency: Currency,
     fromAmount: number,
     toAmount: number,
     code: TransactionCode,
@@ -71,7 +71,8 @@ export enum TransactionType {
     Withdraw = "Withdraw",
     Deposit = "Deposit",
     Transaction = "Transaction",
-    Exchange = "Exchange"
+    Exchange = "Exchange",
+    Transfer = "Transfer",
 }
 
 export enum TransactionStatus

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -67,10 +67,17 @@ const CardDetails = ({ card, onBackClick }: Props) => {
 
           <div className="flex justify-center">
             {!isBlocked ? (
-                <Button variant="destructive" onClick={() => onBlockClick(card.id)}>
-                  <span className="icon-[ph--x-circle] text-lg"></span>
-                  Block card
-                </Button>
+                <div className="flex-row flex justify-between w-full">
+                  <Button variant="destructive" onClick={() => onBlockClick(card.id)}>
+                    <span className="icon-[ph--x-circle] text-lg"></span>
+                    Block card
+                  </Button>
+
+                  <Button variant="outline" className="">
+                    Adjust limits
+                    <span className="icon-[ph--gear] text-base"></span>
+                  </Button>
+                </div>
             ) : (
                 <Alert
                     variant="destructive"
@@ -89,6 +96,7 @@ const CardDetails = ({ card, onBackClick }: Props) => {
                 </Alert>
             )}
           </div>
+
         </CardContent>
       </Card>
   );
