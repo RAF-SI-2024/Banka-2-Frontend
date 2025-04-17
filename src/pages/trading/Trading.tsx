@@ -37,7 +37,7 @@ export default function Trading() {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 1}}
-                                className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm"
+                                className="fixed inset-0 z-50 flex items-center justify-center bg-shadow/50 "
                             >
                                 <Loader />
                             </motion.div>
@@ -159,11 +159,10 @@ function TradingInfoSkeleton(){
 
                 <Card className="border-0 lg:row-start-2  lg:col-span-6 row-start-2 row-span-1 col-span-full" />
 
-                <Card className="border-0 h-[680px] lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-2 row-start-3 col-span-full" />
+                <Card className="border-0 h-full lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-2 row-start-3 col-span-full" />
 
                 {isDesktop ? (
-
-                <Card className="border-0 lg:col-start-9 lg:col-span-2 lg:row-start-1 lg:row-span-2 col-span-full" />
+                    <Card className="border-0 lg:col-start-9 lg:col-span-2 lg:row-start-1 lg:row-span-2 col-span-full" />
                 ): (
                     <></>
                 )}
