@@ -77,8 +77,8 @@ export const getAccountTransactions = async (
                     Page: pageNumber,
                     Size: pageSize,
                     Type: transactionType,
-                    FromDate: fromDate,
-                    ToDate: toDate,
+                    FromDate: fromDate?.toDateString(),
+                    ToDate: toDate?.toDateString(),
                     Status: status,
                 },
             }

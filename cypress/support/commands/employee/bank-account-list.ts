@@ -1,4 +1,5 @@
-import {Gender} from "@/types/enums";
+import {Gender} from "@/types/user";
+
 
 Cypress.Commands.add("clientRegistration", ({firstName = "Klijent",
                                                 lastName = "Klijentic",

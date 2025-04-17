@@ -186,8 +186,8 @@ export const fetchTransactionTableRows = async (
                     purpose: item.purpose
                 })
             }
-            // TRANSFER
-            // FIXME: Ovde moze jedan account da ima vise currency i onda kad se radi provera za currency code,
+                // TRANSFER
+                // FIXME: Ovde moze jedan account da ima vise currency i onda kad se radi provera za currency code,
             //  vraca samo prvi currency a moguce je da je uradjena transakcija sa drugim currency
             else if(clientAccountNumbers.includes(toAccount.accountNumber) && clientAccountNumbers.includes(fromAccount.accountNumber)){
                 tableRows.push({

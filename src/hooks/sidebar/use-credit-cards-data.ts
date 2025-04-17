@@ -17,7 +17,7 @@ export function useCreditCardsData() {
 
                 const response = await getAllCardsForClient(clientId);
 
-                setCreditCards(response.data.map((card: CardDTO) => ({
+                setCreditCards(response.data.items.map((card: CardDTO) => ({
                     title: card.name || "Unnamed card",
                     url: `/card/${card.id}`
                 })));
