@@ -1,4 +1,4 @@
-import {Role} from "@/types/user.ts";
+import {Role} from "@/types/bank_user/user.ts";
 
 export interface Tax {
     id: string;

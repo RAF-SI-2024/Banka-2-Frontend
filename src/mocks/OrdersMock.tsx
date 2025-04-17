@@ -1,4 +1,4 @@
-import { Direction } from "@/types/order";
+import { Direction } from "@/types/exchange/order.ts";
 
 export const mockOrders = [
     {

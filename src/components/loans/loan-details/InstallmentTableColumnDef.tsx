@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {Badge} from "@/components/ui/badge.tsx";
-import {Installment, InstallmentStatus} from "@/types/installment.ts";
+import {Installment, InstallmentStatus} from "@/types/bank_user/installment.ts";
 
 // Utility function to format date and time
 const formatDate = (date: Date) => {

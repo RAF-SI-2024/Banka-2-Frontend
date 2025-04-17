@@ -15,10 +15,10 @@ import {
 } from "@tanstack/react-table";
 import {DataTablePagination} from "@/components/__common__/datatable/DataTablePagination";
 import {DataTableViewOptions} from "@/components/__common__/datatable/DataTableViewOptions";
-import {getAllLoans, getAllLoanTypes, updateLoanStatus} from "@/api/loan";
-import {Loan, LoanResponse, LoanStatus} from "@/types/loan";
+import {getAllLoans, getAllLoanTypes, updateLoanStatus} from "@/api/bank_user/loan.ts";
+import {Loan, LoanResponse, LoanStatus} from "@/types/bank_user/loan.ts";
 import {generateLoanColumns} from "./LoanListColumnDef";
-import {LoanType, LoanTypeResponse} from "@/types/loan-type.ts";
+import {LoanType, LoanTypeResponse} from "@/types/bank_user/loan-type.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 
 // Postoji filter po vrsti kredita i broju računa

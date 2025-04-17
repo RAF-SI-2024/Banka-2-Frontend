@@ -1,21 +1,22 @@
-import api from "@/api/axios.ts";
-import { ExchangeTableDataResponse} from "@/types/exchange.ts";
+import {api_bank_user, api_exchange} from "@/api/axios.ts";
+import { ExchangeTableDataResponse} from "@/types/exchange/exchange.ts";
 
 
 export const getAllExchanges = async (
     page: number,
     size: number,
-    filters?: { search?: string; country?: string;}
+    filters?: { name?: string; polity?: string;}
 ): Promise<ExchangeTableDataResponse> => {
     try {
-        const response = await api.get("/exchanges", {
+        const response = await api_exchange.get("/exchanges", {
             params: {
-                search: filters?.search || undefined,
-                country: filters?.country || undefined,
+                name: filters?.name || undefined,
+                polity: filters?.polity || undefined,
                 page,
                 size,
             },
         });
+        console.log("ALO BRE" + response.data);
         return response.data;
     }
     catch (error) {
@@ -26,7 +27,7 @@ export const getAllExchanges = async (
 
 export const getAllExchangeCountries = async (): Promise<string[]> => {
     try {
-        const response = await api.get("/exchange/countries");
+        const response = await api_bank_user.get("/exchange/countries");
         return response.data;
     }
     catch (error) {

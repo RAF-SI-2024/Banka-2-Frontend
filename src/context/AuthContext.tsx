@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
-import { setAuthToken } from "../api/axios";
-import { User } from "@/types/user";
-import { setGlobalLogout } from "@/types/auth";
+import { setAuthToken } from "../api/axios.ts";
+import { User } from "@/types/bank_user/user.ts";
+import { setGlobalLogout } from "@/types/bank_user/auth.ts";
 
 export interface AuthContextType {
     user: User | null;

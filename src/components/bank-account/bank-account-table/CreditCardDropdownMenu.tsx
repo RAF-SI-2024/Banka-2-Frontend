@@ -6,7 +6,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu.tsx";
-import { changeCardStatusEmployee } from "@/api/card.ts";
+import { changeCardStatusEmployee } from "@/api/bank_user/card.ts";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 
 export interface CreditCardDropdownMenuProps {

@@ -4,7 +4,7 @@ import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessag
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import MoneyInput from "@/components/__common__/input/MoneyInput.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
-import {BankAccount} from "@/types/bank-account.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
 
 interface LaonRequestFinancialInformationProps {
     bankAccounts: BankAccount[];

@@ -15,7 +15,7 @@ import * as React from "react";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {requestPasswordReset} from "@/api/auth.ts";
+import {requestPasswordReset} from "@/api/bank_user/auth.ts";
 import {useNavigate} from "react-router-dom";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 

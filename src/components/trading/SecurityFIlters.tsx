@@ -15,7 +15,7 @@ import {
     DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu.tsx";
 import {DropdownMenuTrigger} from "@radix-ui/react-dropdown-menu";
-import {SecurityType} from "@/types/security.ts";
+import {SecurityType} from "@/types/exchange/security.ts";
 
 interface SecurityFilterProps{
     type: SecurityType;

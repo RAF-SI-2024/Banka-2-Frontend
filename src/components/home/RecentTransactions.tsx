@@ -2,7 +2,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/compo
 import {cn} from "@/lib/utils.ts";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import React, {useEffect, useState} from "react";
-import { TransactionTableRow, TransactionType} from "@/types/transaction.ts";
+import { TransactionTableRow, TransactionType} from "@/types/bank_user/transaction.ts";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {fetchTransactionTableRows, getTransactionStatusBadge} from "@/lib/transactions-table-utils.tsx";
 

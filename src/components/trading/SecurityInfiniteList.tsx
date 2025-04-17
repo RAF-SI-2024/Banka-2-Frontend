@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from "react";
 import InfiniteScroll from "react-infinite-scroll-component"
-import {Security, SecurityType} from "@/types/security.ts";
+import {Security, SecurityType} from "@/types/exchange/security.ts";
 import SecurityListSingle from "@/components/trading/SecurityListSingle.tsx";
 import {generateSecurities} from "@/mocks/trading/SecurityListMock.tsx";
 

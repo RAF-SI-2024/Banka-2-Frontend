@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/card.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
-import { CardDTO } from "@/types/card.ts";
-import {changeCardStatusClient} from "@/api/card.ts";
+import { CardDTO } from "@/types/bank_user/card.ts";
+import {changeCardStatusClient} from "@/api/bank_user/card.ts";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 import BankAccountDetailsAdjustLimitsDialog
   from "@/components/bank-account/bank-account-single/BankAccountDetailsAdjustLimitsDialog.tsx";

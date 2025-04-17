@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils.ts";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {BankAccount} from "@/types/bank-account.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
 import React, {useState} from "react";
 import {CardSwipe} from "@/components/ui/card-swipe.tsx";
 import {CreditCard} from "@/components/ui/credit-card.tsx";
-import {CardDTO} from "@/types/card.ts"
+import {CardDTO} from "@/types/bank_user/card.ts"
 import {format} from "date-fns";
 import {useNavigate} from "react-router-dom";
 import {Tooltip, TooltipProvider, TooltipTrigger, TooltipContent} from "@/components/ui/tooltip.tsx";

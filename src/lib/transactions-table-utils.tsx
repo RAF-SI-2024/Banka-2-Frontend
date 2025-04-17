@@ -4,12 +4,12 @@ import {
     TransactionStatus,
     TransactionTableRow,
     TransactionType
-} from "@/types/transaction.ts";
+} from "@/types/bank_user/transaction.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 import React from "react";
-import {getAccountById, getAllAccountClientWithFilters, getAllAccountsClient,} from "@/api/bank-account.ts";
+import {getAccountById, getAllAccountClientWithFilters, getAllAccountsClient,} from "@/api/bank_user/bank-account.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
-import {getAccountTransactions, getAllTransactions, getNewTransactions} from "@/api/transaction.ts";
+import {getAccountTransactions, getAllTransactions, getNewTransactions} from "@/api/bank_user/transaction.ts";
 
 export const getTransactionStatusBadge = (status: TransactionStatus) => {
     let variant: "success" | "destructive" | "warning" | "outline" | null | undefined;

@@ -5,9 +5,9 @@ import BankAccountTransactions from "@/components/bank-account/bank-account-sing
 import { motion, AnimatePresence } from "framer-motion";
 import BankAccountCardsCard from "@/components/bank-account/bank-account-single/BankAccountCards.tsx";
 import React, {useEffect, useState} from "react";
-import {editAccountClient, getAccountById, getAllCreditCardsForBankAccount} from "@/api/bank-account.ts";
-import {AccountUpdateClientRequest, BankAccount} from "@/types/bank-account.ts";
-import {CardDTO} from "@/types/card.ts";
+import {editAccountClient, getAccountById, getAllCreditCardsForBankAccount} from "@/api/bank_user/bank-account.ts";
+import {AccountUpdateClientRequest, BankAccount} from "@/types/bank_user/bank-account.ts";
+import {CardDTO} from "@/types/bank_user/card.ts";
 import { Toaster} from "@/components/ui/sonner.tsx"
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 

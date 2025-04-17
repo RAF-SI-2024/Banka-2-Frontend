@@ -1,10 +1,10 @@
-import {CurrencyExchange} from "@/types/currency_exchange.ts";
-import api from "@/api/axios.ts";
+import {CurrencyExchange} from "@/types/bank_user/currency_exchange.ts";
+import {api_bank_user} from "@/api/axios.ts";
 
 export const getAllCurrencyExchanges = async (
 ): Promise<CurrencyExchange[]> => {
     try {
-        const response = await api.get("/exchanges", {});
+        const response = await api_bank_user.get("/exchanges", {});
         return response.data;
     }
     catch (error) {

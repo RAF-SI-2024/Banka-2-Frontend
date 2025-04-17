@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
-import {getAllCardsForClient} from "@/api/card.ts";
+import {getAllCardsForClient} from "@/api/bank_user/card.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
-import {CardDTO} from "@/types/card.ts";
+import {CardDTO} from "@/types/bank_user/card.ts";
 
 export function useCreditCardsData() {
     const [creditCards, setCreditCards] = useState<Array<{ title: string; url: string }>>([])

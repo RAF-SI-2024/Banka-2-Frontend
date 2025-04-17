@@ -1,4 +1,4 @@
-import {Loan} from "@/types/loan.ts";
+import {Loan} from "@/types/bank_user/loan.ts";
 
 export interface Installment {
     id: string,

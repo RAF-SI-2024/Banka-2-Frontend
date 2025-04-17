@@ -5,8 +5,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
-import { Actuary, ActuaryType } from "@/types/actuary.ts";
-import { Role, User } from "@/types/user.ts";
+import { Actuary, ActuaryType } from "@/types/bank_user/actuary.ts";
+import { Role, User } from "@/types/bank_user/user.ts";
 
 type Props = {
   currentUserRole: Role;

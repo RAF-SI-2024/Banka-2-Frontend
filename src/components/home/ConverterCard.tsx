@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils.ts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import MoneyInput from "@/components/__common__/input/MoneyInput.tsx";
-import { getExchangeRate, getAllCurrencies } from "@/api/currency.ts";
-import { Currency } from "@/types/currency.ts";
+import { getExchangeRate, getAllCurrencies } from "@/api/bank_user/currency.ts";
+import { Currency } from "@/types/bank_user/currency.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 import {useNavigate} from "react-router-dom";
 

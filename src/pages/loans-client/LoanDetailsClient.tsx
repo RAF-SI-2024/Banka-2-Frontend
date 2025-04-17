@@ -1,8 +1,8 @@
 import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
-import {getLoanById} from "@/api/loan.ts";
-import {Loan} from "@/types/loan.ts";
+import {getLoanById} from "@/api/bank_user/loan.ts";
+import {Loan} from "@/types/bank_user/loan.ts";
 import {Toaster} from "@/components/ui/sonner.tsx";
 import LoanDetailsClientLoanCard from "@/components/loans/loan-details/LoanDetailsClientLoan.tsx";
 import InstallmentListCard from "@/components/loans/loan-details/InstallmentList.tsx";

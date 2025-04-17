@@ -1,5 +1,5 @@
-import {BankAccount} from "@/types/bank-account.ts";
-import {CardType} from "@/types/card-type.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
+import {CardType} from "@/types/bank_user/card-type.ts";
 
 export interface CardDTO {
     id: string;

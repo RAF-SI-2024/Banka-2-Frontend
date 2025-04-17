@@ -1,6 +1,6 @@
-import {Currency} from "@/types/currency.ts";
-import {Employee} from "@/types/user.ts";
-import {BankAccount} from "@/types/bank-account.ts";
+import {Currency} from "@/types/bank_user/currency.ts";
+import {Employee} from "@/types/bank_user/user.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
 
 export interface BankAccountCurrency{
     id: string;

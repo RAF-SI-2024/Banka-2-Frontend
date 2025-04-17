@@ -18,7 +18,7 @@ import {
 } from "@tanstack/react-table";
 import {generateTaxColumns} from "@/components/tax/TaxListColumnDef.tsx";
 import {mockTaxes} from "@/__mocks/mock-taxes.ts";
-import {Tax} from "@/types/tax.ts";
+import {Tax} from "@/types/exchange/tax.ts";
 import CollectConfirmationDialog from "@/components/tax/CollectConfirmationDialog.tsx";
 
 

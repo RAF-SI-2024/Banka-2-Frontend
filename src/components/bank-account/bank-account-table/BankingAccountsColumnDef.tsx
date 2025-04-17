@@ -1,4 +1,4 @@
-import { BankAccount } from "@/types/bank-account.ts"
+import { BankAccount } from "@/types/bank_user/bank-account.ts"
 import { ColumnDef } from "@tanstack/react-table"
 import BankingAccountDropdownMenu from "./BankingAccountDropdownMenu.tsx"
 import {Badge} from "@/components/ui/badge.tsx";

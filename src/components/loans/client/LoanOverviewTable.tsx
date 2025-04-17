@@ -12,10 +12,10 @@ import {
     getFilteredRowModel,
     useReactTable
 } from "@tanstack/react-table";
-import { Loan, LoanResponse } from "@/types/loan";
+import { Loan, LoanResponse } from "@/types/bank_user/loan.ts";
 import { showErrorToast } from "@/lib/show-toast-utils.tsx";
 import { generateLoanOverviewColumns } from "./LoanOverviewListColumnDef";
-import { getLoansByClientId } from "@/api/loan";
+import { getLoansByClientId } from "@/api/bank_user/loan.ts";
 import { useNavigate } from "react-router-dom";
 // import { generateAllLoanColumns } from "./AllLoanListColumnDef";
 

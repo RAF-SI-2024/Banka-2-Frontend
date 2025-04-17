@@ -1,4 +1,4 @@
-import {User} from "@/types/user.ts";
+import {User} from "@/types/bank_user/user.ts";
 
 export type Template = {
     id: string;

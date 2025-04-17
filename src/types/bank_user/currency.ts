@@ -1,4 +1,4 @@
-import {Country} from "@/types/country.ts";
+import {Country} from "@/types/bank_user/country.ts";
 
 export interface Currency{
     id: string;

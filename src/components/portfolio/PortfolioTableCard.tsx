@@ -1,4 +1,4 @@
-import {BankAccount} from "@/types/bank-account.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {cn} from "@/lib/utils.ts";
 import TransactionsDataTable from "@/components/bank-account/bank-account-single/TransactionsDataTable.tsx";

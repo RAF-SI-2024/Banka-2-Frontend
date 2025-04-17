@@ -40,7 +40,7 @@
 
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select.tsx";
 import { useEffect, useState } from "react";
-import { Currency } from "@/types/currency.ts";
+import { Currency } from "@/types/bank_user/currency.ts";
 
 // Definiši props tip
 interface CurrencySelectProps {

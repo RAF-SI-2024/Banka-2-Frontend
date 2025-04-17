@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { AccountResponse, BankAccount } from "@/types/bank-account.ts";
-import { getAllAccounts, getAllCreditCardsForBankAccount } from "@/api/bank-account.ts";
+import { AccountResponse, BankAccount } from "@/types/bank_user/bank-account.ts";
+import { getAllAccounts, getAllCreditCardsForBankAccount } from "@/api/bank_user/bank-account.ts";
 import {
     getCoreRowModel,
     getPaginationRowModel,
@@ -18,7 +18,7 @@ import {
 import { DataTablePagination } from "@/components/__common__/datatable/DataTablePagination.tsx";
 import { DataTableViewOptions } from "@/components/__common__/datatable/DataTableViewOptions.tsx";
 import { generateAccountColumns } from "./BankingAccountsColumnDef.tsx";
-import {Currency} from "@/types/currency.ts";
+import {Currency} from "@/types/bank_user/currency.ts";
 import {ExpandableDataTable} from "@/components/bank-account/bank-account-table/ExpandableDataTable.tsx";
 
 // Define credit card interface

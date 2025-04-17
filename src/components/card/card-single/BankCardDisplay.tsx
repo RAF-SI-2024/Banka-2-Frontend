@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx"
 import { CreditCard } from "@/components/ui/credit-card.tsx"
-import { CardDTO as CardType } from "@/types/card.ts"
+import { CardDTO as CardType } from "@/types/bank_user/card.ts"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button.tsx"
-import {Client} from "@/types/user.ts";
+import {Client} from "@/types/bank_user/user.ts";
 
 interface Props {
     card: CardType

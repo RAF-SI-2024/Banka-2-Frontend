@@ -17,9 +17,9 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import {generateTransactionColumns} from "@/components/bank-account/bank-account-single/TransactionsDataTableColumnDef.tsx";
-import {Transaction, TransactionResponse, TransactionTableRow} from "@/types/transaction.ts";
-import {BankAccount} from "@/types/bank-account.ts";
-import { TransactionStatus } from "@/types/transaction.ts";
+import {Transaction, TransactionResponse, TransactionTableRow} from "@/types/bank_user/transaction.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
+import { TransactionStatus } from "@/types/bank_user/transaction.ts";
 import { DateRange } from "react-day-picker";
 import {fetchTransactionTableRows} from "@/lib/transactions-table-utils.tsx";
 

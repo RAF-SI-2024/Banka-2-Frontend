@@ -2,7 +2,7 @@ import {cn} from "@/lib/utils.ts";
 import PiggyBank from "@/assets/PiggyBank.tsx";
 import {Card} from "@/components/ui/card.tsx";
 import React from "react";
-import {PortfolioBalanceData, PortfolioTaxData} from "@/types/portfolio-data.ts";
+import {PortfolioBalanceData, PortfolioTaxData} from "@/types/exchange/portfolio-data.ts";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import PortfolioUp from "@/assets/PortfolioUp.tsx";
 import PortfolioDown from "@/assets/PortfolioDown";

@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import {User, getGenderString, getRoleString} from "@/types/user.ts";
+import {User, getGenderString, getRoleString} from "@/types/bank_user/user.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 import UserDropdownMenu from "@/components/user-table/all-users/UserDropdownMenu.tsx";
 

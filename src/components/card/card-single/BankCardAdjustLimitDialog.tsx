@@ -2,16 +2,16 @@ import React, {useState} from "react";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {BankAccount} from "@/types/bank-account.ts";
-import {editAccountClient} from "@/api/bank-account.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
+import {editAccountClient} from "@/api/bank_user/bank-account.ts";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 import VerificationOTP from "@/components/__common__/VerificationOTP.tsx";
 import AdjustLimitsForm from "@/components/bank-account/bank-account-single/AdjustLimitsForm.tsx";
 import OTPSuccessCard from "@/components/card/card-create/OTPSuccessNotifiaction.tsx";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
-import {CardDTO, CardUpdateLimitRequest} from "@/types/card.ts";
+import {CardDTO, CardUpdateLimitRequest} from "@/types/bank_user/card.ts";
 import BankCardAdjustLimisForm from "@/components/card/card-single/BankCardAdjustLimitForm.tsx";
-import {editCardLimit} from "@/api/card.ts";
+import {editCardLimit} from "@/api/bank_user/card.ts";
 
 interface BankCardAdjustLimitsDialogProps {
     showDialog: boolean;

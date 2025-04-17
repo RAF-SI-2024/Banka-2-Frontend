@@ -11,7 +11,7 @@ import * as React from "react";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
 import {Check, ChevronsUpDown} from "lucide-react";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command.tsx";
-import {Template} from "@/types/template.ts";
+import {Template} from "@/types/bank_user/template.ts";
 import {cn} from "@/lib/utils.ts";
 
 interface RecipientInputProps {

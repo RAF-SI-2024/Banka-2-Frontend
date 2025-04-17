@@ -1,11 +1,11 @@
-import api from "./axios"
-import {AccountResponse, AccountUpdateClientRequest, CreateBankAccountRequest} from "@/types/bank-account.ts"
+import {api_bank_user} from "../axios.ts"
+import {AccountResponse, AccountUpdateClientRequest, CreateBankAccountRequest} from "@/types/bank_user/bank-account.ts"
 import {API_BASE} from "@/constants/endpoints.ts";
 
 
 export const getAccountById = async (id:string) => {
     try {
-        const response = await api.get(`${API_BASE}/accounts/${id}`, {
+        const response = await api_bank_user.get(`${API_BASE}/accounts/${id}`, {
             params:{
                 id: id
             } //  TODO: izbaciti kada backend popravi
@@ -23,7 +23,7 @@ export const getAllAccounts = async (
     filters: { accountNumber?: string; firstName?: string; lastName?: string;}
 ): Promise<AccountResponse> => {
     try {
-        const response = await api.get("/accounts", {
+        const response = await api_bank_user.get("/accounts", {
             params: {
                 number: filters.accountNumber || undefined,
                 clientFirstName: filters.firstName || undefined,
@@ -49,7 +49,7 @@ export const editAccountClient = async (id: string, data: AccountUpdateClientReq
             name: data.name
         };
 
-        const response = await api.put(`${API_BASE}/accounts/client/${id}`, requestData);
+        const response = await api_bank_user.put(`${API_BASE}/accounts/client/${id}`, requestData);
         return response;
     } catch (error) {
         console.error("Failed to edit bank account! :", error);
@@ -61,7 +61,7 @@ export const editAccountClient = async (id: string, data: AccountUpdateClientReq
 
 export const getAllCreditCardsForBankAccount = async (accountId: string) => {
     try {
-        const response = await api.get(`${API_BASE}/accounts/${accountId}/cards`);
+        const response = await api_bank_user.get(`${API_BASE}/accounts/${accountId}/cards`);
         return response;
     } catch (error) {
         console.error("❌ Failed to get credit cards for bank account:", error);
@@ -70,7 +70,7 @@ export const getAllCreditCardsForBankAccount = async (accountId: string) => {
 
 export const activateOrDeactivateBankAccount = async (accountId: string, status: boolean) => {
     try {
-        const response = await api.put(`${API_BASE}/accounts/employee/${accountId}`, {
+        const response = await api_bank_user.put(`${API_BASE}/accounts/employee/${accountId}`, {
             status: status
         });
         return response;
@@ -82,7 +82,7 @@ export const activateOrDeactivateBankAccount = async (accountId: string, status:
 
 export const getAllAccountsClient = async (clientId: string, page?:number, size?:number) => {
     try {
-        const response = await api.get(`${API_BASE}/clients/${clientId}/accounts`, {
+        const response = await api_bank_user.get(`${API_BASE}/clients/${clientId}/accounts`, {
             params: {
                 page,      // Prosleđujemo broj stranice
                 size,  // Prosleđujemo veličinu stranice
@@ -102,7 +102,7 @@ export const getAllAccountClientWithFilters = async (
     filters?: { accountNumber?: string; firstName?: string; lastName?: string }
 ) => {
     try {
-        const response = await api.get(`${API_BASE}/clients/${clientId}/accounts`, {
+        const response = await api_bank_user.get(`${API_BASE}/clients/${clientId}/accounts`, {
             params: {
                 number: filters?.accountNumber,
                 clientFirstName: filters?.firstName,
@@ -121,7 +121,7 @@ export const getAllAccountClientWithFilters = async (
 
 export const createAccount = async (data: CreateBankAccountRequest) => {
     try {
-        const response = await api.post("/accounts", data);
+        const response = await api_bank_user.post("/accounts", data);
         return {
             success: true,
             data: response.data,

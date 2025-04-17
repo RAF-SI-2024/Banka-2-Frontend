@@ -8,7 +8,7 @@ import {Button} from "@/components/ui/button.tsx";
 import {useMediaQuery} from "@/hooks/use-media-query.ts";
 import {useParams} from "react-router-dom";
 import {generateSecurities} from "@/mocks/trading/SecurityListMock.tsx";
-import {SecurityType} from "@/types/security.ts";
+import {SecurityType} from "@/types/exchange/security.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 import Loader from "@/components/__common__/Loader.tsx";
 import {useQuery} from "react-query";

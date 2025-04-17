@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import {Order, Status, Direction} from "@/types/order";
+import {Order, Status, Direction} from "@/types/exchange/order.ts";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import { formatNumber } from "@/lib/format-number.ts";
 import { ColumnDef } from "@tanstack/react-table";

@@ -1,8 +1,8 @@
-import api from "@/api/axios.ts";
+import {api_bank_user} from "@/api/axios.ts";
 
 export const fetchAccountTypes = async (page: number = 1, Size: number = 50) => {
     try {
-        const response = await api.get("/accounts/types", {
+        const response = await api_bank_user.get("/accounts/types", {
             params: {
                 page,      // Prosleđujemo broj stranice
                 Size,  // Prosleđujemo veličinu stranice

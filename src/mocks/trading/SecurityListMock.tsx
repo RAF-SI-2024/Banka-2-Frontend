@@ -1,4 +1,4 @@
-import {getSecurityTypeName, Security, SecurityType} from "@/types/security.ts";
+import {getSecurityTypeName, Security, SecurityType} from "@/types/exchange/security.ts";
 
 function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));

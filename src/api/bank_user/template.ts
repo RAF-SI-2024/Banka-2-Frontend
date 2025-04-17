@@ -1,8 +1,8 @@
-import api from "./axios"
+import {api_bank_user} from "../axios.ts"
 
 export const createTransactionTemplate = async (name: string, accountNumber: string) => {
     try {
-        const response = await api.post("/transactions/templates", {
+        const response = await api_bank_user.post("/transactions/templates", {
             name,
             accountNumber
         }, {
@@ -21,7 +21,7 @@ export const createTransactionTemplate = async (name: string, accountNumber: str
 
 export const getTemplates = async () => {
     try {
-        const response = await api.get("/transactions/templates", {
+        const response = await api_bank_user.get("/transactions/templates", {
             params: { size: 50 }, // Dodaj parametar za veličinu strane
         });
 
@@ -35,7 +35,7 @@ export const getTemplates = async () => {
 
 export const deleteTemplate = async (id: string, name: string, accountNumber: string) => {
     try {
-        const response = await api.put(`/transactions/templates/${id}`, {
+        const response = await api_bank_user.put(`/transactions/templates/${id}`, {
             name,
             accountNumber,
             deleted: true, // Postavljamo deleted na true
@@ -50,7 +50,7 @@ export const deleteTemplate = async (id: string, name: string, accountNumber: st
 
 export const updateTemplate = async (id: string, name: string, accountNumber: string) => {
     try {
-        const response = await api.put(`/transactions/templates/${id}`, {
+        const response = await api_bank_user.put(`/transactions/templates/${id}`, {
             name,
             accountNumber,
             deleted: false, // Deleted uvek mora biti false

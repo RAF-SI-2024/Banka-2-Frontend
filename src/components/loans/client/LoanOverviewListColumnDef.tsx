@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
 import {Badge} from "@/components/ui/badge.tsx";
-import {Loan, LoanStatus} from "@/types/loan";
+import {Loan, LoanStatus} from "@/types/bank_user/loan.ts";
 import LoanOverviewDropdownMenu from "./LoanOverviewDropdownMenu";
 import {formatCurrency} from "@/lib/format-currency.ts";
 

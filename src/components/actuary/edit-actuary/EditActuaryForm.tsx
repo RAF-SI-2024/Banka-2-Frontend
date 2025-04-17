@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Actuary, ActuaryType} from "@/types/actuary";
-import {Role} from "@/types/user"; // Dodaj definisane role
+import {Actuary, ActuaryType} from "@/types/bank_user/actuary.ts";
+import {Role} from "@/types/bank_user/user.ts"; // Dodaj definisane role
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";

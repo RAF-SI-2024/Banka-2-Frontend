@@ -1,4 +1,4 @@
-import {Gender, Role} from "@/types/user.ts";
+import {Gender, Role} from "@/types/bank_user/user.ts";
 
 export let globalLogout: (() => void) | null = null;
 

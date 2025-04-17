@@ -1,4 +1,4 @@
-import {Currency} from "@/types/currency.ts";
+import {Currency} from "@/types/bank_user/currency.ts";
 
 
 export interface Transaction {

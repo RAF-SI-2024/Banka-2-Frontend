@@ -1,4 +1,4 @@
-import {Gender} from "@/types/user";
+import {Gender} from "@/types/bank_user/user";
 
 
 Cypress.Commands.add("clientRegistration", ({firstName = "Klijent",

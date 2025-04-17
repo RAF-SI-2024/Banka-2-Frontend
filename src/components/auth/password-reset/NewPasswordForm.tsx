@@ -9,7 +9,7 @@ import {Button} from "@/components/ui/button.tsx";
 import InputHidable from "@/components/__common__/input/InputHidable.tsx";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {useEffect} from "react";
-import { resetPassword} from "@/api/auth.ts";
+import { resetPassword} from "@/api/bank_user/auth.ts";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 
 // Form field definitions

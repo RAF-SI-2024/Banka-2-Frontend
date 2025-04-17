@@ -1,5 +1,5 @@
 import { BankAccount } from "./bank-account.ts";
-import { Currency } from "./currency";
+import { Currency } from "./currency.ts";
 import { LoanType } from "./loan-type.ts";
 
 export interface Loan{

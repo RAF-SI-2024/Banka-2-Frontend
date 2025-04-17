@@ -1,9 +1,11 @@
+import {Currency} from "@/types/bank_user/currency.ts";
+
 export interface ExchangeTableData {
     name: string;
     acronym: string;
-    micCode: string;
-    country: string;
-    currency: string;
+    mic: string;
+    polity: string;
+    currency: Currency;
     timeZone: string;
     openTime: string;
     closeTime: string;

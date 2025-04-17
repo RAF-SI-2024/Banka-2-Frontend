@@ -17,7 +17,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer.tsx";
-import { Actuary } from "@/types/actuary.ts";
+import { Actuary } from "@/types/bank_user/actuary.ts";
 import EditActuaryForm from "@/components/actuary/edit-actuary/EditActuaryForm.tsx";
 
 interface EditActuaryDialogProps {

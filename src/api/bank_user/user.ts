@@ -1,6 +1,5 @@
-import api from "./axios";
-import { API_BASE } from "../constants/endpoints";
-import {EditUserRequest, GetUserRequest, UpdateClientRequest, UpdateEmployeeRequest, User, UserResponse} from "@/types/user.ts";
+import {api_bank_user} from "../axios.ts";
+import {EditUserRequest, GetUserRequest, UpdateClientRequest, UpdateEmployeeRequest, User, UserResponse} from "@/types/bank_user/user.ts";
 
 export const getAllUsers = async (
     page: number,
@@ -8,7 +7,7 @@ export const getAllUsers = async (
     filters: { email?: string; firstName?: string; lastName?: string; role?: string }
 ): Promise<UserResponse> => {
     try {
-        const response = await api.get("/users", {
+        const response = await api_bank_user.get("/users", {
             params: {
                 email: filters.email || undefined,
                 firstName: filters.firstName || undefined,
@@ -18,6 +17,7 @@ export const getAllUsers = async (
                 size,
             },
         });
+        console.log(response);
 
         return response.data; // API returns an array of users
     } catch (error) {
@@ -28,7 +28,7 @@ export const getAllUsers = async (
 
 export const getUserById = async (id: string) => {
     try {
-        const response = await api.get(`${API_BASE}/users/${id}`);
+        const response = await api_bank_user.get(`/users/${id}`);
         return response.data; // Returns user data
     } catch (error) {
         console.error("Failed to get specific user! :", error);
@@ -39,7 +39,7 @@ export const getUserById = async (id: string) => {
 
 export const updateClient = async (data: UpdateClientRequest, id: string) => {
     try {
-        const response = await api.put(`${API_BASE}/clients/${id}`, data);
+        const response = await api_bank_user.put(`/clients/${id}`, data);
         return { 
             success: true, 
             data: response.data 
@@ -52,7 +52,7 @@ export const updateClient = async (data: UpdateClientRequest, id: string) => {
 
 export const updateEmployee = async (data: UpdateEmployeeRequest, id: string) => {
     try {
-        const response = await api.put(`${API_BASE}/employees/${id}`, data);
+        const response = await api_bank_user.put(`/employees/${id}`, data);
         return { 
             success: true, 
             data: response.data 
@@ -66,7 +66,7 @@ export const updateEmployee = async (data: UpdateEmployeeRequest, id: string) =>
 
 export const editUser = async (data: EditUserRequest) => {
     try {
-        const response = await api.put(`${API_BASE}/users/editUser`, data) //Address will have to be updated
+        const response = await api_bank_user.put(`/users/editUser`, data) //Address will have to be updated
         return response.data // Returns token or user data
     } catch (error) {
         console.error("❌ Edit failed:", error)
@@ -76,7 +76,7 @@ export const editUser = async (data: EditUserRequest) => {
 
 export const getUser = async (data: GetUserRequest) => {
     try {
-        // const response = await api.get(`${API_BASE}/users/{id}`, data); //Address will have to be updated
+        // const response = await api_bank_user.get(`${API_BASE}/users/{id}`, data); //Address will have to be updated
         // return response.data; // Returns token or user data
 
         // For testing purposes
@@ -108,7 +108,7 @@ export const getAllClients = async (
     filters: { email?: string; firstName?: string; lastName?: string;}
 ): Promise<UserResponse> => {
     try{
-        const response = await api.get("/clients", {
+        const response = await api_bank_user.get("/clients", {
             params: {
                 email: filters.email || undefined,
                 firstName: filters.firstName || undefined,

@@ -16,17 +16,18 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import { generateExchangesColumns } from "./ExchangesListColumnsDef";
-import { ExchangeTableData } from "@/types/exchange";
-import { mokDataExchanges, mokCountries } from "../../mocks/mokdatasExchange";
+import {ExchangeTableData, ExchangeTableDataResponse} from "@/types/exchange/exchange.ts";
 import ConfirmationDialog from "../__common__/ConfirmationDialog";
 import { disable, disableDescription, enable, enableDescription } from "./ConfirmationText";
+import {getAllExchanges} from "@/api/exchange/exchange.ts";
+import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 
 
 export default function ExchangeTable() {
     /* STATES */
     const [filter, setFilter] = useState({
-        search: "",
-        country: "",
+        name: "",
+        polity: "",
     });
 
     // search active - to display clear button
@@ -40,9 +41,6 @@ export default function ExchangeTable() {
 
     // current exchange list
     const [exchanges, setExchangeTableData] = useState<ExchangeTableData[]>([]);
-
-    // countries list
-    const [countries, setExchangesCountries] = useState<string[]>([]);
 
     // working hours
     const [workingHours, setWorkingHours] = useState(false);
@@ -62,8 +60,8 @@ export default function ExchangeTable() {
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
         name: true,
         acronym: true,
-        micCode: true,
-        country: true,
+        mic: true,
+        polity: true,
         currency: true,
         timeZone: true,
         openTime: true,
@@ -81,36 +79,21 @@ export default function ExchangeTable() {
         try {
             //NAMESTENO SAMO ODMARKIRATI KADA NAPRAVE BACKEND
 
-            // const ExchangeDataResponse: ExchangeTableDataResponse = await getAllExchanges(
-            //     currentPage,
-            //     pageSize,
-            //     filter
-            // ); 
-            // setExchangeTableData(ExchangeDataResponse.items);
-            // setTotalPages(ExchangeDataResponse.totalPages);
-            // console.log(ExchangeDataResponse)
-
-            setExchangeTableData(mokDataExchanges);
-            setTotalPages(1);
+            const data: ExchangeTableDataResponse = await getAllExchanges(
+                currentPage,
+                pageSize,
+                filter
+            );
+            setExchangeTableData(data.items);
+            setTotalPages(data.totalPages);
+            console.log(data);
 
         } catch (err) {
-            console.log(err);
+            showErrorToast({error: err, defaultMessage: "Error fetching exchanges"});
             setError("Failed to fetch exchanges");
         }
     };
 
-    const fetchExchangesCountries = async () => {
-        console.log("Fetching Countries");
-        setError(null);
-        try {
-            // const countries: string[] = await getAllExchangeCountries(); 
-            // setExchangesCountries(countries);
-            setExchangesCountries(mokCountries);
-        } catch (err) {
-            console.log(err);
-            setError("Failed to fetch exchanges");
-        }
-    };
 
 
     // handle search change
@@ -129,8 +112,8 @@ export default function ExchangeTable() {
         console.log("Clearing search...");
         // Reset search and fetch immediately
         setFilter({
-            search: "",
-            country: "",
+            name: "",
+            polity: "",
         });
         setFetchFlag(!fetchFlag);
     };
@@ -194,8 +177,7 @@ export default function ExchangeTable() {
     // fetch exchanges effect (triggered on currentpage, pagesize or search change
     useEffect(() => {
         fetchExchanges();
-        fetchExchangesCountries();
-    }, [currentPage, pageSize, fetchFlag]); // Add dependencies
+    }, [currentPage, pageSize, fetchFlag]);
 
     // display error
     if (error) return <h1 className="text-center text-2xl font-semibold text-destructive">{error}</h1>;
@@ -208,24 +190,18 @@ export default function ExchangeTable() {
                 <div className="flex flex-wrap gap-4 items-center">
 
                     <Input
-                        placeholder="Search"
-                        value={filter.search}
-                        onChange={(e) => handleSearchChange("search", e.target.value)}
-                        className="w-88"
+                        placeholder="Exchange name"
+                        value={filter.name}
+                        onChange={(e) => handleSearchChange("name", e.target.value)}
+                        className="w-52"
                     />
 
-                    <Select onValueChange={(value) => handleSearchChange("country", value)} value={filter.country}>
-                        <SelectTrigger className="w-42">
-                            <SelectValue placeholder="Country" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {countries.map((country, index) => (
-                                <SelectItem key={index + 1} value={country}>
-                                    {country}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    <Input
+                        placeholder="Polity"
+                        value={filter.polity}
+                        onChange={(e) => handleSearchChange("polity", e.target.value)}
+                        className="w-52"
+                    />
 
                     <div className="flex items-center space-x-2">
                         <Button onClick={handleFilter} variant="primary">

@@ -14,9 +14,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardDescription } from "@/components/ui/card.tsx";
-import { Currency } from "@/types/currency.ts";
-import { getAllCurrencies } from "@/api/currency.ts";
-import { getAllUsers } from "@/api/user.ts";
+import { Currency } from "@/types/bank_user/currency.ts";
+import { getAllCurrencies } from "@/api/bank_user/currency.ts";
+import { getAllUsers } from "@/api/bank_user/user.ts";
 import {Select,SelectItem,SelectValue,SelectContent,SelectTrigger} from "@/components/ui/select.tsx"
 import {
     Form,
@@ -26,16 +26,16 @@ import {
     FormControl,
     FormMessage,
 } from "@/components/ui/form.tsx";
-import {CardType} from "@/types/card-type.ts";
-import {createCard} from "@/api/card.ts";
-import {CreateBankAccountRequest} from "@/types/bank-account.ts";
-import { BankAccountType } from "@/types/bank-account-type.ts";
+import {CardType} from "@/types/bank_user/card-type.ts";
+import {createCard} from "@/api/bank_user/card.ts";
+import {CreateBankAccountRequest} from "@/types/bank_user/bank-account.ts";
+import { BankAccountType } from "@/types/bank_user/bank-account-type.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
-import {getAllCardTypes} from "@/api/card-type.ts";
-import {fetchAccountTypes} from "@/api/bank-account-type.ts";
-import {createCompany} from "@/api/company.ts";
-import {createAccount} from "@/api/bank-account.ts";
-import {CardCreateRequest} from "@/types/card.ts";
+import {getAllCardTypes} from "@/api/bank_user/card-type.ts";
+import {fetchAccountTypes} from "@/api/bank_user/bank-account-type.ts";
+import {createCompany} from "@/api/bank_user/company.ts";
+import {createAccount} from "@/api/bank_user/bank-account.ts";
+import {CardCreateRequest} from "@/types/bank_user/card.ts";
 
 const businessInfoSchema = z.object({
     businessName: z.string()

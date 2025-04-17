@@ -1,4 +1,4 @@
-import api from "@/api/axios";
+import {api_bank_user} from "@/api/axios.ts";
 
 export interface RawPaymentCode {
     id: string;
@@ -7,7 +7,7 @@ export interface RawPaymentCode {
 }
 
 export const fetchPaymentCodes = async (): Promise<RawPaymentCode[]> => {
-    const response = await api.get("transactions/codes", {
+    const response = await api_bank_user.get("transactions/codes", {
         params: { page: 1, size: 100 },
     });
     return response.data.items || [];
@@ -17,8 +17,8 @@ export const fetchRecipientCurrencyCode = async (
     accountNumber: string
 ): Promise<string | null> => {
     console.log("CURRENCY", accountNumber);
-    const response = await api.get("/accounts", {
-        params: { Number: accountNumber.substring(7,16) }, // FIXME: Ovde treba da stoji samo accountNumber
+    const response = await api_bank_user.get("/accounts", {
+        params: { Number: accountNumber},
     });
 
     console.log(response);

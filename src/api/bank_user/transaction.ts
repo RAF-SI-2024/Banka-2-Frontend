@@ -1,15 +1,15 @@
-import api from "@/api/axios.ts";
-import {TransactionCodeResponse} from "@/types/transaction.ts";
-import {CreateTransactionRequest, TransactionResponse} from "@/types/transaction.ts";
+import {api_bank_user} from "@/api/axios.ts";
+import {TransactionCodeResponse} from "@/types/bank_user/transaction.ts";
+import {CreateTransactionRequest, TransactionResponse} from "@/types/bank_user/transaction.ts";
 import {API_BASE} from "@/constants/endpoints.ts";
-import {TransactionStatus} from "@/types/transaction.ts";
+import {TransactionStatus} from "@/types/bank_user/transaction.ts";
 
 export const getTransactionCodes = async (
     pageNumber: number,
     pageSize: number
 ): Promise<TransactionCodeResponse> => {
     try {
-        const response = await api.get("/transactions/codes", {
+        const response = await api_bank_user.get("/transactions/codes", {
             params: {
                 Page: pageNumber,
                 Size: pageSize,
@@ -24,7 +24,7 @@ export const getTransactionCodes = async (
 
 export const createTransaction = async (transactionData: CreateTransactionRequest) => {
     try {
-        const response = await api.post("/transactions", transactionData);
+        const response = await api_bank_user.post("/transactions", transactionData);
         return response.data;
     } catch (error) {
         console.error("❌ Error while creating transaction:", error);
@@ -44,7 +44,7 @@ export const getAllTransactions = async (
     transactionType?: number,
 ): Promise<TransactionResponse> => {
     try {
-        const response = await api.get(`${API_BASE}/transactions`, {
+        const response = await api_bank_user.get(`${API_BASE}/transactions`, {
                 params: {
                     Page: pageNumber,
                     Size: pageSize,
@@ -72,7 +72,7 @@ export const getAccountTransactions = async (
     transactionType?: number,
 ): Promise<TransactionResponse> => {
     try {
-        const response = await api.get(`${API_BASE}/accounts/${accountId}/transactions`, {
+        const response = await api_bank_user.get(`${API_BASE}/accounts/${accountId}/transactions`, {
                 params: {
                     Page: pageNumber,
                     Size: pageSize,
@@ -92,7 +92,7 @@ export const getAccountTransactions = async (
 
 export const getNewTransactions = async (): Promise<TransactionResponse> => {
     try {
-        const response = await api.get(`${API_BASE}/transactions`,{
+        const response = await api_bank_user.get(`${API_BASE}/transactions`,{
             params: {
                 Page: 1,
                 Size: 5

@@ -2,7 +2,7 @@ import UserTable from "@/components/user-table/all-users/UserTable.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import React, { useState } from "react";
 import RegisterDialog from "@/components/register/RegisterDialog.tsx";
-import {Role} from "@/types/user.ts";
+import {Role} from "@/types/bank_user/user.ts";
 import {Toaster} from "@/components/ui/sonner.tsx";
 
 export default function UserListPage() {

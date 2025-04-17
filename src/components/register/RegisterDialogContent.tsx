@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import ActivationConfirmation from "@/components/register/ActivationConfirmation.tsx"
 import RegisterFormSecondClient from "@/components/register/client/RegisterFormSecondClient.tsx"
-import { RegisterRequestClient } from "@/types/auth.ts"
-import {Role} from "@/types/user.ts";
+import { RegisterRequestClient } from "@/types/bank_user/auth.ts"
+import {Role} from "@/types/bank_user/user.ts";
 import RegisterFormSecondEmployee from "@/components/register/employee/RegisterFormSecondEmployee.tsx";
 
 interface RegisterPageProps {

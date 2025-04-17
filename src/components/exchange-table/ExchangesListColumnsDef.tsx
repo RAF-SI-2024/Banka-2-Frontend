@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ExchangeTableData } from "@/types/exchange";
+import { ExchangeTableData } from "@/types/exchange/exchange.ts";
 
 export function generateExchangesColumns(): ColumnDef<ExchangeTableData>[] {
     return (
@@ -16,24 +16,27 @@ export function generateExchangesColumns(): ColumnDef<ExchangeTableData>[] {
                 enableHiding: true,
             },
             {
-                accessorKey: "micCode",
+                accessorKey: "mic",
                 header: "Mic Code",
                 enableHiding: true,
             },
             {
-                accessorKey: "country",
-                header: "Country",
+                accessorKey: "polity",
+                header: "Polity",
                 enableHiding: true,
             },
             {
                 accessorKey: "currency",
                 header: "Currency",
                 enableHiding: true,
+                cell: ({row}) => row.original.currency.name,
             },
             {
                 accessorKey: "timeZone",
                 header: "Time Zone",
                 enableHiding: true,
+                cell: ({row}) => (row.original.timeZone[0] == "-" ? "" : "+") +
+                    row.original.timeZone.substring(0, row.original.timeZone.lastIndexOf(":"))
             },
             {
                 accessorKey: "openTime",
