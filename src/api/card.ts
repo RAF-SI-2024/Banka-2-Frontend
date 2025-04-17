@@ -1,6 +1,6 @@
 import api from "@/api/axios.ts";
 import {API_BASE} from "@/constants/endpoints.ts";
-import {CardCreateRequest} from "@/types/card.ts";
+import {CardCreateRequest, CardUpdateLimitRequest} from "@/types/card.ts";
 
 export const getCardById = async (id:string) => {
     try {
@@ -58,10 +58,10 @@ export const getAllCardsForClient = async (clientId: string) => {
     }
 }
 
-export const editCardLimit = async (cardId: string) => {
+export const editCardLimit = async (cardId: string, data: CardUpdateLimitRequest) => {
     try {
-        const response = await api.put(`/cards/${cardId}/limit`);
-        return response;
+        const response = await api.put(`/cards/${cardId}/limit`, data);
+        return response.data;
     } catch (error) {
         console.error("❌ Failed to edit limit for the client:", error);
         throw error;

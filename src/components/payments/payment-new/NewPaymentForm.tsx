@@ -92,7 +92,7 @@ export default function NewPaymentForm() {
                     }
                 }
 
-                if(location.state.templateAccount){
+                if(location.state?.templateAccount){
                     form.setValue("recipientAccount", location.state.templateAccount)
                 }
 

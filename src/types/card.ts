@@ -22,3 +22,7 @@ export interface CardCreateRequest {
     limit: number;
     status: boolean;
 }
+
+export interface CardUpdateLimitRequest{
+    limit: number;
+}
