@@ -1,5 +1,5 @@
 import {Toaster} from "@/components/ui/sonner.tsx";
-import React, {Suspense, useState} from "react";
+import React, {Suspense, useEffect, useState} from "react";
 import SecurityListCard from "@/components/trading/SecurityListCard.tsx";
 import SecurityDetailsCard from "@/components/trading/SecurityDetails.tsx";
 import SecurityTradingTable from "@/components/trading/SecurityTradingTable.tsx";
@@ -15,24 +15,33 @@ import {useQuery} from "react-query";
 import {ErrorBoundary} from "react-error-boundary";
 import ErrorFallback from "@/components/__common__/error/ErrorFallback.tsx";
 import TradingViewChart from "@/components/trading/TradingViewChart.tsx";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
+import {Card} from "@/components/ui/card.tsx";
 
 
 export default function Trading() {
+    const { securityId } = useParams();
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0 h-full max-w-screen-2xl mx-auto">
             <Toaster richColors />
             <ErrorBoundary fallbackRender={({ error }) => <ErrorFallback message={error.message} />}>
-                <Suspense fallback={
-                    <div className="fixed inset-0 z-0 flex items-center justify-center bg-black/20 backdrop-blur-sm transition-all duration-1000 ease-in-out">
-                        <Loader />
-                    </div>
+                <Suspense
+                    key={securityId}
+                    fallback={
+                    <>
+                        <div className="fixed inset-0 z-0 flex items-center justify-center bg-black/50  transition  duration-1000 ease-in-out">
+                            <Loader />
+                        </div>
+                        <TradingInfoSkeleton />
+                    </>
                 }>
-                    <TradingInfo />
+                    <TradingInfo securityId={securityId} />
                 </Suspense>
             </ErrorBoundary>
         </main>
     );
 }
+
 
 async function fetchData(securityId?: string){
     try {
@@ -58,11 +67,10 @@ async function fetchData(securityId?: string){
 }
 
 
-function TradingInfo(){
-    const { securityId } = useParams();
+function TradingInfo({securityId}: { securityId?: string }){
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const isDesktop = useMediaQuery("(min-width: 1000px)");
-    const { data } = useQuery(['security'], () => fetchData(securityId), {
+    const { data } = useQuery(['security', securityId], () => fetchData(securityId), {
         suspense: true,
         useErrorBoundary: true,
     });
@@ -114,6 +122,40 @@ function TradingInfo(){
 
                         </Drawer>
                     </>
+                )}
+
+
+            </div>
+        </>
+    )
+}
+
+function TradingInfoSkeleton(){
+    const isDesktop = useMediaQuery("(min-width: 1000px)");
+
+
+
+    return(
+        <>
+            <Skeleton className="w-fit" >
+                <h1 className="font-display font-bold text-5xl text-transparent">
+                Security Overview
+                </h1>
+            </Skeleton>
+
+            <div className="grid lg:grid-rows-2 auto-rows-fr gap-4 lg:grid-cols-10 h-full lg:max-w-dvw min-h-fit lg:max-h-fit max-w-full">
+                {/*/!* Graph starts at row 1 and spans 3 rows *!/*/}
+                <Card className="border-0 h-[400px] lg:row-start-1 lg:col-span-6 lg:col-start-3 lg:row-span-1 row-span-1 row-start-1 md:col-span-full" />
+
+                <Card className="border-0 lg:row-start-2  lg:col-span-6 row-start-2 row-span-1 col-span-full" />
+
+                <Card className="border-0 h-[680px] lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-2 row-start-3 col-span-full" />
+
+                {isDesktop ? (
+
+                <Card className="border-0 lg:col-start-9 lg:col-span-2 lg:row-start-1 lg:row-span-2 col-span-full" />
+                ): (
+                    <></>
                 )}
 
 
