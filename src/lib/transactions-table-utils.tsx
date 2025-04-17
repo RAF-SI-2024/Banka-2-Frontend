@@ -1,12 +1,13 @@
-import {TransactionStatus, TransactionType} from "@/types/transaction.ts";
+import {
+    Transaction,
+    TransactionResponse,
+    TransactionStatus,
+    TransactionTableRow,
+    TransactionType
+} from "@/types/transaction.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 import React from "react";
-import {Transaction, TransactionResponse, TransactionTableRow} from "@/types/transaction.ts";
-import {
-    getAccountById,
-    getAllAccountClientWithFilters,
-    getAllAccountsClient,
-} from "@/api/bank-account.ts";
+import {getAccountById, getAllAccountClientWithFilters, getAllAccountsClient,} from "@/api/bank-account.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 import {getAccountTransactions, getAllTransactions, getNewTransactions} from "@/api/transaction.ts";
 
@@ -25,6 +26,11 @@ export const getTransactionStatusBadge = (status: TransactionStatus) => {
         case TransactionStatus.Canceled:
             variant = "outline";
             text = "Canceled";
+            break;
+
+        case TransactionStatus.Affirm:
+            variant = "outline";
+            text = "Affirm";
             break;
         case TransactionStatus.Completed:
             variant = "success";

@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const newTransferFormSchema = z.object({
-    fromAccountId: z.string(),
+    fromAccountNumber: z.string(),
     toAccountNumber: z.string(),
     amount: z.preprocess(
         (val) => {
