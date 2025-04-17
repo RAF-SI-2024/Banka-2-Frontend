@@ -23,7 +23,7 @@ interface AdjustLimitsFormProps {
 // Form Schema
 export default function BankCardAdjustLimisForm({card, form, nextStep }: AdjustLimitsFormProps) {
     return (
-        <Card className={cn("flex flex-col gap-6 bg-transparent border-0")}>
+        <Card className={cn("flex flex-col gap-6 bg-transparent border-0 shadow-none")}>
             <CardContent className="mt-4 font-paragraph">
                 <h2 className="text-2xl font-heading font-semibold text-center mt-4 mb-8">Adjust limits</h2>
                 <Form {...form}>

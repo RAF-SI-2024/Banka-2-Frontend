@@ -115,7 +115,7 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
 
     return (
         <Dialog open={showDialog} onOpenChange={handleDialogClose}>
-            <DialogContent className="min-w-fit" aria-describedby={undefined}>
+            <DialogContent className="min-w-fit shadow-none" aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle></DialogTitle>
                 </DialogHeader>

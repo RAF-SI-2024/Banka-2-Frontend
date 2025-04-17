@@ -14,7 +14,7 @@ export default function OTPSuccessCard({ title, icon, message, className, ...pro
 
 
     return (
-            <Card className={cn("w-xl z-10 flex flex-col gap-6", className)} {...props}>
+            <Card className={cn("w-xl z-10 flex flex-col gap-6 shadow-none", className)} {...props}>
                 <CardContent className="mt-4 font-paragraph flex flex-col items-center text-center gap-3">
                     <span
                         className={cn("inset-0 bg-gradient-to-r from-primary to-secondary mask-size-cover text-8xl", icon)}

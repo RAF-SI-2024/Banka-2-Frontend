@@ -91,7 +91,7 @@ const CardDetails = ({ card, onBackClick }: Props) => {
               Limit:
             </Label>
             <p className="text-xl font-medium">
-              {formatCurrency(card.limit, card.account.currency.code)}
+              {formatCurrency(limit, card.account.currency.code)}
             </p>
           </div>
 

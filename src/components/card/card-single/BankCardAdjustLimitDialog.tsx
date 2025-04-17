@@ -72,14 +72,11 @@ export default function BankCardAdjustLimitDialog({showDialog, setShowDialog, se
                     limit: parseFloat(form.getValues().limit.toString().replace(/\./g, "").replace(",", "."))
                 }
                 const response = await editCardLimit(card.id, payload);
-                showSuccessToast({title: "Edit successful", description: "Limits adjusted successfully!"})
+                showSuccessToast({title: "Edit successful", description: "Limit adjusted successfully!"})
 
-                if (response.status !== 200) {
-                    throw new Error("API error");
-                }
                 setStep((prev) => prev + 1);
-
-                setLimit(response.data.limit ?? card.limit)
+                console.log(response);
+                setLimit(response.limit ?? card.limit)
             } catch (err) {
                 console.error(err);
                 showErrorToast({error: err, defaultMessage: "Limits could not be adjusted."})

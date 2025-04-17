@@ -17,6 +17,7 @@ import ErrorFallback from "@/components/__common__/error/ErrorFallback.tsx";
 import TradingViewChart from "@/components/trading/TradingViewChart.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {Card} from "@/components/ui/card.tsx";
+import {AnimatePresence, motion} from "framer-motion";
 
 
 export default function Trading() {
@@ -29,9 +30,18 @@ export default function Trading() {
                     key={securityId}
                     fallback={
                     <>
-                        <div className="fixed inset-0 z-0 flex items-center justify-center bg-black/50  transition  duration-1000 ease-in-out">
-                            <Loader />
-                        </div>
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key="loader"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 1}}
+                                className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm"
+                            >
+                                <Loader />
+                            </motion.div>
+                        </AnimatePresence>
                         <TradingInfoSkeleton />
                     </>
                 }>
