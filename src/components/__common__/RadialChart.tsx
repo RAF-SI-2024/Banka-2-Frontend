@@ -25,11 +25,12 @@ const chartConfig = {
 } satisfies ChartConfig
 
 interface RadialChartProps extends React.ComponentProps<"div">{
+    title?: string,
     available_balance: number,
     total_balance: number,
     currencyCode: string
 }
-export function RadialChart({available_balance, total_balance, currencyCode, className, ...props}: RadialChartProps) {
+export function RadialChart({title="Total balance", available_balance, total_balance, currencyCode, className, ...props}: RadialChartProps) {
 
     const isDesktop = useMediaQuery("(min-width: 800px)");
 
@@ -71,7 +72,7 @@ export function RadialChart({available_balance, total_balance, currencyCode, cla
                                                     y={(viewBox.cy || 0) + 4}
                                                     className="fill-muted-foreground "
                                                 >
-                                                    Available balance
+                                                    {title}
                                                 </tspan>
                                             </text>
                                         )

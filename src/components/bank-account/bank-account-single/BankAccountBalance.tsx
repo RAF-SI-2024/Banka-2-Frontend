@@ -5,6 +5,7 @@ import {BankAccount} from "@/types/bank-account.ts";
 import React from "react";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import Wallet from "@/assets/Wallet.tsx";
+import {RadialChart} from "@/components/__common__/RadialChart.tsx";
 
 
 interface BalanceCardProps extends React.ComponentProps<"div">{
@@ -27,16 +28,17 @@ const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expe
             {...props}
         >
             <div>
-                <div className="justify-center w-full">
-                    <div>
-                        <h6 className="font-medium text-4xl font-heading mb-1">
-                            {
-                                formatCurrency(account.balance, account.currency.code)
-                            }
+                <div className="justify-center w-full flex flex-col">
 
-                        </h6>
-                        <p className="text-sm text-secondary-foreground font-paragraph">Account balance</p>
-                    </div>
+                        {/*<h6 className="font-medium text-4xl font-heading mb-1">*/}
+                        {/*    {*/}
+                        {/*        formatCurrency(account.balance, account.currency.code)*/}
+                        {/*    }*/}
+
+                        {/*</h6>*/}
+                        <RadialChart title="Account balance" total_balance={account.balance} available_balance={account.availableBalance} currencyCode={account.currency.code} />
+                        {/*<p className="text-sm text-secondary-foreground font-paragraph">Account balance</p>*/}
+
 
                     <div className="flex items-center justify-center lg:justify-start gap-7 py-9 font-paragraph">
                         <div className="flex items-center">
@@ -44,8 +46,8 @@ const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expe
                                 <span className="icon-[ph--arrow-up-fill] w-4 h-4 text-success" />
                             </Button>
                             <div className="ml-3">
-                                <p className="font-semibold">{formatCurrency(income, account.currency.code)}</p>
-                                <p className="text-sm text-secondary-foreground">Income</p>
+                                <p className="text-sm font-semibold">{formatCurrency(income, account.currency.code)}</p>
+                                <p className="text-xs text-secondary-foreground">Income</p>
                             </div>
                         </div>
 
@@ -54,8 +56,8 @@ const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expe
                                 <span className="icon-[ph--arrow-down-fill] w-4 h-4 text-destructive" />
                             </Button>
                             <div className="ml-3">
-                                <p className="font-semibold">{formatCurrency(expenses, account.currency.code)}</p>
-                                <p className="text-sm text-secondary-foreground">Expenses</p>
+                                <p className="text-sm font-semibold">{formatCurrency(expenses, account.currency.code)}</p>
+                                <p className="text-xs text-secondary-foreground">Expenses</p>
                             </div>
                         </div>
                     </div>
