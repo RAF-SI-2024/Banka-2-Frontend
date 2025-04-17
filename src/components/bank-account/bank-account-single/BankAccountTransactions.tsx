@@ -27,7 +27,7 @@ const BankAccountTransactionsCard = ({ account, cardTitle, className, ...props }
             {/*        </TabsTrigger>*/}
             {/*    </TabsList>*/}
             {/*    <TabsContent value="transactions">*/}
-                    <Card className="rounded-md font-paragraph" >
+                    <Card className="rounded-md font-paragraph border-0" >
                         <TransactionsDataTable account={account}/>
                     </Card>
             {/*    </TabsContent>*/}
