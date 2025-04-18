@@ -1,10 +1,9 @@
 import {api_bank_user} from "@/api/axios.ts";
-import {API_BASE} from "@/constants/endpoints.ts";
 import {CardCreateRequest, CardUpdateLimitRequest} from "@/types/bank_user/card.ts";
 
 export const getCardById = async (id:string) => {
     try {
-        const response = await api_bank_user.get(`${API_BASE}/cards/${id}`);
+        const response = await api_bank_user.get(`/cards/${id}`);
         return response;
     } catch (error) {
         console.error("Failed to get card! :", error);
@@ -14,7 +13,7 @@ export const getCardById = async (id:string) => {
 
 export const changeCardStatusClient = async (cardId: string, status: boolean) => {
     try {
-        const response = await api_bank_user.put(`${API_BASE}/cards/${cardId}/status`, {
+        const response = await api_bank_user.put(`/cards/${cardId}/status`, {
             status: status
         });
         return response;
@@ -26,7 +25,7 @@ export const changeCardStatusClient = async (cardId: string, status: boolean) =>
 
 export const changeCardStatusEmployee = async (id: string, status: boolean) => {
     try {
-        const response = await api_bank_user.put(`${API_BASE}/cards/${id}/status`, {
+        const response = await api_bank_user.put(`/cards/${id}/status`, {
             status: status
         });
         return response;
@@ -50,7 +49,7 @@ export const createCard = async (data: CardCreateRequest) => {
 
 export const getAllCardsForClient = async (clientId: string) => {
     try {
-        const response = await api_bank_user.get(`${API_BASE}/cards`);
+        const response = await api_bank_user.get(`/cards`);
         return response;
     } catch (error) {
         console.error("❌ Failed to get cards for client:", error);
