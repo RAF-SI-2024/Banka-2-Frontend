@@ -1,4 +1,4 @@
-import {PortfolioBalanceData, PortfolioData, PortfolioTaxData} from "@/types/portfolio-data.ts";
+import {PortfolioBalanceData, PortfolioData, PortfolioTaxData} from "@/types/exchange/portfolio-data.ts";
 import {mockCurrencies} from "@/mocks/CurrencyMock.tsx";
 
 // Mock portfolio podaci

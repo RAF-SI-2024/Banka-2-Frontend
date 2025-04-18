@@ -2,8 +2,8 @@ import React, {useState} from "react";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {BankAccount} from "@/types/bank-account.ts";
-import {editAccountClient} from "@/api/bank-account.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
+import {editAccountClient} from "@/api/bank_user/bank-account.ts";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 import VerificationOTP from "@/components/__common__/VerificationOTP.tsx";
 import AdjustLimitsForm from "@/components/bank-account/bank-account-single/AdjustLimitsForm.tsx";
@@ -115,7 +115,7 @@ export default function BankAccountDetailsAdjustLimitsDialog({showDialog, setSho
 
     return (
         <Dialog open={showDialog} onOpenChange={handleDialogClose}>
-            <DialogContent className="min-w-fit" aria-describedby={undefined}>
+            <DialogContent className="min-w-fit shadow-none" aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle></DialogTitle>
                 </DialogHeader>

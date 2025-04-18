@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import {Badge} from "@/components/ui/badge.tsx";
 
-import {getInterestType, Loan, LoanStatus} from "@/types/loan";
+import {getInterestType, Loan, LoanStatus} from "@/types/bank_user/loan.ts";
 import {formatCurrency} from "@/lib/format-currency.ts";
 
 

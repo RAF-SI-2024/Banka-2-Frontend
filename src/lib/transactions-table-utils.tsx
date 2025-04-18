@@ -4,12 +4,12 @@ import {
     TransactionStatus,
     TransactionTableRow,
     TransactionType
-} from "@/types/transaction.ts";
+} from "@/types/bank_user/transaction.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 import React from "react";
-import {getAccountById, getAllAccountClientWithFilters, getAllAccountsClient,} from "@/api/bank-account.ts";
+import {getAccountById, getAllAccountClientWithFilters, getAllAccountsClient,} from "@/api/bank_user/bank-account.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
-import {getAccountTransactions, getAllTransactions, getNewTransactions} from "@/api/transaction.ts";
+import {getAccountTransactions, getAllTransactions, getNewTransactions} from "@/api/bank_user/transaction.ts";
 
 export const getTransactionStatusBadge = (status: TransactionStatus) => {
     let variant: "success" | "destructive" | "warning" | "outline" | null | undefined;
@@ -121,12 +121,13 @@ export const fetchTransactionTableRows = async (
                 tableRows.push({
                     fromAccountNumber: null,
                     toAccountNumber: toAccount.accountNumber,
-                    amount: item.toAmount,
+                    amount: Math.abs(item.toAmount),
                     currencyCode: item.fromCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Deposit,
                     status: item.status,
-                    purpose: item.purpose
+                    purpose: item.purpose,
+                    sign: "+"
                 })
             }
             else if(fromAccount==null)
@@ -136,12 +137,13 @@ export const fetchTransactionTableRows = async (
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
                     toAccountNumber: null,
-                    amount: -item.fromAmount,
+                    amount: Math.abs(item.fromAmount),
                     currencyCode: item.fromCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Withdraw,
                     status: item.status,
-                    purpose: item.purpose
+                    purpose: item.purpose,
+                    sign: "-"
                 })
             }
             else if(toAccount === null){
@@ -152,12 +154,13 @@ export const fetchTransactionTableRows = async (
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
                     toAccountNumber: toAccount.accountNumber,
-                    amount: -item.fromAmount,
+                    amount: Math.abs(item.fromAmount),
                     currencyCode: item.fromCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Transaction,
                     status: item.status,
-                    purpose: item.purpose
+                    purpose: item.purpose,
+                    sign: "-",
                 })
             }
             // PAYMENT FROM SOMEONE
@@ -165,12 +168,13 @@ export const fetchTransactionTableRows = async (
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
                     toAccountNumber: toAccount.accountNumber,
-                    amount: item.toAmount,
+                    amount: Math.abs(item.toAmount),
                     currencyCode: item.fromCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Transaction,
                     status: item.status,
-                    purpose: item.purpose
+                    purpose: item.purpose,
+                    sign: "-",
                 })
             }
             // EXCHANGE
@@ -178,12 +182,13 @@ export const fetchTransactionTableRows = async (
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
                     toAccountNumber: toAccount.accountNumber,
-                    amount: item.fromAmount,
+                    amount: Math.abs(item.fromAmount),
                     currencyCode: item.fromCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Exchange,
                     status: item.status,
-                    purpose: item.purpose
+                    purpose: item.purpose,
+                    sign: bankAccountId ? (bankAccountId === fromAccount.id ? "-" : (bankAccountId === toAccount.id ? "+" : "")) : "",
                 })
             }
                 // TRANSFER
@@ -193,12 +198,13 @@ export const fetchTransactionTableRows = async (
                 tableRows.push({
                     fromAccountNumber: fromAccount.accountNumber,
                     toAccountNumber: toAccount.accountNumber,
-                    amount: item.fromAccount?.id === bankAccountId ? -item.fromAmount : item.toAmount,
+                    amount: Math.abs(item.fromAccount?.id === bankAccountId ? -item.fromAmount : item.toAmount),
                     currencyCode: item.fromAccount?.id === bankAccountId ? item.fromCurrency.code : item.toCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Transfer,
                     status: item.status,
-                    purpose: item.purpose
+                    purpose: item.purpose,
+                    sign: bankAccountId ? (bankAccountId === fromAccount.id ? "-" : (bankAccountId === toAccount.id ? "+" : "")) : "",
                 })
             }
 

@@ -6,7 +6,7 @@ import {
     fetchPaymentCodes,
     fetchRecipientCurrencyCode,
     RawPaymentCode
-} from "@/api/transactionCode.ts";
+} from "@/api/bank_user/transactionCode.ts";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 import VerificationOTP from "@/components/__common__/VerificationOTP.tsx";
 import {cn} from "@/lib/utils.ts";
@@ -24,17 +24,17 @@ import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} fro
 import {z} from "zod";
 import * as React from "react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
-import {BankAccount} from "@/types/bank-account.ts";
-import {getAllAccountsClient} from "@/api/bank-account.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
+import {getAllAccountsClient} from "@/api/bank_user/bank-account.ts";
 import {Input} from "@/components/ui/input.tsx";
 import MoneyInput from "@/components/__common__/input/MoneyInput.tsx";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {Textarea} from "@/components/ui/textarea.tsx";
-import {Template} from "@/types/template.ts";
-import {getTemplates} from "@/api/template.ts";
+import {Template} from "@/types/bank_user/template.ts";
+import {getTemplates} from "@/api/bank_user/template.ts";
 import {RecipientInput} from "@/components/payments/payment-new/RecipientInput.tsx";
-import {CreateTransactionRequest} from "@/types/transaction.ts";
-import {createTransaction} from "@/api/transaction.ts";
+import {CreateTransactionRequest} from "@/types/bank_user/transaction.ts";
+import {createTransaction} from "@/api/bank_user/transaction.ts";
 import {Button} from "@/components/ui/button.tsx";
 import AddRecipientTemplate from "@/components/payments/payment-new/AddRecipientTemplate.tsx";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -90,6 +90,10 @@ export default function NewPaymentForm() {
                         setSelectedBankAccount(defaultBankAccount);
                         form.setValue("accountNumber", defaultBankAccount.accountNumber, { shouldValidate: true });
                     }
+                }
+
+                if(location.state?.templateAccount){
+                    form.setValue("recipientAccount", location.state.templateAccount)
                 }
 
 

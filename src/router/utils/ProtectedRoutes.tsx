@@ -1,5 +1,5 @@
 import { Outlet, Navigate } from "react-router-dom";
-import {  Role } from "@/types/user.ts";
+import {  Role } from "@/types/bank_user/user.ts";
 
 export const AllProtectedRoutes = () => {
     const token = sessionStorage.getItem("token");

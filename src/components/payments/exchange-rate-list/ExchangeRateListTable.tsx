@@ -2,8 +2,8 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {useEffect, useState} from "react";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
-import {CurrencyExchange} from "@/types/currency_exchange.ts";
-import {getAllCurrencyExchanges} from "@/api/currency_exchange.ts";
+import {CurrencyExchange} from "@/types/bank_user/currency_exchange.ts";
+import {getAllCurrencyExchanges} from "@/api/bank_user/currency_exchange.ts";
 
 
 export default function ExchangeRateListTable({className, ...props}: React.ComponentProps<"table">) {

@@ -15,12 +15,12 @@ import {
     getFilteredRowModel,
     useReactTable
 } from "@tanstack/react-table";
-import { getAllLoans, getAllLoanTypes } from "@/api/loan";
-import { Loan, LoanResponse } from "@/types/loan";
-import { LoanType, LoanTypeResponse } from "@/types/loan-type.ts";
+import { getAllLoans, getAllLoanTypes } from "@/api/bank_user/loan.ts";
+import { Loan, LoanResponse } from "@/types/bank_user/loan.ts";
+import { LoanType, LoanTypeResponse } from "@/types/bank_user/loan-type.ts";
 import { showErrorToast } from "@/lib/show-toast-utils.tsx";
 import { generateAllLoanColumns } from "./AllLoanListColumnDef";
-import {LoanStatus} from "@/types/loan.ts";
+import {LoanStatus} from "@/types/bank_user/loan.ts";
 
 // Postoji filter po vrsti kredita i broju računa
 export default function AllLoanTable() {

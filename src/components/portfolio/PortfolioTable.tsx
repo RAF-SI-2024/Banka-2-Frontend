@@ -11,7 +11,7 @@ import {DataTableViewOptions} from "@/components/__common__/datatable/DataTableV
 import {DataTable} from "@/components/__common__/datatable/DataTable.tsx";
 import {DataTablePagination} from "@/components/__common__/datatable/DataTablePagination.tsx";
 import {generatePortfolioColumns} from "@/components/portfolio/PortfolioTableColumns.tsx";
-import {PortfolioData} from "@/types/portfolio-data.ts";
+import {PortfolioData} from "@/types/exchange/portfolio-data.ts";
 import {portfolioDataMock} from "@/mocks/PortfolioDataMock.tsx";
 
 import {

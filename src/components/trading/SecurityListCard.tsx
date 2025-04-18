@@ -5,7 +5,7 @@ import {Tabs} from "@/components/ui/tabs.tsx";
 import {TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import SecurityInfiniteList from "@/components/trading/SecurityInfiniteList.tsx";
 import SecurityFilters from "@/components/trading/SecurityFIlters";
-import {getSecurityTypePlural, SecurityType} from "@/types/security.ts";
+import {getSecurityTypePlural, SecurityType} from "@/types/exchange/security.ts";
 
 
 export default function SecurityListCard({className, ...props}: React.ComponentProps<"div">) {

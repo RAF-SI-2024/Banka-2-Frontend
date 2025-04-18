@@ -44,7 +44,7 @@ export function DatePickerWithRange({
                                 format(date.from, "LLL dd, y")
                             )
                         ) : (
-                            <span>Pick a date range</span>
+                            <span className="text-muted-foreground">Filter by date range</span>
                         )}
                     </button>
                 </PopoverTrigger>

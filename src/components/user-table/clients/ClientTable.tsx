@@ -1,8 +1,8 @@
 import {useState, useEffect, useMemo} from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
-import { User, UserResponse } from "@/types/user.ts";
-import {getAllClients} from "@/api/user.ts";
+import { User, UserResponse } from "@/types/bank_user/user.ts";
+import {getAllClients} from "@/api/bank_user/user.ts";
 import { EditUserDialog } from "@/components/user-table/all-users/edit-user/EditUserDialog.tsx";
 import { DataTable } from "@/components/__common__/datatable/DataTable.tsx";
 import { getCoreRowModel} from "@tanstack/react-table";

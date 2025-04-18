@@ -4,10 +4,10 @@ import React, {useEffect, useState} from "react"
 import CardDetails from "@/components/card/card-single/BankCardDetails.tsx"
 import BankAccountTransactions from "@/components/bank-account/bank-account-single/BankAccountTransactions.tsx"
 import CardDisplay from "@/components/card/card-single/BankCardDisplay.tsx";
-import {CardDTO} from "@/types/card.ts";
-import { getCardById } from "@/api/card.ts"
-import {getAccountById} from "@/api/bank-account.ts";
-import {BankAccount} from "@/types/bank-account.ts";
+import {CardDTO} from "@/types/bank_user/card.ts";
+import { getCardById } from "@/api/bank_user/card.ts"
+import {getAccountById} from "@/api/bank_user/bank-account.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
 import BankAccountBalanceCard from "@/components/bank-account/bank-account-single/BankAccountBalance.tsx";
 import {Toaster} from "@/components/ui/sonner.tsx";
 

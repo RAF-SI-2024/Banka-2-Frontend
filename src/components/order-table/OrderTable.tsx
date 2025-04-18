@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DataTable } from "@/components/__common__/datatable/DataTable";
 import { DataTablePagination } from "@/components/__common__/datatable/DataTablePagination";
 import { mockOrders } from "@/mocks/OrdersMock";
-import {Order, Status} from "@/types/order.ts";
+import {Order, Status} from "@/types/exchange/order.ts";
 import {DataTableViewOptions} from "@/components/__common__/datatable/DataTableViewOptions.tsx";
 import {generateOrderColumns} from "@/components/order-table/OrderListColumnDef.tsx";
 

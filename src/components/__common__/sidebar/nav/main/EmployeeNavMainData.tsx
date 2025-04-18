@@ -1,4 +1,4 @@
-import { Actuary, ActuaryType } from "@/types/actuary";
+import { Actuary, ActuaryType } from "@/types/bank_user/actuary.ts";
 import * as React from "react";
 
 // Function that returns navigation items based on actuary type

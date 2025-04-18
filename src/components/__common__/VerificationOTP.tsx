@@ -53,7 +53,7 @@ export default function VerificationOTP({form, nextStep}: OTPFormProps) {
 
 
     return (
-        <Card className={cn("flex flex-col gap-6 bg-transparent border-0")}>
+        <Card className={cn("flex flex-col gap-6 bg-transparent border-0 shadow-none")}>
             <CardContent>
             <h2 className="text-2xl font-heading font-semibold text-center mt-4 mb-8">Verification required</h2>
             <InputOTP maxLength={6} className="flex justify-center gap-4" value={value} onChange={handleChange}>

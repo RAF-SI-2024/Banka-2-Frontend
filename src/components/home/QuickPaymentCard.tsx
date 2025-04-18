@@ -2,18 +2,19 @@ import React, { useState,useEffect } from "react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {createTransactionTemplate, deleteTemplate, updateTemplate} from "@/api/template.ts";
+import {createTransactionTemplate, deleteTemplate, updateTemplate} from "@/api/bank_user/template.ts";
 import AddTemplateDialog from "./AddTemplateDialog";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import EditTemplateDialog from "./EditTemplateDialog"; // Importuj EditTemplateDialog
-import { getTemplates } from "@/api/template.ts";
-import {Template} from "@/types/template.ts";
+import { getTemplates } from "@/api/bank_user/template.ts";
+import {Template} from "@/types/bank_user/template.ts";
 import TemplateDropdownMenu from "@/components/home/TemplateDropDownMenu.tsx";
 import {cn} from "@/lib/utils.ts";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
+import {useNavigate} from "react-router-dom";
 
 const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) => {
     const [templates, setTemplates] = useState<Template[]>([]);
@@ -22,6 +23,8 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
     const [templateToDelete, setTemplateToDelete] = useState<string | null>(null);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false); // State za edit dijalog
     const [templateToEdit, setTemplateToEdit] = useState<Template | null>(null); // Šablon koji se edituje
+
+    const navigate = useNavigate();
 
 
     const templateSchema = z.object({
@@ -143,7 +146,7 @@ const QuickPaymentCard = ({ className, ...props }: React.ComponentProps<"div">) 
                             <TableRow key={template.id} className="bg-background font-medium border-border text-foreground">
                                 <TableCell className="p-0 rounded-2xl">
                                     <span className="size-full font-paragraph text-base py-4 font-semibold rounded-none flex justify-between items-center px-4 bg-negative text-foreground cursor-pointer">
-                                        {template.name}
+                                        <span className="w-full" onClick={() => navigate("/payments/new", {state: {templateAccount: template.accountNumber}})}> {template.name} </span>
                                         <TemplateDropdownMenu
                                             onEdit={() => handleEdit(template.id)}
                                             onDelete={() => handleDelete(template.id)}

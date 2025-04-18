@@ -1,7 +1,7 @@
-import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
+import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/bank_user/auth.ts";
 import {format} from "date-fns";
-import {Role} from "@/types/user.ts";
-import {registerClient, registerEmployee} from "@/api/auth.ts";
+import {Role} from "@/types/bank_user/user.ts";
+import {registerClient, registerEmployee} from "@/api/bank_user/auth.ts";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 
 // @ts-expect-error Need to add type to the props

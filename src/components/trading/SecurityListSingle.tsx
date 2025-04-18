@@ -1,4 +1,4 @@
-import {Security} from "@/types/security.ts";
+import {Security} from "@/types/exchange/security.ts";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {formatPercentage} from "@/lib/format-number.ts";
 import {cn} from "@/lib/utils.ts";

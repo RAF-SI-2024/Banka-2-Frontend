@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { getTaxRoleString, Tax } from "@/types/tax.ts";
+import { getTaxRoleString, Tax } from "@/types/exchange/tax.ts";
 import TaxDropdownMenu from "@/components/tax/TaxDropdownMenu.tsx";
 import {formatCurrency} from "@/lib/format-currency.ts"; // prilagodi ako je putanja druga
 

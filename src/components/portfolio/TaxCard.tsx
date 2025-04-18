@@ -1,7 +1,7 @@
 import {cn} from "@/lib/utils.ts";
 import {Card} from "@/components/ui/card.tsx";
 import React from "react";
-import {PortfolioTaxData} from "@/types/portfolio-data.ts";
+import {PortfolioTaxData} from "@/types/exchange/portfolio-data.ts";
 import {formatCurrency} from "@/lib/format-currency.ts";
 
 export default function TaxCard({amount }: {amount: PortfolioTaxData}) {

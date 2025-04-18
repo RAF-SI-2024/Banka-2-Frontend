@@ -2,8 +2,8 @@ import React, {useState} from "react";
 import {Card, CardContent, CardDescription, CardHeader} from "@/components/ui/card.tsx";
 import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
-import {LoanType} from "@/types/loan-type.ts";
-import {InterestType} from "@/types/loan.ts";
+import {LoanType} from "@/types/bank_user/loan-type.ts";
+import {InterestType} from "@/types/bank_user/loan.ts";
 
 
 interface LoanRequestLoanDetailsProps{

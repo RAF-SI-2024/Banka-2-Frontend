@@ -1,14 +1,14 @@
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BankAccount } from "@/types/bank-account.ts";
+import { BankAccount } from "@/types/bank_user/bank-account.ts";
 import React, {useEffect, useState} from "react";
 import {Button} from "@/components/ui/button.tsx";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
-import {Loan} from "@/types/loan.ts";
-import {Installment} from "@/types/installment.ts";
+import {Loan} from "@/types/bank_user/loan.ts";
+import {Installment} from "@/types/bank_user/installment.ts";
 import LoanDetailsClientLeft from "@/components/loans/loan-details/LoanDetailsClientLeft.tsx";
 import LoanDetailsClientRight from "@/components/loans/loan-details/LoanDetailsClientRight.tsx";
-import {getLoanInstallments} from "@/api/loan.ts";
+import {getLoanInstallments} from "@/api/bank_user/loan.ts";
 
 interface DetailsProps extends React.ComponentProps<"div"> {
     loan: Loan;

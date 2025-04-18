@@ -1,7 +1,7 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {cn} from "@/lib/utils.ts";
 import TransactionsDataTable from "@/components/bank-account/bank-account-single/TransactionsDataTable.tsx";
-import {BankAccount} from "@/types/bank-account.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
 
 
 interface BankAccountTransactionProps extends React.ComponentProps<"div">{
@@ -27,7 +27,7 @@ const BankAccountTransactionsCard = ({ account, cardTitle, className, ...props }
             {/*        </TabsTrigger>*/}
             {/*    </TabsList>*/}
             {/*    <TabsContent value="transactions">*/}
-                    <Card className="rounded-md font-paragraph" >
+                    <Card className="rounded-md font-paragraph border-0" >
                         <TransactionsDataTable account={account}/>
                     </Card>
             {/*    </TabsContent>*/}

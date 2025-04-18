@@ -3,7 +3,7 @@ import NewPasswordForm from "@/components/auth/password-reset/NewPasswordForm.ts
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {useEffect} from "react";
 import * as z from "zod";
-import {activateUser} from "@/api/auth.ts";
+import {activateUser} from "@/api/bank_user/auth.ts";
 
 export default function ResetPassPage({
   className

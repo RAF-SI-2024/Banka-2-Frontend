@@ -1,4 +1,4 @@
-import { ExchangeTableData } from "@/types/exchange";
+import { ExchangeTableData } from "@/types/exchange/exchange.ts";
 
 export const mokCountries: string[]= ["USA", "Indonesia", "Australia", "United States", "Ireland", "Italy", "India", "France", "Canada", "Poland", "Ukraine"];
 

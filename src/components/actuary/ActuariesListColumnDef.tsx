@@ -1,10 +1,10 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Actuary, ActuaryType, getActuaryTypeLabel } from "@/types/actuary";
+import { Actuary, ActuaryType, getActuaryTypeLabel } from "@/types/bank_user/actuary.ts";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/format-currency.ts";
 import ActuariesDropdownMenu from "@/pages/actuary/ActuaryDropDownMenu.tsx";
-import {Role, User} from "@/types/user";
-import {getUserById} from "@/api/user.ts";
+import {Role, User} from "@/types/bank_user/user.ts";
+import {getUserById} from "@/api/bank_user/user.ts";
 
 export function generateActuaryColumns(
   handleOpenEditDialog: (actuary: Actuary) => void,

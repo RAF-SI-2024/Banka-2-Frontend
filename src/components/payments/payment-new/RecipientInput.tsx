@@ -11,7 +11,8 @@ import * as React from "react";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
 import {Check, ChevronsUpDown} from "lucide-react";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command.tsx";
-import {Template} from "@/types/template.ts";
+import {Template} from "@/types/bank_user/template.ts";
+import {cn} from "@/lib/utils.ts";
 
 interface RecipientInputProps {
     templates: Template[]
@@ -33,7 +34,8 @@ export function RecipientInput({ templates }: RecipientInputProps) {
 
                         <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
-                                <Button variant="outline" role="combobox" data-cy="recipient-dropdown" aria-expanded={open} className="justify-between hover:bg-foreground/80 text-muted-foreground border-border">
+                                <Button variant="outline" role="combobox" data-cy="recipient-dropdown" aria-expanded={open}
+                                        className={cn("justify-between hover:bg-foreground/80 border-border", field.value ? "text-foreground": "text-muted-foreground")}>
                                     {field.value || "Enter account number..."}
                                     <ChevronsUpDown className="opacity-50" />
                                 </Button>

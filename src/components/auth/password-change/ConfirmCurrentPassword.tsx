@@ -5,8 +5,8 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {useNavigate} from "react-router-dom";
-import {LoginRequest, RequestPasswordReset} from "@/types/auth.ts";
-import {loginUser, requestPasswordReset} from "@/api/auth.ts";
+import {LoginRequest, RequestPasswordReset} from "@/types/bank_user/auth.ts";
+import {loginUser, requestPasswordReset} from "@/api/bank_user/auth.ts";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 
 const formSchema = z.object({

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { Label } from "@/components/ui/label.tsx";
-import { BankAccount } from "@/types/bank-account.ts";
+import { BankAccount } from "@/types/bank_user/bank-account.ts";
 import React, { useState} from "react";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {Button} from "@/components/ui/button.tsx";

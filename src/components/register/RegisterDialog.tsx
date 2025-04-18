@@ -1,6 +1,6 @@
 import {Dialog, DialogContent, DialogDescription, DialogTitle} from "@/components/ui/dialog.tsx";
 import RegisterDialogContent from "@/components/register/RegisterDialogContent.tsx";
-import {Role} from "@/types/user.ts";
+import {Role} from "@/types/bank_user/user.ts";
 import {useMediaQuery} from "@/hooks/use-media-query.ts";
 import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerTitle} from "../ui/drawer";
 import {Button} from "@/components/ui/button.tsx";

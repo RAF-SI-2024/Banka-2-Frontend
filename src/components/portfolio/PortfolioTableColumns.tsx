@@ -1,8 +1,8 @@
-import {getGenderString, getRoleString, User} from "@/types/user.ts";
+import {getGenderString, getRoleString, User} from "@/types/bank_user/user.ts";
 import {ColumnDef} from "@tanstack/react-table";
 import {Badge} from "@/components/ui/badge.tsx";
 import UserDropdownMenu from "@/components/user-table/all-users/UserDropdownMenu.tsx";
-import {PortfolioData} from "@/types/portfolio-data.ts";
+import {PortfolioData} from "@/types/exchange/portfolio-data.ts";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {Button} from "@/components/ui/button.tsx";
 

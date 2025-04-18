@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Actuary } from "@/types/actuary";
+import { Actuary } from "@/types/bank_user/actuary.ts";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,8 +26,8 @@ import { mockActuaries } from "@/__mocks/mock-actuaries";
 import { generateActuaryColumns } from "@/components/actuary/ActuariesListColumnDef.tsx";
 import { EditActuaryDialog } from "@/components/actuary/edit-actuary/EditActuaryDialog.tsx";
 import ResetLimitConfirmDialog from "./reset-used-limit/ResetLimitConfirmDialog";
-import { User } from "@/types/user.ts";
-import { getAllUsers } from "@/api/user.ts";
+import { User } from "@/types/bank_user/user.ts";
+import { getAllUsers } from "@/api/bank_user/user.ts";
 
 export default function ActuaryTable() {
   const [actuaries, setActuaries] = useState<Actuary[]>([]);

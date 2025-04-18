@@ -1,11 +1,11 @@
 import * as React from "react";
 import Stepper from "@/components/__common__/Stepper.tsx";
 import EmailConfirmation from "@/components/__common__/EmailConfirmation.tsx";
-import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/auth.ts";
-import {registerClient, registerEmployee} from "@/api/auth.ts";
+import {RegisterRequestClient, RegisterRequestEmployee} from "@/types/bank_user/auth.ts";
+import {registerClient, registerEmployee} from "@/api/bank_user/auth.ts";
 import { Button } from "@/components/ui/button";
 import {CardFooter} from "@/components/ui/card.tsx";
-import {Role} from "@/types/user.ts";
+import {Role} from "@/types/bank_user/user.ts";
 
 interface ActivationConfirmationProps extends React.ComponentProps<"div"> {
     onContinue?: () => void;

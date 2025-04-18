@@ -1,13 +1,13 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {getUserById, updateClient, updateEmployee} from "@/api/user.ts";
+import {getUserById, updateClient, updateEmployee} from "@/api/bank_user/user.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { cn } from "@/lib/utils.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Form } from "@/components/ui/form.tsx";
-import { UpdateClientRequest, UpdateEmployeeRequest, User, Role } from "@/types/user.ts";
+import { UpdateClientRequest, UpdateEmployeeRequest, User, Role } from "@/types/bank_user/user.ts";
 import { createFormSchema, getFormFields } from "@/components/__utils__/form-fields.tsx";
 import { FormFieldRenderer } from "@/components/user-table/all-users/edit-user/FormFieldRendered.tsx";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";

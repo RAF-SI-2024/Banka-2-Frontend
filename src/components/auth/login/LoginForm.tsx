@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "@/api/auth.ts";
-import { LoginRequest } from "@/types/auth.ts";
+import { loginUser } from "@/api/bank_user/auth.ts";
+import { LoginRequest } from "@/types/bank_user/auth.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";

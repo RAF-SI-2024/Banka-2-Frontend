@@ -12,9 +12,9 @@ import {
 import { Button } from "@/components/ui/button.tsx";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import {Input} from "@/components/ui/input.tsx";
-import {BankAccount} from "@/types/bank-account.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
 import MoneyInput from "@/components/__common__/input/MoneyInput.tsx";
-import {getAllCardTypes} from "@/api/card-type.ts";
+import {getAllCardTypes} from "@/api/bank_user/card-type.ts";
 
 interface CreateCardProps {
     account: BankAccount,

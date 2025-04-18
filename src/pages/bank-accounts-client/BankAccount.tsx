@@ -5,9 +5,9 @@ import BankAccountTransactions from "@/components/bank-account/bank-account-sing
 import { motion, AnimatePresence } from "framer-motion";
 import BankAccountCardsCard from "@/components/bank-account/bank-account-single/BankAccountCards.tsx";
 import React, {useEffect, useState} from "react";
-import {editAccountClient, getAccountById, getAllCreditCardsForBankAccount} from "@/api/bank-account.ts";
-import {AccountUpdateClientRequest, BankAccount} from "@/types/bank-account.ts";
-import {CardDTO} from "@/types/card.ts";
+import {editAccountClient, getAccountById, getAllCreditCardsForBankAccount} from "@/api/bank_user/bank-account.ts";
+import {AccountUpdateClientRequest, BankAccount} from "@/types/bank_user/bank-account.ts";
+import {CardDTO} from "@/types/bank_user/card.ts";
 import { Toaster} from "@/components/ui/sonner.tsx"
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 
@@ -96,7 +96,7 @@ export default function BankAccountPage() {
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
             <Toaster richColors />
             <h1 className="font-display font-bold text-5xl">{account.name || "An unnamed account"} overview</h1>
-            <div className="grid auto-rows-min gap-4 md:grid-cols-2">
+            <div className="grid auto-rows-min md:gap-0 gap-4 md:grid-cols-2">
                 <AnimatePresence mode="wait">
                     {showDetails ? (
                         <motion.div
@@ -107,6 +107,7 @@ export default function BankAccountPage() {
                             exit={{ opacity: 0, x: -100 }}
                         >
                             <BankAccountDetailsCard
+                                className="mr-2"
                                 account={account}
                                 onBackClick={() => setShowDetails(false)}
                                 onAccountNameChange={async (newValue) =>{
@@ -127,17 +128,18 @@ export default function BankAccountPage() {
                             exit={{ opacity: 0, x: -100 }}
                         >
                             <BankAccountBalanceCard
+                                className="mr-2"
                                 account={account}
                                 onSendClick={() => navigate('/payments/new', {state:{accountId: account.id}})}
                                 onDetailsClick={() => setShowDetails(true)}
                             />
 
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                <BankAccountCardsCard account={account} cards={cards} />
-                <BankAccountTransactions className="md:col-span-2 sm:col-span-1" account={account} cardTitle="Recent transactions"/>
+                <BankAccountCardsCard account={account} cards={cards} className="md:ml-2"/>
+                <BankAccountTransactions className="md:col-span-2 md:mt-4 sm:col-span-1 " account={account} cardTitle="Transactions"/>
             </div>
         </main>
     )
