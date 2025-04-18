@@ -70,7 +70,6 @@ export default function UserTable() {
     /* FUNCTIONS */
     // fetch users function
     const fetchUsers = async () => {
-        console.log("Fetching users");
         setError(null);
         try {
             const usersData: UserResponse = await getAllUsers(
@@ -80,9 +79,7 @@ export default function UserTable() {
             );
             setUsers(usersData.items);
             setTotalPages(usersData.totalPages);
-            console.log(usersData)
         } catch (err) {
-            console.log(err);
             setError("Failed to fetch users");
         }
     };
