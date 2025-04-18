@@ -1,8 +1,10 @@
-import {useState, useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component"
-import {Security, SecurityType} from "@/types/exchange/security.ts";
+import {getSecurityTypePlural, Security, SecuritySimple, SecurityType} from "@/types/exchange/security.ts";
 import SecurityListSingle from "@/components/trading/SecurityListSingle.tsx";
 import {generateSecurities} from "@/mocks/trading/SecurityListMock.tsx";
+import {getAllSecuritiesOfType} from "@/api/exchange/security.ts";
+import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 
 interface InfiniteListProps {
     type: SecurityType;
@@ -12,37 +14,43 @@ interface InfiniteListProps {
 }
 
 export default function SecurityInfiniteList({ type, scrollableId, fetchFlag, itemsPerPage = 20 }: InfiniteListProps) {
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     const initialized = useRef(false)
     const [hasMore, setHasMore] = useState(true);
-    const [securities, setSecurities] = useState<Security[]>([]);
+    const [securities, setSecurities] = useState<SecuritySimple[]>([]);
 
     const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
     // Reset when dependencies change
     useEffect(() => {
-        setPage(0);
+        setPage(1);
         setSecurities([]);
 
-        next(0);
+        next(1);
     }, [type, fetchFlag]); // Include itemsPerPage in dependencies
 
     const next = async (currentPage: number = page) => {
+        try {
+            let newSecurities: SecuritySimple[] = [];
+            if (type == SecurityType.Stock) { // TODO: izbrisati kad se dodaju rute za svaki tip
+                newSecurities = (await getAllSecuritiesOfType(type, currentPage, itemsPerPage)).items;
+            } else {
+                newSecurities = await generateSecurities(type, currentPage, itemsPerPage);
+            }
 
+            if (page == 1)
+                setSecurities(newSecurities);
+            else
+                setSecurities(prev => [...prev, ...newSecurities]);
 
+            setPage(currentPage + 1);
+            setHasMore(newSecurities.length >= itemsPerPage);
 
-        const newSecurities = await generateSecurities(type, currentPage, itemsPerPage);
-
-        if(page==0)
-            setSecurities(newSecurities);
-        else
-            setSecurities(prev => [...prev, ...newSecurities]);
-
-        setPage(currentPage + 1);
-        setHasMore(newSecurities.length >= itemsPerPage);
-
-        initialized.current = false;
-
+            initialized.current = false;
+        }
+        catch (error) {
+            showErrorToast({error, defaultMessage: "Error while fetching " + getSecurityTypePlural(type) + "."} );
+        }
 
     };
 
@@ -66,7 +74,7 @@ export default function SecurityInfiniteList({ type, scrollableId, fetchFlag, it
             scrollableTarget={scrollableId}
         >
             {securities.map((security) => (
-                <SecurityListSingle key={security.id} security={security} />
+                <SecurityListSingle key={security.id} security={security} securityType={type} />
             ))}
         </InfiniteScroll>
     );
