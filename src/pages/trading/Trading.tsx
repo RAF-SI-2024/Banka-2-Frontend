@@ -7,7 +7,7 @@ import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, Dra
 import {Button} from "@/components/ui/button.tsx";
 import {useMediaQuery} from "@/hooks/use-media-query.ts";
 import {useParams} from "react-router-dom";
-import {getSecurityTypeFromString, SecurityType} from "@/types/exchange/security.ts";
+import {getSecurityTypeFromString, Security, SecuritySimple, SecurityType} from "@/types/exchange/security.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 import Loader from "@/components/__common__/Loader.tsx";
 import {useQuery} from "react-query";
@@ -53,7 +53,7 @@ export default function Trading() {
 }
 
 
-async function fetchData(securityId?: string, securityType?: SecurityType){
+async function fetchData(securityId?: string, securityType?: SecurityType) {
     try {
         let res;
         // If on "/trading" (no securityId), update the URL without triggering a re-fetch
@@ -90,9 +90,17 @@ function TradingInfo({securityId, securityType}: { securityId?: string, security
     return(
         <>
 
-            <h1 className="font-display font-bold text-5xl">
+            <div className="flex flex-row gap-2 items-baseline">
+            <h1 className="font-display font-bold text-5xl -mb-4">
                 {data.ticker ? data.ticker : "Security"} Overview
             </h1>
+                <h1 className="font-display font-light text-lg -mb-4 text-muted-foreground">
+                    {data.stockExchange?.acronym || "NaN"}
+                </h1>
+            </div>
+            <p className="text-base text-muted-foreground font-paragraph max-w-screen">
+                {data.name}
+            </p>
 
             <div className="grid lg:grid-rows-2 auto-rows-fr gap-4 lg:grid-cols-10 h-full lg:max-w-dvw min-h-fit lg:max-h-fit max-w-full">
                 {/* Graph starts at row 1 and spans 3 rows */}
@@ -147,9 +155,15 @@ function TradingInfoSkeleton(){
     return(
         <>
             <Skeleton className="w-fit" >
-                <h1 className="font-display font-bold text-5xl text-transparent">
-                Security Overview
+                <h1 className="font-display font-bold text-5xl text-transparent -mb-4">
+                Security (NASDAQ) Overview
+
                 </h1>
+            </Skeleton>
+            <Skeleton className="w-fit">
+                <p className="text-base font-paragraph text-transparent">
+                    J.P. Morgan Exchange-Traded Fund Trust JPMorgan Fundamental Data Science Large Core ETF
+                </p>
             </Skeleton>
 
             <div className="grid lg:grid-rows-2 auto-rows-fr gap-4 lg:grid-cols-10 h-full lg:max-w-dvw min-h-fit lg:max-h-fit max-w-full">

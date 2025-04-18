@@ -19,8 +19,6 @@ export default function SecurityInfiniteList({ type, scrollableId, fetchFlag, it
     const [hasMore, setHasMore] = useState(true);
     const [securities, setSecurities] = useState<SecuritySimple[]>([]);
 
-    const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-
     // Reset when dependencies change
     useEffect(() => {
         setPage(1);
@@ -34,6 +32,7 @@ export default function SecurityInfiniteList({ type, scrollableId, fetchFlag, it
             let newSecurities: SecuritySimple[] = [];
             if (type == SecurityType.Stock) { // TODO: izbrisati kad se dodaju rute za svaki tip
                 newSecurities = (await getAllSecuritiesOfType(type, currentPage, itemsPerPage)).items;
+                console.log(newSecurities[0]);
             } else {
                 newSecurities = await generateSecurities(type, currentPage, itemsPerPage);
             }

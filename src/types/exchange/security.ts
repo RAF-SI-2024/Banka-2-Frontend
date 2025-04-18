@@ -1,3 +1,6 @@
+import {Currency} from "@/types/bank_user/currency.ts";
+import {Exchange} from "@/types/exchange/exchange.ts";
+
 export interface Security {
     id: string;
     name: string;
@@ -7,6 +10,7 @@ export interface Security {
     askPrice: number;
     bidPrice: number;
     volume: number;
+    stockExchange: Exchange;
     priceChangeInInterval: number;
     priceChangePercentInInterval: number;
     createdAt: Date;
@@ -15,8 +19,10 @@ export interface Security {
 
 export interface SecuritySimple {
     id: string;
+    name: string;
     ticker: string;
     askPrice: number;
+    stockExchange?: Exchange;
     priceChangePercentInInterval: number;
 }
 

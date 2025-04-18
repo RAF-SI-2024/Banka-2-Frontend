@@ -1,8 +1,8 @@
-import { ExchangeTableData } from "@/types/exchange/exchange.ts";
+import { Exchange } from "@/types/exchange/exchange.ts";
 
 export const mokCountries: string[]= ["USA", "Indonesia", "Australia", "United States", "Ireland", "Italy", "India", "France", "Canada", "Poland", "Ukraine"];
 
-export const mokDataExchanges: ExchangeTableData[] = [
+export const mokDataExchanges: Exchange[] = [
     {
       name: "Nasdaq",
       acronym: "NASDAQ",

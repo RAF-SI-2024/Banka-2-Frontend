@@ -22,7 +22,6 @@ export const getAllSecuritiesOfType = async (
                 size,
             },
         });
-        console.log(response.data);
         return response.data;
     }
     catch (error) {
