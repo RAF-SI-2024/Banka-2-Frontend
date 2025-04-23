@@ -1,5 +1,5 @@
 import {api_bank_user} from "../axios.ts";
-import { API_BASE } from "../../constants/endpoints.ts";
+import { API_BASE } from "@/constants/endpoints.ts";
 import {
   LoginRequest,
   RegisterRequestClient,
