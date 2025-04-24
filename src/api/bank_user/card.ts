@@ -49,7 +49,7 @@ export const createCard = async (data: CardCreateRequest) => {
 
 export const getAllCardsForClient = async (clientId: string) => {
     try {
-        const response = await api_bank_user.get(`/cards`);
+        const response = await api_bank_user.get(`clients/${clientId}/cards`);
         return response;
     } catch (error) {
         console.error("❌ Failed to get cards for client:", error);
