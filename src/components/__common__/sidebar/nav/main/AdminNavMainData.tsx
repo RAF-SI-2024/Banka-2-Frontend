@@ -41,6 +41,12 @@ export function AdminNavMainData() {
                         }
                     ]
                 },
+                {
+                    title: "Tax tracking",
+                    url: "/tax/overview",
+                    icon: <span className="icon-[ph--invoice]" />,
+                    isCollapsed: true,
+                }
             ]
         },
         {

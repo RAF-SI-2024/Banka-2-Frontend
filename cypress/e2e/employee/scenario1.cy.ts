@@ -4,7 +4,9 @@ describe('Scenario 1 - Register client, create him a bank account, check if his 
         cy.login("employee1@gmail.com", "employee1");
     });
 
+
     it("Click on create a new bank account button", () => {
+        cy.visit('/bank-account-list');
         cy.get('.fixed > .cursor-pointer').click();
     })
 
