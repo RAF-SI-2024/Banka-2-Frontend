@@ -53,8 +53,8 @@ export default function EmailConfirmation({
     }, [countdown]);
 
     return (
-        <div className={cn("flex flex-col justify-center items-center w-full gap-2 z-10 max-width-full", className)} {...props}>
-            <Card className={cn("w-xl z-10 flex flex-col gap-6", cardClassName)} {...cardProps}>
+        <div className={cn(" flex flex-col justify-center items-center w-full gap-2 z-10 max-width-full", className)} {...props}>
+            <Card className={cn("bg-transparent border-0 shadow-none w-xl z-10 flex flex-col gap-6", cardClassName)} {...cardProps}>
                 <CardContent className="mt-4 font-paragraph flex flex-col items-center text-center gap-3">
                     <span
                         className={cn("icon-[ph--check-circle-fill] inset-0 bg-gradient-to-r from-primary to-secondary mask-size-cover text-8xl", iconClassName)}
