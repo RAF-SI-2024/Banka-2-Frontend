@@ -1,4 +1,5 @@
 import {api_bank_user} from "@/api/axios.ts";
+import {TransactionCodeResponse} from "@/types/bank_user/transaction.ts";
 
 export interface RawPaymentCode {
     id: string;
@@ -26,4 +27,22 @@ export const fetchRecipientCurrencyCode = async (
     return response.data.items?.[0].currency.id;
 
 
+};
+
+export const getTransactionCodes = async (
+    pageNumber: number,
+    pageSize: number
+): Promise<TransactionCodeResponse> => {
+    try {
+        const response = await api_bank_user.get("/transactions/codes", {
+            params: {
+                Page: pageNumber,
+                Size: pageSize,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("❌ Error fetching transaction codes:", error);
+        throw error;
+    }
 };

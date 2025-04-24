@@ -17,7 +17,6 @@ export const getAllUsers = async (
                 size,
             },
         });
-        console.log(response);
 
         return response.data; // API returns an array of users
     } catch (error) {

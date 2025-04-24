@@ -51,20 +51,6 @@ api_exchange.interceptors.response.use(
 );
 
 
-// Axios Interceptor to attach JWT token dynamically (except for login/register)
-api_bank_user.interceptors.request.use(
-    (config) => {
-        const token = sessionStorage.getItem("token");
-        if (token && !config.url?.includes("/users/login") && !config.url?.includes("/users/register")) {
-            config.headers["Authorization"] = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
 api_bank_user.interceptors.response.use(
     (response) => response, // If response is successful, return it
     (error) => {
