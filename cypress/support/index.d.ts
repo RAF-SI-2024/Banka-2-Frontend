@@ -1,4 +1,4 @@
-import { Gender } from "@/types/enums";
+import { Gender } from "@/types/bank_user/user";
 
 declare global {
     namespace Cypress {
