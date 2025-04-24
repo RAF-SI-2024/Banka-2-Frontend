@@ -16,8 +16,10 @@ const api_exchange = axios.create({
 export const setAuthToken = (token: string | null) => {
     if (token) {
         api_exchange.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        api_bank_user.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     } else {
         delete api_exchange.defaults.headers.common["Authorization"];
+        delete api_bank_user.defaults.headers.common["Authorization"];
     }
 };
 
@@ -36,6 +38,20 @@ api_exchange.interceptors.request.use(
 );
 
 api_exchange.interceptors.response.use(
+    (response) => response, // If response is successful, return it
+    (error) => {
+        if (error.response?.status === 401 || error.response?.status === 403) {
+
+            if (typeof globalLogout === "function") {
+                globalLogout(); // Call the globally stored logout function
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
+
+api_bank_user.interceptors.response.use(
     (response) => response, // If response is successful, return it
     (error) => {
         if (error.response?.status === 401 || error.response?.status === 403) {

@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ExchangeTableData } from "@/types/exchange/exchange.ts";
+import { Exchange } from "@/types/exchange/exchange.ts";
 
-export function generateExchangesColumns(): ColumnDef<ExchangeTableData>[] {
+export function generateExchangesColumns(): ColumnDef<Exchange>[] {
     return (
         [
             {

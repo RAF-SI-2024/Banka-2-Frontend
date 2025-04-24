@@ -1,5 +1,4 @@
 import {api_bank_user} from "../axios.ts"
-import {API_BASE} from "@/constants/endpoints.ts";
 
 export const getAllCurrencies = async () => {
     try {
@@ -13,7 +12,7 @@ export const getAllCurrencies = async () => {
 
 export const getCurrencyById = async (currencyId: string) => {
     try{
-        const response = await api_bank_user.get(`${API_BASE}/currencies/${currencyId}`);
+        const response = await api_bank_user.get(`/currencies/${currencyId}`);
         return response;
     } catch (error) {
         console.error("❌ Error fetching currency:", error);

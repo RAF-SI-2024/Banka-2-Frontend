@@ -1,6 +1,6 @@
 import {Currency} from "@/types/bank_user/currency.ts";
 
-export interface ExchangeTableData {
+export interface Exchange {
     name: string;
     acronym: string;
     mic: string;
@@ -12,8 +12,8 @@ export interface ExchangeTableData {
 }
 
 
-export interface ExchangeTableDataResponse {
-    items: ExchangeTableData[];
+export interface ExchangeResponse {
+    items: Exchange[];
     pageNumber: number;
     pageSize: number;
     totalElements: number;

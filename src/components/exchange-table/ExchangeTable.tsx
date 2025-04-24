@@ -16,7 +16,7 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import { generateExchangesColumns } from "./ExchangesListColumnsDef";
-import {ExchangeTableData, ExchangeTableDataResponse} from "@/types/exchange/exchange.ts";
+import {Exchange, ExchangeResponse} from "@/types/exchange/exchange.ts";
 import ConfirmationDialog from "../__common__/ConfirmationDialog";
 import { disable, disableDescription, enable, enableDescription } from "./ConfirmationText";
 import {getAllExchanges} from "@/api/exchange/exchange.ts";
@@ -40,7 +40,7 @@ export default function ExchangeTable() {
     const [fetchFlag, setFetchFlag] = useState(false);
 
     // current exchange list
-    const [exchanges, setExchangeTableData] = useState<ExchangeTableData[]>([]);
+    const [exchanges, setExchangeTableData] = useState<Exchange[]>([]);
 
     // working hours
     const [workingHours, setWorkingHours] = useState(false);
@@ -79,7 +79,7 @@ export default function ExchangeTable() {
         try {
             //NAMESTENO SAMO ODMARKIRATI KADA NAPRAVE BACKEND
 
-            const data: ExchangeTableDataResponse = await getAllExchanges(
+            const data: ExchangeResponse = await getAllExchanges(
                 currentPage,
                 pageSize,
                 filter

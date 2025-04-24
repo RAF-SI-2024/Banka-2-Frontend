@@ -19,7 +19,7 @@ import {getAllLoans, getAllLoanTypes, updateLoanStatus} from "@/api/bank_user/lo
 import {Loan, LoanResponse, LoanStatus} from "@/types/bank_user/loan.ts";
 import {generateLoanColumns} from "./LoanListColumnDef";
 import {LoanType, LoanTypeResponse} from "@/types/bank_user/loan-type.ts";
-import {showErrorToast} from "@/lib/show-toast-utils.tsx";
+import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 
 // Postoji filter po vrsti kredita i broju računa
 export default function LoanRequestTable() {
@@ -133,6 +133,7 @@ export default function LoanRequestTable() {
         try {
             const response = await updateLoanStatus(loan.id, loanUpdateRequest);
             setFetchFlag(!fetchFlag); // Fetch loans and loan types again
+            showSuccessToast({description: `Loan successfully ${status == LoanStatus.Rejected ? "rejected" : "approved"}`})
         } catch (error) {
             console.error("Failed to update loan status:", error);
             showErrorToast({ error, defaultMessage: "Failed to update loan status." });

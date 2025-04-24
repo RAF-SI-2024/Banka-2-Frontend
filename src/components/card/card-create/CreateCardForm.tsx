@@ -69,7 +69,7 @@ export default function CreateCardForm({account, form, nextStep }: CreateCardPro
                             name="cardTypeId"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Account Type</FormLabel>
+                                    <FormLabel>Card Type</FormLabel>
                                     <Select
                                         onValueChange={field.onChange}
                                     >

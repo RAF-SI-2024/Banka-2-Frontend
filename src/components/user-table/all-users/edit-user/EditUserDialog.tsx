@@ -40,7 +40,7 @@ export function EditUserDialog({ id, isOpen, onOpenChange }: EditUserDialogProps
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
+              Click "Update" when you're done.
             </DialogDescription>
           </DialogHeader>
           <EditUserForm id_={id} onClose={handleClose} />

@@ -1,12 +1,12 @@
 import {api_bank_user, api_exchange} from "@/api/axios.ts";
-import { ExchangeTableDataResponse} from "@/types/exchange/exchange.ts";
+import { ExchangeResponse} from "@/types/exchange/exchange.ts";
 
 
 export const getAllExchanges = async (
     page: number,
     size: number,
     filters?: { name?: string; polity?: string;}
-): Promise<ExchangeTableDataResponse> => {
+): Promise<ExchangeResponse> => {
     try {
         const response = await api_exchange.get("/exchanges", {
             params: {
