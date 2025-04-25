@@ -20,7 +20,7 @@ import './commands'
 import "./commands/authorization"
 
 // ADMIN
-import "./commands/admin/user-list"
+import "./commands/admin/user-management"
 
 // CLIENT
 // LOAN
