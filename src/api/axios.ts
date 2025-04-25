@@ -37,6 +37,20 @@ api_exchange.interceptors.request.use(
     }
 );
 
+api_bank_user.interceptors.request.use(
+    (config) => {
+        const token = sessionStorage.getItem("token");
+        if (token && !config.url?.includes("/users/login") && !config.url?.includes("/users/register")) {
+            config.headers["Authorization"] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+
 api_exchange.interceptors.response.use(
     (response) => response, // If response is successful, return it
     (error) => {

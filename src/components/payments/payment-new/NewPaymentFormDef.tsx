@@ -13,6 +13,7 @@ export const paymentSchema = z.object({
         z.number()
             .gt(0, "Amount is too small")
     ),
+    toCurrencyId: z.string(),
 
     referenceNumber: z
         .string()

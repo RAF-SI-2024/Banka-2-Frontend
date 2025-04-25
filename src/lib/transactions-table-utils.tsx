@@ -169,12 +169,12 @@ export const fetchTransactionTableRows = async (
                     fromAccountNumber: fromAccount.accountNumber,
                     toAccountNumber: toAccount.accountNumber,
                     amount: Math.abs(item.toAmount),
-                    currencyCode: item.fromCurrency.code,
+                    currencyCode: item.toCurrency.code,
                     date: new Date(item.createdAt),
                     type: TransactionType.Transaction,
                     status: item.status,
                     purpose: item.purpose,
-                    sign: "-",
+                    sign: "+",
                 })
             }
             // EXCHANGE

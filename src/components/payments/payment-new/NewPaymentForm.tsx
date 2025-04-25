@@ -4,7 +4,6 @@ import {paymentSchema} from "@/components/payments/payment-new/NewPaymentFormDef
 import {useEffect, useState} from "react";
 import {
     fetchPaymentCodes,
-    fetchRecipientCurrencyCode,
     RawPaymentCode
 } from "@/api/bank_user/transactionCode.ts";
 import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
@@ -38,6 +37,8 @@ import {createTransaction} from "@/api/bank_user/transaction.ts";
 import {Button} from "@/components/ui/button.tsx";
 import AddRecipientTemplate from "@/components/payments/payment-new/AddRecipientTemplate.tsx";
 import {useLocation, useNavigate} from "react-router-dom";
+import {Currency} from "@/types/bank_user/currency.ts";
+import {getAllCurrencies} from "@/api/bank_user/currency.ts";
 
 export default function NewPaymentForm() {
     const location = useLocation();
@@ -48,6 +49,7 @@ export default function NewPaymentForm() {
             recipientAccount: "",
             accountNumber: "",
             purpose: "",
+            toCurrencyId: "",
             referenceNumber: "",
             amount: 0,
         },
@@ -59,6 +61,8 @@ export default function NewPaymentForm() {
     const [selectedBankAccount, setSelectedBankAccount] = useState<BankAccount | null>(null);
     const [amountError, setAmountError] = useState<string | null>(null);
     const [amount, setAmount] = useState<number>(0);
+    const [toCurrency, setToCurrency] = useState<Currency | null>(null);
+    const [currencies, setCurrencies] = useState<Currency[]>([])
     const [templates, setTemplates] = useState<Template[]>([]);
     const [step, setStep] = useState<"form" | "otp" | "success">("form");
     const navigate = useNavigate();
@@ -73,6 +77,7 @@ export default function NewPaymentForm() {
                 const codes = await fetchPaymentCodes();
                 const bankAccountsResponse = await getAllAccountsClient(JSON.parse(sessionStorage.user).id, 1, 100);
                 const templatesResponse = await getTemplates();
+                const currencies = await getAllCurrencies();
 
                 if (bankAccountsResponse.status !== 200)
                     throw new Error("Failed to fetch bank accounts");
@@ -80,6 +85,11 @@ export default function NewPaymentForm() {
                 setPaymentCodes(codes);
                 setTemplates(templatesResponse.items);
                 setBankAccounts(bankAccountsResponse.data.items);
+                setCurrencies(currencies);
+                const rsdCurrency: Currency = currencies.find((c: Currency) => c.code === "RSD");
+                setToCurrency(rsdCurrency);
+                if (rsdCurrency)
+                    form.setValue("toCurrencyId", rsdCurrency.id)
                 let defaultBankAccount = null;
                 if (location.state && location.state.accountId) {
                     defaultBankAccount = bankAccountsResponse.data.items.find(
@@ -110,21 +120,21 @@ export default function NewPaymentForm() {
 
     async function onSubmit (values: z.infer<typeof paymentSchema>) {
         try {
-            const toAcc = values.recipientAccount//FIXME: OVDE SE SALJE SVE A NE SAMO 9 CIFARA
+            const toAcc = values.recipientAccount
             const matchingCode = paymentCodes.find((c) => c.code === values.paymentCode || c.code === "289");
-            const toCurrencyId = await fetchRecipientCurrencyCode(toAcc);
+
             console.log(matchingCode);
-            console.log(toCurrencyId);
-            if (!(selectedBankAccount && toCurrencyId && matchingCode)){
+            if (!(selectedBankAccount && matchingCode)){
                 throw new Error("Errorrrr");
             }
+
 
 
             const payload: CreateTransactionRequest = {
                 fromAccountNumber: values.accountNumber,
                 fromCurrencyId: selectedBankAccount.currency.id,
                 toAccountNumber: values.recipientAccount,
-                toCurrencyId: toCurrencyId,
+                toCurrencyId: values.toCurrencyId,
                 amount: values.amount,
                 codeId: matchingCode.id,
                 referenceNumber: values.referenceNumber,
@@ -140,6 +150,7 @@ export default function NewPaymentForm() {
             setStep("success")
         }
         catch(error){
+            console.log(error);
             showErrorToast({error, defaultMessage: "Failed to make transaction."})
         }
 
@@ -215,42 +226,81 @@ export default function NewPaymentForm() {
                             <RecipientInput templates={templates} />
                         </div>
 
-                        <FormField
-                            key="amount"
-                            name="amount"
-                            render={({ field }) => (
-                                <FormItem className="md:w-1/2 md:pr-8">
-                                    <FormLabel>Amount</FormLabel>
-                                    <FormControl>
-                                        <MoneyInput
-                                            currency={selectedBankAccount?.currency?.code || "RSD"}
-                                            onChange={(event) => {
-                                                field.onChange(event);
-                                                const newAmount = parseFloat(event.target.value.replace(/\./g, "").replace(",", "."));
-                                                if (selectedBankAccount && newAmount > selectedBankAccount.availableBalance) {
-                                                    setAmountError("Amount exceeds available balance.");
-                                                } else {
-                                                    setAmountError(null);
-                                                }
-                                                setAmount(newAmount);
-                                            }}
-                                            min={0}
-                                            max={selectedBankAccount?.availableBalance}
-                                            defaultValue={0}
+                        <div className="flex flex-col gap-8 md:flex-row md:gap-16 items-baseline ">
 
-                                        />
-                                    </FormControl>
-                                    <FormDescription>
-                                        {selectedBankAccount ? "Balance after transaction: " +
-                                            formatCurrency(selectedBankAccount?.availableBalance - amount, selectedBankAccount?.currency?.code || "RSD") :
-                                            "Transaction amount"
-                                        }
-                                    </FormDescription>
-                                    <FormMessage>{amountError || null}</FormMessage>
-                                </FormItem>
+                            <FormField
+                                key="amount"
+                                name="amount"
+                                render={({ field }) => (
+                                    <FormItem className="w-full">
+                                        <FormLabel>Amount</FormLabel>
+                                        <FormControl>
+                                            <MoneyInput
+                                                currency={toCurrency?.code || "RSD"}
+                                                onChange={(event) => {
+                                                    field.onChange(event);
+                                                    const newAmount = parseFloat(event.target.value.replace(/\./g, "").replace(",", "."));
+                                                    if (selectedBankAccount && newAmount > selectedBankAccount.availableBalance) {
+                                                        setAmountError("Amount exceeds available balance.");
+                                                    } else {
+                                                        setAmountError(null);
+                                                    }
+                                                    setAmount(newAmount);
+                                                }}
+                                                min={0}
+                                                max={selectedBankAccount?.availableBalance}
+                                                defaultValue={0}
 
-                            )}
-                        />
+                                            />
+                                        </FormControl>
+                                        <FormDescription>
+                                            {selectedBankAccount ? "Balance after transaction: " +
+                                                formatCurrency(selectedBankAccount?.availableBalance - amount, selectedBankAccount?.currency?.code || "RSD") :
+                                                "Transaction amount"
+                                            }
+                                        </FormDescription>
+                                        <FormMessage>{amountError || null}</FormMessage>
+                                    </FormItem>
+
+                                )}
+                            />
+
+                            <FormField
+                                key="toCurrencyId"
+                                name="toCurrencyId"
+                                render={({ field }) => (
+                                    <FormItem className="w-full">
+                                        <FormLabel>To Currency</FormLabel>
+                                        <FormControl>
+                                            <Select
+                                                value={toCurrency?.id}
+                                                onValueChange={val => {
+                                                    field.onChange(val);
+                                                    const selected = currencies.find(c => c.id === val);
+                                                    if (selected) setToCurrency(selected);
+                                                }} >
+                                                <SelectTrigger>
+                                                    <SelectValue >{toCurrency?.code || "RSD"}</SelectValue>
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {currencies.map((item) => (
+                                                        <SelectItem
+                                                            key={item.id}
+                                                            value={item.id}
+                                                        >
+                                                            {item.code}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage>{amountError || null}</FormMessage>
+                                    </FormItem>
+
+                                )}
+                            />
+
+                        </div>
 
                         <FormField
                             key="purpose"
