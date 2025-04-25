@@ -21,6 +21,7 @@ export const fetchRecipientCurrencyCode = async (
     const response = await api_bank_user.get("/accounts", {
         params: { Number: accountNumber},
     });
+    console.log("RESP: ", response);
 
     console.log(response);
 
