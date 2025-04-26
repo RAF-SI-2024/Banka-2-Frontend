@@ -2,10 +2,17 @@ import { cn } from "@/lib/utils.ts";
 import { Card } from "@/components/ui/card.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {BankAccount} from "@/types/bank_user/bank-account.ts";
-import React from "react";
+import React, {useState} from "react";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import Wallet from "@/assets/Wallet.tsx";
 import {RadialChart} from "@/components/__common__/RadialChart.tsx";
+import {Swiper, SwiperSlide} from "swiper/react";
+import "swiper/swiper-bundle.css";
+
+import {
+    Autoplay, EffectCoverflow,
+    Pagination,
+} from "swiper/modules";
 
 
 interface BalanceCardProps extends React.ComponentProps<"div">{
@@ -19,6 +26,7 @@ interface BalanceCardProps extends React.ComponentProps<"div">{
 
 
 const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expenses=0, onSendClick, onDetailsClick, className, ...props }: BalanceCardProps) => {
+
     return (
         <Card
             className={cn(
@@ -36,9 +44,37 @@ const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expe
                         {/*    }*/}
 
                         {/*</h6>*/}
-                        <RadialChart title="Account balance" total_balance={account.balance} available_balance={account.availableBalance} currencyCode={account.currency.code} />
-                        {/*<p className="text-sm text-secondary-foreground font-paragraph">Account balance</p>*/}
+                    <Swiper
+                        autoplay={{
+                            delay: 5000,
+                            disableOnInteraction: false,
+                        }}
+                        pagination={{
+                            clickable: true,
+                        }}
+                        effect={"coverflow"}
+                        coverflowEffect={{rotate: 90, slideShadows: false}}
+                        loop={true}
+                        rewind={true}
+                        spaceBetween={30}
+                        className="!max-w-full w-64 h-52 !max-h-full -mb-8"
 
+                        modules={[ EffectCoverflow, Autoplay, Pagination]}
+                    >
+
+                        <SwiperSlide className="!flex !items-center !justify-baseline md:-ml-2">
+                            <RadialChart title={`Account balance (${account.currency.code})`} total_balance={account.balance}
+                                         available_balance={account.availableBalance} currencyCode={account.currency.code} />
+                        </SwiperSlide>
+
+                        {account.accountCurrencies.map((item, index) => (
+                            <SwiperSlide className="!flex !items-center !justify-baseline">
+                                <RadialChart title={`Account balance (${item.currency.code})`} total_balance={item.balance}
+                                             available_balance={item.availableBalance} currencyCode={item.currency.code} />
+                            </SwiperSlide>
+                        ))}
+                        {/*<p className="text-sm text-secondary-foreground font-paragraph">Account balance</p>*/}
+                    </Swiper>
 
                     <div className="flex items-center justify-center lg:justify-start gap-7 py-9 font-paragraph">
                         <div className="flex items-center">
