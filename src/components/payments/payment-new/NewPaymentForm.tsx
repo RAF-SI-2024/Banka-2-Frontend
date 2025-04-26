@@ -126,8 +126,7 @@ export default function NewPaymentForm() {
             const toAcc = values.recipientAccount
             const matchingCode = paymentCodes.find((c) => c.code === values.paymentCode || c.code === "289");
 
-            console.log(matchingCode);
-            if (!(selectedBankAccount && matchingCode)){
+            if (!(selectedBankAccount && matchingCode && toCurrency)){
                 throw new Error("Errorrrr");
             }
 
@@ -137,7 +136,7 @@ export default function NewPaymentForm() {
                 fromAccountNumber: values.accountNumber,
                 fromCurrencyId: values.fromCurrencyId,
                 toAccountNumber: values.recipientAccount,
-                toCurrencyId: values.toCurrencyId,
+                toCurrencyId: toCurrency.id,
                 amount: values.amount,
                 codeId: matchingCode.id,
                 referenceNumber: values.referenceNumber,
