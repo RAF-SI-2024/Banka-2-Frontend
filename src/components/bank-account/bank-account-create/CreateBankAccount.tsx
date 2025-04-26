@@ -441,7 +441,7 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
                                         control={emailForm.control}
                                         name="email"
                                         render={({ field }) => (
-                                            <FormItem>
+                                            <FormItem data-cy="existing-client-email">
                                                 <FormLabel>Email</FormLabel>
                                                 <FormControl>
                                                     <Input placeholder="example@example.com" {...field} />

@@ -28,7 +28,7 @@ export function RecipientInput({ templates }: RecipientInputProps) {
             key="recipientAccount"
             name="recipientAccount"
             render={({ field }) => (
-                <FormItem className="w-full">
+                <FormItem className="w-full" data-cy="to-account-number-transaction">
                     <FormLabel>Recipient account</FormLabel>
                     <FormControl>
 

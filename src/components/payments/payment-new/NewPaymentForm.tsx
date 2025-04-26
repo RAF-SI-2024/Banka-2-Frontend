@@ -126,7 +126,7 @@ export default function NewPaymentForm() {
             const toAcc = values.recipientAccount
             const matchingCode = paymentCodes.find((c) => c.code === values.paymentCode || c.code === "289");
 
-            if (!(selectedBankAccount && matchingCode && toCurrency)){
+            if (!(selectedBankAccount && matchingCode && toCurrency && fromCurrency)){
                 throw new Error("Errorrrr");
             }
 
@@ -134,7 +134,7 @@ export default function NewPaymentForm() {
 
             const payload: CreateTransactionRequest = {
                 fromAccountNumber: values.accountNumber,
-                fromCurrencyId: values.fromCurrencyId,
+                fromCurrencyId: fromCurrency.id,
                 toAccountNumber: values.recipientAccount,
                 toCurrencyId: toCurrency.id,
                 amount: values.amount,
@@ -223,7 +223,7 @@ export default function NewPaymentForm() {
                                     key="accountNumber"
                                     name="accountNumber"
                                     render={({ field }) => (
-                                        <FormItem className="w-full">
+                                        <FormItem className="w-full" data-cy="from-account-number-transaction">
                                             <FormLabel>Your bank account</FormLabel>
                                             <FormControl>
                                                 <Select {...field} value={selectedBankAccount?.id || ""}
@@ -275,7 +275,7 @@ export default function NewPaymentForm() {
                                     key="toCurrencyId"
                                     name="toCurrencyId"
                                     render={({ field }) => (
-                                        <FormItem className="w-fit">
+                                        <FormItem className="w-fit" data-cy="to-currency-code-transaction">
                                             <FormLabel>To Currency</FormLabel>
                                             <FormControl>
                                                 <Select
@@ -360,7 +360,7 @@ export default function NewPaymentForm() {
                             key="purpose"
                             name="purpose"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem data-cy="purpose-transaction">
                                     <FormLabel>Purpose</FormLabel>
                                     <FormControl>
                                         <Textarea

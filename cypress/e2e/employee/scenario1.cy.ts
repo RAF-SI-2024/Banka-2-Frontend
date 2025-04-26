@@ -1,5 +1,7 @@
 
-describe('Scenario 1 - Register client, create him a bank account, check if his account is in a list.', () => {
+describe('Scenario 1 - Register client, create him a bank account, check if his account is in a list.' +
+    'Osnovno poslovanje banke - PROVERA 1 i 2', () => {
+
     it("Log in as employee", () => {
         cy.login("employee1@gmail.com", "employee1");
     });

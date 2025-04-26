@@ -210,7 +210,7 @@ export default function NewTransferForm() {
                                     key="fromAccountNumber"
                                     name="fromAccountNumber"
                                     render={({ field }) => (
-                                        <FormItem className="w-full">
+                                        <FormItem className="w-full" data-cy="from-account-number-transfer">
                                             <FormLabel>Transfer from</FormLabel>
                                             <FormControl>
                                                 <Select {...field} value={fromBankAccount?.accountNumber.toString() || ""}
@@ -299,7 +299,7 @@ export default function NewTransferForm() {
                                     key="toAccountNumber"
                                     name="toAccountNumber"
                                     render={({ field }) => (
-                                        <FormItem className="w-full">
+                                        <FormItem className="w-full" data-cy="to-account-number-transfer">
                                             <FormLabel>Transfer to</FormLabel>
                                             <FormControl>
                                                 <Select {...field} value={toBankAccount?.accountNumber.toString() || ""}
@@ -380,7 +380,7 @@ export default function NewTransferForm() {
                             key="purpose"
                             name="purpose"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem data-cy="purpose-transfer">
                                     <FormLabel>Purpose</FormLabel>
                                     <FormControl>
                                         <Textarea
