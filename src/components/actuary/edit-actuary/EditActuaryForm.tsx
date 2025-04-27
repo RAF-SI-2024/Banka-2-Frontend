@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Actuary, ActuaryType} from "@/types/bank_user/actuary.ts";
+import {Actuary, Permission} from "@/types/bank_user/actuary.ts";
 import {Role} from "@/types/bank_user/user.ts"; // Dodaj definisane role
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Button} from "@/components/ui/button";
@@ -45,7 +45,7 @@ export default function EditActuaryForm({
   const isAdmin = currentUserRole === Role.Admin;
   const schema = isAdmin ? adminSchema : employeeSchema;
 
-  const [actuaryType, setActuaryType] = useState<ActuaryType>();
+  const [actuaryType, setActuaryType] = useState<Permission>();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -121,13 +121,13 @@ export default function EditActuaryForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={ActuaryType.None.toString()}>
+                    <SelectItem value={Permission.Employee.toString()}>
                       None
                     </SelectItem>
-                    <SelectItem value={ActuaryType.Supervisor.toString()}>
+                    <SelectItem value={Permission.Supervisor.toString()}>
                       Supervisor
                     </SelectItem>
-                    <SelectItem value={ActuaryType.Agent.toString()}>
+                    <SelectItem value={Permission.Agent.toString()}>
                       Agent
                     </SelectItem>
                   </SelectContent>
@@ -143,10 +143,10 @@ export default function EditActuaryForm({
           name="limit"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className={actuaryType !== ActuaryType.Agent ? "text-muted-foreground": ""}>Limit</FormLabel>
+              <FormLabel className={actuaryType !== Permission.Agent ? "text-muted-foreground": ""}>Limit</FormLabel>
               <FormControl>
                 <MoneyInput
-                  disabled={actuaryType !== ActuaryType.Agent}
+                  disabled={actuaryType !== Permission.Agent}
                   currency={"RSD"}
                   onChange={(event) => {
                     const rawValue = event.target.value;
