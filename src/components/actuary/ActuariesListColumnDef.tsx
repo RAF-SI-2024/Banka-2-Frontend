@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Actuary, ActuaryType, getActuaryTypeLabel } from "@/types/bank_user/actuary.ts";
+import { Actuary, Permission, getActuaryTypeLabel } from "@/types/bank_user/actuary.ts";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/format-currency.ts";
 import ActuariesDropdownMenu from "@/pages/actuary/ActuaryDropDownMenu.tsx";

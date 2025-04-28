@@ -59,10 +59,10 @@ export function AdminNavMainData() {
                     isCollapsed: false,
                 },
                 {
-                    title: "Actuaries",
-                    url: "/actuary/overview",
-                    icon: <span className="icon-[ph--users-three]" />,
-                    isCollapsed: true,
+                    title: "Trading",
+                    url: "/trading",
+                    icon: <span className="icon-[ph--chart-line-up]"/>,
+                    isCollapsed: false,
                 },
                 {
                     title: "Orders",
@@ -71,11 +71,17 @@ export function AdminNavMainData() {
                     isCollapsed: true,
                 },
                 {
-                    title: "Trading",
-                    url: "/trading",
-                    icon: <span className="icon-[ph--chart-line-up]"/>,
+                    title: "Actuaries",
+                    url: "/actuary/overview",
+                    icon: <span className="icon-[ph--users-three]" />,
+                    isCollapsed: true,
+                },
+                {
+                    title: "My Portfolio",
+                    url: "/my-portfolio",
+                    icon: <span className="icon-[ph--chalkboard-teacher]"/>,
                     isCollapsed: false,
-                }, 
+                },
             ]
         }
 

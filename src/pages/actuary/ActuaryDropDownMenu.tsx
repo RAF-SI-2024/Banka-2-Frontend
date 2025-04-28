@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
-import { Actuary, ActuaryType } from "@/types/bank_user/actuary.ts";
+import { Actuary, Permission } from "@/types/bank_user/actuary.ts";
 import { Role, User } from "@/types/bank_user/user.ts";
 
 type Props = {
@@ -25,10 +25,10 @@ export default function ActuariesDropdownMenu({
   const isEmployee = user?.role === Role.Employee;
 
   const showEdit = isEmployee
-    ? actuary.actuaryType === ActuaryType.Agent
+    ? actuary.actuaryType === Permission.Agent
     : currentUserRole !== Role.Admin;
 
-  const showResetLimit = actuary.actuaryType === ActuaryType.Agent;
+  const showResetLimit = actuary.actuaryType === Permission.Agent;
 
   if (!(showEdit || showResetLimit)) return null; // Ako nema opcija, dropdown se ne prikazuje
 
