@@ -2,11 +2,9 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/compo
 import {cn} from "@/lib/utils.ts";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import React, {useEffect, useState} from "react";
-import { TransactionTableRow, TransactionType} from "@/types/bank_user/transaction.ts";
+import {TransactionStatus, TransactionTableRow} from "@/types/bank_user/transaction.ts";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {fetchTransactionTableRows, getTransactionStatusBadge} from "@/lib/transactions-table-utils.tsx";
-
-
 
 
 const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"div">) => {
@@ -61,7 +59,7 @@ const RecentTransactionsCard = ({ className, ...props }: React.ComponentProps<"d
                                 <TableCell className="px-2  py-5">
                                     {new Date(item.date).toLocaleDateString('sr-RS')} ({new Date(item.date).toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' })})
                                 </TableCell>
-                                <TableCell className={`font-semibold px-2 py-5 ${item.sign === "+" ? "text-success" : (item.sign === "-" ? "text-destructive" : "text-foreground")}`}>
+                                <TableCell className={cn(`font-semibold px-2 py-5 ${item.sign === "+" ? "text-success" : (item.sign === "-" ? "text-destructive" : "text-foreground")}`, [TransactionStatus.Failed, TransactionStatus.Canceled, TransactionStatus.Invalid].includes(item.status) ? "text-muted-foreground" : "")}>
                                     {item.sign}
                                     {formatCurrency(item.amount, item.currencyCode)}
                                 </TableCell>

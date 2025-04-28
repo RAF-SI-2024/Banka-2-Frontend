@@ -1,8 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table"
-import {TransactionTableRow, TransactionType} from "@/types/bank_user/transaction.ts"
+import {TransactionStatus, TransactionTableRow, TransactionType} from "@/types/bank_user/transaction.ts"
 import { formatCurrency } from "@/lib/format-currency.ts";
 import {getTransactionStatusBadge} from "@/lib/transactions-table-utils.tsx";
 import { formatDate } from "@/lib/format-date";
+import {cn} from "@/lib/utils.ts";
 
 
 export function generateTransactionColumns(): ColumnDef<TransactionTableRow>[] {
@@ -40,7 +41,7 @@ export function generateTransactionColumns(): ColumnDef<TransactionTableRow>[] {
             header: "Amount",
             enableHiding: true,
             cell: ({ row }) => {
-                return (<div className={`font-semibold px-2 py-5 ${row.original.sign === "+" ? "text-success" : (row.original.sign === "-" ? "text-destructive" : "text-foreground")}`}>
+                return (<div className={cn(`font-semibold px-2 py-5 ${row.original.sign === "+" ? "text-success" : (row.original.sign === "-" ? "text-destructive" : "text-foreground")}`, [TransactionStatus.Failed, TransactionStatus.Canceled, TransactionStatus.Invalid].includes(row.original.status) ? "text-muted-foreground" : "")}>
                     {row.original.sign}
                     {formatCurrency(row.original.amount, row.original.currencyCode)}
                 </div>)

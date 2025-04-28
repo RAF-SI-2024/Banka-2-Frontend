@@ -62,12 +62,12 @@ export const AppRoutes = () => {
                     </Route>
 
                     <Route element={<ProtectedAdminOrEmployee />}>
-                        <Route path="loan/request" element={<LoanRequestList />} />
-                        <Route path="bank-account-list" element={<BankAccountListPage />} />
-                        <Route path="loan/all" element={<AllLoanList />} />
+                        <Route path="/loan/request" element={<LoanRequestList />} />
+                        <Route path="/bank-account-list" element={<BankAccountListPage />} />
+                        <Route path="/loan/all" element={<AllLoanList />} />
                         <Route path="/order/overview" element={<OrdersPage />} />
-                        <Route path="actuary/overview" element={<ActuaryListPage />} />
-                        <Route path="tax/overview" element={<TaxPage />} />
+                        <Route path="/actuary/overview" element={<ActuaryListPage />} />
+                        <Route path="/tax/overview" element={<TaxPage />} />
                     </Route>
 
                     <Route element={<ProtectedAdmin />}>
