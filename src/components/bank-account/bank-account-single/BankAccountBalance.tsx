@@ -57,7 +57,7 @@ const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expe
                         loop={true}
                         rewind={true}
                         spaceBetween={30}
-                        className="!max-w-full w-64 h-52 !max-h-full -mb-8"
+                        className="!max-w-full w-64 h-52 !max-h-full mb-8"
 
                         modules={[ EffectCoverflow, Autoplay, Pagination]}
                     >
@@ -76,27 +76,27 @@ const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expe
                         {/*<p className="text-sm text-secondary-foreground font-paragraph">Account balance</p>*/}
                     </Swiper>
 
-                    <div className="flex items-center justify-center lg:justify-start gap-7 py-9 font-paragraph">
-                        <div className="flex items-center">
-                            <Button variant="negative" className="cursor-auto" size="icon">
-                                <span className="icon-[ph--arrow-up-fill] w-4 h-4 text-success" />
-                            </Button>
-                            <div className="ml-3">
-                                <p className="text-sm font-semibold">{formatCurrency(income, account.currency.code)}</p>
-                                <p className="text-xs text-secondary-foreground">Income</p>
-                            </div>
-                        </div>
+                    {/*<div className="flex items-center justify-center lg:justify-start gap-7 py-9 font-paragraph">*/}
+                    {/*    <div className="flex items-center">*/}
+                    {/*        <Button variant="negative" className="cursor-auto" size="icon">*/}
+                    {/*            <span className="icon-[ph--arrow-up-fill] w-4 h-4 text-success" />*/}
+                    {/*        </Button>*/}
+                    {/*        <div className="ml-3">*/}
+                    {/*            <p className="text-sm font-semibold">{formatCurrency(income, account.currency.code)}</p>*/}
+                    {/*            <p className="text-xs text-secondary-foreground">Income</p>*/}
+                    {/*        </div>*/}
+                    {/*    </div>*/}
 
-                        <div className="flex items-center">
-                            <Button variant="negative" className="cursor-auto" size="icon">
-                                <span className="icon-[ph--arrow-down-fill] w-4 h-4 text-destructive" />
-                            </Button>
-                            <div className="ml-3">
-                                <p className="text-sm font-semibold">{formatCurrency(expenses, account.currency.code)}</p>
-                                <p className="text-xs text-secondary-foreground">Expenses</p>
-                            </div>
-                        </div>
-                    </div>
+                    {/*    <div className="flex items-center">*/}
+                    {/*        <Button variant="negative" className="cursor-auto" size="icon">*/}
+                    {/*            <span className="icon-[ph--arrow-down-fill] w-4 h-4 text-destructive" />*/}
+                    {/*        </Button>*/}
+                    {/*        <div className="ml-3">*/}
+                    {/*            <p className="text-sm font-semibold">{formatCurrency(expenses, account.currency.code)}</p>*/}
+                    {/*            <p className="text-xs text-secondary-foreground">Expenses</p>*/}
+                    {/*        </div>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
 
                         <div className="flex items-center justify-center lg:justify-start gap-4">
                             <Button variant="primary" size="lg" onClick={onSendClick}>Send</Button>
