@@ -1,4 +1,4 @@
-import { Actuary, ActuaryType } from "@/types/bank_user/actuary.ts";
+import { Actuary, Permission } from "@/types/bank_user/actuary.ts";
 
 export const mockActuaries: Actuary[] = [
   {
@@ -8,7 +8,7 @@ export const mockActuaries: Actuary[] = [
     username: "employee1",
     firstName: "John",
     lastName: "Smith",
-    actuaryType: ActuaryType.Supervisor,
+    actuaryType: Permission.Supervisor,
     limit: 0,
     usedLimit: 0,
     needsApproval: false,
@@ -20,7 +20,7 @@ export const mockActuaries: Actuary[] = [
     username: "maria.jones",
     firstName: "Maria",
     lastName: "Jones",
-    actuaryType: ActuaryType.Agent,
+    actuaryType: Permission.Agent,
     limit: 150000,
     usedLimit: 25000,
     needsApproval: true,
@@ -32,7 +32,7 @@ export const mockActuaries: Actuary[] = [
     username: "ana.markovic",
     firstName: "Ana",
     lastName: "Marković",
-    actuaryType: ActuaryType.Agent,
+    actuaryType: Permission.Agent,
     limit: 100000,
     usedLimit: 100000,
     needsApproval: false,
@@ -44,7 +44,7 @@ export const mockActuaries: Actuary[] = [
     username: "employee3",
     firstName: "Stefan",
     lastName: "Nikolic",
-    actuaryType: ActuaryType.Supervisor,
+    actuaryType: Permission.Supervisor,
     limit: 0,
     usedLimit: 0,
     needsApproval: false,
@@ -56,7 +56,7 @@ export const mockActuaries: Actuary[] = [
     username: "admin",
     firstName: "Admin",
     lastName: "Admin",
-    actuaryType: ActuaryType.Supervisor, // admin je uvek supervisor
+    actuaryType: Permission.Supervisor, // admin je uvek supervisor
     limit: 0,
     usedLimit: 0,
     needsApproval: false,

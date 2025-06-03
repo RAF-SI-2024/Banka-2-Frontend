@@ -1,8 +1,9 @@
-import { Actuary, ActuaryType } from "@/types/bank_user/actuary.ts";
+import {Permission} from "@/types/bank_user/actuary.ts";
 import * as React from "react";
+import {useBankAccountsData} from "@/hooks/sidebar/use-bank-accounts-data.ts";
 
 // Function that returns navigation items based on actuary type
-export function EmployeeNavMainData(actuary: Actuary) {
+export function EmployeeNavMainData(permission: Permission) {
   const items = [
     {
       label: "Management",
@@ -19,7 +20,7 @@ export function EmployeeNavMainData(actuary: Actuary) {
       label: "Banking",
       content: [
         {
-          title: "All Bank Accounts",
+          title: "All bank accounts",
           url: "/bank-account-list",
           icon: <span className="icon-[ph--list-magnifying-glass]" />,
           isCollapsed: true,
@@ -44,38 +45,10 @@ export function EmployeeNavMainData(actuary: Actuary) {
         },
       ],
     },
-    {
-      label: "Exchange",
-      content: [
-        {
-          title: "Trading",
-          url: "/trading",
-          icon: <span className="icon-[ph--chart-line-up]" />,
-          isCollapsed: false,
-        },
-        {
-          title: "Orders",
-          url: "/order/overview",
-          icon: <span className="icon-[ph--hand-deposit]" />,
-          isCollapsed: true,
-        },
-      ],
-    },
+
   ];
 
-  // Add the "Actuaries" menu item only if the actuary is a supervisor
-  if (actuary.actuaryType === ActuaryType.Supervisor) {
-    const exchangeSection = items.find(section => section.label === "Exchange");
-    if (exchangeSection) {
-      exchangeSection.content.push({
-        title: "Actuaries",
-        url: "/actuary/overview",
-        icon: <span className="icon-[ph--users-three]" />,
-        isCollapsed: true,
-      });
-    }
-  }
-  if (actuary.actuaryType == ActuaryType.Supervisor) {
+  if (permission == Permission.Supervisor) {
     const bankingSection = items.find(section => section.label === "Banking");
     if(bankingSection){
       bankingSection.content.push({
@@ -86,6 +59,60 @@ export function EmployeeNavMainData(actuary: Actuary) {
       });
     }
   }
+  if(permission == Permission.Agent || permission == Permission.Supervisor) {
+      items.push({
+        label: "Exchange",
+            content: [
+              {
+                title: "Trading",
+                url: "/trading",
+                icon: <span className="icon-[ph--chart-line-up]" />,
+                isCollapsed: false,
+              },
+              {
+                title: "Orders",
+                url: "/order/overview",
+                icon: <span className="icon-[ph--hand-deposit]" />,
+                isCollapsed: true,
+              },
+            ],
+      })
+    const exchangeSection = items.find(section => section.label === "Exchange");
+    if (permission === Permission.Supervisor) {
+
+      if (exchangeSection) {
+        exchangeSection.content.push({
+          title: "Actuaries",
+          url: "/actuary/overview",
+          icon: <span className="icon-[ph--users-three]" />,
+          isCollapsed: true,
+        });
+      }
+
+    }
+
+    if(exchangeSection){
+      const accounts = useBankAccountsData();
+      if(accounts.length > 0) {
+        exchangeSection.content.push({
+          title: "Trading account",
+          url: accounts[0].url,
+          icon: <span className="icon-[ph--piggy-bank]" />,
+          isCollapsed: false,
+        })
+      }
+
+      exchangeSection.content.push({
+          title: "My portfolio",
+          url: "/my-portfolio",
+          icon: <span className="icon-[ph--chalkboard-teacher]"/>,
+          isCollapsed: false,
+      })
+    }
+
+  }
+
+
 
 
   return items;

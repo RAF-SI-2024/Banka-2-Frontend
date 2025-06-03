@@ -12,17 +12,7 @@ import {cn} from "@/lib/utils.ts";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {useMediaQuery} from "@/hooks/use-media-query.ts";
 
-const chartConfig = {
 
-    available_balance: {
-        label: "Available balance:    ",
-        color: "var(--primary)",
-    },
-    reserved_funds: {
-        label: "Reserved funds:     ",
-        color: "var(--muted)",
-    },
-} satisfies ChartConfig
 
 interface RadialChartProps extends React.ComponentProps<"div">{
     title?: string,
@@ -33,6 +23,18 @@ interface RadialChartProps extends React.ComponentProps<"div">{
 export function RadialChart({title="Total balance", available_balance, total_balance, currencyCode, className, ...props}: RadialChartProps) {
 
     const isDesktop = useMediaQuery("(min-width: 800px)");
+
+    const chartConfig = {
+
+        available_balance: {
+            label: `Available balance (${currencyCode}):    `,
+            color: "var(--primary)",
+        },
+        reserved_funds: {
+            label: `Reserved funds (${currencyCode}):     `,
+            color: "var(--muted)",
+        },
+    } satisfies ChartConfig
 
     return (
                 <ChartContainer

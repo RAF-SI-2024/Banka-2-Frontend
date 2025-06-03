@@ -10,10 +10,15 @@
 // }
 
 // Enum za actuary tipove
-export enum ActuaryType {
-  None = 0,
-  Supervisor = 1,
-  Agent = 2,
+export enum Permission {
+  Invalid = 0,
+  Client = 1,
+  Employee = 2,
+  Admin = 4,
+  Trade = 8,
+  ApproveTrade = 16,
+  Agent = 10, // Employee (2) | Trade (8)
+  Supervisor = 26, // Employee (2) | Trade (8) | ApproveTrade (16)
 }
 
 export interface Actuary {
@@ -23,18 +28,18 @@ export interface Actuary {
   username: string;
   firstName: string;
   lastName: string;
-  actuaryType: ActuaryType;
+  actuaryType: Permission;
   limit: number;
   usedLimit: number;
   needsApproval: boolean;
 }
 
 // Helper funkcija - prikazivanje enuma kao string
-export function getActuaryTypeLabel(type: ActuaryType): string {
+export function getActuaryTypeLabel(type: Permission): string {
   switch (type) {
-    case ActuaryType.Supervisor:
+    case Permission.Supervisor:
       return "Supervisor";
-    case ActuaryType.Agent:
+    case Permission.Agent:
       return "Agent";
     default:
       return "None";

@@ -1,12 +1,11 @@
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {newTransferFormSchema} from "@/components/payments/transfer-new/NewTransfertFormDef.tsx";
-import {useEffect, useState} from "react";
-import {getAccountById, getAllAccountsClient} from "@/api/bank_user/bank-account.ts";
-import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
+import { useEffect, useState} from "react";
+import {getAllAccountsClient} from "@/api/bank_user/bank-account.ts";
+import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 import {BankAccount} from "@/types/bank_user/bank-account.ts";
 import {z} from "zod";
-import {CreateTransactionRequest} from "@/types/bank_user/transaction.ts";
 import {createTransaction} from "@/api/bank_user/transaction.ts";
 import {cn} from "@/lib/utils.ts";
 import {Card, CardContent} from "@/components/ui/card.tsx";
@@ -20,7 +19,6 @@ import {
     FormMessage
 } from "@/components/ui/form.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
-import {RecipientInput} from "@/components/payments/payment-new/RecipientInput.tsx";
 import * as React from "react";
 import MoneyInput from "@/components/__common__/input/MoneyInput.tsx";
 import {formatCurrency} from "@/lib/format-currency.ts";
@@ -30,6 +28,8 @@ import {fetchPaymentCodes, RawPaymentCode} from "@/api/bank_user/transactionCode
 import {useNavigate} from "react-router-dom";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 import AddRecipientTemplate from "@/components/payments/payment-new/AddRecipientTemplate.tsx";
+import {Currency} from "@/types/bank_user/currency.ts";
+
 
 export default function NewTransferForm() {
     const form = useForm({
@@ -42,15 +42,82 @@ export default function NewTransferForm() {
     });
 
     const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
+    const [fromBankAccounts, setFromBankAccounts] = useState<BankAccount[]>([]);
+    const [toBankAccounts, setToBankAccounts] = useState<BankAccount[]>([])
     const [paymentCodes, setPaymentCodes] = useState<RawPaymentCode[]>([]);
     const [fromBankAccount, setFromBankAccount] = useState<BankAccount | null>(null);
     const [toBankAccount, setToBankAccount] = useState<BankAccount | null>(null);
     const [amountError, setAmountError] = useState<string | null>(null);
     const [amount, setAmount] = useState<number>(0);
+    const [toCurrency, setToCurrency] = useState<Currency | null>(null);
+    const [toCurrencies, setToCurrencies] = useState<Currency[]>([])
+    const [fromCurrency, setFromCurrency] = useState<Currency | null>(null);
+    const [fromCurrencies, setFromCurrencies] = useState<Currency[]>([]);
     const [step, setStep] = useState<"form" | "success">("form");
     const navigate = useNavigate();
 
+    const [rotation, setRotation] = useState(0);
 
+    const [swap, setSwap] = useState(false);
+
+    const handleSwapClick = () => {
+        setRotation((prev) => prev + 180);
+
+        const tmpFromAccount = fromBankAccount;
+        const tmpToAccount = toBankAccount;
+        const tmpFromCurrency = fromCurrency;
+        const tmpToCurrency = toCurrency;
+        const tmpFromCurrencies = [...fromCurrencies];
+        const tmpToCurrencies = [...toCurrencies];
+
+
+        setFromCurrency(tmpToCurrency);
+        setToCurrency(tmpFromCurrency);
+        setFromCurrencies(tmpToCurrencies);
+        setToCurrencies(tmpFromCurrencies);
+
+
+
+
+        setFromBankAccounts(bankAccounts.filter(acc => acc !== tmpFromAccount || acc.accountCurrencies.length > 0))
+        setToBankAccounts(bankAccounts.filter(acc => acc !== tmpToAccount || acc.accountCurrencies.length > 0))
+
+        setSwap(!swap);
+
+        // Update state with swapped values
+    };
+
+    useEffect(() => {
+        setFromBankAccounts(bankAccounts.filter(acc => acc !== toBankAccount || acc.accountCurrencies.length > 0))
+        setToBankAccounts(bankAccounts.filter(acc => acc !== fromBankAccount || acc.accountCurrencies.length > 0))
+    }, [fromBankAccount, toBankAccount]);
+
+    useEffect(() => {
+        const tmpFromAccount = fromBankAccount;
+        const tmpToAccount = toBankAccount;
+
+        setFromBankAccount(tmpToAccount);
+        setToBankAccount(tmpFromAccount);
+
+        if (tmpToAccount) {
+            form.setValue("fromAccountNumber", tmpToAccount.accountNumber.toString());
+        }
+        if (tmpFromAccount) {
+            form.setValue("toAccountNumber", tmpFromAccount.accountNumber.toString());
+        }
+    }, [swap]);
+
+    function generateAccountSelectContent(dir=true){
+        let relevantAccounts = dir ? fromBankAccounts : toBankAccounts;
+        return (
+            <SelectContent>
+                {relevantAccounts.map((bankAccount) => (
+                    <SelectItem key={bankAccount.accountNumber.toString()} value={bankAccount.accountNumber.toString()}>
+                        {bankAccount.accountNumber} {"(" + bankAccount.currency.code + ")"}
+                    </SelectItem>
+                ))}
+            </SelectContent>);
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,49 +130,42 @@ export default function NewTransferForm() {
 
                 setBankAccounts(bankAccountsResponse.data.items);
                 setPaymentCodes(codes);
-
-
+                setFromBankAccounts(bankAccountsResponse.data.items);
+                setToBankAccounts(bankAccountsResponse.data.items);
             } catch (err) {
                 showErrorToast({error: err, defaultMessage: "Failed to fetch data."})
             }
         };
 
         fetchData();
-
     }, []);
-
 
     async function onSubmit(values: z.infer<typeof newTransferFormSchema>) {
         try {
-
             const matchingCode = paymentCodes.find((c) => c.code ===  "289");
 
-            if (!(fromBankAccount && toBankAccount && matchingCode)){
+            if (!(fromBankAccount && toBankAccount && matchingCode && fromCurrency && toCurrency)){
                 throw new Error("Error fetching data.");
             }
 
+            console.log(fromCurrency.code);
             const transactionData = {
                 fromAccountNumber: values.fromAccountNumber,
-                fromCurrencyId: fromBankAccount.currency.id,
+                fromCurrencyId: fromCurrency.id,
                 toAccountNumber: values.toAccountNumber,
-                toCurrencyId: toBankAccount.currency.id,
+                toCurrencyId: toCurrency.id,
                 amount: Number(values.amount.toString().replace(",", ".")),
                 codeId: matchingCode.id,
                 purpose: values.purpose,
                 referenceNumber: "2025-2025"
             };
 
-
             await createTransaction(transactionData);
-
             setStep("success");
-
-
         } catch (error) {
             showErrorToast({ error, defaultMessage: "Transfer failed" });
         }
     }
-
 
     return (
         <Card className={cn("bg-transparent shadow-none border-0 lg:w-2/3 md:w-full sm:w-full w-full")}>
@@ -113,83 +173,170 @@ export default function NewTransferForm() {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-8">
                         <div className="flex flex-col gap-8 md:flex-row md:gap-4 items-baseline">
-                            <FormField
-                                key="fromAccountNumber"
-                                name="fromAccountNumber"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Transfer from</FormLabel>
-                                        <FormControl>
-                                            <Select {...field} value={fromBankAccount?.id || ""}
-                                                    onValueChange={(value) => {
-                                                        const account = bankAccounts.find(acc => acc.id === value) || null;
-                                                        setFromBankAccount(account);
+                            <div className="flex flex-col gap-4 w-full">
+                                <FormField
+                                    key="fromCurrencyId"
+                                    name="fromCurrencyId"
+                                    render={({ field }) => (
+                                        <FormItem className="w-fit">
+                                            <FormLabel>From Currency</FormLabel>
+                                            <FormControl>
+                                                <Select
+                                                    disabled={fromCurrencies.length == 0}
+                                                    value={fromCurrency?.id}
+                                                    onValueChange={val => {
+                                                        field.onChange(val);
+                                                        const selected = fromCurrencies.find(c => c.id === val);
+                                                        if (selected) setFromCurrency(selected);
+                                                    }} >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="RSD">{fromCurrency?.code}</SelectValue>
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {fromCurrencies.map((item) =>
+                                                            item !== toCurrency || fromBankAccount !== toBankAccount ? (
+                                                                <SelectItem key={item.id} value={item.id}>
+                                                                    {item.code}
+                                                                </SelectItem>
+                                                            ) : null
+                                                        )}
+                                                    </SelectContent>
+                                                </Select>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    key="fromAccountNumber"
+                                    name="fromAccountNumber"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full" data-cy="from-account-number-transfer">
+                                            <FormLabel>Transfer from</FormLabel>
+                                            <FormControl>
+                                                <Select {...field} value={fromBankAccount?.accountNumber.toString() || ""}
+                                                        onValueChange={(value) => {
+                                                            const account = bankAccounts.find(acc => acc.accountNumber.toString() === value) || null;
+                                                            setFromBankAccount(account);
 
-                                                        field.onChange(account?.accountNumber);
-                                                        if (account && account?.availableBalance < amount)
-                                                            setAmountError("Amount exceeds available balance.");
-                                                        else
-                                                            setAmountError(null);
-                                                    }}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a bank account" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {bankAccounts.map((bankAccount) => (
-                                                        bankAccount != toBankAccount ?
-                                                        <SelectItem key={bankAccount.id} value={bankAccount.id}>
-                                                            {bankAccount.accountNumber} {"(" + bankAccount.currency.code + ")"}
-                                                        </SelectItem>: null
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </FormControl>
-                                        <FormDescription>
-                                            From account
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                                            field.onChange(value);
 
-                            <div className="md:pt-6 md:mb-auto md:w-fit sm:w-full sm:flex sm:justify-center justify-center w-full flex">
-                                <span className=" md:icon-[ph--arrow-right] sm:icon-[ph--arrow-down] icon-[ph--arrow-down] md:size-8 sm:size-8 size-8"></span>
+                                                            if(account) {
+                                                                if(toBankAccount !== account)
+                                                                    setFromCurrency(account.currency);
+                                                                else if(account.accountCurrencies.length > 0)
+                                                                    setFromCurrency(account.accountCurrencies[0].currency);
+                                                                setFromCurrencies([account.currency, ...account.accountCurrencies.map(ac => ac.currency)]);
+                                                                form.setValue("fromCurrencyId", account.currency.id);
+                                                            }
+
+                                                            if (account && fromCurrency && amount > 0) {
+                                                                const availableBalance = fromCurrency === account.currency
+                                                                    ? account.availableBalance
+                                                                    : account.accountCurrencies.find(ac => ac.currency === fromCurrency)?.availableBalance || 0;
+
+                                                                if (amount > availableBalance) {
+                                                                    setAmountError("Amount exceeds available balance.");
+                                                                } else {
+                                                                    setAmountError(null);
+                                                                }
+                                                            }
+                                                        }}>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a bank account" />
+                                                    </SelectTrigger>
+                                                    {generateAccountSelectContent(true)}
+                                                </Select>
+                                            </FormControl>
+                                            <FormDescription>
+                                                From account
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             </div>
 
-                            <FormField
-                                key="toAccountNumber"
-                                name="toAccountNumber"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Transfer to</FormLabel>
-                                        <FormControl>
-                                            <Select {...field} value={toBankAccount?.accountNumber.toString() || ""}
-                                                    onValueChange={(value) => {
-                                                        const account = bankAccounts.find(acc => acc.accountNumber.toString() === value) || null;
-                                                        setToBankAccount(account);
+                            <div className="md:pt-24 md:mb-auto md:w-fit sm:w-full sm:flex sm:justify-center justify-center w-full flex">
+                                <Button type="button" size={"icon"} variant="link" onClick={handleSwapClick}>
+                                    <span
+                                        className="icon-[ph--arrows-clockwise-bold] transition-transform duration-500 text-xl antialiased"
+                                        style={{ transform: `rotate(${rotation}deg)` }}
+                                    />
+                                </Button>
+                            </div>
 
-                                                        field.onChange(value);
-                                                    }}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a bank account" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {bankAccounts.map((bankAccount) => (
-                                                        bankAccount != fromBankAccount ?
-                                                            <SelectItem key={bankAccount.accountNumber.toString()} value={bankAccount.accountNumber.toString()}>
-                                                                {bankAccount.accountNumber} {"(" + bankAccount.currency.code + ")"}
-                                                            </SelectItem>: null
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </FormControl>
-                                        <FormDescription>
-                                            To account
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className="flex flex-col gap-4 w-full">
+                                <FormField
+                                    key="toCurrencyId"
+                                    name="toCurrencyId"
+                                    render={({ field }) => (
+                                        <FormItem className="w-fit">
+                                            <FormLabel>To Currency</FormLabel>
+                                            <FormControl>
+                                                <Select
+                                                    disabled={toCurrencies.length == 0}
+                                                    value={toCurrency?.id}
+                                                    onValueChange={val => {
+                                                        field.onChange(val);
+                                                        const selected = toCurrencies.find(c => c.id === val);
+                                                        if (selected) setToCurrency(selected);
+                                                    }} >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="RSD">{toCurrency?.code || "RSD"}</SelectValue>
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {toCurrencies.map((item) =>
+                                                            item !== fromCurrency || fromBankAccount !== toBankAccount ? (
+                                                                <SelectItem key={item.id} value={item.id}>
+                                                                    {item.code}
+                                                                </SelectItem>
+                                                            ) : null
+                                                        )}
+                                                    </SelectContent>
+                                                </Select>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    key="toAccountNumber"
+                                    name="toAccountNumber"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full" data-cy="to-account-number-transfer">
+                                            <FormLabel>Transfer to</FormLabel>
+                                            <FormControl>
+                                                <Select {...field} value={toBankAccount?.accountNumber.toString() || ""}
+                                                        onValueChange={(value) => {
+                                                            const account = bankAccounts.find(acc => acc.accountNumber.toString() === value) || null;
+                                                            setToBankAccount(account);
+
+                                                            field.onChange(value);
+
+                                                            if(account) {
+                                                                if(fromBankAccount !== account)
+                                                                    setToCurrency(account.currency);
+                                                                else if(account.accountCurrencies.length > 0)
+                                                                    setToCurrency(account.accountCurrencies[0].currency);
+                                                                setToCurrencies([account.currency, ...account.accountCurrencies.map(ac => ac.currency)]);
+                                                                form.setValue("toCurrencyId", account.currency.id);
+                                                            }
+                                                        }}>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a bank account" />
+                                                    </SelectTrigger>
+                                                    {generateAccountSelectContent(false)}
+                                                </Select>
+                                            </FormControl>
+                                            <FormDescription>
+                                                To account
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         </div>
 
                         <FormField
@@ -200,11 +347,19 @@ export default function NewTransferForm() {
                                     <FormLabel>Amount</FormLabel>
                                     <FormControl>
                                         <MoneyInput
-                                            currency={fromBankAccount?.currency?.code || "RSD"}
+                                            currency={fromCurrency?.code || "RSD"}
                                             onChange={(event) => {
                                                 field.onChange(event);
                                                 const newAmount = parseFloat(event.target.value.replace(/\./g, "").replace(",", "."));
-                                                if (fromBankAccount && newAmount > fromBankAccount.availableBalance) {
+                                                if (
+                                                    fromBankAccount &&
+                                                    fromCurrency &&
+                                                    newAmount > (
+                                                        fromCurrency === fromBankAccount.currency
+                                                            ? fromBankAccount.availableBalance
+                                                            : fromBankAccount.accountCurrencies.find(ac => ac.currency === fromCurrency)?.availableBalance || 0
+                                                    )
+                                                ) {
                                                     setAmountError("Amount exceeds available balance.");
                                                 } else {
                                                     setAmountError(null);
@@ -214,18 +369,18 @@ export default function NewTransferForm() {
                                             min={0}
                                             max={fromBankAccount?.availableBalance}
                                             defaultValue={0}
-
                                         />
                                     </FormControl>
                                     <FormDescription>
                                         {fromBankAccount ? "Balance after transaction: " +
-                                            formatCurrency(fromBankAccount?.availableBalance - amount, fromBankAccount?.currency?.code || "RSD") :
+                                            formatCurrency( fromCurrency === fromBankAccount.currency
+                                                ? fromBankAccount.availableBalance - amount
+                                                : (fromBankAccount.accountCurrencies.find(ac => ac.currency === fromCurrency)?.availableBalance || 0) - amount, fromCurrency?.code || "RSD") :
                                             "Transaction amount"
                                         }
                                     </FormDescription>
                                     <FormMessage>{amountError || null}</FormMessage>
                                 </FormItem>
-
                             )}
                         />
 
@@ -233,19 +388,17 @@ export default function NewTransferForm() {
                             key="purpose"
                             name="purpose"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem data-cy="purpose-transfer">
                                     <FormLabel>Purpose</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             {...field}
                                             placeholder="Enter the purpose of the transaction"
                                         />
-
                                     </FormControl>
                                     <FormDescription>Let us know the purpose of transaction? (e.g., family support, education)</FormDescription>
                                     <FormMessage />
                                 </FormItem>
-
                             )}
                         />
 
@@ -270,8 +423,6 @@ export default function NewTransferForm() {
                                 />
                             </DialogContent>
                         </Dialog>
-
-
                     </form>
                 </Form>
             </CardContent>

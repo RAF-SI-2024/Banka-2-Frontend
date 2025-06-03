@@ -1,6 +1,7 @@
 import {Client, Employee} from "@/types/bank_user/user.ts";
 import {Currency} from "@/types/bank_user/currency.ts";
 import {BankAccountType} from "@/types/bank_user/bank-account-type.ts";
+import {BankAccountSimple} from "@/types/bank_user/transaction.ts";
 
 export interface BankAccount {
     id: string;
@@ -17,11 +18,19 @@ export interface BankAccount {
     status: boolean;
     creationDate: Date;
     expirationDate: Date;
+
+    accountCurrencies: AccountCurrency[]
+
     createdAt: Date;
     modifiedAt: Date;
 }
 
-
+export interface AccountCurrency{
+    id: string;
+    currency: Currency;
+    balance: number;
+    availableBalance: number;
+}
 
 export interface AccountResponse {
     items: BankAccount[]
