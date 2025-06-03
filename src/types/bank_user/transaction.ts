@@ -43,6 +43,7 @@ export interface CreateTransactionRequest {
     codeId: string;
     referenceNumber?: string;
     purpose: string;
+    confirmationCode: string;
 }
 
 export interface TransactionTableRow {

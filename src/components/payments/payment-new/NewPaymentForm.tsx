@@ -143,7 +143,8 @@ export default function NewPaymentForm() {
                 amount: values.amount,
                 codeId: matchingCode.id,
                 referenceNumber: values.referenceNumber,
-                purpose: values.purpose
+                purpose: values.purpose,
+                confirmationCode: values.otp
             }
 
             console.log("SLANJE TRANSKACIJE", payload);
