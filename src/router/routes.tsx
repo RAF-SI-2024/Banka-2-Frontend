@@ -48,6 +48,8 @@ export const AppRoutes = () => {
 
                     <Route path="/card/:cardId" element={<CardDetailsPage />} />
 
+                    <Route path="/my-portfolio" element={<MyPortfolioPage />} />
+
                     {/*protected client routes*/}
                     <Route element={<ProtectedClient />}>
                         <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
@@ -56,22 +58,23 @@ export const AppRoutes = () => {
                         <Route path="/payments/new" element={<NewPaymentPage />} />
                         <Route path="/loan/new" element={<NewLoanRequest />} />
                         <Route path="/loan/overview" element={<LoanOverviewList />} />
-                        <Route path="loan/overview/:loanId" element={<LoanDetailsClientPage />} />
-                        <Route path="payments/exchange-rate" element={<ExchangeRateListPage />} />
-                        <Route path="my-portfolio" element={<MyPortfolioPage />} />
+                        <Route path="/loan/overview/:loanId" element={<LoanDetailsClientPage />} />
+                        <Route path="/payments/exchange-rate" element={<ExchangeRateListPage />} />
                     </Route>
 
                     <Route element={<ProtectedAdminOrEmployee />}>
-                        <Route path="loan/request" element={<LoanRequestList />} />
-                        <Route path="bank-account-list" element={<BankAccountListPage />} />
-                        <Route path="loan/all" element={<AllLoanList />} />
+                        <Route path="/loan/request" element={<LoanRequestList />} />
+                        <Route path="/bank-account-list" element={<BankAccountListPage />} />
+                        <Route path="/loan/all" element={<AllLoanList />} />
                         <Route path="/order/overview" element={<OrdersPage />} />
-                        <Route path="actuary/overview" element={<ActuaryListPage />} />
-                        <Route path="tax/overview" element={<TaxPage />} />
+                        <Route path="/actuary/overview" element={<ActuaryListPage />} />
+                        <Route path="/tax/overview" element={<TaxPage />} />
+
                     </Route>
 
                     <Route element={<ProtectedAdmin />}>
                         <Route path="/exchanges" element={<Exchanges/>} />
+
                     </Route>
 
                     <Route element={<ProtectedEmployee />}>

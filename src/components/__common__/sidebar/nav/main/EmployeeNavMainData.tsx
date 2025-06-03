@@ -1,5 +1,6 @@
 import {Permission} from "@/types/bank_user/actuary.ts";
 import * as React from "react";
+import {useBankAccountsData} from "@/hooks/sidebar/use-bank-accounts-data.ts";
 
 // Function that returns navigation items based on actuary type
 export function EmployeeNavMainData(permission: Permission) {
@@ -19,7 +20,7 @@ export function EmployeeNavMainData(permission: Permission) {
       label: "Banking",
       content: [
         {
-          title: "All Bank Accounts",
+          title: "All bank accounts",
           url: "/bank-account-list",
           icon: <span className="icon-[ph--list-magnifying-glass]" />,
           isCollapsed: true,
@@ -89,9 +90,20 @@ export function EmployeeNavMainData(permission: Permission) {
       }
 
     }
+
     if(exchangeSection){
+      const accounts = useBankAccountsData();
+      if(accounts.length > 0) {
+        exchangeSection.content.push({
+          title: "Trading account",
+          url: accounts[0].url,
+          icon: <span className="icon-[ph--piggy-bank]" />,
+          isCollapsed: false,
+        })
+      }
+
       exchangeSection.content.push({
-          title: "My Portfolio",
+          title: "My portfolio",
           url: "/my-portfolio",
           icon: <span className="icon-[ph--chalkboard-teacher]"/>,
           isCollapsed: false,
