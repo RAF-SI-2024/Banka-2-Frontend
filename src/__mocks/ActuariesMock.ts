@@ -1,6 +1,6 @@
 import { Actuary, Permission } from "@/types/bank_user/actuary.ts";
 
-export const mockActuaries: Actuary[] = [
+export const actuariesMock: Actuary[] = [
   {
     id: "a1",
     employeeId: "5817c260-e4a9-4dc1-87d9-2fa12af157d9",
