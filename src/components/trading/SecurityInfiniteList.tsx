@@ -2,7 +2,7 @@ import {useEffect, useRef, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component"
 import {getSecurityTypePlural, Security, SecuritySimple, SecurityType} from "@/types/exchange/security.ts";
 import SecurityListSingle from "@/components/trading/SecurityListSingle.tsx";
-import {generateSecurities} from "@/__mocks/trading/SecurityListMock.ts";
+import {generateSecurities} from "@/mocks/trading/SecurityListMock.tsx";
 import {getAllSecuritiesOfType} from "@/api/exchange/security.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 

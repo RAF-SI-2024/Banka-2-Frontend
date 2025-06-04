@@ -21,7 +21,7 @@ import {formatCurrency} from "@/lib/format-currency.ts";
 import {
     Datafeed,
     generateRealtimeData, getNextRealtimeUpdate,
-} from "@/__mocks/trading/GraphMock.ts";
+} from "@/mocks/trading/GraphMock.tsx";
 import { Button } from '../ui/button';
 import {Card, CardContent, CardFooter} from "@/components/ui/card.tsx";
 

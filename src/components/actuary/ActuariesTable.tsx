@@ -22,7 +22,7 @@ import {
 import { DataTable } from "@/components/__common__/datatable/DataTable";
 import { DataTablePagination } from "@/components/__common__/datatable/DataTablePagination";
 import { DataTableViewOptions } from "@/components/__common__/datatable/DataTableViewOptions";
-import { actuariesMock } from "@/__mocks/ActuariesMock.ts";
+import { mockActuaries } from "@/__mocks/mock-actuaries";
 import { generateActuaryColumns } from "@/components/actuary/ActuariesListColumnDef.tsx";
 import { EditActuaryDialog } from "@/components/actuary/edit-actuary/EditActuaryDialog.tsx";
 import ResetLimitConfirmDialog from "./reset-used-limit/ResetLimitConfirmDialog";
@@ -141,7 +141,7 @@ export default function ActuaryTable() {
   });
 
   useEffect(() => {
-    setActuaries(actuariesMock);
+    setActuaries(mockActuaries);
   }, [fetchFlag]);
 
   useEffect(() => {
