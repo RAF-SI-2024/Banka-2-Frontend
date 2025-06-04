@@ -49,7 +49,7 @@ export default function SecurityListSingle({securityType, security}: SecuritySin
                     {getCurrencyCode(security, securityType)}
                 </div>
             </div>
-            <div className={cn("text-xs font-light text-muted-foreground hover:text-muted-foreground", security.priceChangePercentInInterval > 0 ? "text-success": "", security.priceChangePercentInInterval < 0 ? "text-destructive": "")}>
+            <div className={cn("text-xs font-light text-muted-foreground", security.priceChangePercentInInterval > 0 ? "text-success": "", security.priceChangePercentInInterval < 0 ? "text-destructive": "")}>
                 {security.priceChangePercentInInterval > 0? "+": ""}{formatPercentage(security.priceChangePercentInInterval)}
             </div>
         </Button>
