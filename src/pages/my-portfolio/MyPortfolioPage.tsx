@@ -4,7 +4,7 @@ import TaxCard from "@/components/portfolio/TaxCard.tsx";
 import TotalProfitCard from "@/components/portfolio/TotalProfitCard.tsx";
 import PortfolioTable from "@/components/portfolio/PortfolioTable.tsx";
 import {PortfolioBalanceData, PortfolioTaxData} from "@/types/exchange/portfolio-data.ts";
-import {mockPortfolioBalanceData, mockPortfolioTaxData} from "@/mocks/PortfolioDataMock.tsx";
+import {mockPortfolioBalanceData, mockPortfolioTaxData} from "@/__mocks/PortfolioDataMock.ts";
 import PortfolioTableCard from "@/components/portfolio/PortfolioTableCard.tsx";
 import {Toaster} from "@/components/ui/sonner.tsx";
 
