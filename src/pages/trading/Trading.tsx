@@ -1,5 +1,5 @@
 import {Toaster} from "@/components/ui/sonner.tsx";
-import React, {Suspense, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import SecurityListCard from "@/components/trading/SecurityListCard.tsx";
 import SecurityDetailsCard from "@/components/trading/SecurityDetails.tsx";
 import SecurityTradingTable from "@/components/trading/SecurityTradingTable.tsx";
@@ -7,28 +7,63 @@ import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, Dra
 import {Button} from "@/components/ui/button.tsx";
 import {useMediaQuery} from "@/hooks/use-media-query.ts";
 import {useParams} from "react-router-dom";
-import {getSecurityTypeFromString, Security, SecuritySimple, SecurityType} from "@/types/exchange/security.ts";
+import {getSecurityTypeFromString, Security, SecurityDailyResponse, SecurityType} from "@/types/exchange/security.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 import Loader from "@/components/__common__/Loader.tsx";
-import {useQuery} from "react-query";
-import {ErrorBoundary} from "react-error-boundary";
 import ErrorFallback from "@/components/__common__/error/ErrorFallback.tsx";
 import TradingViewChart from "@/components/trading/TradingViewChart.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {Card} from "@/components/ui/card.tsx";
 import {AnimatePresence, motion} from "framer-motion";
-import {getAllSecuritiesOfType, getSecurityOfType} from "@/api/exchange/security.ts";
+import {getAllSecuritiesOfType, getSecurityOfType, getSecurityOfTypeDaily} from "@/api/exchange/security.ts";
 
 
 export default function Trading() {
     const { securityId, securityType } = useParams();
+
+    const [loading,  setLoading]  = useState(true);
+    const [error, setError] = useState("")
+    const [security, setSecurity] =  useState<SecurityDailyResponse>();
+
+    useEffect(() => {
+
+        const fetchData = async () => {
+            try {
+
+                setLoading(true);
+                let res;
+                // If on "/trading" (no securityId), update the URL without triggering a re-fetch
+                if (!securityId || securityType===undefined) {
+                    const data = (await getAllSecuritiesOfType(SecurityType.Stock, 1, 1)).items;
+
+                    if(data.length > 0) {
+                        window.history.replaceState(null, "", `/trading/stock/${data[0].id}`);
+                        res = await getSecurityOfTypeDaily(SecurityType.Stock, data[0].id);
+
+                    }
+                } else {
+                    res = await getSecurityOfTypeDaily( getSecurityTypeFromString(securityType), securityId);
+                }
+
+                setSecurity(res);
+            }
+            catch (error){
+                showErrorToast({error, defaultMessage: "Failed to fetch trading data."});
+                setError(error ? error.toString(): "Failed to fetch trading data.");
+            }
+            finally {
+                setLoading(false);
+            }
+        }
+
+        fetchData();
+    }, [securityId, securityType]);
+
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0 h-full max-w-screen-2xl mx-auto">
             <Toaster richColors />
-            <ErrorBoundary fallbackRender={({ error }) => <ErrorFallback message={error.message} />}>
-                <Suspense
-                    key={securityId}
-                    fallback={
+            {loading ?
+                (
                     <>
                         <AnimatePresence mode="wait">
                             <motion.div
@@ -44,49 +79,26 @@ export default function Trading() {
                         </AnimatePresence>
                         <TradingInfoSkeleton />
                     </>
-                }>
-                    <TradingInfo securityId={securityId} securityType={securityType ? getSecurityTypeFromString(securityType): undefined} />
-                </Suspense>
-            </ErrorBoundary>
+                ) :
+                (
+                    error || !security ?  (<ErrorFallback message={error} />) :
+                        (
+                            <TradingInfo data={security} securityType={securityType ? getSecurityTypeFromString(securityType) : SecurityType.Stock}/>
+                        )
+                )}
         </main>
     );
 }
 
 
-async function fetchData(securityId?: string, securityType?: SecurityType) {
-    try {
-        let res;
-        // If on "/trading" (no securityId), update the URL without triggering a re-fetch
-        if (!securityId || securityType===undefined) {
-            const data = (await getAllSecuritiesOfType(SecurityType.Stock, 1, 1)).items;
-
-            if(data.length > 0) {
-                window.history.replaceState(null, "", `/trading/stock/${data[0].id}`);
-                res = data[0];
-            }
-        } else {
-            res = await getSecurityOfType(securityType, securityId);
-        }
-        return res;
-    }
-    catch (error){
-        showErrorToast({error, defaultMessage: "Failed to fetch trading data."});
-        throw error;
-    }
-}
 
 
-function TradingInfo({securityId, securityType}: { securityId?: string, securityType?: SecurityType }) {
+
+function TradingInfo({data, securityType}: {data: SecurityDailyResponse, securityType: SecurityType}) {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const isDesktop = useMediaQuery("(min-width: 1000px)");
-    const { data } = useQuery(['security', securityId, securityType], () => fetchData(securityId, securityType), {
-        suspense: true,
-        useErrorBoundary: true,
-    });
 
-    if(!data)
-        return;
-    
+
     return(
         <>
 
@@ -107,7 +119,8 @@ function TradingInfo({securityId, securityType}: { securityId?: string, security
 
             <div className="grid lg:grid-rows-2 auto-rows-fr gap-4 lg:grid-cols-10 h-full lg:max-w-dvw min-h-fit lg:max-h-fit max-w-full">
                 {/* Graph starts at row 1 and spans 3 rows */}
-                <TradingViewChart title={data.ticker} className="lg:row-start-1 lg:col-span-6 lg:col-start-3 lg:row-span-1 row-span-1 row-start-1 md:col-span-full"/> {/* TODO: swap with security short name or smth */}
+                {data.ticker && data.quotes &&  <TradingViewChart currency={data.stockExchange.currency} ticker={data.ticker } quotes={data.quotes} className="lg:row-start-1 lg:col-span-6 lg:col-start-3 lg:row-span-1 row-span-1 row-start-1 md:col-span-full"/>}
+
 
                 {/* Details start at row 4 to avoid overlap */}
                 <SecurityDetailsCard className="lg:row-start-2  lg:col-span-6 row-start-2 row-span-1 col-span-full" />

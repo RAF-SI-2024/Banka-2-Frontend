@@ -38,12 +38,8 @@ export default function SecurityInfiniteList({ filters, type, scrollableId, fetc
     const next = async (currentPage: number = page) => {
         try {
             let newSecurities: SecuritySimple[] = [];
-            if (type != SecurityType.Future) { // TODO: izbrisati kad se dodaju rute za futures
-                newSecurities = (await getAllSecuritiesOfType(type, currentPage, itemsPerPage, filters)).items;
 
-            } else {
-                newSecurities = await generateSecurities(type, currentPage, itemsPerPage);
-            }
+            newSecurities = (await getAllSecuritiesOfType(type, currentPage, itemsPerPage, filters)).items;
 
             if (page == 1)
                 setSecurities(newSecurities);

@@ -31,7 +31,9 @@ export default function SecurityListSingle({securityType, security}: SecuritySin
                     {/*</div>*/}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                    {formatCurrency(security.askPrice, security.stockExchange ? security.stockExchange.currency.code : "RSD")}
+                    {securityType == SecurityType.Forex ?
+                        formatCurrency(security.askPrice, security.stockExchange ? security.stockExchange.currency.code : security.ticker.substring(3))
+                     :   formatCurrency(security.askPrice, security.stockExchange ? security.stockExchange.currency.code : "USD")}
                 </div>
             </div>
             <div className={cn("text-xs font-light", security.priceChangePercentInInterval > 0 ? "text-success": "", security.priceChangePercentInInterval < 0 ? "text-destructive": "")}>

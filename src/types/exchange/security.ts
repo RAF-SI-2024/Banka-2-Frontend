@@ -1,5 +1,22 @@
-import {Currency} from "@/types/bank_user/currency.ts";
 import {Exchange} from "@/types/exchange/exchange.ts";
+
+export interface SecurityDailyResponse {
+    id: string;
+    name: string;
+    ticker: string;
+    highPrice: number;
+    lowPrice: number;
+    openPrice: number;
+    closePrice: number;
+    volume: number;
+    stockExchange: Exchange;
+    priceChangeInInterval: number;
+    priceChangePercentInInterval: number;
+    quotes: QuoteDailySimpleResponse[];
+    createdAt: Date;
+    modifiedAt: Date;
+}
+
 
 export interface Security {
     id: string;
@@ -13,8 +30,30 @@ export interface Security {
     stockExchange: Exchange;
     priceChangeInInterval: number;
     priceChangePercentInInterval: number;
+    quotes: QuoteSimpleResponse[];
     createdAt: Date;
     modifiedAt: Date;
+}
+
+export interface QuoteSimpleResponse{
+    id: string;
+    highPrice: number;
+    lowPrice: number;
+    askPrice: number;
+    bidPrice: number;
+    volume: number;
+    createdAt: string;
+    modifiedAt: string;
+}
+
+export interface QuoteDailySimpleResponse {
+    highPrice: number;
+    lowPrice: number;
+    openPrice: number;
+    closePrice: number;
+    volume: number;
+    createdAt: string;
+    modifiedAt: string;
 }
 
 export interface SecuritySearchFilters{

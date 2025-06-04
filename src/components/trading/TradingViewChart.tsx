@@ -18,21 +18,26 @@ import {
     getMAColors, getVolumeColors, getWatermarkOptions
 } from "@/components/trading/ChartUtils.tsx";
 import {formatCurrency} from "@/lib/format-currency.ts";
-import {
-    Datafeed,
-    generateRealtimeData, getNextRealtimeUpdate,
-} from "@/__mocks/trading/GraphMock.ts";
+
 import { Button } from '../ui/button';
 import {Card, CardContent, CardFooter} from "@/components/ui/card.tsx";
+import {QuoteDailySimpleResponse, QuoteSimpleResponse, Security, SecurityType} from '@/types/exchange/security';
+import {Datafeed} from "@/components/trading/TradingViewChartFunctions.ts";
+import {Currency} from "@/types/bank_user/currency.ts";
 
 
 interface TradingChartProps {
-    title: string;
     className?: string;
+    ticker: string;
+    quotes: QuoteDailySimpleResponse[],
+    currency: Currency,
 }
 
 
-export default function TradingViewChart({ title, className, ...props }: TradingChartProps) {
+
+export default function TradingViewChart({ currency, ticker, quotes, className, ...props }: TradingChartProps) {
+
+
     const { theme } = useTheme();
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const chartRef = useRef<IChartApi | null>(null);
@@ -47,7 +52,10 @@ export default function TradingViewChart({ title, className, ...props }: Trading
     const [legendTime, setLegendTime] = useState<string>();
     const [legendName, setLegendName] = useState<string>();
 
-    const datafeed = new Datafeed();
+    const datafeed = new Datafeed(quotes);
+
+    // const generator = useRealtimeCandleGenerator(ticker, 60_000);
+
 
 
     // First time init
@@ -71,7 +79,7 @@ export default function TradingViewChart({ title, className, ...props }: Trading
             priceFormat: {
                 type: 'custom',
                 minMove: 0.01,
-                formatter: (price: number) => formatCurrency(price, "RSD")
+                formatter: (price: number) => formatCurrency(price, currency.code)
             },
         }, 0);
 
@@ -94,7 +102,7 @@ export default function TradingViewChart({ title, className, ...props }: Trading
 
         createTextWatermark(chart.panes()[0], getWatermarkOptions(colors));
 
-        const data = datafeed.getBars(200);
+        const data = datafeed.getBars();
         // update data
         const candleData = data.map(d => ({
             time: d.time as Time,
@@ -135,9 +143,9 @@ export default function TradingViewChart({ title, className, ...props }: Trading
                 // Convert `rawTime` to a JavaScript Date object
                 const time = (new Date(bar.time*1000)).toLocaleString("sr-RS");
                 const price = bar.value !== undefined ? bar.value : bar.close;
-                const formattedPrice = formatCurrency(price, "RSD");
+                const formattedPrice = formatCurrency(price, currency.code);
 
-                setLegendName(title);
+                setLegendName(ticker);
                 setLegendPrice(formattedPrice);
                 setLegendTime(time);
             };
@@ -147,56 +155,44 @@ export default function TradingViewChart({ title, className, ...props }: Trading
             updateLegend(undefined);
         }
 
-        if(chartRef.current) {
-            chartRef.current.timeScale().subscribeVisibleLogicalRangeChange(logicalRange => {
-                if (logicalRange && logicalRange.from < 10) {
-                    // load more data
-                    const numberBarsToLoad = 50 - logicalRange.from;
-                    const data = datafeed.getBars(numberBarsToLoad);
-                    setTimeout(() => {
-                        setChartData(data);
-
-                    }, 250); // add a loading delay
-                }
-            });
-        }
 
         const lastCandle = data[data.length - 1];
-        const { realtimeUpdates } = generateRealtimeData(lastCandle.close, 20, 1000);
-        const streamingDataProvider = getNextRealtimeUpdate(realtimeUpdates);
         let lastCandleTime: number = -1;
 
-        const intervalID = setInterval(() => {
-            const update = streamingDataProvider.next();
-            if (update.done) {
-                clearInterval(intervalID);
-                return;
-            }
-
-
-
-            setLegendPrice(formatCurrency(update.value.close, "RSD"));
-            setLegendTime(new Date(update.value.time * 1000).toLocaleString("sr-RS"));
-
-            // Update candlestick and volume series
-            candleSeriesRef.current?.update(update.value);
-            volumeSeriesRef.current?.update({
-                time: update.value.time,
-                value: update.value.volume,
-            });
-
-            if (candleSeriesRef.current && maSeriesRef.current && lastCandleTime !== update.value.time) {
-                // New candle detected → recalculate MA
-                if(lastCandleTime > 0) {
-                    const maData = calculateMovingAverageSeriesData(candleSeriesRef.current.data(), 20);
-                    maSeriesRef.current.setData(maData);
-                }
-                lastCandleTime = update.value.time;
-            }
-
-
-
-        }, 250);
+        // const intervalID =  setInterval(async () => {
+        //     const update = await generator.next();
+        //     if(update == null)
+        //         return;
+        //
+        //
+        //     setLegendPrice(formatCurrency(update.close, "RSD"));
+        //     setLegendTime(new Date(update.time * 1000).toLocaleString("sr-RS"));
+        //
+        //     // Update candlestick and volume series
+        //     candleSeriesRef.current?.update({
+        //         time: update.time as UTCTimestamp,
+        //         open: update.open,
+        //         high: update.high,
+        //         low: update.low,
+        //         close: update.close
+        //     });
+        //     volumeSeriesRef.current?.update({
+        //         time: update.time as UTCTimestamp,
+        //         value: update.volume,
+        //     });
+        //
+        //     if (candleSeriesRef.current && maSeriesRef.current && lastCandleTime !== update.time) {
+        //         // New candle detected → recalculate MA
+        //         if(lastCandleTime > 0) {
+        //             const maData = calculateMovingAverageSeriesData(candleSeriesRef.current.data(), 20);
+        //             maSeriesRef.current.setData(maData);
+        //         }
+        //         lastCandleTime = update.time;
+        //     }
+        //
+        //
+        //
+        // }, 250);
 
 
 
@@ -206,7 +202,7 @@ export default function TradingViewChart({ title, className, ...props }: Trading
             // Clean up all chart instances
             chartRef.current?.remove();
             chartRef.current = null;
-            clearInterval(intervalID);
+            // clearInterval(intervalID);
         };
     }, []);
 
