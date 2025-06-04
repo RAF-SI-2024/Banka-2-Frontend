@@ -1,25 +1,48 @@
-import { useState, useEffect, useMemo } from "react";
-import {useReactTable, getCoreRowModel, getPaginationRowModel, VisibilityState} from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DataTable } from "@/components/__common__/datatable/DataTable";
-import { DataTablePagination } from "@/components/__common__/datatable/DataTablePagination";
-import { mockOrders } from "@/mocks/OrdersMock";
-import {Order, Status} from "@/types/exchange/order.ts";
+import {useEffect, useMemo, useState} from "react";
+import {getCoreRowModel, getPaginationRowModel, useReactTable, VisibilityState} from "@tanstack/react-table";
+import {Button} from "@/components/ui/button";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {DataTable} from "@/components/__common__/datatable/DataTable";
+import {DataTablePagination} from "@/components/__common__/datatable/DataTablePagination";
+import {Order, OrderResponse, OrderStatus, stringToOrderStatus} from "@/types/exchange/order.ts";
 import {DataTableViewOptions} from "@/components/__common__/datatable/DataTableViewOptions.tsx";
 import {generateOrderColumns} from "@/components/order-table/OrderListColumnDef.tsx";
+import {editOrder, getAllOrders} from "@/api/exchange/order.ts";
 
 export default function OrderList() {
-    const [search, setSearch] = useState<{ status: Status | "" }>({ status: "" });
+    const [search, setSearch] = useState<{ status: string }>({ status: "" });
     const [orders, setOrders] = useState<Order[]>([]);
     const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+
+    // error
+    const [error, setError] = useState<string | null>(null);
+
+    // Clear/Filter button clicked
+    const [fetchFlag, setFetchFlag] = useState(false);
 
     useEffect(() => {
-        setOrders(mockOrders);
-        setFilteredOrders(mockOrders);
-    }, []);
+        fetchOrders();
+    }, [currentPage, pageSize, fetchFlag]); // Add dependencies
+
+    const fetchOrders = async () => {
+        setError(null);
+
+        const statusFilter = search.status == "" ? null : Number(search.status);
+        try {
+            const ordersData: OrderResponse = await getAllOrders(
+                statusFilter,
+                currentPage,
+                pageSize
+            );
+            setOrders(ordersData.items);
+            setTotalPages(ordersData.totalPages);
+        } catch (err) {
+            setError("Failed to fetch orders");
+        }
+    };
 
     useEffect(() => {
         const start = (currentPage - 1) * pageSize;
@@ -28,25 +51,20 @@ export default function OrderList() {
     }, [currentPage, pageSize, orders]);
 
     const handleSearchChange = (field: keyof typeof search, value: string) => {
-        setSearch(prev => ({ ...prev, [field]: value as Status | "" }));
+        setSearch(prevSearch => ({ ...prevSearch, [field]: value }));
     };
 
     const handleFilter = () => {
-        const selectedStatus = search.status;
-        const filtered = selectedStatus !== ""
-            ? orders.filter(order => order.status === Number(search.status))
-            : orders;
-
-        setFilteredOrders(filtered.slice(0, pageSize));
         setCurrentPage(1);
+        setFetchFlag(!fetchFlag);
     };
 
     // visibility state - make some columns invisible by default
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
         orderType: false,
         securityType: false,
-        contractSize: false,
-        pricePerUnit: false,
+        contractCount: false,
+        // pricePerUnit: false,
         creationDate: false,
     });
 
@@ -54,16 +72,25 @@ export default function OrderList() {
 
     const handleClearSearch = () => {
         setSearch({ status: "" });
-        setFilteredOrders(orders.slice(0, pageSize));
         setCurrentPage(1);
+        setFetchFlag(!fetchFlag);
     };
+
+    const handlePut = async (id: string, status: OrderStatus) => {
+        try {
+            await editOrder(id, {status: status});
+            setFetchFlag(!fetchFlag);
+        } catch (err) {
+            setError("Failed to update order status");
+        }
+    }
 
     const columns = useMemo(() => {
         const handleApprove = (order: Order) => {
-            console.log("Approve", order);
+            handlePut(order.id, OrderStatus.ACTIVE);
         }
         const handleDecline = (order: Order) => {
-            console.log("Decline", order);
+            handlePut(order.id, OrderStatus.DECLINED);
         }
         return generateOrderColumns(handleApprove, handleDecline)}
     , [orders]);
@@ -75,7 +102,7 @@ export default function OrderList() {
         getPaginationRowModel: getPaginationRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         manualPagination: true,
-        pageCount: Math.ceil(orders.length / pageSize),
+        pageCount: totalPages,
         state: {
             columnVisibility,
             pagination: {
@@ -95,6 +122,8 @@ export default function OrderList() {
         },
     });
 
+    if (error) return <h1 className="text-center text-2xl font-semibold text-destructive">{error}</h1>;
+
     return (
         <div className="p-6 space-y-4">
             <div className="w-full flex flex-row items-baseline">
@@ -104,10 +133,11 @@ export default function OrderList() {
                             <SelectValue placeholder="Filter by status" className="text-sm" />
                         </SelectTrigger>
                         <SelectContent className="text-sm">
-                            <SelectItem value={Status.Pending.toString()}>Pending</SelectItem>
-                            <SelectItem value={Status.Approved.toString()}>Approved</SelectItem>
-                            <SelectItem value={Status.Declined.toString()}>Declined</SelectItem>
-                            <SelectItem value={Status.Done.toString()}>Done</SelectItem>
+                            <SelectItem value={OrderStatus.NEEDS_APPROVAL.toString()}>Pending</SelectItem>
+                            <SelectItem value={OrderStatus.ACTIVE.toString()}>Approved</SelectItem>
+                            <SelectItem value={OrderStatus.DECLINED.toString()}>Declined</SelectItem>
+                            <SelectItem value={OrderStatus.COMPLETED.toString()}>Done</SelectItem>
+                            <SelectItem value={OrderStatus.FAILED.toString()}>Failed</SelectItem>
                         </SelectContent>
                     </Select>
 
