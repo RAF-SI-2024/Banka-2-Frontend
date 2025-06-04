@@ -117,19 +117,59 @@ function TradingInfo({data, securityType}: {data: SecurityDailyResponse, securit
                 {data.name}
             </p>
 
-            <div className="grid lg:grid-rows-2 auto-rows-fr gap-4 lg:grid-cols-10 h-full lg:max-w-dvw min-h-fit lg:max-h-fit max-w-full">
+            <div className="grid lg:grid-rows-2 auto-rows-fr gap-4 lg:grid-cols-10 grid-cols-1 h-full lg:max-w-dvw min-h-fit lg:max-h-fit max-w-full">
                 {/* Graph starts at row 1 and spans 3 rows */}
-                {data.ticker && data.quotes &&  <TradingViewChart currency={data.stockExchange.currency} ticker={data.ticker } quotes={data.quotes} className="lg:row-start-1 lg:col-span-6 lg:col-start-3 lg:row-span-1 row-span-1 row-start-1 md:col-span-full"/>}
+                {/*{data.ticker && data.quotes &&  <TradingViewChart currency={data.stockExchange.currency} ticker={data.ticker } quotes={data.quotes} className="lg:row-start-1 lg:col-span-6 lg:col-start-3 lg:row-span-1 row-span-1 row-start-1 md:col-span-full"/>}*/}
+
+
+                {/*/!* Details start at row 4 to avoid overlap *!/*/}
+                {/*<SecurityDetailsCard className="lg:row-start-2  lg:col-span-6 row-start-2 row-span-1 col-span-full" />*/}
+
+                {/*<SecurityTradingTable className="lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-2 row-start-3 col-span-full" />*/}
+
+                {/*{isDesktop ? (*/}
+
+                {/*    <SecurityListCard className="lg:col-start-9 lg:col-span-2 lg:row-start-1 lg:row-span-2 col-span-full" />*/}
+                {/*): (*/}
+                {/*    <>*/}
+                {/*        <div className="fixed bottom-4 right-4 transform translate-x-0 z-50 -mr-2 -mb-2">*/}
+                {/*            <Button variant="default" className="rounded-full size-12" size="icon"  onClick={() => setIsDrawerOpen(true)} >*/}
+                {/*                <span className="icon-[ph--list-bullets]"></span>*/}
+                {/*            </Button>*/}
+                {/*        </div>*/}
+                {/*        /!* ShadCN Drawer for mobile *!/*/}
+                {/*        <Drawer open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>*/}
+
+                {/*            <DrawerContent className="bg-card !max-h-11/12">*/}
+                {/*                <DrawerTitle></DrawerTitle>*/}
+                {/*                <DrawerDescription></DrawerDescription>*/}
+                {/*                <div className="p-4 w-full overflow-y-auto h-full">*/}
+                {/*                    <SecurityListCard className="w-full" />*/}
+                {/*                </div>*/}
+                {/*                <DrawerFooter className="pt-2 self-center w-full max-w-3xl ">*/}
+                {/*                    <DrawerClose asChild>*/}
+                {/*                        <Button variant="outline" className="w-full">Close</Button>*/}
+                {/*                    </DrawerClose>*/}
+                {/*                </DrawerFooter>*/}
+                {/*            </DrawerContent>*/}
+
+                {/*        </Drawer>*/}
+                {/*    </>*/}
+                {/*)}*/}
+
+
+                {data.ticker && data.quotes &&  <TradingViewChart
+                    currency={data.stockExchange.currency} ticker={data.ticker } quotes={data.quotes}
+                    className="lg:row-start-1 lg:col-span-7 lg:col-start-1 lg:row-span-1 row-span-1 row-start-1 md:col-span-full"/>}
 
 
                 {/* Details start at row 4 to avoid overlap */}
-                <SecurityDetailsCard className="lg:row-start-2  lg:col-span-6 row-start-2 row-span-1 col-span-full" />
+                <SecurityDetailsCard className="lg:row-start-2  lg:col-span-7 row-start-2 row-span-1 col-span-full" />
 
-                <SecurityTradingTable className="lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-2 row-start-3 col-span-full" />
 
                 {isDesktop ? (
 
-                    <SecurityListCard className="lg:col-start-9 lg:col-span-2 lg:row-start-1 lg:row-span-2 col-span-full" />
+                    <SecurityListCard className="lg:col-start-8 lg:col-span-3 lg:row-start-1 lg:row-span-2 col-span-full" />
                 ): (
                     <>
                         <div className="fixed bottom-4 right-4 transform translate-x-0 z-50 -mr-2 -mb-2">

@@ -11,6 +11,21 @@ interface SecuritySingleProps{
     security: SecuritySimple;
 }
 
+function getCurrencyCode(security: SecuritySimple, securityType: SecurityType) {
+    if(securityType == SecurityType.Forex){
+        try{
+            return security.ticker.substring(3)
+        }
+        catch (e){
+            return "USD";
+        }
+
+    }
+    else{
+        return "USD";
+    }
+}
+
 export default function SecurityListSingle({securityType, security}: SecuritySingleProps) {
     const navigate = useNavigate();
     return (
@@ -31,12 +46,10 @@ export default function SecurityListSingle({securityType, security}: SecuritySin
                     {/*</div>*/}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                    {securityType == SecurityType.Forex ?
-                        formatCurrency(security.askPrice, security.stockExchange ? security.stockExchange.currency.code : security.ticker.substring(3))
-                     :   formatCurrency(security.askPrice, security.stockExchange ? security.stockExchange.currency.code : "USD")}
+                    {getCurrencyCode(security, securityType)}
                 </div>
             </div>
-            <div className={cn("text-xs font-light", security.priceChangePercentInInterval > 0 ? "text-success": "", security.priceChangePercentInInterval < 0 ? "text-destructive": "")}>
+            <div className={cn("text-xs font-light text-muted-foreground hover:text-muted-foreground", security.priceChangePercentInInterval > 0 ? "text-success": "", security.priceChangePercentInInterval < 0 ? "text-destructive": "")}>
                 {security.priceChangePercentInInterval > 0? "+": ""}{formatPercentage(security.priceChangePercentInInterval)}
             </div>
         </Button>
