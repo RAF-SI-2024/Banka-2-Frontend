@@ -17,6 +17,12 @@ export interface Security {
     modifiedAt: Date;
 }
 
+export interface SecuritySearchFilters{
+    ticker: string;
+    name: string;
+
+}
+
 export interface SecuritySimple {
     id: string;
     name: string;

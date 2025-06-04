@@ -16,14 +16,18 @@ import {
 } from "@/components/ui/dropdown-menu.tsx";
 import {DropdownMenuTrigger} from "@radix-ui/react-dropdown-menu";
 import {SecurityType} from "@/types/exchange/security.ts";
+import {getAllExchanges} from "@/api/exchange/exchange.ts";
 
 interface SecurityFilterProps{
     type: SecurityType;
     doFetch:() => void;
+    handleSearchChange: (field: string, value: string | null) => void;
 }
 
-export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
+export default function SecurityFilters({handleSearchChange, type, doFetch}: SecurityFilterProps){
     const [searchValue, setSearchValue] = useState("");
+    const [ticker, setTicker] = useState("");
+    const [exchangeAcronym, setExchangeAcronym] = useState("");
     const [showFilters, setShowFilters] = React.useState(false);
     const [askValues, setAskValues] = useState([0, 1000000]);
     const [bidValues, setBidValues] = useState([0, 1000000]);
@@ -60,12 +64,23 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
             toDate: undefined,
             status: "",
         });
+        setTicker("");
+        setExchangeAcronym("");
+        handleSearchChange("ticker", "");
+        // handleSearchChange("stockExchangeId", null);
         setShowFilters(false);
         doFetch();
     };
 
-    const handleApply = () => {
+    const handleApply = async () => {
         console.log(filters);
+        handleSearchChange("ticker", ticker);
+        // if(exchangeAcronym !== "" ){
+        //     const filteredExchange = await getAllExchanges(1, 1, {name:exchangeAcronym});
+        //     if(filteredExchange.items.length > 0){
+        //         handleSearchChange("stockExchangeId", filteredExchange.items[0].id);
+        //     }
+        // }
         setShowFilters(false);
         doFetch();
     }
@@ -73,6 +88,8 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
     const handleSearch = () => {
         console.log(searchValue);
         setShowFilters(false);
+        handleSearchChange("name", searchValue);
+
         doFetch();
     }
 
@@ -80,6 +97,8 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
         console.log("Search clear...");
         setSearchValue("");
         setShowFilters(false);
+        handleSearchChange("name", "");
+        handleSearchChange("ticker", "");
         doFetch();
     }
 
@@ -102,35 +121,35 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
                 <Button size="icon" variant="outline" onClick={handleSearch}>
                     <span className="icon-[ph--magnifying-glass]" />
                 </Button>
-                <DropdownMenu onOpenChange={() => setShowFilters(false)}>
-                    <DropdownMenuTrigger asChild>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className="z-0 ml-auto  size-9 lg:flex"
+                {/*<DropdownMenu onOpenChange={() => setShowFilters(false)}>*/}
+                {/*    <DropdownMenuTrigger asChild>*/}
+                {/*        <Button*/}
+                {/*            variant="outline"*/}
+                {/*            size="icon"*/}
+                {/*            className="z-0 ml-auto  size-9 lg:flex"*/}
 
-                        >
-                            <span className="icon-[ph--sort-ascending]" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-[180px] pl-0" >
+                {/*        >*/}
+                {/*            <span className="icon-[ph--sort-ascending]" />*/}
+                {/*        </Button>*/}
+                {/*    </DropdownMenuTrigger>*/}
+                {/*    <DropdownMenuContent align="end" className="w-[180px] pl-0" >*/}
 
-                        <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuRadioGroup value={sorting} onValueChange={handleSort}>
-                            <DropdownMenuRadioItem value="">Default</DropdownMenuRadioItem>
-                            <DropdownMenuSeparator className="bg-muted"/>
-                            <DropdownMenuRadioItem value="1">Price Increasing</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="2">Price Decreasing</DropdownMenuRadioItem>
-                            <DropdownMenuSeparator className="bg-muted"/>
-                            <DropdownMenuRadioItem value="3">Amount Increasing</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="4">Amount Decreasing</DropdownMenuRadioItem>
-                            <DropdownMenuSeparator className="bg-muted"/>
-                            <DropdownMenuRadioItem value="5">Maintenance margin Increasing</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="6">Maintenance margin Decreasing</DropdownMenuRadioItem>
-                        </DropdownMenuRadioGroup>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                {/*        <DropdownMenuLabel>Sort by</DropdownMenuLabel>*/}
+                {/*        <DropdownMenuSeparator/>*/}
+                {/*        <DropdownMenuRadioGroup value={sorting} onValueChange={handleSort}>*/}
+                {/*            <DropdownMenuRadioItem value="">Default</DropdownMenuRadioItem>*/}
+                {/*            <DropdownMenuSeparator className="bg-muted"/>*/}
+                {/*            <DropdownMenuRadioItem value="1">Price Increasing</DropdownMenuRadioItem>*/}
+                {/*            <DropdownMenuRadioItem value="2">Price Decreasing</DropdownMenuRadioItem>*/}
+                {/*            <DropdownMenuSeparator className="bg-muted"/>*/}
+                {/*            <DropdownMenuRadioItem value="3">Amount Increasing</DropdownMenuRadioItem>*/}
+                {/*            <DropdownMenuRadioItem value="4">Amount Decreasing</DropdownMenuRadioItem>*/}
+                {/*            <DropdownMenuSeparator className="bg-muted"/>*/}
+                {/*            <DropdownMenuRadioItem value="5">Maintenance margin Increasing</DropdownMenuRadioItem>*/}
+                {/*            <DropdownMenuRadioItem value="6">Maintenance margin Decreasing</DropdownMenuRadioItem>*/}
+                {/*        </DropdownMenuRadioGroup>*/}
+                {/*    </DropdownMenuContent>*/}
+                {/*</DropdownMenu>*/}
             </div>
 
             {/* Filters toggle button */}
@@ -169,49 +188,59 @@ export default function SecurityFilters({type, doFetch}: SecurityFilterProps){
                         className="md:w-100 w-full absolute top-full right-0 bg-card z-[100] p-4 shadow-xl shadow-shadow rounded-xl"
                         ref={filterRef}
                     >
-                        {(type === SecurityType.Future || type === SecurityType.Option) && (
-                            <div className="w-full mb-4">
-                                <Label>Settlement date</Label>
-                                <DatePickerWithRange
-                                    className="max-w-full"
-                                    date={{ from: filters.fromDate, to: filters.toDate }}
-                                    setDate={(range) => {
-                                        if (range) {
-                                            const rangeDate = range as DateRange;
-                                            setFilters(prev => ({
-                                                ...prev,
-                                                fromDate: rangeDate?.from,
-                                                toDate: rangeDate?.to,
-                                            }));
-                                        }
-                                    }}
-                                />
-                            </div>
-                        )}
+                        {/*{(type === SecurityType.Future || type === SecurityType.Option) && (*/}
+                        {/*    <div className="w-full mb-4">*/}
+                        {/*        <Label>Settlement date</Label>*/}
+                        {/*        <DatePickerWithRange*/}
+                        {/*            className="max-w-full"*/}
+                        {/*            date={{ from: filters.fromDate, to: filters.toDate }}*/}
+                        {/*            setDate={(range) => {*/}
+                        {/*                if (range) {*/}
+                        {/*                    const rangeDate = range as DateRange;*/}
+                        {/*                    setFilters(prev => ({*/}
+                        {/*                        ...prev,*/}
+                        {/*                        fromDate: rangeDate?.from,*/}
+                        {/*                        toDate: rangeDate?.to,*/}
+                        {/*                    }));*/}
+                        {/*                }*/}
+                        {/*            }}*/}
+                        {/*        />*/}
+                        {/*    </div>*/}
+                        {/*)}*/}
 
                         <div className="space-y-6">
                             <div className="w-full">
-                                <Label>Exchange acronym</Label>
-                                <Input placeholder="NASDAQ" />
+                                <Label>Ticker</Label>
+                                <Input
+                                    value={ticker}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTicker(e.target.value)}
+                                    placeholder="UCRD" />
                             </div>
+                            {/*<div className="w-full">*/}
+                            {/*    <Label>Exchange acronym</Label>*/}
+                            {/*    <Input*/}
+                            {/*        value={exchangeAcronym}*/}
+                            {/*        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setExchangeAcronym(e.target.value)}*/}
+                            {/*        placeholder="NASDAQ" />*/}
+                            {/*</div>*/}
 
-                            <RangeSection
-                                label="Ask price (RSD)"
-                                values={askValues}
-                                onChange={setAskValues}
-                            />
+                        {/*    <RangeSection*/}
+                        {/*        label="Ask price (RSD)"*/}
+                        {/*        values={askValues}*/}
+                        {/*        onChange={setAskValues}*/}
+                        {/*    />*/}
 
-                            <RangeSection
-                                label="Bid price (RSD)"
-                                values={bidValues}
-                                onChange={setBidValues}
-                            />
+                        {/*    <RangeSection*/}
+                        {/*        label="Bid price (RSD)"*/}
+                        {/*        values={bidValues}*/}
+                        {/*        onChange={setBidValues}*/}
+                        {/*    />*/}
 
-                            <RangeSection
-                                label="Amount"
-                                values={amountValues}
-                                onChange={setAmountValues}
-                            />
+                        {/*    <RangeSection*/}
+                        {/*        label="Amount"*/}
+                        {/*        values={amountValues}*/}
+                        {/*        onChange={setAmountValues}*/}
+                        {/*    />*/}
 
                             <div className="flex flex-col gap-0">
                                 <Button variant="negative" className="text-destructive w-full flex flex-row items-baseline" onClick={handleClear}>

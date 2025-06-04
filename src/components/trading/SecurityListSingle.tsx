@@ -1,4 +1,4 @@
-import {getSecurityTypeName, Security, SecuritySimple, SecurityType} from "@/types/exchange/security.ts";
+import {getSecurityTypeName, SecuritySimple, SecurityType} from "@/types/exchange/security.ts";
 import {formatCurrency} from "@/lib/format-currency.ts";
 import {formatPercentage} from "@/lib/format-number.ts";
 import {cn} from "@/lib/utils.ts";
@@ -20,11 +20,15 @@ export default function SecurityListSingle({securityType, security}: SecuritySin
             <div className="flex flex-col items-baseline">
                 <div className="font-bold text-foreground text-sm flex flex-row gap-1">
                     <div>
-                        {security.ticker}
+                        {securityType == SecurityType.Forex ? security.ticker.substring(0, 3)
+                            + "/" + security.ticker.substring(3) :
+                            securityType == SecurityType.Option ? security.ticker.replace(/[0-9]/g, '') :
+                            security.ticker}
+
                     </div>
-                    <div className="text-muted-foreground font-light">
-                        ({security.stockExchange?.acronym || "NaN"})
-                    </div>
+                    {/*<div className="text-muted-foreground font-light">*/}
+                    {/*    ({security.stockExchange?.acronym || "NaN"})*/}
+                    {/*</div>*/}
                 </div>
                 <div className="text-xs text-muted-foreground">
                     {formatCurrency(security.askPrice, security.stockExchange ? security.stockExchange.currency.code : "RSD")}

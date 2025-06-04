@@ -92,7 +92,10 @@ function TradingInfo({securityId, securityType}: { securityId?: string, security
 
             <div className="flex flex-row gap-2 items-baseline">
             <h1 className="font-display font-bold text-5xl -mb-4">
-                {data.ticker ? data.ticker : "Security"} Overview
+                {data.ticker ? securityType == SecurityType.Forex ? data.ticker.substring(0, 3)
+                    + "/" + data.ticker.substring(3) :
+                    securityType == SecurityType.Option ? data.ticker.replace(/[0-9]/g, '') :
+                        data.ticker : "Security"} Overview
             </h1>
                 <h1 className="font-display font-light text-lg -mb-4 text-muted-foreground">
                     {data.stockExchange?.acronym || "NaN"}
