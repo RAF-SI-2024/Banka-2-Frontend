@@ -14,7 +14,8 @@ const createOrderMarketFormSchema = z.object({
             .gt(0, "Amount is too small")
     ),
     allOrNone: z.boolean(),
-    margin: z.boolean()
+    margin: z.boolean(),
+    accountNumber: z.string(),
 })
 
 const createOrderLimitFormSchema = z.object({
@@ -43,7 +44,8 @@ const createOrderLimitFormSchema = z.object({
             .min(0, "Limit value is too small")
     ),
     allOrNone: z.boolean(),
-    margin: z.boolean()
+    margin: z.boolean(),
+    accountNumber: z.string(),
 })
 
 const createOrderStopFormSchema = z.object({
@@ -72,7 +74,8 @@ const createOrderStopFormSchema = z.object({
             .min(0, "Stop value is too small")
     ),
     allOrNone: z.boolean(),
-    margin: z.boolean()
+    margin: z.boolean(),
+    accountNumber: z.string(),
 })
 
 const createOrderStopLimitFormSchema = z.object({
@@ -113,7 +116,8 @@ const createOrderStopLimitFormSchema = z.object({
             .min(0, "Stop value is too small")
     ),
     allOrNone: z.boolean(),
-    margin: z.boolean()
+    margin: z.boolean(),
+    accountNumber: z.string(),
 })
 
 
