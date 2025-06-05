@@ -31,7 +31,9 @@ export default function Trading() {
     const [loading,  setLoading]  = useState(true);
     const [error, setError] = useState("")
     const [security, setSecurity] =  useState<SecurityDailyResponse>();
-    const [onMessage, setOnMessage] = useState<((quote: QuoteSimpleResponse) =>void) | null>(null);
+    const [queueTrigger, setQueueTrigger] = useState(0);
+
+
 
 
 
@@ -96,7 +98,7 @@ export default function Trading() {
                 (
                     error || !security ?  (<ErrorFallback message={error} />) :
                         (
-                            <TradingInfo data={security} securityType={securityType ? getSecurityTypeFromString(securityType) : SecurityType.Stock}/>
+                            <TradingInfo trigger={queueTrigger} setTrigger={setQueueTrigger} data={security} securityType={securityType ? getSecurityTypeFromString(securityType) : SecurityType.Stock}/>
                         )
                 )}
         </main>
@@ -107,10 +109,13 @@ export default function Trading() {
 
 
 
-function TradingInfo({data, securityType}: {data: SecurityDailyResponse, securityType: SecurityType}) {
+function TradingInfo({data, securityType, trigger, setTrigger }: {data: SecurityDailyResponse, securityType: SecurityType,
+    trigger:number, setTrigger: React.Dispatch<React.SetStateAction<number>>}) {
 
 
-    const generator = useRealtimeCandleGenerator(data.ticker);
+    const messageQueueRef = useRef<QuoteSimpleResponse[]>([]);
+
+    const generator = useRealtimeCandleGenerator(data.ticker, messageQueueRef, setTrigger);
 
 
 
@@ -183,6 +188,8 @@ function TradingInfo({data, securityType}: {data: SecurityDailyResponse, securit
 
 
                 {data.ticker && data.quotes &&  <TradingViewChart
+                    updateTrigger={trigger}
+                    messageQueueRef={messageQueueRef}
                     datafeed={datafeed} generator={generator}
                     currency={data.stockExchange.currency} ticker={data.ticker } quotes={data.quotes}
                     className="lg:row-start-1 lg:col-span-7 lg:col-start-1 lg:row-span-1 row-span-1 row-start-1 md:col-span-full"/>}

@@ -1,5 +1,6 @@
 import {useState, useEffect, useRef, useMemo, useCallback, useImperativeHandle, forwardRef} from 'react';
 import {
+    CandlestickData,
     CandlestickSeries,
     createChart, createTextWatermark,
     HistogramSeries,
@@ -25,6 +26,7 @@ import {QuoteDailySimpleResponse, QuoteSimpleResponse, Security, SecurityType} f
 import {Datafeed} from "@/components/trading/TradingViewChartFunctions.ts";
 import {Currency} from "@/types/bank_user/currency.ts";
 import { CandleGenerator } from '@/hooks/use-candle-data';
+import {number} from "zod";
 
 interface TradingChartProps {
     className?: string;
@@ -34,6 +36,8 @@ interface TradingChartProps {
     interval?: number; // Add interval prop with default
     datafeed: Datafeed,
     generator: CandleGenerator | null,
+    messageQueueRef:  React.RefObject<QuoteSimpleResponse[]>,
+    updateTrigger:number
 }
 export type TradingChartRef = {
     onMessage: (quote: QuoteSimpleResponse) => void;
@@ -47,6 +51,8 @@ const TradingViewChart = (
         className,
         datafeed,
         generator,
+        messageQueueRef,
+        updateTrigger,
         ...props
     }: TradingChartProps,
 ) => {
@@ -68,38 +74,89 @@ const TradingViewChart = (
     const [legendTime, setLegendTime] = useState<string>();
     const [legendName, setLegendName] = useState<string>();
 
-    // on neew data
-    // useImperativeHandle(ref, () => ({
-    //     onMessage: (quote: QuoteSimpleResponse) => {
-    //         console.log('Received quote:', quote);
-    //         // You can update state, redraw the chart, etc. here
+
+    useEffect(() => {
+        if(messageQueueRef.current.length > 0){
+            const newQuote = messageQueueRef.current.pop();
+            if(!newQuote){
+                return;
+            }
+            if(candleSeriesRef.current && volumeSeriesRef.current){
+                console.log(newQuote)
+                const data = candleSeriesRef.current.data();
+                const volumeData = volumeSeriesRef.current.data();
+
+                const lastCandle = data[data.length - 1];
+
+                const lastVolumeData = volumeData[data.length - 1];
+
+                const time = lastCandle.time;
+
+                let high = newQuote.highPrice;
+                let low = newQuote.lowPrice;
+                let open = newQuote.bidPrice;
+
+                if('high' in lastCandle){
+                    high = lastCandle.high;
+                    low = lastCandle.low;
+                    open = lastCandle.open;
+                }
+
+                let newVolume = newQuote.volume;
+
+                if('value' in lastVolumeData){
+                    newVolume += lastVolumeData.value;
+                }
+
+
+                candleSeriesRef.current.update({
+                    time: time,
+                    low: Math.min(newQuote.lowPrice, low),
+                    high: Math.max(newQuote.highPrice, high),
+                    close: newQuote.bidPrice,
+                    open: open,
+
+                });
+                volumeSeriesRef.current.update({
+                    time: time,
+                    value: newVolume
+                });
+                //
+                setLegendPrice(formatCurrency(newQuote.bidPrice, "RSD"));
+                setLegendTime(time.toLocaleString("sr-RS"));
+                if(maSeriesRef.current){
+                    const maData = calculateMovingAverageSeriesData(candleSeriesRef.current.data(), 20);
+                    maSeriesRef.current.setData(maData);
+                }
+
+
+            }
+
+        }
+    }, [updateTrigger]);
+
+
+    //
+    // // Cleanup function
+    // const cleanup = useCallback(() => {
+    //     if (intervalRef.current) {
+    //         clearInterval(intervalRef.current);
+    //         intervalRef.current = null;
     //     }
-    // })); //TODO implement onMessage via queue
-
-
-
-
-
-    // Cleanup function
-    const cleanup = useCallback(() => {
-        if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-        }
-
-        if(generator)
-            generator.close();
-
-        if (chartRef.current) {
-            chartRef.current.remove();
-            chartRef.current = null;
-        }
-
-        // Clear all series refs
-        candleSeriesRef.current = null;
-        volumeSeriesRef.current = null;
-        maSeriesRef.current = null;
-    }, [generator]);
+    //
+    //     if(generator)
+    //         generator.close();
+    //
+    //     if (chartRef.current) {
+    //         chartRef.current.remove();
+    //         chartRef.current = null;
+    //     }
+    //
+    //     // Clear all series refs
+    //     candleSeriesRef.current = null;
+    //     volumeSeriesRef.current = null;
+    //     maSeriesRef.current = null;
+    // }, [generator]);
 
     // Chart initialization
     useEffect(() => {
@@ -186,8 +243,7 @@ const TradingViewChart = (
         chartRef.current.subscribeCrosshairMove(updateLegend);
         updateLegend(undefined);
 
-        return cleanup;
-    }, [theme, ticker, currency.code, datafeed, generator, cleanup]);
+    }, [theme, ticker, currency.code, datafeed, generator]);
 
     // Update data when chartData changes
     useEffect(() => {
@@ -235,10 +291,6 @@ const TradingViewChart = (
         maSeriesRef.current.applyOptions(getMAColors(colors));
     }, [theme]);
 
-    // Cleanup on unmount
-    useEffect(() => {
-        return cleanup;
-    }, [cleanup]);
 
     // Time scale buttons
     const setTimeScale = useCallback((option: string) => {
