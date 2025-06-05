@@ -157,7 +157,8 @@ export default function NewTransferForm() {
                 amount: Number(values.amount.toString().replace(",", ".")),
                 codeId: matchingCode.id,
                 purpose: values.purpose,
-                referenceNumber: "2025-2025"
+                referenceNumber: "2025-2025",
+                confirmationCode: ""
             };
 
             await createTransaction(transactionData);
@@ -182,7 +183,6 @@ export default function NewTransferForm() {
                                             <FormLabel>From Currency</FormLabel>
                                             <FormControl>
                                                 <Select
-                                                    disabled={fromCurrencies.length == 0}
                                                     value={fromCurrency?.id}
                                                     onValueChange={val => {
                                                         field.onChange(val);
@@ -190,7 +190,7 @@ export default function NewTransferForm() {
                                                         if (selected) setFromCurrency(selected);
                                                     }} >
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="RSD">{fromCurrency?.code}</SelectValue>
+                                                        <SelectValue>{fromCurrency?.code}</SelectValue>
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {fromCurrencies.map((item) =>
@@ -222,10 +222,7 @@ export default function NewTransferForm() {
                                                             field.onChange(value);
 
                                                             if(account) {
-                                                                if(toBankAccount !== account)
-                                                                    setFromCurrency(account.currency);
-                                                                else if(account.accountCurrencies.length > 0)
-                                                                    setFromCurrency(account.accountCurrencies[0].currency);
+                                                                setFromCurrency(account.currency);
                                                                 setFromCurrencies([account.currency, ...account.accountCurrencies.map(ac => ac.currency)]);
                                                                 form.setValue("fromCurrencyId", account.currency.id);
                                                             }
@@ -275,7 +272,6 @@ export default function NewTransferForm() {
                                             <FormLabel>To Currency</FormLabel>
                                             <FormControl>
                                                 <Select
-                                                    disabled={toCurrencies.length == 0}
                                                     value={toCurrency?.id}
                                                     onValueChange={val => {
                                                         field.onChange(val);
@@ -283,7 +279,7 @@ export default function NewTransferForm() {
                                                         if (selected) setToCurrency(selected);
                                                     }} >
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="RSD">{toCurrency?.code || "RSD"}</SelectValue>
+                                                        <SelectValue>{toCurrency?.code || "RSD"}</SelectValue>
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {toCurrencies.map((item) =>
@@ -315,10 +311,7 @@ export default function NewTransferForm() {
                                                             field.onChange(value);
 
                                                             if(account) {
-                                                                if(fromBankAccount !== account)
-                                                                    setToCurrency(account.currency);
-                                                                else if(account.accountCurrencies.length > 0)
-                                                                    setToCurrency(account.accountCurrencies[0].currency);
+                                                                setToCurrency(account.currency);
                                                                 setToCurrencies([account.currency, ...account.accountCurrencies.map(ac => ac.currency)]);
                                                                 form.setValue("toCurrencyId", account.currency.id);
                                                             }
