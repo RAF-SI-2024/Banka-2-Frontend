@@ -11,6 +11,9 @@ import MoneyInput from "@/components/__common__/input/MoneyInput.tsx";
 import {CreateOrderRequest, OrderDirection, OrderType} from "@/types/exchange/order.ts";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {createOrder} from "@/api/exchange/order.ts";
+import {useEffect, useState} from "react";
+import {getSecurityOfType} from "@/api/exchange/security.ts";
+import {SecurityType} from "@/types/exchange/security.ts";
 
 
 interface SecurityCreateOrderProps {
@@ -40,6 +43,38 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
 
     const segments = location.pathname.split("/");
     const securityId = segments[segments.indexOf("trading") + 2];
+    const securityType = segments[segments.indexOf("trading") + 1];
+
+    const [ticker, setTicker] = useState<string>("");
+
+    useEffect(() => {
+        async function fetchSecurity() {
+            try {
+                const securityTypeOf: SecurityType = (() => {
+                    switch (securityType) {
+                        case "stock":
+                            return SecurityType.Stock;
+                        case "future":
+                            return SecurityType.Future;
+                        case "forex":
+                            return SecurityType.Forex;
+                        case "option":
+                            return SecurityType.Option;
+                        default:
+                            return SecurityType.Unknown;
+                    }
+                })();
+                const security = await getSecurityOfType(securityTypeOf, securityId);
+                setTicker(security.ticker);
+            } catch (error) {
+                console.error("❌ Failed to fetch security", error);
+            }
+        }
+
+        if (securityType && securityId) {
+            fetchSecurity();
+        }
+    }, [securityType, securityId]);
 
     async function onSubmit(values: z.infer<typeof schema>){
 
@@ -101,7 +136,7 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
                                 <FormItem>
                                     <FormLabel>Amount</FormLabel>
                                     <FormControl>
-                                        <SecurityInput symbol={"BTC"} fixedDecimalScale={false} decimalScale={8} onChange={field.onChange} defaultValue={1}/>
+                                        <SecurityInput symbol={ticker || "BTC"} fixedDecimalScale={false} decimalScale={8} onChange={field.onChange} defaultValue={1}/>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
