@@ -52,7 +52,7 @@ export const getSecurityOfTypeDaily = async (
     try {
         const response = await api_exchange.get(`${getSecurityTypeRoute(type)}/daily/${id}`, {
         });
-        console.log(response.data);
+        // console.log(response.data);
         return response.data;
     }
     catch (error) {

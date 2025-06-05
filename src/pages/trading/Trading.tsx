@@ -1,5 +1,5 @@
 import {Toaster} from "@/components/ui/sonner.tsx";
-import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useMemo, useRef, useState} from "react";
 import SecurityListCard from "@/components/trading/SecurityListCard.tsx";
 import SecurityDetailsCard from "@/components/trading/SecurityDetails.tsx";
 import SecurityTradingTable from "@/components/trading/SecurityTradingTable.tsx";
@@ -7,16 +7,23 @@ import {Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, Dra
 import {Button} from "@/components/ui/button.tsx";
 import {useMediaQuery} from "@/hooks/use-media-query.ts";
 import {useParams} from "react-router-dom";
-import {getSecurityTypeFromString, Security, SecurityDailyResponse, SecurityType} from "@/types/exchange/security.ts";
+import {
+    getSecurityTypeFromString,
+    QuoteSimpleResponse,
+    Security,
+    SecurityDailyResponse,
+    SecurityType
+} from "@/types/exchange/security.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 import Loader from "@/components/__common__/Loader.tsx";
 import ErrorFallback from "@/components/__common__/error/ErrorFallback.tsx";
-import TradingViewChart from "@/components/trading/TradingViewChart.tsx";
+import TradingViewChart, {TradingChartRef} from "@/components/trading/TradingViewChart.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
 import {Card} from "@/components/ui/card.tsx";
 import {AnimatePresence, motion} from "framer-motion";
 import {getAllSecuritiesOfType, getSecurityOfType, getSecurityOfTypeDaily} from "@/api/exchange/security.ts";
-
+import {Datafeed} from "@/components/trading/TradingViewChartFunctions.ts";
+import {CandleGenerator, useRealtimeCandleGenerator} from "@/hooks/use-candle-data.ts";
 
 export default function Trading() {
     const { securityId, securityType } = useParams();
@@ -24,6 +31,12 @@ export default function Trading() {
     const [loading,  setLoading]  = useState(true);
     const [error, setError] = useState("")
     const [security, setSecurity] =  useState<SecurityDailyResponse>();
+    const [onMessage, setOnMessage] = useState<((quote: QuoteSimpleResponse) =>void) | null>(null);
+
+
+
+
+
 
     useEffect(() => {
 
@@ -95,20 +108,31 @@ export default function Trading() {
 
 
 function TradingInfo({data, securityType}: {data: SecurityDailyResponse, securityType: SecurityType}) {
+
+
+    const generator = useRealtimeCandleGenerator(data.ticker);
+
+
+
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const isDesktop = useMediaQuery("(min-width: 1000px)");
+
+    const datafeed = useMemo(() => new Datafeed(data.quotes), [data.quotes]);
+
+
+
 
 
     return(
         <>
 
             <div className="flex flex-row gap-2 items-baseline">
-            <h1 className="font-display font-bold text-5xl -mb-4">
-                {data.ticker ? securityType == SecurityType.Forex ? data.ticker.substring(0, 3)
-                    + "/" + data.ticker.substring(3) :
-                    securityType == SecurityType.Option ? data.ticker.replace(/[0-9]/g, '') :
-                        data.ticker : "Security"} Overview
-            </h1>
+                <h1 className="font-display font-bold text-5xl -mb-4">
+                    {data.ticker ? securityType == SecurityType.Forex ? data.ticker.substring(0, 3)
+                        + "/" + data.ticker.substring(3) :
+                        securityType == SecurityType.Option ? data.ticker.replace(/[0-9]/g, '') :
+                            data.ticker : "Security"} Overview
+                </h1>
                 <h1 className="font-display font-light text-lg -mb-4 text-muted-foreground">
                     {data.stockExchange?.acronym || "NaN"}
                 </h1>
@@ -159,6 +183,7 @@ function TradingInfo({data, securityType}: {data: SecurityDailyResponse, securit
 
 
                 {data.ticker && data.quotes &&  <TradingViewChart
+                    datafeed={datafeed} generator={generator}
                     currency={data.stockExchange.currency} ticker={data.ticker } quotes={data.quotes}
                     className="lg:row-start-1 lg:col-span-7 lg:col-start-1 lg:row-span-1 row-span-1 row-start-1 md:col-span-full"/>}
 
@@ -212,7 +237,7 @@ function TradingInfoSkeleton(){
         <>
             <Skeleton className="w-fit" >
                 <h1 className="font-display font-bold text-5xl text-transparent -mb-4">
-                Security (NASDAQ) Overview
+                    Security (NASDAQ) Overview
 
                 </h1>
             </Skeleton>

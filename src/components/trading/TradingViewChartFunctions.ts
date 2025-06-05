@@ -15,7 +15,7 @@ function generateCandleData(quoteData: QuoteDailySimpleResponse[]): CandleData[]
 
     let time = new Date().getTime();
 
-    console.log(quoteData);
+    // console.log(quoteData);
 
 
     for (let i = quoteData.length - 1; i >= 0; i--) {
