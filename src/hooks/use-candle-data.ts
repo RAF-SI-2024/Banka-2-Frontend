@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as signalR from '@microsoft/signalr';
 import { API_SOCKET } from '@/constants/endpoints.ts';
 import {QuoteSimpleResponse} from "@/types/exchange/security.ts";
@@ -8,8 +8,10 @@ export interface CandleGenerator {
     close: () => void;
 }
 
-export function useRealtimeCandleGenerator(ticker: string): CandleGenerator {
-    const messageQueueRef = useRef<QuoteSimpleResponse[]>([]);
+export function useRealtimeCandleGenerator(ticker: string,
+                                           messageQueueRef :  React.RefObject<QuoteSimpleResponse[]>,
+                                           setTrigger: React.Dispatch<React.SetStateAction<number>>): CandleGenerator {
+
     const connectionRef = useRef<signalR.HubConnection | null>(null);
 
     useEffect(() => {
@@ -33,7 +35,7 @@ export function useRealtimeCandleGenerator(ticker: string): CandleGenerator {
         // Receive updates from server
         connection.on('ReceiveSecurityUpdate', (quote: QuoteSimpleResponse) => {
             messageQueueRef.current.push(quote);
-            // TODO: add message processing
+            setTrigger(prev => prev + 1);
         });
 
 
