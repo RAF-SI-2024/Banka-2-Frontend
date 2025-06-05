@@ -23,7 +23,7 @@ import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} fro
 import {z} from "zod";
 import * as React from "react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
-import {AccountCurrency, BankAccount} from "@/types/bank_user/bank-account.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
 import {getAllAccountsClient} from "@/api/bank_user/bank-account.ts";
 import {Input} from "@/components/ui/input.tsx";
 import MoneyInput from "@/components/__common__/input/MoneyInput.tsx";
@@ -101,10 +101,7 @@ export default function NewPaymentForm() {
 
                     if (defaultBankAccount) {
                         setSelectedBankAccount(defaultBankAccount);
-                        setFromCurrency(defaultBankAccount.currency);
-                        setFromCurrencies([defaultBankAccount.currency, ...defaultBankAccount.accountCurrencies.map((ac: AccountCurrency) => ac.currency)]);
                         form.setValue("accountNumber", defaultBankAccount.accountNumber, { shouldValidate: true });
-                        form.setValue("fromCurrencyId", defaultBankAccount.currency.id, {shouldValidate: true})
                     }
                 }
 
@@ -197,7 +194,6 @@ export default function NewPaymentForm() {
                                             <FormLabel>From Currency</FormLabel>
                                             <FormControl>
                                                 <Select
-                                                    disabled={fromCurrencies.length === 0}
                                                     value={fromCurrency?.id}
                                                     onValueChange={val => {
                                                         field.onChange(val);
@@ -205,7 +201,7 @@ export default function NewPaymentForm() {
                                                         if (selected) setFromCurrency(selected);
                                                     }} >
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="RSD">{fromCurrency?.code}</SelectValue>
+                                                        <SelectValue >{fromCurrency?.code}</SelectValue>
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {fromCurrencies.map((item) => (
@@ -284,7 +280,6 @@ export default function NewPaymentForm() {
                                             <FormLabel>To Currency</FormLabel>
                                             <FormControl>
                                                 <Select
-                                                    disabled={currencies.length === 0}
                                                     value={toCurrency?.id}
                                                     onValueChange={val => {
                                                         field.onChange(val);
@@ -292,7 +287,7 @@ export default function NewPaymentForm() {
                                                         if (selected) setToCurrency(selected);
                                                     }} >
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="RSD">{toCurrency?.code || "RSD"}</SelectValue>
+                                                        <SelectValue >{toCurrency?.code || "RSD"}</SelectValue>
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {currencies.map((item) => (

@@ -19,7 +19,7 @@ export const getAccountById = async (id:string) => {
 export const getAllAccounts = async (
     pageNumber: number,
     pageSize: number,
-    filters: { accountNumber?: string; firstName?: string; lastName?: string; email: string },
+    filters: { accountNumber?: string; firstName?: string; lastName?: string;}
 ): Promise<AccountResponse> => {
     try {
         const response = await api_bank_user.get("/accounts", {
