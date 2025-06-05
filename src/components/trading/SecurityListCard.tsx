@@ -5,7 +5,7 @@ import {Tabs} from "@/components/ui/tabs.tsx";
 import {TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import SecurityInfiniteList from "@/components/trading/SecurityInfiniteList.tsx";
 import SecurityFilters from "@/components/trading/SecurityFIlters";
-import {getSecurityTypePlural, SecurityType} from "@/types/exchange/security.ts";
+import {getSecurityTypePlural, QuoteIntervalType, SecurityType} from "@/types/exchange/security.ts";
 
 
 export default function SecurityListCard({className, ...props}: React.ComponentProps<"div">) {
@@ -13,6 +13,17 @@ export default function SecurityListCard({className, ...props}: React.ComponentP
 
     const [activeTab, setActiveTab] = useState<SecurityType>(SecurityType.Stock);
     const [fetchFlag, setFetchFlag] = useState(false);
+    const [filters, setFilters] = useState({
+        name: "",
+        ticker: "",
+        // stockExchangeId: null,
+        interval: QuoteIntervalType.Week
+    });
+
+    const handleSearchChange = (field: string, value: string | null) => {
+        setFilters(prevSearch => ({ ...prevSearch, [field]: value }));
+    };
+
 
     return (
         <Card
@@ -37,13 +48,13 @@ export default function SecurityListCard({className, ...props}: React.ComponentP
                     </TabsList>
 
                     <TabsContent value={activeTab.toString()} className="p-2">
-                        <SecurityFilters doFetch={() => setFetchFlag(!fetchFlag)} type={Number(activeTab)} />
+                        <SecurityFilters doFetch={() => setFetchFlag(!fetchFlag)} type={Number(activeTab)} handleSearchChange={handleSearchChange} />
                     </TabsContent>
 
 
                 </CardHeader>
                 <CardContent className="py-0 px-4 pb-4 max-h-[680px] min-h-[680px] overflow-y-scroll"  id="scrollableDiv">
-                    <SecurityInfiniteList fetchFlag={fetchFlag} scrollableId={"scrollableDiv"} type={Number(activeTab)} />
+                    <SecurityInfiniteList filters={filters}  fetchFlag={fetchFlag} scrollableId={"scrollableDiv"} type={Number(activeTab)} />
                 </CardContent>
             </Tabs>
         </Card>

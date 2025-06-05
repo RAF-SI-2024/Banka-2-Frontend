@@ -1,6 +1,7 @@
 import {Currency} from "@/types/bank_user/currency.ts";
 
 export interface Exchange {
+    id: string;
     name: string;
     acronym: string;
     mic: string;

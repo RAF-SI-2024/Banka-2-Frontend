@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import {useState, useEffect, useRef, useMemo, useCallback, useImperativeHandle, forwardRef} from 'react';
 import {
     CandlestickSeries,
     createChart, createTextWatermark,
@@ -18,24 +18,45 @@ import {
     getMAColors, getVolumeColors, getWatermarkOptions
 } from "@/components/trading/ChartUtils.tsx";
 import {formatCurrency} from "@/lib/format-currency.ts";
-import {
-    Datafeed,
-    generateRealtimeData, getNextRealtimeUpdate,
-} from "@/__mocks/trading/GraphMock.ts";
+
 import { Button } from '../ui/button';
 import {Card, CardContent, CardFooter} from "@/components/ui/card.tsx";
-
+import {QuoteDailySimpleResponse, QuoteSimpleResponse, Security, SecurityType} from '@/types/exchange/security';
+import {Datafeed} from "@/components/trading/TradingViewChartFunctions.ts";
+import {Currency} from "@/types/bank_user/currency.ts";
+import { CandleGenerator } from '@/hooks/use-candle-data';
 
 interface TradingChartProps {
-    title: string;
     className?: string;
+    ticker: string;
+    quotes: QuoteDailySimpleResponse[],
+    currency: Currency,
+    interval?: number; // Add interval prop with default
+    datafeed: Datafeed,
+    generator: CandleGenerator | null,
 }
+export type TradingChartRef = {
+    onMessage: (quote: QuoteSimpleResponse) => void;
+};
 
+const TradingViewChart = (
+    {
+        currency,
+        ticker,
+        quotes,
+        className,
+        datafeed,
+        generator,
+        ...props
+    }: TradingChartProps,
+) => {
 
-export default function TradingViewChart({ title, className, ...props }: TradingChartProps) {
+    const containerRef = useRef<HTMLDivElement>(null);
     const { theme } = useTheme();
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const chartRef = useRef<IChartApi | null>(null);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const isUpdatingRef = useRef(false);
 
     const [chartData, setChartData] = useState<CandleData[]>([]);
 
@@ -47,10 +68,40 @@ export default function TradingViewChart({ title, className, ...props }: Trading
     const [legendTime, setLegendTime] = useState<string>();
     const [legendName, setLegendName] = useState<string>();
 
-    const datafeed = new Datafeed();
+    // on neew data
+    // useImperativeHandle(ref, () => ({
+    //     onMessage: (quote: QuoteSimpleResponse) => {
+    //         console.log('Received quote:', quote);
+    //         // You can update state, redraw the chart, etc. here
+    //     }
+    // })); //TODO implement onMessage via queue
 
 
-    // First time init
+
+
+
+    // Cleanup function
+    const cleanup = useCallback(() => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+
+        if(generator)
+            generator.close();
+
+        if (chartRef.current) {
+            chartRef.current.remove();
+            chartRef.current = null;
+        }
+
+        // Clear all series refs
+        candleSeriesRef.current = null;
+        volumeSeriesRef.current = null;
+        maSeriesRef.current = null;
+    }, [generator]);
+
+    // Chart initialization
     useEffect(() => {
         if (!chartContainerRef.current || chartRef.current) return;
 
@@ -64,20 +115,18 @@ export default function TradingViewChart({ title, className, ...props }: Trading
         // Create candle chart
         const chart = createChart(chartContainerRef.current, options);
 
-
         // Create series
         candleSeriesRef.current = chart.addSeries(CandlestickSeries, {
             ...getCandlestickColors(colors),
             priceFormat: {
                 type: 'custom',
                 minMove: 0.01,
-                formatter: (price: number) => formatCurrency(price, "RSD")
+                formatter: (price: number) => formatCurrency(price, currency.code)
             },
         }, 0);
 
         maSeriesRef.current = chart.addSeries(LineSeries, {
             ...getMAColors(colors),
-
             lineWidth: 2,
         }, 0)
 
@@ -86,7 +135,6 @@ export default function TradingViewChart({ title, className, ...props }: Trading
             priceFormat: { type: 'volume' },
         }, 1);
 
-
         const volumePane = chart.panes()[1];
         volumePane.setHeight(80);
 
@@ -94,8 +142,9 @@ export default function TradingViewChart({ title, className, ...props }: Trading
 
         createTextWatermark(chart.panes()[0], getWatermarkOptions(colors));
 
-        const data = datafeed.getBars(200);
-        // update data
+        const data = datafeed.getBars();
+
+        // Initialize chart data
         const candleData = data.map(d => ({
             time: d.time as Time,
             open: d.open,
@@ -110,118 +159,44 @@ export default function TradingViewChart({ title, className, ...props }: Trading
             color: colors.volume
         }))
 
-
-
         candleSeriesRef.current.setData(candleData);
-
         volumeSeriesRef.current.setData(volumeData);
 
         const maData = calculateMovingAverageSeriesData(candleSeriesRef.current.data(), 20);
-
         maSeriesRef.current.setData(maData);
 
-        // LEGEND
+        // Setup legend
+        const updateLegend = (param: any) => {
+            const validCrosshairPoint = !(
+                param === undefined || param.time === undefined || param.point.x < 0 || param.point.y < 0
+            );
+            const bar = validCrosshairPoint ? param.seriesData.get(candleSeriesRef.current) : candleData[candleData.length-1];
 
+            if (!bar) return;
 
-        if (chartRef.current) {
-            // @ts-ignore
-            const updateLegend = param => {
-                const validCrosshairPoint = !(
-                    param === undefined || param.time === undefined || param.point.x < 0 || param.point.y < 0
-                );
-                const bar = validCrosshairPoint ? param.seriesData.get(candleSeriesRef.current) : candleData[candleData.length-1];;
-                // time is in the same format that you supplied to the setData method,
-                // which in this case is YYYY-MM-DD
-                // Convert `rawTime` to a JavaScript Date object
-                const time = (new Date(bar.time*1000)).toLocaleString("sr-RS");
-                const price = bar.value !== undefined ? bar.value : bar.close;
-                const formattedPrice = formatCurrency(price, "RSD");
+            const time = (new Date(bar.time * 1000)).toLocaleString("sr-RS");
+            const price = bar.value !== undefined ? bar.value : bar.close;
+            const formattedPrice = formatCurrency(price, currency.code);
 
-                setLegendName(title);
-                setLegendPrice(formattedPrice);
-                setLegendTime(time);
-            };
-
-            chartRef.current.subscribeCrosshairMove(updateLegend);
-
-            updateLegend(undefined);
-        }
-
-        if(chartRef.current) {
-            chartRef.current.timeScale().subscribeVisibleLogicalRangeChange(logicalRange => {
-                if (logicalRange && logicalRange.from < 10) {
-                    // load more data
-                    const numberBarsToLoad = 50 - logicalRange.from;
-                    const data = datafeed.getBars(numberBarsToLoad);
-                    setTimeout(() => {
-                        setChartData(data);
-
-                    }, 250); // add a loading delay
-                }
-            });
-        }
-
-        const lastCandle = data[data.length - 1];
-        const { realtimeUpdates } = generateRealtimeData(lastCandle.close, 20, 1000);
-        const streamingDataProvider = getNextRealtimeUpdate(realtimeUpdates);
-        let lastCandleTime: number = -1;
-
-        const intervalID = setInterval(() => {
-            const update = streamingDataProvider.next();
-            if (update.done) {
-                clearInterval(intervalID);
-                return;
-            }
-
-
-
-            setLegendPrice(formatCurrency(update.value.close, "RSD"));
-            setLegendTime(new Date(update.value.time * 1000).toLocaleString("sr-RS"));
-
-            // Update candlestick and volume series
-            candleSeriesRef.current?.update(update.value);
-            volumeSeriesRef.current?.update({
-                time: update.value.time,
-                value: update.value.volume,
-            });
-
-            if (candleSeriesRef.current && maSeriesRef.current && lastCandleTime !== update.value.time) {
-                // New candle detected → recalculate MA
-                if(lastCandleTime > 0) {
-                    const maData = calculateMovingAverageSeriesData(candleSeriesRef.current.data(), 20);
-                    maSeriesRef.current.setData(maData);
-                }
-                lastCandleTime = update.value.time;
-            }
-
-
-
-        }, 250);
-
-
-
-
-
-        return () => {
-            // Clean up all chart instances
-            chartRef.current?.remove();
-            chartRef.current = null;
-            clearInterval(intervalID);
+            setLegendName(ticker);
+            setLegendPrice(formattedPrice);
+            setLegendTime(time);
         };
-    }, []);
 
+        chartRef.current.subscribeCrosshairMove(updateLegend);
+        updateLegend(undefined);
 
+        return cleanup;
+    }, [theme, ticker, currency.code, datafeed, generator, cleanup]);
 
-
-    // Update data when it changes
+    // Update data when chartData changes
     useEffect(() => {
         if (!candleSeriesRef.current || !volumeSeriesRef.current
             || !chartRef.current || chartData.length === 0
             || !maSeriesRef.current) return;
 
-
         const colors = getChartColors(theme);
-        // update data
+
         const candleData = chartData.map(d => ({
             time: d.time as Time,
             open: d.open,
@@ -237,15 +212,14 @@ export default function TradingViewChart({ title, className, ...props }: Trading
         }))
 
         candleSeriesRef.current.setData(candleData);
-
         volumeSeriesRef.current.setData(volumeData);
 
         const maData = calculateMovingAverageSeriesData(candleSeriesRef.current.data(), 20);
-
         maSeriesRef.current.setData(maData);
 
-    }, [chartData]);
+    }, [chartData, theme]);
 
+    // Update theme colors
     useEffect(() => {
         if (!candleSeriesRef.current || !volumeSeriesRef.current
             || !chartRef.current || !maSeriesRef.current) return;
@@ -261,17 +235,20 @@ export default function TradingViewChart({ title, className, ...props }: Trading
         maSeriesRef.current.applyOptions(getMAColors(colors));
     }, [theme]);
 
+    // Cleanup on unmount
+    useEffect(() => {
+        return cleanup;
+    }, [cleanup]);
 
-    // time scale Buttons
-    function setTimeScale(option:string){
-        if(!chartRef.current)
-            return;
+    // Time scale buttons
+    const setTimeScale = useCallback((option: string) => {
+        if (!chartRef.current) return;
 
-        function formatDate(date: Date): string {
+        const formatDate = (date: Date): string => {
             return date.toISOString().slice(0, 10);
-        }
-        //
-        const dateTo = new Date(); // today
+        };
+
+        const dateTo = new Date();
         let dateFrom = new Date();
 
         switch(option.toUpperCase()){
@@ -289,21 +266,18 @@ export default function TradingViewChart({ title, className, ...props }: Trading
                 break;
             default:
                 return;
-
         }
 
         chartRef.current.timeScale().setVisibleRange({
             from: formatDate(dateFrom),
             to: formatDate(dateTo),
         });
-    }
-
-
+    }, []);
 
     return (
         <Card className={cn("border-0 h-full w-full", className)} {...props}>
-            <CardContent className="h-[400px] p-0" >
-                <div ref={chartContainerRef} className={cn("relative size-full transition-colors", className)} >
+            <CardContent className="h-[400px] p-0">
+                <div ref={chartContainerRef} className={cn("relative size-full transition-colors", className)}>
                     <div className="absolute left-3 top-2 z-10 font-paragraph text-chart-legend">
                         <div className="font-semibold text-xl">{legendName}</div>
                         <div className="text-base">{legendPrice}</div>
@@ -318,8 +292,7 @@ export default function TradingViewChart({ title, className, ...props }: Trading
                 <Button variant='ghost' onClick={() => setTimeScale('1Y')} className="text-link hover:text-muted-foreground">1Y</Button>
             </CardFooter>
         </Card>
-
     );
-}
+};
 
-
+export default TradingViewChart;
