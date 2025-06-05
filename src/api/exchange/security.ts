@@ -1,10 +1,12 @@
-
 import {api_exchange} from "@/api/axios.ts";
 import {
     getSecurityTypeName,
     getSecurityTypeRoute,
     QuoteFilterQuery,
-    QuoteIntervalType, Security, SecurityDailyResponse, SecuritySimpleResponse,
+    QuoteIntervalType,
+    Security,
+    SecurityDailyResponse,
+    SecuritySimpleResponse,
     SecurityType
 } from "@/types/exchange/security.ts";
 
@@ -15,6 +17,9 @@ export const getAllSecuritiesOfType = async (
     filters: QuoteFilterQuery = {interval: QuoteIntervalType.Week},
 ): Promise<SecuritySimpleResponse> => {
     try {
+        // Futures are not from API
+        if(type == SecurityType.Future)
+            filters.interval = QuoteIntervalType.Max;
         const response = await api_exchange.get(`${getSecurityTypeRoute(type)}`, {
             params: {
                 ...filters,
@@ -51,6 +56,9 @@ export const getSecurityOfTypeDaily = async (
 ): Promise<SecurityDailyResponse> => {
     try {
         const response = await api_exchange.get(`${getSecurityTypeRoute(type)}/daily/${id}`, {
+            params:{
+                interval: QuoteIntervalType.Max
+            }
         });
         // console.log(response.data);
         return response.data;

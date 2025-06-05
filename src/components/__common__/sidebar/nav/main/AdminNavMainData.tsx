@@ -1,8 +1,9 @@
 import * as React from "react";
+import {useBankAccountsData} from "@/hooks/sidebar/use-bank-accounts-data.ts";
 
 export function AdminNavMainData() {
 
-    return [
+    const items = [
         {
             label: "Management",
             content: [
@@ -41,12 +42,12 @@ export function AdminNavMainData() {
                         }
                     ]
                 },
-                {
-                    title: "Tax tracking",
-                    url: "/tax/overview",
-                    icon: <span className="icon-[ph--invoice]" />,
-                    isCollapsed: true,
-                }
+                // {
+                //     title: "Tax tracking",
+                //     url: "/tax/overview",
+                //     icon: <span className="icon-[ph--invoice]" />,
+                //     isCollapsed: true,
+                // }
             ]
         },
         {
@@ -76,14 +77,31 @@ export function AdminNavMainData() {
                     icon: <span className="icon-[ph--users-three]" />,
                     isCollapsed: true,
                 },
-                {
-                    title: "My Portfolio",
-                    url: "/my-portfolio",
-                    icon: <span className="icon-[ph--chalkboard-teacher]"/>,
-                    isCollapsed: false,
-                },
             ]
         }
 
     ];
+    const exchangeSection = items.find(section => section.label === "Exchange");
+    if(exchangeSection) {
+        const accounts = useBankAccountsData();
+        console.log(accounts);
+        if (accounts.length > 0) {
+            exchangeSection.content.push({
+                title: "Trading account",
+                url: accounts[0].url,
+                icon: <span className="icon-[ph--piggy-bank]"/>,
+                isCollapsed: false,
+            })
+        }
+
+        exchangeSection.content.push({
+            title: "My portfolio",
+            url: "/my-portfolio",
+            icon: <span className="icon-[ph--chalkboard-teacher]"/>,
+            isCollapsed: false,
+        })
+    }
+
+    return items;
+
 }
