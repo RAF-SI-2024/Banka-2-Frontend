@@ -2,18 +2,7 @@ import {api_bank_user} from "@/api/axios.ts";
 import {CreateTransactionRequest, TransactionResponse} from "@/types/bank_user/transaction.ts";
 import {TransactionStatus} from "@/types/bank_user/transaction.ts";
 
-interface CreateTransferRequest {
-    fromAccountNumber: string;
-    fromCurrencyId: string;
-    toAccountNumber: string;
-    toCurrencyId: string;
-    amount: number;
-    codeId: string;
-    referenceNumber?: string;
-    purpose: string;
-}
-
-export const createTransaction = async (transactionData: CreateTransferRequest) => {
+export const createTransaction = async (transactionData: CreateTransactionRequest) => {
     try {
         const response = await api_bank_user.post("/transactions", transactionData);
         return response.data;

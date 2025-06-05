@@ -157,7 +157,8 @@ export default function NewTransferForm() {
                 amount: Number(values.amount.toString().replace(",", ".")),
                 codeId: matchingCode.id,
                 purpose: values.purpose,
-                referenceNumber: "2025-2025"
+                referenceNumber: "2025-2025",
+                confirmationCode: ""
             };
 
             await createTransaction(transactionData);
