@@ -44,7 +44,7 @@ export interface CreateOrderRequest {
     limitPrice: number;
     stopPrice:  number;
     direction: OrderDirection;
-    supervisorId: string;
+    supervisorId?: string;
     securityId: string;
 
 }
