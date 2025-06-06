@@ -24,11 +24,12 @@ export default function ActuariesDropdownMenu({
   const user = JSON.parse(sessionStorage.getItem("user") || "{}") as User;
   const isEmployee = user?.role === Role.Employee;
 
+
   const showEdit = isEmployee
-    ? actuary.actuaryType === Permission.Agent
+    ? actuary.permission && actuary.permission === Permission.Agent
     : currentUserRole !== Role.Admin;
 
-  const showResetLimit = actuary.actuaryType === Permission.Agent;
+  const showResetLimit = actuary.permission === Permission.Agent;
 
   if (!(showEdit || showResetLimit)) return null; // Ako nema opcija, dropdown se ne prikazuje
 

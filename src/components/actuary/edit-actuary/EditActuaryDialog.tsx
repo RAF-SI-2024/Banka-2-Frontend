@@ -17,21 +17,22 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer.tsx";
-import { Actuary } from "@/types/bank_user/actuary.ts";
+import {Actuary, EditActuaryRequest} from "@/types/bank_user/actuary.ts";
 import EditActuaryForm from "@/components/actuary/edit-actuary/EditActuaryForm.tsx";
+import {User} from "@/types/bank_user/user.ts";
 
 interface EditActuaryDialogProps {
   actuary: Actuary;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onSuccess: (updatedActuary: Actuary) => void;
+  onEditActuary: (oldValue: Actuary, req: EditActuaryRequest) => void;
 }
 
 export function EditActuaryDialog({
   actuary,
   isOpen,
   onOpenChange,
-  onSuccess,
+                                    onEditActuary,
 }: EditActuaryDialogProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -51,7 +52,7 @@ export function EditActuaryDialog({
         <EditActuaryForm
           actuary={actuary}
           onClose={handleClose}
-          onSuccess={onSuccess}
+          onEditActuary={onEditActuary}
         />
       </DialogContent>
     </Dialog>
@@ -67,7 +68,7 @@ export function EditActuaryDialog({
         <EditActuaryForm
           actuary={actuary}
           onClose={handleClose}
-          onSuccess={onSuccess}
+          onEditActuary={onEditActuary}
         />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>

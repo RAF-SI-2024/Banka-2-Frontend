@@ -4,7 +4,7 @@ import {EditUserRequest, GetUserRequest, UpdateClientRequest, UpdateEmployeeRequ
 export const getAllUsers = async (
     page: number,
     size: number,
-    filters: { email?: string; firstName?: string; lastName?: string; role?: string }
+    filters: { email?: string; firstName?: string; lastName?: string; role?: string, permissions?: string }
 ): Promise<UserResponse> => {
     try {
         const response = await api_bank_user.get("/users", {
@@ -13,10 +13,12 @@ export const getAllUsers = async (
                 firstName: filters.firstName || undefined,
                 lastName: filters.lastName || undefined,
                 role: filters.role ? parseInt(filters.role, 10) : undefined, // Convert role to number
+                permissions: filters.permissions ?  Number(filters.permissions) : undefined,
                 page,
                 size,
             },
         });
+
 
         return response.data; // API returns an array of users
     } catch (error) {
