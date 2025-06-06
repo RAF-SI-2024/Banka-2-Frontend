@@ -8,7 +8,6 @@ import {
     SecurityType
 } from "@/types/exchange/security.ts";
 import SecurityListSingle from "@/components/trading/SecurityListSingle.tsx";
-import {generateSecurities} from "@/__mocks/trading/SecurityListMock.ts";
 import {getAllSecuritiesOfType} from "@/api/exchange/security.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 

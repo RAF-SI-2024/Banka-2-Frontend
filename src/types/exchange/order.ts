@@ -1,5 +1,6 @@
 import {Actuary} from "@/types/bank_user/actuary.ts";
 import {BankAccount} from "@/types/bank_user/bank-account.ts";
+import {Security} from "@/types/exchange/security.ts";
 
 export interface Order {
     id: string;
@@ -15,6 +16,7 @@ export interface Order {
     direction: Direction;
     remainingPortions: number;
     status: OrderStatus;
+    security: Security;
 
     account: BankAccount;
     stopPrice: number;
