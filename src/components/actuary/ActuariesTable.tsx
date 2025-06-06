@@ -82,11 +82,11 @@ export default function ActuaryTable() {
     setDialogOpen(true);
   };
 
-  const handleResetLimit = (actuary: Actuary) => {
-    console.log("Reset limit:", actuary);
-    setSelectedActuary(actuary);
-    setResetLimitDialogOpen(true);
-  };
+  // const handleResetLimit = (actuary: Actuary) => {
+  //   console.log("Reset limit:", actuary);
+  //   setSelectedActuary(actuary);
+  //   setResetLimitDialogOpen(true);
+  // };
 
   const handleActuaryUpdate = (updatedActuary: Actuary) => {
     setActuaries((prevActuaries) =>
@@ -97,7 +97,7 @@ export default function ActuaryTable() {
   };
 
   const columns = useMemo(
-    () => generateActuaryColumns(handleEdit, handleResetLimit, users),
+    () => generateActuaryColumns(handleEdit, users),
     [users]
   );
 

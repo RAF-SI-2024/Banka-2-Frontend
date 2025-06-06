@@ -13,6 +13,8 @@ import {
     Autoplay, EffectCoverflow,
     Pagination,
 } from "swiper/modules";
+import {Role, User} from "@/types/bank_user/user.ts";
+import ErrorFallback from "@/components/__common__/error/ErrorFallback.tsx";
 
 
 interface BalanceCardProps extends React.ComponentProps<"div">{
@@ -26,6 +28,14 @@ interface BalanceCardProps extends React.ComponentProps<"div">{
 
 
 const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expenses=0, onSendClick, onDetailsClick, className, ...props }: BalanceCardProps) => {
+
+    const user = sessionStorage.getItem("user");
+    let parsedUser: User;
+    if (user !== null) {
+        parsedUser = JSON.parse(user);
+    }
+    else return <ErrorFallback message={"An error occurred"} />
+
 
     return (
         <Card
@@ -98,12 +108,12 @@ const BankAccountBalanceCard = ({ cardPageVersion=false, account, income=0, expe
                         </div>
                     </div>
 
-                        <div className="flex items-center justify-center lg:justify-start gap-4">
+                    {parsedUser.role == Role.Client && <div className="flex items-center justify-center lg:justify-start gap-4">
                             <Button variant="primary" size="lg" onClick={onSendClick}>Send</Button>
-                            <Button variant="negative" size="lg" onClick={onDetailsClick}>
+                           <Button variant="negative" size="lg" onClick={onDetailsClick}>
                                 {cardPageVersion ? "Account info": "Details"}
                             </Button>
-                        </div>
+                        </div> }
 
                 </div>
             </div>

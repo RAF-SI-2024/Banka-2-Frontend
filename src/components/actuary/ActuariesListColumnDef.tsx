@@ -8,7 +8,7 @@ import {getUserById} from "@/api/bank_user/user.ts";
 
 export function generateActuaryColumns(
   handleOpenEditDialog: (actuary: Actuary) => void,
-  handleResetUsedLimit: (actuary: Actuary) => void,
+  // handleResetUsedLimit: (actuary: Actuary) => void,
   users: User[]
 ): ColumnDef<Actuary>[] {
   return [
@@ -67,7 +67,7 @@ export function generateActuaryColumns(
                 actuary={actuary}
                 currentUserRole={userRole}
                 onEdit={() => handleOpenEditDialog(actuary)}
-                onResetLimit={() => handleResetUsedLimit(actuary)}
+                // onResetLimit={() => handleResetUsedLimit(actuary)}
             />
         );
       },

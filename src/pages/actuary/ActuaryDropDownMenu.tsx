@@ -12,14 +12,14 @@ type Props = {
   currentUserRole: Role;
   actuary: Actuary;
   onEdit: () => void;
-  onResetLimit: () => void;
+  // onResetLimit: () => void;
 };
 
 export default function ActuariesDropdownMenu({
   actuary,
   currentUserRole,
   onEdit,
-  onResetLimit,
+  // onResetLimit,
 }: Props) {
   const user = JSON.parse(sessionStorage.getItem("user") || "{}") as User;
   const isEmployee = user?.role === Role.Employee;
@@ -47,11 +47,11 @@ export default function ActuariesDropdownMenu({
             {isEmployee ? "Adjust limit" : "Edit actuary"}
           </DropdownMenuItem>
         )}
-        {showResetLimit && (
-          <DropdownMenuItem onClick={onResetLimit}>
-            Reset Used Limit
-          </DropdownMenuItem>
-        )}
+        {/*{showResetLimit && (*/}
+        {/*  <DropdownMenuItem onClick={onResetLimit}>*/}
+        {/*    Reset Used Limit*/}
+        {/*  </DropdownMenuItem>*/}
+        {/*)}*/}
       </DropdownMenuContent>
     </DropdownMenu>
   );

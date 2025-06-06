@@ -7,6 +7,8 @@ import {formatCurrency} from "@/lib/format-currency.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {z} from "zod";
 import BankAccountDetailsAdjustLimitsDialog from "@/components/bank-account/bank-account-single/BankAccountDetailsAdjustLimitsDialog.tsx";
+import {Role, User} from "@/types/bank_user/user.ts";
+import ErrorFallback from "@/components/__common__/error/ErrorFallback.tsx";
 
 interface DetailsProps extends React.ComponentProps<"div"> {
     account: BankAccount;
@@ -71,6 +73,13 @@ const BankAccountDetailsCard = ({
         setAdjustLimitsDialogOpen(true);
     };
 
+    const user = sessionStorage.getItem("user");
+    let parsedUser: User;
+    if (user !== null) {
+        parsedUser = JSON.parse(user);
+    }
+    else return <ErrorFallback message={"An error occurred"} />
+
 
     return (
         <Card
@@ -82,9 +91,9 @@ const BankAccountDetailsCard = ({
         >
 
             <CardHeader className="mb-2 flex flex-row -ml-4 items-center">
-                <Button size="icon" variant="ghost" onClick={onBackClick}>
+                { parsedUser.role == Role.Client ? <Button size="icon" variant="ghost" onClick={onBackClick}>
                     <span className="icon-[ph--caret-left] size-6" />
-                </Button>
+                </Button> : <span className="size-2" />}
                 <CardTitle className="font-heading text-2xl">Account details</CardTitle>
             </CardHeader>
 
@@ -189,10 +198,10 @@ const BankAccountDetailsCard = ({
                         {formatCurrency(dailyLimit, account.currency.code)}
                     </p>
                 </div>
-                <Button size="sm" variant="outline" className="absolute bottom-4 right-4" onClick={handleAdjustLimitsClick}>
+                {parsedUser.role != Role.Employee && <Button size="sm" variant="outline" className="absolute bottom-4 right-4" onClick={handleAdjustLimitsClick}>
                     Adjust limits
                     <span className="icon-[ph--gear] text-base"></span>
-                </Button>
+                </Button>}
 
                 <BankAccountDetailsAdjustLimitsDialog account={account}
                                                       showDialog={isAdjustLimitsDialogOpen}
