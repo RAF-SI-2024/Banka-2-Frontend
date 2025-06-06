@@ -81,7 +81,7 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
         try {
             const user = JSON.parse(sessionStorage.getItem("user") || "{}");
             const orderDirection = direction === "buy" ? OrderDirection.BUY : OrderDirection.SELL;
-
+            const permission = user.permission;
             const orderRequest: CreateOrderRequest = {
                 actuaryId: user.id,
                 accountNumber: values.accountNumber,
@@ -91,9 +91,13 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
                 limitPrice: 0,
                 stopPrice: 0,
                 direction: orderDirection,
-                supervisorId: user.id,
-                securityId: securityId || "",
+                securityId: securityId,
             }
+
+            if(permission === 26){
+                orderRequest.supervisorId = user.id;
+            }
+
 
             if ("limitValue" in values) {
                 orderRequest.limitPrice = values.limitValue as number;
