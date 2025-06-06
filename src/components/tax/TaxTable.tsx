@@ -17,7 +17,7 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import {generateTaxColumns} from "@/components/tax/TaxListColumnDef.tsx";
-import {mockTaxes} from "@/__mocks/mock-taxes.ts";
+import {taxesMock} from "@/__mocks/TaxesMock.ts";
 import {Tax} from "@/types/exchange/tax.ts";
 import CollectConfirmationDialog from "@/components/tax/CollectConfirmationDialog.tsx";
 
@@ -68,7 +68,7 @@ export default function TaxTable() {
     /* FUNCTIONS */
     // fetch taxes function
     const fetchTaxes = async () => {
-        let filtered = mockTaxes;
+        let filtered = taxesMock;
 
         // Apply email filter
         if (search.email.trim() !== "") {

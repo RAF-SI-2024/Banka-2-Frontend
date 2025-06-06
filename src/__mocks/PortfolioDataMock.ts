@@ -1,5 +1,5 @@
 import {PortfolioBalanceData, PortfolioData, PortfolioTaxData} from "@/types/exchange/portfolio-data.ts";
-import {mockCurrencies} from "@/mocks/CurrencyMock.tsx";
+import {mockCurrencies} from "@/__mocks/CurrencyMock.ts";
 
 // Mock portfolio podaci
 export const portfolioDataMock: PortfolioData[] = [

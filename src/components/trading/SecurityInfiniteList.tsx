@@ -1,8 +1,13 @@
 import {useEffect, useRef, useState} from "react";
 import InfiniteScroll from "react-infinite-scroll-component"
-import {getSecurityTypePlural, Security, SecuritySimple, SecurityType} from "@/types/exchange/security.ts";
+import {
+    getSecurityTypePlural,
+    QuoteFilterQuery,
+    Security,
+    SecuritySimple,
+    SecurityType
+} from "@/types/exchange/security.ts";
 import SecurityListSingle from "@/components/trading/SecurityListSingle.tsx";
-import {generateSecurities} from "@/mocks/trading/SecurityListMock.tsx";
 import {getAllSecuritiesOfType} from "@/api/exchange/security.ts";
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
 
@@ -11,9 +16,11 @@ interface InfiniteListProps {
     scrollableId: string;
     itemsPerPage?: number;
     fetchFlag: boolean;
+    filters: QuoteFilterQuery
+
 }
 
-export default function SecurityInfiniteList({ type, scrollableId, fetchFlag, itemsPerPage = 20 }: InfiniteListProps) {
+export default function SecurityInfiniteList({ filters, type, scrollableId, fetchFlag, itemsPerPage = 20 }: InfiniteListProps) {
     const [page, setPage] = useState(1);
     const initialized = useRef(false)
     const [hasMore, setHasMore] = useState(true);
@@ -30,12 +37,8 @@ export default function SecurityInfiniteList({ type, scrollableId, fetchFlag, it
     const next = async (currentPage: number = page) => {
         try {
             let newSecurities: SecuritySimple[] = [];
-            if (type == SecurityType.Stock) { // TODO: izbrisati kad se dodaju rute za svaki tip
-                newSecurities = (await getAllSecuritiesOfType(type, currentPage, itemsPerPage)).items;
-                console.log(newSecurities[0]);
-            } else {
-                newSecurities = await generateSecurities(type, currentPage, itemsPerPage);
-            }
+
+            newSecurities = (await getAllSecuritiesOfType(type, currentPage, itemsPerPage, filters)).items;
 
             if (page == 1)
                 setSecurities(newSecurities);

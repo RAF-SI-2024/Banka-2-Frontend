@@ -12,23 +12,24 @@ type Props = {
   currentUserRole: Role;
   actuary: Actuary;
   onEdit: () => void;
-  onResetLimit: () => void;
+  // onResetLimit: () => void;
 };
 
 export default function ActuariesDropdownMenu({
   actuary,
   currentUserRole,
   onEdit,
-  onResetLimit,
+  // onResetLimit,
 }: Props) {
   const user = JSON.parse(sessionStorage.getItem("user") || "{}") as User;
   const isEmployee = user?.role === Role.Employee;
 
+
   const showEdit = isEmployee
-    ? actuary.actuaryType === Permission.Agent
+    ? actuary.permission && actuary.permission === Permission.Agent
     : currentUserRole !== Role.Admin;
 
-  const showResetLimit = actuary.actuaryType === Permission.Agent;
+  const showResetLimit = actuary.permission === Permission.Agent;
 
   if (!(showEdit || showResetLimit)) return null; // Ako nema opcija, dropdown se ne prikazuje
 
@@ -47,11 +48,11 @@ export default function ActuariesDropdownMenu({
             {isEmployee ? "Adjust limit" : "Edit actuary"}
           </DropdownMenuItem>
         )}
-        {showResetLimit && (
-          <DropdownMenuItem onClick={onResetLimit}>
-            Reset Used Limit
-          </DropdownMenuItem>
-        )}
+        {/*{showResetLimit && (*/}
+        {/*  <DropdownMenuItem onClick={onResetLimit}>*/}
+        {/*    Reset Used Limit*/}
+        {/*  </DropdownMenuItem>*/}
+        {/*)}*/}
       </DropdownMenuContent>
     </DropdownMenu>
   );

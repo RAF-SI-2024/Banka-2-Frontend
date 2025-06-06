@@ -81,7 +81,7 @@ interface Data{
     volume: number;
 }
 
-export class Datafeed {
+export class DatafeedMock {
     private _earliestDate: Date;
     private _data: Data[];
 

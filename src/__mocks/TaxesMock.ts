@@ -1,6 +1,6 @@
 import {Tax, TaxRole} from "@/types/exchange/tax.ts";
 
-export const mockTaxes: Tax[] = [
+export const taxesMock: Tax[] = [
     {
         id:"t1",
         firstName: "Admin",

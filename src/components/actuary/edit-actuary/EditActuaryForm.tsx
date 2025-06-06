@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Actuary, Permission} from "@/types/bank_user/actuary.ts";
-import {Role} from "@/types/bank_user/user.ts"; // Dodaj definisane role
+import {Actuary, EditActuaryRequest, Permission} from "@/types/bank_user/actuary.ts";
+import {Role, User} from "@/types/bank_user/user.ts"; // Dodaj definisane role
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
@@ -11,12 +11,14 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 
 const adminSchema = z.object({
-  actuaryType: z.string(),
-  limit: z.number().gt(0, "Limit must be greater than zero"),
+  permission: z.string(),
+  accountLimit: z.number().gt(0, "Limit must be greater than zero"),
 });
 
+
 const employeeSchema = z.object({
-  limit: z.number().gt(0, "Limit must be greater than zero"),
+  permission: z.string(),
+  accountLimit: z.number().gt(0, "Limit must be greater than zero"),
 });
 
 type FormValues = z.infer<typeof adminSchema> | z.infer<typeof employeeSchema>;
@@ -24,13 +26,13 @@ type FormValues = z.infer<typeof adminSchema> | z.infer<typeof employeeSchema>;
 interface EditActuaryFormProps {
   actuary: Actuary;
   onClose: () => void;
-  onSuccess: (updatedActuary: Actuary) => void;
+  onEditActuary: (oldValue: Actuary, req: EditActuaryRequest) => void;
 }
 
 export default function EditActuaryForm({
   actuary,
   onClose,
-  onSuccess,
+                                          onEditActuary,
 }: EditActuaryFormProps) {
   const [currentUserRole, setCurrentUserRole] = useState<Role>(Role.Invalid);
 
@@ -50,8 +52,8 @@ export default function EditActuaryForm({
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      actuaryType:  actuary.actuaryType.toString(),
-      limit: actuary.limit,
+      permission:  actuary.permission.toString(),
+      accountLimit: actuary.account.monthlyLimit,
     }
   });
 
@@ -59,16 +61,16 @@ export default function EditActuaryForm({
     console.log("📌 Current actuary:", actuary); // Loguje trenutni actuary
 
     form.reset({
-      actuaryType: actuary.actuaryType.toString(),
-      limit: actuary.limit,
+      permission: actuary.permission.toString(),
+      accountLimit: actuary.account.monthlyLimit,
     });
-    setActuaryType(actuary.actuaryType);
+    setActuaryType(actuary.permission);
   }, [actuary, isAdmin, form]);
 
   const { control, handleSubmit, watch } = form;
   const hasChanges =
-    watch("limit") !== actuary.limit ||
-    (isAdmin && watch("actuaryType") !== actuary.actuaryType.toString());
+    watch("accountLimit") !== actuary.account.monthlyLimit ||
+    (isAdmin && watch("permission") !== actuary.permission.toString());
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -76,20 +78,27 @@ export default function EditActuaryForm({
 
       if(isAdmin){
         payload = {
-          actuaryType: Number(actuary.actuaryType),
-          limit: actuary.limit,
+          id: actuary.id,
+          accountId: actuary.account.id,
+          permission: Number(values.permission),
+          accountLimit: values.accountLimit,
         }
       }
       else {
         payload = {
-          limit: actuary.limit,
+          id: actuary.id,
+          accountId: actuary.account.id,
+          permission: Number(actuary.permission),
+          accountLimit: values.accountLimit,
         }
       }
-      const updatedActuary = { ...actuary, ...payload };
-      console.log("🚀 Updated actuary:", updatedActuary);
-      showSuccessToast({ title: "Updated successfully" });
+      // const updatedActuary = { ...actuary, ...payload };
+      // console.log("🚀 Updated actuary:", updatedActuary);
+      // showSuccessToast({ title: "Updated successfully" });
       onClose();
-      onSuccess(updatedActuary); // Pass the updated actuary to onSuccess
+      // onSuccess(updatedActuary); // Pass the updated actuary to onSuccess
+
+      onEditActuary(actuary, payload);
     } catch (error) {
       console.error("❌ Update failed:", error);
       showErrorToast({ error, defaultMessage: "Failed to update actuary" });
@@ -102,8 +111,8 @@ export default function EditActuaryForm({
         {isAdmin && (
           <FormField
             control={control}
-            key="actuaryType"
-            name="actuaryType"
+            key="permission"
+            name="permission"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Actuary Type</FormLabel>
@@ -140,7 +149,8 @@ export default function EditActuaryForm({
 
         <FormField
           control={control}
-          name="limit"
+          key="accountLimit"
+          name="accountLimit"
           render={({ field }) => (
             <FormItem>
               <FormLabel className={actuaryType !== Permission.Agent ? "text-muted-foreground": ""}>Limit</FormLabel>
@@ -155,7 +165,7 @@ export default function EditActuaryForm({
                     );
                     field.onChange(numericValue);
                   }}
-                  defaultValue={actuary.limit}
+                  defaultValue={actuary.account.monthlyLimit}
                 />
               </FormControl>
               <FormMessage />

@@ -70,11 +70,11 @@ export default function VerificationOTP({form, nextStep}: OTPFormProps) {
             </CardContent>
             <CardDescription>
             <DialogDescription className="text-center font-light">
-                An email has been sent to {context?.user?.email}
+                Verify using your BankToo® authenticator app.
             </DialogDescription>
-            <DialogDescription className="text-center font-light">
-                Didn't receive the code? <Button size="tight" variant="link">Resend verification code</Button>
-            </DialogDescription>
+            {/*<DialogDescription className="text-center font-light">*/}
+            {/*    Didn't receive the code? <Button size="tight" variant="link">Resend verification code</Button>*/}
+            {/*</DialogDescription>*/}
             </CardDescription>
 
         </Card>

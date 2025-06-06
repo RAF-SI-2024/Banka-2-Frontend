@@ -20,7 +20,7 @@ export function EmployeeNavMainData(permission: Permission) {
       label: "Banking",
       content: [
         {
-          title: "All bank accounts",
+          title: "All Bank Accounts",
           url: "/bank-account-list",
           icon: <span className="icon-[ph--list-magnifying-glass]" />,
           isCollapsed: true,
@@ -50,68 +50,58 @@ export function EmployeeNavMainData(permission: Permission) {
 
   if (permission == Permission.Supervisor) {
     const bankingSection = items.find(section => section.label === "Banking");
-    if(bankingSection){
-      bankingSection.content.push({
-        title: "Tax tracking",
-            url: "/tax/overview",
-            icon: <span className="icon-[ph--invoice]" />,
-            isCollapsed: true,
-      });
-    }
+  //   if(bankingSection){
+  //     bankingSection.content.push({
+  //       title: "Tax tracking",
+  //           url: "/tax/overview",
+  //           icon: <span className="icon-[ph--invoice]" />,
+  //           isCollapsed: true,
+  //     });
+  //   }
   }
   if(permission == Permission.Agent || permission == Permission.Supervisor) {
-      items.push({
-        label: "Exchange",
-            content: [
-              {
-                title: "Trading",
-                url: "/trading",
-                icon: <span className="icon-[ph--chart-line-up]" />,
-                isCollapsed: false,
-              },
-              {
-                title: "Orders",
-                url: "/order/overview",
-                icon: <span className="icon-[ph--hand-deposit]" />,
-                isCollapsed: true,
-              },
-            ],
-      })
+    items.push({
+      label: "Exchange",
+      content: [
+        {
+          title: "Trading",
+          url: "/trading",
+          icon: <span className="icon-[ph--chart-line-up]"/>,
+          isCollapsed: false,
+        },
+        {
+          title: "Orders",
+          url: "/order/overview",
+          icon: <span className="icon-[ph--hand-deposit]"/>,
+          isCollapsed: true,
+        },
+      ],
+    })
     const exchangeSection = items.find(section => section.label === "Exchange");
-    if (permission === Permission.Supervisor) {
+    if (permission === Permission.Supervisor || permission == Permission.Agent) {
 
       if (exchangeSection) {
+        const accounts = useBankAccountsData();
+        console.log(accounts);
+        if (accounts.length > 0) {
+          exchangeSection.content.push({
+            title: "Trading account",
+            url: accounts[0].url,
+            icon: <span className="icon-[ph--piggy-bank]"/>,
+            isCollapsed: false,
+          })
+        }
+
         exchangeSection.content.push({
-          title: "Actuaries",
-          url: "/actuary/overview",
-          icon: <span className="icon-[ph--users-three]" />,
-          isCollapsed: true,
-        });
-      }
-
-    }
-
-    if(exchangeSection){
-      const accounts = useBankAccountsData();
-      if(accounts.length > 0) {
-        exchangeSection.content.push({
-          title: "Trading account",
-          url: accounts[0].url,
-          icon: <span className="icon-[ph--piggy-bank]" />,
-          isCollapsed: false,
-        })
-      }
-
-      exchangeSection.content.push({
           title: "My portfolio",
           url: "/my-portfolio",
           icon: <span className="icon-[ph--chalkboard-teacher]"/>,
           isCollapsed: false,
-      })
+        })
+      }
+
     }
-
   }
-
 
 
 

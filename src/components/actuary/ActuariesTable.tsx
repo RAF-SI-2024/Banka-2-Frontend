@@ -1,60 +1,53 @@
-import { useEffect, useMemo, useState } from "react";
-import { Actuary } from "@/types/bank_user/actuary.ts";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import {useEffect, useMemo, useState} from "react";
+import {Actuary, EditActuaryRequest, Permission} from "@/types/bank_user/actuary.ts";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  useReactTable,
+  ColumnFiltersState,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
-  ColumnFiltersState,
+  useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { DataTable } from "@/components/__common__/datatable/DataTable";
-import { DataTablePagination } from "@/components/__common__/datatable/DataTablePagination";
-import { DataTableViewOptions } from "@/components/__common__/datatable/DataTableViewOptions";
-import { mockActuaries } from "@/__mocks/mock-actuaries";
-import { generateActuaryColumns } from "@/components/actuary/ActuariesListColumnDef.tsx";
-import { EditActuaryDialog } from "@/components/actuary/edit-actuary/EditActuaryDialog.tsx";
+import {DataTable} from "@/components/__common__/datatable/DataTable";
+import {DataTablePagination} from "@/components/__common__/datatable/DataTablePagination";
+import {DataTableViewOptions} from "@/components/__common__/datatable/DataTableViewOptions";
+import {generateActuaryColumns} from "@/components/actuary/ActuariesListColumnDef.tsx";
+import {EditActuaryDialog} from "@/components/actuary/edit-actuary/EditActuaryDialog.tsx";
 import ResetLimitConfirmDialog from "./reset-used-limit/ResetLimitConfirmDialog";
-import { User } from "@/types/bank_user/user.ts";
-import { getAllUsers } from "@/api/bank_user/user.ts";
+import {User, UserResponse} from "@/types/bank_user/user.ts";
+import {getAllUsers} from "@/api/bank_user/user.ts";
+import {editAccountClient, getAccountById} from "@/api/bank_user/bank-account.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
+import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
+import {editPermission} from "@/api/bank_user/actuary.ts";
 
 export default function ActuaryTable() {
   const [actuaries, setActuaries] = useState<Actuary[]>([]);
   const [fetchFlag, setFetchFlag] = useState(false);
   const [selectedActuary, setSelectedActuary] = useState<Actuary | null>(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const [users, setUsers] = useState<User[]>([]);
   const [isResetLimitDialogOpen, setResetLimitDialogOpen] = useState(false);
+
+  const [error, setError] = useState<string | null>(null);
+
+  // pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
 
   const [search, setSearch] = useState({
     email: "",
     firstName: "",
     lastName: "",
-    actuaryType: "",
-  });
-  const [appliedFilters, setAppliedFilters] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-    actuaryType: "",
+    permissions: "8"
   });
 
-  const handleApplyFilters = () => {
-    setAppliedFilters(search);
-  };
 
-  const isSearchActive = Object.values(search).some((v) => v !== "");
 
   const handleSearchChange = (field: string, value: string) => {
     setSearch((prev) => ({ ...prev, [field]: value }));
@@ -65,13 +58,7 @@ export default function ActuaryTable() {
       email: "",
       firstName: "",
       lastName: "",
-      actuaryType: "",
-    });
-    setAppliedFilters({
-      email: "",
-      firstName: "",
-      lastName: "",
-      actuaryType: "",
+      permissions: "8"
     });
     setFetchFlag(!fetchFlag);
   };
@@ -82,11 +69,16 @@ export default function ActuaryTable() {
     setDialogOpen(true);
   };
 
-  const handleResetLimit = (actuary: Actuary) => {
-    console.log("Reset limit:", actuary);
-    setSelectedActuary(actuary);
-    setResetLimitDialogOpen(true);
-  };
+  // const handleResetLimit = (actuary: Actuary) => {
+  //   console.log("Reset limit:", actuary);
+  //   setSelectedActuary(actuary);
+  //   setResetLimitDialogOpen(true);
+  // };
+
+  const columns = useMemo(
+      () => generateActuaryColumns(handleEdit, actuaries),
+      [actuaries]
+  );
 
   const handleActuaryUpdate = (updatedActuary: Actuary) => {
     setActuaries((prevActuaries) =>
@@ -96,35 +88,44 @@ export default function ActuaryTable() {
     );
   };
 
-  const columns = useMemo(
-    () => generateActuaryColumns(handleEdit, handleResetLimit, users),
-    [users]
-  );
+  const fetchActuaries = async () => {
+    setError(null);
+    try {
+      const usersData: UserResponse = await getAllUsers(
+          currentPage,
+          pageSize,
+          search,
+      );
+      const actuariesData: Actuary[] = await Promise.all(
+          usersData.items.map(async (user) => {
+            const account: BankAccount = (await getAccountById(user.accounts[0].id)).data;
+            return {
+              id: user.id,
+              email: user.email,
+              username: user.username,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              permission: user.permissions,
+              account: account,
+              role: user.role,
+            };
+          })
+      );
+      setActuaries(actuariesData);
+      setTotalPages(usersData.totalPages);
+    } catch (err) {
+      setError("Failed to fetch actuaries");
+    }
+  };
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
-  const filteredData = useMemo(() => {
-    return actuaries.filter((a) => {
-      const matchesEmail = a.email
-        .toLowerCase()
-        .includes(search.email.toLowerCase());
-      const matchesFirst = a.firstName
-        .toLowerCase()
-        .includes(search.firstName.toLowerCase());
-      const matchesLast = a.lastName
-        .toLowerCase()
-        .includes(search.lastName.toLowerCase());
-      const matchesType =
-        search.actuaryType === "" ||
-        a.actuaryType === parseInt(appliedFilters.actuaryType);
-      return matchesEmail && matchesFirst && matchesLast && matchesType;
-    });
-  }, [actuaries, appliedFilters]);
+
 
   const table = useReactTable({
-    data: filteredData,
+    data: actuaries,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -141,36 +142,50 @@ export default function ActuaryTable() {
   });
 
   useEffect(() => {
-    setActuaries(mockActuaries);
+    fetchActuaries();
   }, [fetchFlag]);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const userResponse = await getAllUsers(1, 1000, {});
-        setUsers(userResponse.items);
-      } catch (error) {
-        console.error("Failed to fetch users:", error);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  const handleConfirmResetLimit = () => {
-    if (selectedActuary) {
-      const updatedActuary = { ...selectedActuary, usedLimit: 0 };
-
-      setActuaries((prevActuaries) =>
-        prevActuaries.map((actuary) =>
-          actuary.id === updatedActuary.id ? updatedActuary : actuary
-        )
-      );
-
-      console.log("Limit reset for actuary:", selectedActuary);
-    }
-    setResetLimitDialogOpen(false);
+  const handleFilter = () => {
+    setCurrentPage(1);
+    setFetchFlag(!fetchFlag);
   };
+
+
+  // const handleConfirmResetLimit = () => {
+  //   if (selectedActuary) {
+  //     const updatedActuary = { ...selectedActuary, usedLimit: 0 };
+  //
+  //     setActuaries((prevActuaries) =>
+  //       prevActuaries.map((actuary) =>
+  //         actuary.id === updatedActuary.id ? updatedActuary : actuary
+  //       )
+  //     );
+  //
+  //     console.log("Limit reset for actuary:", selectedActuary);
+  //   }
+  //   setResetLimitDialogOpen(false);
+  // };
+
+  async function onEditActuary(oldValue: Actuary, req: EditActuaryRequest) {
+    try{
+      if(oldValue.permission !== req.permission){
+        console.log(req.permission);
+        await editPermission(oldValue.id, oldValue.permission, req.permission);
+      }
+      if(oldValue.account.monthlyLimit !== req.accountLimit){
+         await editAccountClient(oldValue.account.id, {dailyLimit: oldValue.account.dailyLimit, monthlyLimit: req.accountLimit, name: oldValue.account.name.replace(" ", "")} );
+      }
+
+
+      showSuccessToast({description: "Actuary successfully edited"});
+
+      setFetchFlag(!fetchFlag);
+    }
+    catch (err){
+      showErrorToast({defaultMessage:"Error editing actuary", error:err})
+      console.error(err)
+    }
+  }
 
   return (
     <div className="p-6 space-y-4">
@@ -194,21 +209,21 @@ export default function ActuaryTable() {
             onChange={(e) => handleSearchChange("lastName", e.target.value)}
             className="w-42"
           />
-          <Select
-            value={search.actuaryType}
-            onValueChange={(value) => handleSearchChange("actuaryType", value)}
-          >
-            <SelectTrigger className="w-42">
-              <SelectValue placeholder="Filter by type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">Supervisor</SelectItem>
-              <SelectItem value="2">Agent</SelectItem>
-            </SelectContent>
-          </Select>
+          {/*<Select*/}
+          {/*  value={search.permissions}*/}
+          {/*  onValueChange={(value) => handleSearchChange("permissions", value)}*/}
+          {/*>*/}
+          {/*  <SelectTrigger className="w-42">*/}
+          {/*    <SelectValue placeholder="Filter by type" />*/}
+          {/*  </SelectTrigger>*/}
+          {/*  <SelectContent>*/}
+          {/*    <SelectItem value={Permission.Supervisor.toString()}>Supervisor</SelectItem>*/}
+          {/*    <SelectItem value={Permission.Agent.toString()}>Agent</SelectItem>*/}
+          {/*  </SelectContent>*/}
+          {/*</Select>*/}
 
           <div className="flex items-center space-x-2">
-            <Button variant="primary" onClick={handleApplyFilters}>
+            <Button variant="primary" onClick={handleFilter}>
               <span className="icon-[ph--funnel]" /> Filter
             </Button>
             <Button variant="secondary" onClick={handleClearSearch}>
@@ -230,17 +245,17 @@ export default function ActuaryTable() {
           actuary={selectedActuary}
           isOpen={isDialogOpen}
           onOpenChange={setDialogOpen}
-          onSuccess={handleActuaryUpdate}
+          onEditActuary={onEditActuary}
         />
       )}
 
-      {selectedActuary && (
-        <ResetLimitConfirmDialog
-          open={isResetLimitDialogOpen}
-          onClose={() => setResetLimitDialogOpen(false)}
-          onConfirm={handleConfirmResetLimit}
-        />
-      )}
+      {/*{selectedActuary && (*/}
+      {/*  <ResetLimitConfirmDialog*/}
+      {/*    open={isResetLimitDialogOpen}*/}
+      {/*    onClose={() => setResetLimitDialogOpen(false)}*/}
+      {/*    onConfirm={handleConfirmResetLimit}*/}
+      {/*  />*/}
+      {/*)}*/}
     </div>
   );
 }

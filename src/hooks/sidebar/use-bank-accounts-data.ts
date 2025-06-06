@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {getAllAccountsClient} from "@/api/bank_user/bank-account.ts";
 import {BankAccount} from "@/types/bank_user/bank-account.ts"
 import {showErrorToast} from "@/lib/show-toast-utils.tsx";
+import {User} from "@/types/bank_user/user.ts";
 
 
 export  function useBankAccountsData() {
@@ -11,13 +12,15 @@ export  function useBankAccountsData() {
             try {
                 const rawData = sessionStorage.getItem("user");
                 let id: string = "";
+                let user: User;
                 if (rawData) {
-                    const user = JSON.parse(rawData);
+                    user = JSON.parse(rawData);
                     id = user.id;
                 }
                 if (id.length == 0){
                     throw new Error("User ID not found");
                 }
+
 
                 const response = await getAllAccountsClient(id, 1, 100);
 
