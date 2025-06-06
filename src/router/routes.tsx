@@ -48,6 +48,8 @@ export const AppRoutes = () => {
 
                     <Route path="/card/:cardId" element={<CardDetailsPage />} />
 
+                    <Route path="my-portfolio" element={<MyPortfolioPage />} />
+
                     {/*protected client routes*/}
                     <Route element={<ProtectedClient />}>
                         <Route path="/bank-account/:accountId" element={<BankAccountPage />} />
@@ -58,7 +60,7 @@ export const AppRoutes = () => {
                         <Route path="/loan/overview" element={<LoanOverviewList />} />
                         <Route path="loan/overview/:loanId" element={<LoanDetailsClientPage />} />
                         <Route path="payments/exchange-rate" element={<ExchangeRateListPage />} />
-                        <Route path="my-portfolio" element={<MyPortfolioPage />} />
+
                     </Route>
 
                     <Route element={<ProtectedAdminOrEmployee />}>

@@ -1,3 +1,5 @@
+import {Permission} from "@/types/bank_user/actuary.ts";
+
 export interface Client {
     firstName: string;
     lastName: string;
@@ -33,6 +35,7 @@ export interface User {
     uniqueIdentificationNumber: string;
     email: string;
     username: string;
+    permissions: Permission;
     phoneNumber: string;
     address: string;
     role: Role;

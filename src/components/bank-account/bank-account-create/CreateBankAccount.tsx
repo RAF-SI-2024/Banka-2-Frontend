@@ -239,7 +239,7 @@ export default function CreateBankAccount({onRegister, registeredEmail, onClose}
             };
 
             const createAccData: CreateBankAccountRequest = {
-                name: "Štedni račun",
+                name: "Bankovni račun",
                 dailyLimit: 2000,
                 monthlyLimit: 50000,
                 clientId: clientID,

@@ -1,5 +1,6 @@
 import {Permission} from "@/types/bank_user/actuary.ts";
 import * as React from "react";
+import {useBankAccountsData} from "@/hooks/sidebar/use-bank-accounts-data.ts";
 
 // Function that returns navigation items based on actuary type
 export function EmployeeNavMainData(permission: Permission) {
@@ -49,57 +50,58 @@ export function EmployeeNavMainData(permission: Permission) {
 
   if (permission == Permission.Supervisor) {
     const bankingSection = items.find(section => section.label === "Banking");
-    if(bankingSection){
-      bankingSection.content.push({
-        title: "Tax tracking",
-            url: "/tax/overview",
-            icon: <span className="icon-[ph--invoice]" />,
-            isCollapsed: true,
-      });
-    }
+  //   if(bankingSection){
+  //     bankingSection.content.push({
+  //       title: "Tax tracking",
+  //           url: "/tax/overview",
+  //           icon: <span className="icon-[ph--invoice]" />,
+  //           isCollapsed: true,
+  //     });
+  //   }
   }
   if(permission == Permission.Agent || permission == Permission.Supervisor) {
-      items.push({
-        label: "Exchange",
-            content: [
-              {
-                title: "Trading",
-                url: "/trading",
-                icon: <span className="icon-[ph--chart-line-up]" />,
-                isCollapsed: false,
-              },
-              {
-                title: "Orders",
-                url: "/order/overview",
-                icon: <span className="icon-[ph--hand-deposit]" />,
-                isCollapsed: true,
-              },
-            ],
-      })
+    items.push({
+      label: "Exchange",
+      content: [
+        {
+          title: "Trading",
+          url: "/trading",
+          icon: <span className="icon-[ph--chart-line-up]"/>,
+          isCollapsed: false,
+        },
+        {
+          title: "Orders",
+          url: "/order/overview",
+          icon: <span className="icon-[ph--hand-deposit]"/>,
+          isCollapsed: true,
+        },
+      ],
+    })
     const exchangeSection = items.find(section => section.label === "Exchange");
-    if (permission === Permission.Supervisor) {
+    if (permission === Permission.Supervisor || permission == Permission.Agent) {
 
       if (exchangeSection) {
-        exchangeSection.content.push({
-          title: "Actuaries",
-          url: "/actuary/overview",
-          icon: <span className="icon-[ph--users-three]" />,
-          isCollapsed: true,
-        });
-      }
+        const accounts = useBankAccountsData();
+        console.log(accounts);
+        if (accounts.length > 0) {
+          exchangeSection.content.push({
+            title: "Trading account",
+            url: accounts[0].url,
+            icon: <span className="icon-[ph--piggy-bank]"/>,
+            isCollapsed: false,
+          })
+        }
 
-    }
-    if(exchangeSection){
-      exchangeSection.content.push({
-          title: "My Portfolio",
+        exchangeSection.content.push({
+          title: "My portfolio",
           url: "/my-portfolio",
           icon: <span className="icon-[ph--chalkboard-teacher]"/>,
           isCollapsed: false,
-      })
+        })
+      }
+
     }
-
   }
-
 
 
 

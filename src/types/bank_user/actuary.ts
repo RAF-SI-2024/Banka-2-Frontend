@@ -10,6 +10,9 @@
 // }
 
 // Enum za actuary tipove
+import {Role} from "@/types/bank_user/user.ts";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
+
 export enum Permission {
   Invalid = 0,
   Client = 1,
@@ -23,15 +26,22 @@ export enum Permission {
 
 export interface Actuary {
   id: string;
-  employeeId: string;
+  // employeeId: string;
   email: string;
   username: string;
   firstName: string;
   lastName: string;
-  actuaryType: Permission;
-  limit: number;
-  usedLimit: number;
-  needsApproval: boolean;
+  permission: Permission;
+  role: Role;
+  account: BankAccount
+  // needsApproval: boolean;
+}
+
+export interface EditActuaryRequest{
+  id: string;
+  accountId: string;
+  accountLimit: number ;
+  permission: Permission;
 }
 
 // Helper funkcija - prikazivanje enuma kao string

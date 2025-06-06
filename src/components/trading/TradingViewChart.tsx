@@ -122,7 +122,7 @@ const TradingViewChart = (
                     value: newVolume
                 });
                 //
-                setLegendPrice(formatCurrency(newQuote.bidPrice, "RSD"));
+                setLegendPrice(formatCurrency(newQuote.bidPrice, "RSD", 4, 4));
                 setLegendTime(time.toLocaleString("sr-RS"));
                 if(maSeriesRef.current){
                     const maData = calculateMovingAverageSeriesData(candleSeriesRef.current.data(), 20);
@@ -178,7 +178,7 @@ const TradingViewChart = (
             priceFormat: {
                 type: 'custom',
                 minMove: 0.01,
-                formatter: (price: number) => formatCurrency(price, currency.code)
+                formatter: (price: number) => formatCurrency(price, currency.code, 4, 4)
             },
         }, 0);
 
@@ -233,7 +233,7 @@ const TradingViewChart = (
 
             const time = (new Date(bar.time * 1000)).toLocaleString("sr-RS");
             const price = bar.value !== undefined ? bar.value : bar.close;
-            const formattedPrice = formatCurrency(price, currency.code);
+            const formattedPrice = formatCurrency(price, currency.code, 4, 4);
 
             setLegendName(ticker);
             setLegendPrice(formattedPrice);

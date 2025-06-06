@@ -85,7 +85,7 @@ export default function AdjustLimitsOTP({form, nextStep, setErrors}: OTPFormProp
                 </InputOTPGroup>
             </InputOTP>
             <DialogDescription className="text-center text-lg font-light">
-                An email has been sent to {context?.user?.email}
+                Verify on your authenticator app.
             </DialogDescription>
             <DialogDescription className="text-center text-lg font-light">
                 Didn't receive the code?
