@@ -25,11 +25,14 @@ import {
 import {Button} from "@/components/ui/button.tsx";
 import {DualRangeSlider} from "@/components/ui/dual-range-slider.tsx";
 import {Input} from "@/components/ui/input.tsx";
+import {getAllOrders} from "@/api/exchange/order.ts";
+import {Order, OrderResponse} from "@/types/exchange/order.ts";
+import {Currency} from "@/types/bank_user/currency.ts";
 
 export default function PortfolioTable() {
 
     // current portfolio data
-    const [portfolioData, setPortfolioData] = useState<PortfolioData[]>([]);
+    const [portfolioData, setPortfolioData] = useState<Order[]>([]);
 
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -48,32 +51,7 @@ export default function PortfolioTable() {
     // Open slider dialog
     const [open, setOpen] = useState(false);
     // Selected row from which slider appears
-    const [selectedRow, setSelectedRow] = useState<PortfolioData | null>(null);
-
-    const [sliderValue, setSliderValue] = useState<number[]>([selectedRow?.public ?? 0]);
-
-    useEffect(() => {
-        setSliderValue([selectedRow?.public ?? 0]);
-    }, [selectedRow]);
-
-    const handleSliderChange = (newValue: number[]) => {
-        setSliderValue(newValue);
-        setSelectedRow((prev) => prev ? { ...prev, public: newValue[0] > prev.amount ? prev.amount : (newValue[0] < 0 ? 0 : newValue[0]) } : null);
-    };
-
-    const handleSave = () => {
-        if (selectedRow) {
-            setPortfolioData((prevData) => {
-                return prevData.map((item) => {
-                    if (item.ticker === selectedRow.ticker) {
-                        return { ...item, public: sliderValue[0] };
-                    }
-                    return item;
-                });
-            });
-        }
-        setOpen(false);
-    };
+    const [selectedRow, setSelectedRow] = useState<Order | null>(null);
 
     /* FUNCTIONS */
     // fetch portfolio data function
@@ -81,28 +59,24 @@ export default function PortfolioTable() {
         console.log("Fetching portfolio data");
         setError(null);
         try {
-            // const portfolioData: PortfolioData = await getAllUsers(
-            //     currentPage,
-            //     pageSize
-            // );
-            //
-            //
-            // setTotalPages(portfolioData.totalPages);
+            const response: OrderResponse = await getAllOrders(
+                null,
+                currentPage,
+                pageSize
+            );
+
+            setPortfolioData(response.items)
+            setTotalPages(response.totalPages);
         } catch (err) {
             console.log(err);
             setError("Failed to fetch portfolio data");
         }
     };
 
-    /* TABLE */
-    // generate columns
     const columns = useMemo(() => {
-        // Return generated columns
-        setPortfolioData(portfolioDataMock);
         return generatePortfolioColumns(setOpen, setSelectedRow);
-    }, []); // Empty dependency array since handleOpenEditDialog is now inside
+    }, []);
 
-    // create the table instance with pagination, sorting, and column visibility
     const table = useReactTable({
         data: portfolioData,
         columns,
@@ -152,34 +126,6 @@ export default function PortfolioTable() {
                     <DataTableViewOptions table={table} />
                 </div>
             </div>
-
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Change amount of public assets</DialogTitle>
-                        <DialogDescription>
-                            <DualRangeSlider
-                                className="mt-8"
-                                label={(value) => value}
-                                value={sliderValue}
-                                onValueChange={handleSliderChange}
-                                min={0}
-                                max={selectedRow?.amount}
-                                step={1}
-                            />
-                            <Input
-                                className="mt-4"
-                                type="number"
-                                value={sliderValue[0]}
-
-                                onChange={(e) => handleSliderChange([Number(e.target.value)])}
-                            />
-                        </DialogDescription>
-                    </DialogHeader>
-                    <Button variant="gradient" onClick={handleSave}>Save</Button>
-                </DialogContent>
-            </Dialog>
-
             {/* 📋 Portfolio table */}
 
             <DataTable
