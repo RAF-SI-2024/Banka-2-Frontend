@@ -14,6 +14,10 @@ import {createOrder} from "@/api/exchange/order.ts";
 import {useEffect, useState} from "react";
 import {getSecurityOfType} from "@/api/exchange/security.ts";
 import {SecurityType} from "@/types/exchange/security.ts";
+import ErrorFallback from "@/components/__common__/error/ErrorFallback.tsx";
+import {BankAccount} from "@/types/bank_user/bank-account.ts";
+import {getAccountById} from "@/api/bank_user/bank-account.ts";
+import {showErrorToast, showSuccessToast} from "@/lib/show-toast-utils.tsx";
 
 
 interface SecurityCreateOrderProps {
@@ -46,6 +50,8 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
     const securityType = segments[segments.indexOf("trading") + 1];
 
     const [ticker, setTicker] = useState<string>("");
+
+
 
     useEffect(() => {
         async function fetchSecurity() {
@@ -94,6 +100,8 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
                 securityId: securityId,
             }
 
+
+
             if(permission === 26){
                 orderRequest.supervisorId = user.id;
             }
@@ -109,11 +117,35 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
 
             const response = await createOrder(orderRequest);
             console.log("✅ Order created", response);
+            showSuccessToast({title: "Order created", description: "Successfully created the order."})
         } catch (error) {
+            showErrorToast({error: "Error", defaultMessage: "Failed to create order."})
             console.error("❌ Failed to create order", error);
         }
 
     }
+    const fetchAccount = async (id: string) => {
+
+        if (!id) {
+            throw new Error("AccountId is missing from URL!");
+        }
+        console.log("Fetching bank account info");
+        try {
+            const response = await getAccountById(id);
+            if (response.status !== 200) {
+                throw new Error("Failed to fetch bank account info");
+            }
+
+            setSelectedCurrency(response.data.currency.code);
+
+        } catch (err) {
+            console.error(err);
+            showErrorToast({defaultMessage: "Failed to fetch bank account info"});
+        }
+    }
+
+
+    const user = JSON.parse(sessionStorage.getItem("user") || "{}");
 
     const form = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
@@ -125,6 +157,13 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
             accountNumber: "",
         },
     });
+
+
+    const accounts = user.accounts || [];
+
+    const [selectedCurrency, setSelectedCurrency] = useState<string>(
+        "RSD"
+    );
 
 
 
@@ -156,7 +195,7 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
                                     <FormItem>
                                         <FormLabel>Limit</FormLabel>
                                         <FormControl>
-                                            <MoneyInput currency={"RSD"}  fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
+                                            <MoneyInput currency={selectedCurrency}  fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -174,13 +213,14 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
                                     <FormItem>
                                         <FormLabel>Stop</FormLabel>
                                         <FormControl>
-                                            <MoneyInput currency={"RSD"} fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
+                                            <MoneyInput currency={selectedCurrency} fixedDecimalScale={false} decimalScale={4} onChange={field.onChange} defaultValue={0}/>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                         }
+
 
 
                         <div className="w-full flex md:flex-row sm:flex-col gap-2 py-2">
@@ -227,14 +267,25 @@ export default function SecurityCreateOrder({direction, variant}: SecurityCreate
                                         }
                                     }, []);
 
-                                    const accounts = user.accounts || [];
-
 
                                     return (
                                         <FormItem className="flex flex-col w-full gap-2">
                                             <FormLabel>Your Account Number</FormLabel>
                                             <FormControl>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <Select
+                                                    onValueChange={(value) => {
+                                                        field.onChange(value);
+
+                                                        const acc = accounts.find(
+                                                            (a: any) => a.accountNumber == value
+
+                                                        );
+                                                        if (acc)
+                                                            fetchAccount(acc.id)
+
+                                                    }}
+                                                    defaultValue={field.value}
+                                                >
                                                     <SelectTrigger className="w-full">
                                                         <SelectValue placeholder="Select account" />
                                                     </SelectTrigger>
