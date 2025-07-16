@@ -1,26 +1,18 @@
-import {getGenderString, getRoleString, User} from "@/types/bank_user/user.ts";
 import {ColumnDef} from "@tanstack/react-table";
-import {Badge} from "@/components/ui/badge.tsx";
-import UserDropdownMenu from "@/components/user-table/all-users/UserDropdownMenu.tsx";
-import {PortfolioData} from "@/types/exchange/portfolio-data.ts";
-import {formatCurrency} from "@/lib/format-currency.ts";
 import {Button} from "@/components/ui/button.tsx";
-import {useNavigate} from "react-router-dom";
 import {createOrder} from "@/api/exchange/order.ts";
-import {CreateOrderRequest, Order, OrderDirection, OrderType} from "@/types/exchange/order.ts";
+import {CreateOrderRequest, OrderDirection, OrderType} from "@/types/exchange/order.ts";
+import {Asset} from "@/types/exchange/asset.ts";
 
-const formatDate = (date: Date): string => {
-    return date.toLocaleDateString('sr-RS') + " (" + date.toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit'}) + ")"
-};
 
-export function generatePortfolioColumns(setOpen: (open: boolean) => void, setSelectedRow: (row: Order) => void): ColumnDef<Order>[] {    return [
-        {
-            accessorKey: "type",
-            header: "Type",
-            cell: ({ row }) => (
-                OrderType[row.original.orderType]
-            ),
-        },
+export function generatePortfolioColumns(setOpen: (open: boolean) => void, setSelectedRow: (row: Asset) => void): ColumnDef<Asset>[] {    return [
+        // {
+        //     // accessorKey: "type",
+        //     // header: "Type",
+        //     // cell: ({ row }) => (
+        //     //     OrderType[row.original.orderType]
+        //     // ),
+        // },
         {
             accessorKey: "ticker",
             header: "Ticker",
@@ -35,47 +27,6 @@ export function generatePortfolioColumns(setOpen: (open: boolean) => void, setSe
                 row.original.quantity
             ),
         },
-        // {
-        //     accessorKey: "price",
-        //     header: "Price",
-        //     cell: ({row}) => {
-        //         return (formatCurrency(row.original., row.original.currency.code))
-        //     },
-        //     enableHiding: true,
-        // },
-        // {
-        //     accessorKey: "profit_loss",
-        //     header: "Profit/Loss",
-        //     cell: ({row}) => {
-        //         return (formatCurrency(row.original.price, row.original.currency.code))
-        //     },
-        //     enableHiding: true,
-        // },
-        // {
-        //     accessorKey: "lastModified",
-        //     header: "Last Modified",
-        //     cell: ({ row }) => {
-        //         return (new Date(row.original.)).toLocaleString("sr-RS")
-        //     },
-        //     enableHiding: true,
-        // },
-        // {
-        //     accessorKey: "public",
-        //     header: "Public",
-        //     enableHiding: true,
-        // },
-        // {
-        //     id: "change",
-        //     header: "Change public",
-        //     cell: ({ row }) => (
-        //         <Button variant="gradient" onClick={() => {
-        //             setSelectedRow(row.original);
-        //             setOpen(true);
-        //         }}>
-        //             Change
-        //         </Button>
-        //     ),
-        // },
         {
             id: "sell",
             header: "Sell asset",
@@ -91,18 +42,21 @@ export function generatePortfolioColumns(setOpen: (open: boolean) => void, setSe
 
     ];
 }
-const handleSell = async (item: Order) => {
-    if(!item.account.accountNumber){
+const handleSell = async (item: Asset) => {
+
+    const accountNumber = item.actuary.account.accountNumber;
+    if(!accountNumber){
         return;
     }
+    // TODO: FIX this, ASSET DOESNT HAVE REQUIRED FIELDS
     const orderRequest : CreateOrderRequest = {
         actuaryId: item.actuary.id,
-        accountNumber: String(item.account.accountNumber) ,
-        orderType: item.orderType,
+        accountNumber: String(accountNumber) ,
+        orderType: OrderType.MARKET,
         quantity: item.quantity,
-        contractCount: item.contractCount,
-        limitPrice: item.limitPrice,
-        stopPrice: item.stopPrice,
+        contractCount: 1,
+        limitPrice: 200,
+        stopPrice: 150,
         direction: OrderDirection.SELL,
         securityId: item.security.id
 
@@ -114,17 +68,3 @@ const handleSell = async (item: Order) => {
         console.error("asdfsadadas", error);
     }
 };
-/*
-{
-  "actuaryId": "a8be210e-84f9-472e-9f0a-f2f334dcb20a",
-  "orderType": "Market",
-  "quantity": 100,
-  "contractCount": 10,
-  "limitPrice": 250.75,
-  "stopPrice": 222.22,
-  "direction": "Buy",
-  "supervisorId": "e1f3de40-719e-4b5f-8e4d-d42f06e4a411",
-  "accountNumber": "000000005",
-  "securityId": "9000bb03-afac-4ab5-80f3-980a0ed898f2"
-}
- */

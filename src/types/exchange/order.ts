@@ -65,8 +65,9 @@ export interface OrderResponse {
 }
 
 export enum Direction {
-    Buy = 0 ,
-    Sell = 1
+    Invalid,
+    Buy,
+    Sell
 }
 
 export enum OrderStatus {
